@@ -1,0 +1,8 @@
+{
+  "pdd.persona.integration.enabled": true,
+  "pdd.persona.commands.path": ".claude/commands",
+  "pdd.agents.memory.file": "AGENTS.md",
+  "pdd.bmad.boundaries.enforced": true,
+  "pdd.natural.language.activation": true,
+  "pdd.context.switching.enabled": true
+}
