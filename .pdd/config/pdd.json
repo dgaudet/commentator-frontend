@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "framework": "pdd",
+  "personas": {
+    "defaultPack": "core-enterprise",
+    "paths": [
+      "personas",
+      "packs/*/personas"
+    ]
+  },
+  "generation": {
+    "contextPath": "generated/contexts",
+    "template": "default"
+  }
+}

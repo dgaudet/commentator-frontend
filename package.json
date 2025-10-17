@@ -1,0 +1,14 @@
+{
+  "name": "hello-world-app",
+  "version": "1.0.0",
+  "description": "Full-stack Hello World application with React and Node.js",
+  "scripts": {
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "dev:server": "cd server && npm start",
+    "dev:client": "cd client && npm run dev",
+    "dev": "echo 'Please run dev:server and dev:client in separate terminals'"
+  },
+  "keywords": ["react", "nodejs", "express", "hello-world"],
+  "author": "",
+  "license": "ISC"
+}
