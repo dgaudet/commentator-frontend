@@ -35,6 +35,12 @@ Every implementation task follows the Red-Green-Refactor cycle:
 4. ✅ **Confirm Test Passes**
 5. ✅ **Refactor & Improve** (REFACTOR)
 
+### Test File Organization
+All test files must be placed in `__tests__` directories:
+- Test files should be located in a `__tests__` subdirectory within the same directory as the code being tested
+- Example: `src/components/Button.tsx` → `src/components/__tests__/Button.test.tsx`
+- This follows Jest's standard convention for test file organization
+
 ---
 
 ## Phase 1: Project Setup & Infrastructure
@@ -95,7 +101,7 @@ npm run start  # Must load successfully
 - [ ] TypeScript compilation passes
 
 **TDD Steps**:
-1. **RED**: Create test file `src/types/Class.test.ts` (type validation tests)
+1. **RED**: Create test file `src/types/__tests__/Class.test.ts` (type validation tests)
 2. **RED**: Run tests - should fail (types don't exist)
 3. **GREEN**: Create `Class.ts` with interfaces
 4. **GREEN**: Run tests - should pass
@@ -140,8 +146,8 @@ export interface ApiError {
 
 **Test Validation**:
 ```typescript
-// src/types/Class.test.ts
-import { Class, CreateClassRequest } from './Class';
+// src/types/__tests__/Class.test.ts
+import { Class, CreateClassRequest } from '../Class';
 
 describe('Class Types', () => {
   it('should accept valid class object', () => {
@@ -200,9 +206,9 @@ npm test  # Should run successfully
 
 **Test Validation**:
 ```typescript
-// src/App.test.tsx
+// src/__tests__/App.test.tsx
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import App from '../App';
 
 describe('App', () => {
   it('renders without crashing', () => {
@@ -335,10 +341,10 @@ export const handlers = [
 
 **Test Validation**:
 ```typescript
-// src/mocks/handlers.test.ts
+// src/mocks/__tests__/handlers.test.ts
 import { http } from 'msw';
 import { setupServer } from 'msw/node';
-import { handlers } from './handlers';
+import { handlers } from '../handlers';
 
 const server = setupServer(...handlers);
 
@@ -457,8 +463,8 @@ export const apiClient = new ApiClient();
 
 **Test Validation**:
 ```typescript
-// src/services/api/apiClient.test.ts
-import { apiClient } from './apiClient';
+// src/services/api/__tests__/apiClient.test.ts
+import { apiClient } from '../apiClient';
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
 
@@ -620,8 +626,8 @@ export function validateClassForm(data: { name: string; year: number }): Validat
 
 **Test Validation**:
 ```typescript
-// src/services/validation/classValidation.test.ts
-import { validateClassName, validateYear, validateClassForm } from './classValidation';
+// src/services/validation/__tests__/classValidation.test.ts
+import { validateClassName, validateYear, validateClassForm } from '../classValidation';
 
 describe('Class Validation', () => {
   describe('validateClassName', () => {
@@ -800,10 +806,10 @@ export const classService = {
 
 **Test Validation**:
 ```typescript
-// src/services/api/classService.test.ts
-import { classService } from './classService';
+// src/services/api/__tests__/classService.test.ts
+import { classService } from '../classService';
 import { setupServer } from 'msw/node';
-import { handlers } from '../../mocks/handlers';
+import { handlers } from '../../../mocks/handlers';
 
 const server = setupServer(...handlers);
 
@@ -1068,11 +1074,11 @@ export function useClasses(): UseClassesReturn {
 
 **Test Validation**:
 ```typescript
-// src/hooks/useClasses.test.ts
+// src/hooks/__tests__/useClasses.test.ts
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { useClasses } from './useClasses';
+import { useClasses } from '../useClasses';
 import { setupServer } from 'msw/node';
-import { handlers } from '../mocks/handlers';
+import { handlers } from '../../mocks/handlers';
 
 const server = setupServer(...handlers);
 
@@ -1274,9 +1280,9 @@ export const Button: React.FC<ButtonProps> = ({
 ```
 
 ```typescript
-// src/components/common/Button.test.tsx
+// src/components/common/__tests__/Button.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Button } from './Button';
+import { Button } from '../Button';
 
 describe('Button', () => {
   it('should render with text', () => {
@@ -1378,9 +1384,9 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateFirst }) => {
 
 **Test Validation**:
 ```typescript
-// src/components/classes/EmptyState.test.tsx
+// src/components/classes/__tests__/EmptyState.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
-import { EmptyState } from './EmptyState';
+import { EmptyState } from '../EmptyState';
 
 describe('EmptyState', () => {
   it('should display no classes message', () => {
@@ -1535,10 +1541,10 @@ export const ClassListItem: React.FC<ClassListItemProps> = ({
 
 **Test Validation**:
 ```typescript
-// src/components/classes/ClassListItem.test.tsx
+// src/components/classes/__tests__/ClassListItem.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ClassListItem } from './ClassListItem';
-import { Class } from '../../types/Class';
+import { ClassListItem } from '../ClassListItem';
+import { Class } from '../../../types/Class';
 
 const mockClass: Class = {
   id: 1,
@@ -1715,11 +1721,11 @@ export const ClassList: React.FC<ClassListProps> = ({ onClassClick, onAddClass }
 
 **Test Validation**:
 ```typescript
-// src/components/classes/ClassList.test.tsx
+// src/components/classes/__tests__/ClassList.test.tsx
 import { render, screen, waitFor } from '@testing-library/react';
-import { ClassList } from './ClassList';
+import { ClassList } from '../ClassList';
 import { setupServer } from 'msw/node';
-import { handlers } from '../../mocks/handlers';
+import { handlers } from '../../../mocks/handlers';
 import { http, HttpResponse } from 'msw';
 
 const server = setupServer(...handlers);
@@ -1965,10 +1971,10 @@ export const ClassForm: React.FC<ClassFormProps> = ({
 
 **Test Validation**:
 ```typescript
-// src/components/classes/ClassForm.test.tsx
+// src/components/classes/__tests__/ClassForm.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ClassForm } from './ClassForm';
+import { ClassForm } from '../ClassForm';
 
 describe('ClassForm', () => {
   const mockOnSubmit = jest.fn();
