@@ -70,8 +70,8 @@ class ApiClient {
     return this.client.put<T>(...args)
   }
 
-  delete(...args: Parameters<AxiosInstance['delete']>) {
-    return this.client.delete(...args)
+  delete<T>(...args: Parameters<AxiosInstance['delete']>) {
+    return this.client.delete<T>(...args)
   }
 }
 
