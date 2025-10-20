@@ -1,4 +1,4 @@
-import './App.css';
+import './App.css'
 
 /**
  * Main application component
@@ -15,7 +15,7 @@ function App() {
         <p>Application initialized. Ready for class management features.</p>
       </main>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
