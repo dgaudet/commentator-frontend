@@ -4,9 +4,27 @@
  *
  * Configures:
  * - @testing-library/jest-dom matchers
- * - Mock Service Worker (MSW) setup (will be fully configured in TASK-1.4)
+ * - MSW (Mock Service Worker) with polyfills
  */
 import '@testing-library/jest-dom'
+import 'whatwg-fetch'
+import { TextDecoder, TextEncoder } from 'util'
+import { ReadableStream, TransformStream } from 'stream/web'
 
-// MSW setup will be added in TASK-1.4 with proper polyfills
-// For now, tests run without API mocking
+// Polyfill for MSW v2 in Jest/jsdom environment
+// @ts-expect-error - TextEncoder type mismatch between util and lib.dom
+global.TextEncoder = TextEncoder
+// @ts-expect-error - TextDecoder type mismatch between util and lib.dom
+global.TextDecoder = TextDecoder
+
+// Polyfill ReadableStream for MSW v2
+if (typeof global.ReadableStream === 'undefined') {
+  // @ts-expect-error - ReadableStream type mismatch between stream/web and lib.dom
+  global.ReadableStream = ReadableStream
+}
+
+// Polyfill TransformStream for MSW v2
+if (typeof global.TransformStream === 'undefined') {
+  // @ts-expect-error - TransformStream type mismatch between stream/web and lib.dom
+  global.TransformStream = TransformStream
+}
