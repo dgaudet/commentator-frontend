@@ -158,9 +158,12 @@ interface EmptyStateProps {
 
 ### Base Configuration
 
-- **Base URL**: `/api/v1` (configured via `VITE_API_BASE_URL` environment variable)
-- **Authentication**: Bearer token (JWT) in `Authorization` header
+- **Base URL**: `http://localhost:3000` (existing backend API)
+- **API Documentation**: Available at `http://localhost:3000/api-docs/ui` (Swagger UI)
+- **Authentication**: Not required for MVP (no auth implemented yet)
 - **Content-Type**: `application/json`
+
+**Note**: The backend API already exists and is documented using OpenAPI 3.0 specification. This frontend will consume the existing `/class` endpoints.
 
 ### DES-5: TypeScript Type Definitions
 
@@ -169,30 +172,33 @@ interface EmptyStateProps {
 
 /**
  * Class entity representing an educational class
- * Maps to backend Class model
+ * Maps to backend Class model from existing API
+ * API Reference: http://localhost:3000/api-docs/ui
  */
 export interface Class {
-  id: string;                    // UUID format, system-generated
-  name: string;                  // 1-100 characters
-  year: number;                  // 2000-2099
-  created_at: string;            // ISO 8601 timestamp (UTC)
-  updated_at: string;            // ISO 8601 timestamp (UTC)
+  id: number;                    // Auto-generated integer ID (backend assigns)
+  name: string;                  // Class name (e.g., "Mathematics 101")
+  year: number;                  // Academic year (e.g., 2024)
+  createdAt: string;             // ISO 8601 timestamp - Creation time
+  updatedAt: string;             // ISO 8601 timestamp - Last update time
 }
 
 /**
  * Request payload for creating a new class
+ * Maps to POST /class endpoint
  */
 export interface CreateClassRequest {
-  name: string;
-  year: number;
+  name: string;                  // Required: Class name
+  year: number;                  // Required: Academic year
 }
 
 /**
  * Request payload for updating an existing class
+ * Maps to PUT /class/:id endpoint
  */
 export interface UpdateClassRequest {
-  name: string;
-  year: number;
+  name: string;                  // Required: Class name
+  year: number;                  // Required: Academic year
 }
 ```
 
@@ -226,218 +232,225 @@ export interface ApiError {
 
 ### DES-7: REST API Endpoints
 
-#### GET /api/v1/classes
+**API Reference**: http://localhost:3000/api-docs/ui
 
-**Purpose**: Fetch all classes for the authenticated teacher
+#### GET /class
+
+**Purpose**: Retrieve all classes
 **User Story**: US-CLASS-001 (View List)
+**Backend Documentation**: Swagger UI → Classes → GET /class
 
 **Request**:
 ```http
-GET /api/v1/classes
-Authorization: Bearer {token}
+GET http://localhost:3000/class
+Content-Type: application/json
 ```
 
-**Query Parameters** (optional):
-- `sort`: `year_desc` (default), `name_asc`, `created_desc`
-- `limit`: number (pagination - future enhancement)
-- `offset`: number (pagination - future enhancement)
+**Query Parameters**: None (returns all classes)
 
 **Success Response** (200 OK):
 ```json
-{
-  "data": [
-    {
-      "id": "550e8400-e29b-41d4-a716-446655440000",
-      "name": "Math 101",
-      "year": 2025,
-      "created_at": "2025-01-15T14:30:00Z",
-      "updated_at": "2025-01-15T14:30:00Z"
-    },
-    {
-      "id": "550e8400-e29b-41d4-a716-446655440001",
-      "name": "English 201",
-      "year": 2024,
-      "created_at": "2024-09-01T08:00:00Z",
-      "updated_at": "2024-09-01T08:00:00Z"
-    }
-  ],
-  "message": "Classes retrieved successfully"
-}
+[
+  {
+    "id": 1,
+    "name": "Mathematics 101",
+    "year": 2024,
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "name": "English 201",
+    "year": 2024,
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
+]
 ```
 
+**Response Format**: Array of Class objects (direct array response, not wrapped in `data` property)
+
 **Error Responses**:
-- `401 Unauthorized`: Invalid or missing authentication token
 - `500 Internal Server Error`: Server-side error
 
 ---
 
-#### POST /api/v1/classes
+#### POST /class
 
 **Purpose**: Create a new class
 **User Story**: US-CLASS-002 (Add Class)
+**Backend Documentation**: Swagger UI → Classes → POST /class
 
 **Request**:
 ```http
-POST /api/v1/classes
-Authorization: Bearer {token}
+POST http://localhost:3000/class
 Content-Type: application/json
 
 {
-  "name": "Math 101",
-  "year": 2025
+  "name": "Mathematics 101",
+  "year": 2024
 }
 ```
+
+**Request Body Requirements**:
+- `name` (string, required): Class name
+- `year` (integer, required): Academic year
 
 **Success Response** (201 Created):
 ```json
 {
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Math 101",
-    "year": 2025,
-    "created_at": "2025-01-15T14:30:00Z",
-    "updated_at": "2025-01-15T14:30:00Z"
-  },
-  "message": "Class created successfully"
+  "id": 1,
+  "name": "Mathematics 101",
+  "year": 2024,
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T10:30:00Z"
 }
 ```
+
+**Response Format**: Single Class object (direct object response, not wrapped)
 
 **Error Responses**:
 
 **400 Bad Request** - Validation errors:
 ```json
 {
-  "error": "ValidationError",
-  "message": "Invalid input data",
-  "statusCode": 400,
-  "details": {
-    "name": ["Class name is required", "Name must be 1-100 characters"],
-    "year": ["Year must be between 2000 and 2099"]
-  }
+  "error": "Validation failed",
+  "details": ["name is required", "year must be a number"]
 }
 ```
 
-**409 Conflict** - Duplicate name + year combination:
-```json
-{
-  "error": "DuplicateError",
-  "message": "A class with this name already exists for this year",
-  "statusCode": 409
-}
-```
+**Note**: The backend may return validation errors in different formats. Frontend should handle both string and array formats for error details.
 
 Other errors:
-- `401 Unauthorized`: Invalid authentication
 - `500 Internal Server Error`: Server-side error
+
+**Business Logic** (Frontend Validation):
+- Frontend should validate name and year before submission
+- Duplicate detection should show user-friendly error message
+- Backend will enforce database constraints
 
 ---
 
-#### GET /api/v1/classes/:id
+#### GET /class/:id
 
-**Purpose**: Fetch single class details
+**Purpose**: Get class by ID
 **User Story**: US-CLASS-004 (View Details)
+**Backend Documentation**: Swagger UI → Classes → GET /class/{id}
 
 **Request**:
 ```http
-GET /api/v1/classes/550e8400-e29b-41d4-a716-446655440000
-Authorization: Bearer {token}
+GET http://localhost:3000/class/1
+Content-Type: application/json
 ```
+
+**Path Parameters**:
+- `id` (integer, required): Class ID
 
 **Success Response** (200 OK):
 ```json
 {
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Math 101",
-    "year": 2025,
-    "created_at": "2025-01-15T14:30:00Z",
-    "updated_at": "2025-01-16T10:45:00Z"
-  }
+  "id": 1,
+  "name": "Mathematics 101",
+  "year": 2024,
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-16T10:45:00Z"
 }
 ```
 
+**Response Format**: Single Class object
+
 **Error Responses**:
-- `404 Not Found`: Class doesn't exist or doesn't belong to teacher
-- `401 Unauthorized`: Invalid authentication
+- `400 Bad Request`: Invalid ID format
+- `404 Not Found`: Class doesn't exist
 
 ---
 
-#### PUT /api/v1/classes/:id
+#### PUT /class/:id
 
-**Purpose**: Update existing class
+**Purpose**: Update class
 **User Story**: US-CLASS-003 (Edit Class)
+**Backend Documentation**: Swagger UI → Classes → PUT /class/{id}
 
 **Request**:
 ```http
-PUT /api/v1/classes/550e8400-e29b-41d4-a716-446655440000
-Authorization: Bearer {token}
+PUT http://localhost:3000/class/1
 Content-Type: application/json
 
 {
-  "name": "Math 102",
-  "year": 2025
+  "name": "Mathematics 102",
+  "year": 2024
 }
 ```
+
+**Path Parameters**:
+- `id` (integer, required): Class ID
+
+**Request Body Requirements**:
+- `name` (string, required): Updated class name
+- `year` (integer, required): Updated academic year
 
 **Success Response** (200 OK):
 ```json
 {
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Math 102",
-    "year": 2025,
-    "created_at": "2025-01-15T14:30:00Z",
-    "updated_at": "2025-01-17T09:20:00Z"
-  },
-  "message": "Class updated successfully"
+  "id": 1,
+  "name": "Mathematics 102",
+  "year": 2024,
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-17T09:20:00Z"
 }
 ```
 
+**Response Format**: Updated Class object
+
 **Business Rules**:
-- `id` cannot be changed (immutable)
-- `created_at` must remain unchanged (immutable)
-- `updated_at` automatically set to current timestamp by backend
+- `id` cannot be changed (immutable, path parameter)
+- `createdAt` must remain unchanged (backend enforced)
+- `updatedAt` automatically set to current timestamp by backend
 
 **Error Responses**:
 - `400 Bad Request`: Validation errors (same format as POST)
 - `404 Not Found`: Class not found
-- `409 Conflict`: Duplicate name + year combination
-- `401 Unauthorized`: Invalid authentication
 
 ---
 
-#### DELETE /api/v1/classes/:id
+#### DELETE /class/:id
 
-**Purpose**: Delete a class
+**Purpose**: Delete class
 **User Story**: US-CLASS-005 (Delete Class)
+**Backend Documentation**: Swagger UI → Classes → DELETE /class/{id}
 
 **Request**:
 ```http
-DELETE /api/v1/classes/550e8400-e29b-41d4-a716-446655440000
-Authorization: Bearer {token}
+DELETE http://localhost:3000/class/1
+Content-Type: application/json
 ```
+
+**Path Parameters**:
+- `id` (integer, required): Class ID
 
 **Success Response** (200 OK):
 ```json
 {
-  "message": "Class deleted successfully"
+  "message": "Class deleted successfully",
+  "deletedClass": {
+    "id": 1,
+    "name": "Mathematics 101",
+    "year": 2024,
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
 }
 ```
+
+**Response Format**: Object with success message and deleted class data
 
 **Error Responses**:
-
-**409 Conflict** - Class has associated data:
-```json
-{
-  "error": "ConstraintViolation",
-  "message": "Cannot delete this class because it has associated data. Remove all students and comments first.",
-  "statusCode": 409
-}
-```
-
-Other errors:
+- `400 Bad Request`: Invalid ID format
 - `404 Not Found`: Class not found
-- `401 Unauthorized`: Invalid authentication
+
+**Business Logic** (Backend Enforced):
+- Backend may prevent deletion if class has associated comments or students
+- Frontend should handle potential constraint violation errors gracefully
 
 ---
 
@@ -632,11 +645,12 @@ graph TD
 
 import axios, { AxiosInstance } from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 /**
- * Base API client with authentication and error handling
- * Provides centralized HTTP operations with automatic token management
+ * Base API client for backend communication
+ * Connects to existing API at http://localhost:3000
+ * API Documentation: http://localhost:3000/api-docs/ui
  */
 class ApiClient {
   private client: AxiosInstance;
@@ -649,24 +663,19 @@ class ApiClient {
       },
     });
 
-    // Request interceptor: Add authentication token
-    this.client.interceptors.request.use((config) => {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    });
-
     // Response interceptor: Handle global errors
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        // Redirect to login on authentication failure
-        if (error.response?.status === 401) {
-          window.location.href = '/login';
-        }
-        return Promise.reject(error.response?.data || error);
+        // Handle common error scenarios
+        const errorData = error.response?.data || {};
+
+        // Format error for consistent handling
+        return Promise.reject({
+          status: error.response?.status,
+          message: errorData.error || errorData.message || 'An error occurred',
+          details: errorData.details || null,
+        });
       }
     );
   }
@@ -697,76 +706,77 @@ export const apiClient = new ApiClient();
 // src/services/api/classService.ts
 
 import { Class, CreateClassRequest, UpdateClassRequest } from '../../types/Class';
-import { ApiResponse } from '../../types/ApiResponse';
 import { apiClient } from './apiClient';
 
 /**
  * Service for class-related API operations
- * Provides abstraction over HTTP calls to backend API
+ * Consumes existing backend API at http://localhost:3000
+ * API Documentation: http://localhost:3000/api-docs/ui
  */
 export const classService = {
   /**
-   * Fetch all classes for authenticated teacher
-   * Maps to: GET /api/v1/classes
+   * Fetch all classes
+   * Maps to: GET /class
    *
-   * @returns Promise<Class[]> List of classes
+   * @returns Promise<Class[]> List of classes (direct array response)
    * @throws ApiError on failure
    */
   async getAll(): Promise<Class[]> {
-    const response = await apiClient.get<ApiResponse<Class[]>>('/classes');
-    return response.data.data;
+    const response = await apiClient.get<Class[]>('/class');
+    return response.data;
   },
 
   /**
    * Fetch single class by ID
-   * Maps to: GET /api/v1/classes/:id
+   * Maps to: GET /class/:id
    *
-   * @param id - Class UUID
-   * @returns Promise<Class> Class details
-   * @throws ApiError on failure (404 if not found)
+   * @param id - Class ID (integer)
+   * @returns Promise<Class> Class details (direct object response)
+   * @throws ApiError on failure (400 bad request, 404 not found)
    */
-  async getById(id: string): Promise<Class> {
-    const response = await apiClient.get<ApiResponse<Class>>(`/classes/${id}`);
-    return response.data.data;
+  async getById(id: number): Promise<Class> {
+    const response = await apiClient.get<Class>(`/class/${id}`);
+    return response.data;
   },
 
   /**
    * Create new class
-   * Maps to: POST /api/v1/classes
+   * Maps to: POST /class
    *
-   * @param data - Class creation data
-   * @returns Promise<Class> Created class with generated ID
-   * @throws ApiError on failure (400 validation, 409 duplicate)
+   * @param data - Class creation data {name, year}
+   * @returns Promise<Class> Created class with auto-generated ID (direct object response)
+   * @throws ApiError on failure (400 validation errors)
    */
   async create(data: CreateClassRequest): Promise<Class> {
-    const response = await apiClient.post<ApiResponse<Class>>('/classes', data);
-    return response.data.data;
+    const response = await apiClient.post<Class>('/class', data);
+    return response.data;
   },
 
   /**
    * Update existing class
-   * Maps to: PUT /api/v1/classes/:id
+   * Maps to: PUT /class/:id
    *
-   * @param id - Class UUID
-   * @param data - Updated class data
-   * @returns Promise<Class> Updated class
-   * @throws ApiError on failure (400 validation, 404 not found, 409 duplicate)
+   * @param id - Class ID (integer)
+   * @param data - Updated class data {name, year}
+   * @returns Promise<Class> Updated class (direct object response)
+   * @throws ApiError on failure (400 validation, 404 not found)
    */
-  async update(id: string, data: UpdateClassRequest): Promise<Class> {
-    const response = await apiClient.put<ApiResponse<Class>>(`/classes/${id}`, data);
-    return response.data.data;
+  async update(id: number, data: UpdateClassRequest): Promise<Class> {
+    const response = await apiClient.put<Class>(`/class/${id}`, data);
+    return response.data;
   },
 
   /**
    * Delete class
-   * Maps to: DELETE /api/v1/classes/:id
+   * Maps to: DELETE /class/:id
    *
-   * @param id - Class UUID
-   * @returns Promise<void>
-   * @throws ApiError on failure (404 not found, 409 has dependencies)
+   * @param id - Class ID (integer)
+   * @returns Promise<{message: string, deletedClass: Class}> Delete confirmation
+   * @throws ApiError on failure (400 bad request, 404 not found)
    */
-  async delete(id: string): Promise<void> {
-    await apiClient.delete(`/classes/${id}`);
+  async delete(id: number): Promise<{ message: string; deletedClass: Class }> {
+    const response = await apiClient.delete<{ message: string; deletedClass: Class }>(`/class/${id}`);
+    return response.data;
   },
 };
 ```
@@ -779,14 +789,15 @@ export const classService = {
 
 | Risk ID | Risk Description | Impact | Probability | Mitigation Strategy | Owner |
 |---------|-----------------|--------|-------------|---------------------|-------|
-| RISK-1 | Backend API not ready for integration | **HIGH** | Medium | Create mock API service with MSW for parallel development | Backend Team |
-| RISK-2 | Duplicate detection performance issues with large datasets | Medium | Low | Implement backend-side validation; client-side as UX enhancement only | Backend Team |
-| RISK-3 | Authentication token management complexity | Medium | Medium | Use existing auth patterns from other features; create reusable auth hook | Frontend Team |
-| RISK-4 | Form validation library selection (Formik vs React Hook Form vs native) | Low | Low | Start with native React validation; refactor to library if complexity grows | Frontend Team |
-| RISK-5 | Date formatting inconsistencies across timezones | Medium | Medium | Use `date-fns` for consistent formatting; store UTC on backend | Frontend Team |
-| RISK-6 | Accessibility compliance (WCAG 2.1 AA) | Medium | Medium | Follow WAI-ARIA best practices; add ARIA labels; keyboard navigation | Frontend Team |
+| ~~RISK-1~~ | ~~Backend API not ready~~ | ~~HIGH~~ | ~~Medium~~ | **RESOLVED**: Backend API already exists at http://localhost:3000 | ✅ N/A |
+| RISK-2 | Duplicate detection performance issues with large datasets | Medium | Low | Backend handles validation; frontend provides UX feedback | Backend Team |
+| RISK-3 | ~~Authentication token management~~ | ~~Medium~~ | ~~Medium~~ | **NOT APPLICABLE**: MVP has no authentication requirement | ✅ N/A |
+| RISK-4 | Form validation library selection | Low | Low | Start with native React validation; refactor if needed | Frontend Team |
+| RISK-5 | Date formatting inconsistencies | Medium | Medium | Use `date-fns` for consistent formatting; backend returns ISO 8601 | Frontend Team |
+| RISK-6 | Accessibility compliance (WCAG 2.1 AA) | Medium | Medium | Follow WAI-ARIA best practices; keyboard navigation | Frontend Team |
 | RISK-7 | State synchronization after CRUD operations | Low | Low | Use optimistic updates with rollback on error | Frontend Team |
-| RISK-8 | Error message clarity and user-friendliness | Low | High | Create error message mapping service; UX review of all error states | Frontend Team |
+| RISK-8 | Error message clarity | Low | High | Map backend error responses to user-friendly messages | Frontend Team |
+| **RISK-9** | **API field name mismatch** | **LOW** | **Medium** | Backend uses `createdAt/updatedAt`, not `created_at/updated_at` | Frontend Team |
 
 ---
 
@@ -812,10 +823,11 @@ export const classService = {
 ```
 
 #### Backend Dependencies:
-- ✅ **Authentication API**: JWT token generation and validation
-- ✅ **Classes CRUD API**: All 5 endpoints defined in DES-7
-- ✅ **Database Schema**: Class table with proper indexes on (teacher_id, name, year)
-- ⚠️ **CORS Configuration**: Frontend domain must be whitelisted
+- ✅ **Backend API**: Fully implemented and running at `http://localhost:3000`
+- ✅ **API Documentation**: Available at `http://localhost:3000/api-docs/ui` (Swagger UI)
+- ✅ **Classes CRUD API**: All 5 endpoints exist (GET, POST, PUT, DELETE /class endpoints)
+- ✅ **Database**: SQLite database with Class table (id, name, year, createdAt, updatedAt)
+- ⚠️ **CORS Configuration**: Ensure localhost:5173 (Vite default) is allowed for development
 
 #### Infrastructure Dependencies:
 - Environment variables configuration (`.env` file)
@@ -1115,27 +1127,31 @@ stateDiagram-v2
 ```typescript
 // src/mocks/data/classes.ts
 
+/**
+ * Mock data for development and testing
+ * Matches actual backend API response format from http://localhost:3000/class
+ */
 export const mockClasses: Class[] = [
   {
-    id: '550e8400-e29b-41d4-a716-446655440000',
-    name: 'Math 101',
-    year: 2025,
-    created_at: '2025-01-15T14:30:00Z',
-    updated_at: '2025-01-15T14:30:00Z',
+    id: 1,
+    name: 'Mathematics 101',
+    year: 2024,
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
   },
   {
-    id: '550e8400-e29b-41d4-a716-446655440001',
+    id: 2,
     name: 'English 201',
     year: 2024,
-    created_at: '2024-09-01T08:00:00Z',
-    updated_at: '2024-09-01T08:00:00Z',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
   },
   {
-    id: '550e8400-e29b-41d4-a716-446655440002',
+    id: 3,
     name: 'Science 301',
     year: 2025,
-    created_at: '2025-01-20T09:00:00Z',
-    updated_at: '2025-01-20T09:00:00Z',
+    createdAt: '2025-01-20T09:00:00Z',
+    updatedAt: '2025-01-20T09:00:00Z',
   },
 ];
 ```
