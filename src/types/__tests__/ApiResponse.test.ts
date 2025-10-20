@@ -3,7 +3,7 @@
  * TDD: RED Phase - Tests written BEFORE implementation
  */
 import { describe, it, expect } from '@jest/globals'
-import type { ApiResponse, ApiError } from './ApiResponse'
+import type { ApiResponse, ApiError } from '../ApiResponse'
 
 describe('API Response Type Definitions', () => {
   describe('ApiResponse interface', () => {
