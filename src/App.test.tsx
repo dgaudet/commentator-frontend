@@ -1,14 +1,23 @@
 /**
  * App Component Tests
- * TDD: Tests infrastructure setup and basic rendering
+ * Validates testing infrastructure and basic rendering
  */
-import { describe, it, expect } from '@jest/globals';
+import { render, screen } from './test-utils'
+import App from './App'
 
-describe('App Component', () => {
-  it('should be defined', () => {
-    // This test validates that our test infrastructure is working
-    expect(true).toBe(true);
-  });
+describe('App', () => {
+  it('renders without crashing', () => {
+    render(<App />)
+    expect(screen.getByText(/commentator/i)).toBeInTheDocument()
+  })
 
-  // Additional tests will be added after testing infrastructure is fully configured (TASK-1.3)
-});
+  it('displays the application title', () => {
+    render(<App />)
+    expect(screen.getByText('Commentator')).toBeInTheDocument()
+  })
+
+  it('shows initialization message', () => {
+    render(<App />)
+    expect(screen.getByText(/application initialized/i)).toBeInTheDocument()
+  })
+})
