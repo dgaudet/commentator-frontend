@@ -3,7 +3,7 @@
  * Unit tests for API client structure and configuration
  * Integration tests with MSW will be in service layer tests
  */
-import { apiClient } from './apiClient'
+import { apiClient } from '../apiClient'
 
 describe('ApiClient', () => {
   it('should be defined', () => {

@@ -3,9 +3,9 @@
  * TDD Phase: RED - These tests should fail initially
  * Reference: TASK-4.3, US-CLASS-001, DES-2
  */
-import { render, screen, fireEvent } from '../../test-utils'
-import { ClassListItem } from './ClassListItem'
-import { Class } from '../../types/Class'
+import { render, screen, fireEvent } from '../../../test-utils'
+import { ClassListItem } from '../ClassListItem'
+import { Class } from '../../../types/Class'
 
 const mockClass: Class = {
   id: 1,

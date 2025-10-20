@@ -6,7 +6,7 @@
  * Backend API Reference: http://localhost:3000/api-docs/ui
  */
 import { describe, it, expect } from '@jest/globals'
-import type { Class, CreateClassRequest, UpdateClassRequest } from './Class'
+import type { Class, CreateClassRequest, UpdateClassRequest } from '../Class'
 
 describe('Class Type Definitions', () => {
   describe('Class interface', () => {

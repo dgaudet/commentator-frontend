@@ -3,13 +3,13 @@
  * TDD Phase: RED - These tests should fail initially
  * Reference: TASK-4.5, US-CLASS-002, US-CLASS-003, DES-3, DES-4
  */
-import { render, screen, fireEvent, waitFor } from '../../test-utils'
-import { ClassForm } from './ClassForm'
-import { useClasses } from '../../hooks/useClasses'
-import type { Class } from '../../types/Class'
+import { render, screen, fireEvent, waitFor } from '../../../test-utils'
+import { ClassForm } from '../ClassForm'
+import { useClasses } from '../../../hooks/useClasses'
+import type { Class } from '../../../types/Class'
 
 // Mock the useClasses hook
-jest.mock('../../hooks/useClasses')
+jest.mock('../../../hooks/useClasses')
 
 const mockUseClasses = useClasses as jest.MockedFunction<typeof useClasses>
 

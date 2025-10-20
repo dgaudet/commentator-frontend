@@ -2,8 +2,8 @@
  * Button Component Tests
  * TDD Phase: RED - These tests should fail initially
  */
-import { render, screen, fireEvent } from '../../test-utils'
-import { Button } from './Button'
+import { render, screen, fireEvent } from '../../../test-utils'
+import { Button } from '../Button'
 
 describe('Button', () => {
   it('should render with text', () => {

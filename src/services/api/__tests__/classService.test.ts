@@ -6,7 +6,7 @@
  * Note: Full integration tests with MSW will be performed at the component/hook level
  * This avoids MSW v2 + Jest ESM compatibility issues when testing services in isolation
  */
-import { classService } from './classService'
+import { classService } from '../classService'
 
 describe('ClassService', () => {
   it('should be defined', () => {

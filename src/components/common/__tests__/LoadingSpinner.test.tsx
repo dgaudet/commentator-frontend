@@ -2,8 +2,8 @@
  * LoadingSpinner Component Tests
  * TDD Phase: RED - These tests should fail initially
  */
-import { render, screen } from '../../test-utils'
-import { LoadingSpinner } from './LoadingSpinner'
+import { render, screen } from '../../../test-utils'
+import { LoadingSpinner } from '../LoadingSpinner'
 
 describe('LoadingSpinner', () => {
   it('should render with default message', () => {

@@ -2,8 +2,8 @@
  * ErrorMessage Component Tests
  * TDD Phase: RED - These tests should fail initially
  */
-import { render, screen, fireEvent } from '../../test-utils'
-import { ErrorMessage } from './ErrorMessage'
+import { render, screen, fireEvent } from '../../../test-utils'
+import { ErrorMessage } from '../ErrorMessage'
 
 describe('ErrorMessage', () => {
   it('should render error message', () => {

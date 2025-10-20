@@ -3,8 +3,8 @@
  * TDD Phase: RED - These tests should fail initially
  * Reference: TASK-4.2, US-CLASS-001
  */
-import { render, screen, fireEvent } from '../../test-utils'
-import { EmptyState } from './EmptyState'
+import { render, screen, fireEvent } from '../../../test-utils'
+import { EmptyState } from '../EmptyState'
 
 describe('EmptyState', () => {
   it('should render "No classes found" message', () => {

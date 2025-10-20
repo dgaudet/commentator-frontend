@@ -3,7 +3,7 @@
  * TDD Phase: RED - These tests should fail initially
  * Reference: TASK-2.2
  */
-import { validateClassName, validateYear, validateClassForm } from './classValidation'
+import { validateClassName, validateYear, validateClassForm } from '../classValidation'
 
 describe('Class Validation', () => {
   describe('validateClassName', () => {

@@ -2,7 +2,7 @@
  * Date Formatter Tests
  * TDD Phase: RED - These tests should fail initially
  */
-import { formatDate, formatDateTime } from './dateFormatter'
+import { formatDate, formatDateTime } from '../dateFormatter'
 
 describe('dateFormatter', () => {
   describe('formatDate', () => {

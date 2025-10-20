@@ -7,11 +7,11 @@
  * This avoids MSW v2 + Jest ESM compatibility issues in Jest
  */
 import { renderHook, waitFor, act } from '@testing-library/react'
-import { useClasses } from './useClasses'
-import { classService } from '../services/api/classService'
+import { useClasses } from '../useClasses'
+import { classService } from '../../services/api/classService'
 
 // Mock the classService
-jest.mock('../services/api/classService')
+jest.mock('../../services/api/classService')
 
 const mockClassService = classService as jest.Mocked<typeof classService>
 

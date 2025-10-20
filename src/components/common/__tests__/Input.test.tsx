@@ -2,8 +2,8 @@
  * Input Component Tests
  * TDD Phase: RED - These tests should fail initially
  */
-import { render, screen, fireEvent } from '../../test-utils'
-import { Input } from './Input'
+import { render, screen, fireEvent } from '../../../test-utils'
+import { Input } from '../Input'
 
 describe('Input', () => {
   it('should render with label', () => {
