@@ -1,7 +1,7 @@
 /**
  * ClassList Container Component
  * Displays list of classes with loading, error, and empty states
- * Reference: TASK-4.4, TASK-6.2, US-CLASS-001, DES-1, DES-16
+ * Reference: TASK-4.4, TASK-6.2, US-CLASS-001, US-CLASS-003, US-CLASS-005, DES-1, DES-16
  * Performance: Uses useCallback for event handlers
  */
 import React, { useCallback } from 'react'
@@ -11,18 +11,29 @@ import { EmptyState } from './EmptyState'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
+import { Class } from '../../types/Class'
 
 interface ClassListProps {
   onClassClick?: (classId: number) => void
   onAddClass?: () => void
+  onEdit?: (classItem: Class) => void
+  onDelete?: (classId: number) => void
 }
 
 /**
  * Container component for displaying list of classes
  * Handles loading, error, and empty states
- * User Story: US-CLASS-001 (View List of Classes)
+ * User Stories:
+ * - US-CLASS-001 (View List of Classes)
+ * - US-CLASS-003 (Edit Existing Class)
+ * - US-CLASS-005 (Delete Class)
  */
-export const ClassList: React.FC<ClassListProps> = ({ onClassClick, onAddClass }) => {
+export const ClassList: React.FC<ClassListProps> = ({
+  onClassClick,
+  onAddClass,
+  onEdit,
+  onDelete,
+}) => {
   const { classes, isLoading, error, clearError } = useClasses()
 
   // Memoize event handlers to prevent re-creating functions on every render
@@ -37,6 +48,17 @@ export const ClassList: React.FC<ClassListProps> = ({ onClassClick, onAddClass }
   const handleClassClick = useCallback((classId: number) => {
     onClassClick?.(classId)
   }, [onClassClick])
+
+  const handleEdit = useCallback((classId: number) => {
+    const classItem = classes.find(c => c.id === classId)
+    if (classItem && onEdit) {
+      onEdit(classItem)
+    }
+  }, [classes, onEdit])
+
+  const handleDelete = useCallback((classId: number) => {
+    onDelete?.(classId)
+  }, [onDelete])
 
   // Loading state - initial load with no data
   if (isLoading && classes.length === 0) {
@@ -85,6 +107,8 @@ export const ClassList: React.FC<ClassListProps> = ({ onClassClick, onAddClass }
             key={classItem.id}
             classItem={classItem}
             onView={handleClassClick}
+            onEdit={onEdit ? handleEdit : undefined}
+            onDelete={onDelete ? handleDelete : undefined}
           />
         ))}
       </div>
