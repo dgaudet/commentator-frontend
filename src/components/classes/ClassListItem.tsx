@@ -1,7 +1,8 @@
 /**
  * ClassListItem Component
  * Displays a single class in the list with formatted dates
- * Reference: TASK-4.3, US-CLASS-001, DES-2
+ * Reference: TASK-4.3, TASK-6.2, US-CLASS-001, DES-2
+ * Performance: Memoized to prevent unnecessary re-renders
  */
 import React from 'react'
 import { Class } from '../../types/Class'
@@ -14,7 +15,7 @@ interface ClassListItemProps {
   onView?: (id: number) => void
 }
 
-export const ClassListItem: React.FC<ClassListItemProps> = ({
+export const ClassListItem: React.FC<ClassListItemProps> = React.memo(({
   classItem,
   onEdit,
   onDelete,
@@ -73,4 +74,4 @@ export const ClassListItem: React.FC<ClassListItemProps> = ({
       </div>
     </div>
   )
-}
+})

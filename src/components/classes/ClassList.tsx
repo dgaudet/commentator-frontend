@@ -1,9 +1,10 @@
 /**
  * ClassList Container Component
  * Displays list of classes with loading, error, and empty states
- * Reference: TASK-4.4, US-CLASS-001, DES-1, DES-16
+ * Reference: TASK-4.4, TASK-6.2, US-CLASS-001, DES-1, DES-16
+ * Performance: Uses useCallback for event handlers
  */
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useClasses } from '../../hooks/useClasses'
 import { ClassListItem } from './ClassListItem'
 import { EmptyState } from './EmptyState'
@@ -24,6 +25,19 @@ interface ClassListProps {
 export const ClassList: React.FC<ClassListProps> = ({ onClassClick, onAddClass }) => {
   const { classes, isLoading, error, clearError } = useClasses()
 
+  // Memoize event handlers to prevent re-creating functions on every render
+  const handleClearError = useCallback(() => {
+    clearError()
+  }, [clearError])
+
+  const handleAddClass = useCallback(() => {
+    onAddClass?.()
+  }, [onAddClass])
+
+  const handleClassClick = useCallback((classId: number) => {
+    onClassClick?.(classId)
+  }, [onClassClick])
+
   // Loading state - initial load with no data
   if (isLoading && classes.length === 0) {
     return (
@@ -37,14 +51,14 @@ export const ClassList: React.FC<ClassListProps> = ({ onClassClick, onAddClass }
   if (error && classes.length === 0) {
     return (
       <div className="py-12">
-        <ErrorMessage message={error} onDismiss={clearError} />
+        <ErrorMessage message={error} onDismiss={handleClearError} />
       </div>
     )
   }
 
   // Empty state - no classes available
   if (classes.length === 0) {
-    return <EmptyState onCreateFirst={onAddClass} />
+    return <EmptyState onCreateFirst={handleAddClass} />
   }
 
   // Success state - render list of classes
@@ -53,7 +67,7 @@ export const ClassList: React.FC<ClassListProps> = ({ onClassClick, onAddClass }
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Your Classes</h2>
         {onAddClass && (
-          <Button onClick={onAddClass} variant="primary">
+          <Button onClick={handleAddClass} variant="primary">
             Add Class
           </Button>
         )}
@@ -61,7 +75,7 @@ export const ClassList: React.FC<ClassListProps> = ({ onClassClick, onAddClass }
 
       {error && (
         <div className="mb-4">
-          <ErrorMessage message={error} onDismiss={clearError} />
+          <ErrorMessage message={error} onDismiss={handleClearError} />
         </div>
       )}
 
@@ -70,7 +84,7 @@ export const ClassList: React.FC<ClassListProps> = ({ onClassClick, onAddClass }
           <ClassListItem
             key={classItem.id}
             classItem={classItem}
-            onView={onClassClick}
+            onView={handleClassClick}
           />
         ))}
       </div>
