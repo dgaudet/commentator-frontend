@@ -1,9 +1,9 @@
 /**
  * ClassList Component Tests
  * TDD Phase: RED - These tests should fail initially
- * Reference: TASK-4.4, US-CLASS-001, DES-1, DES-16
+ * Reference: TASK-4.4, US-CLASS-001, US-CLASS-003, US-CLASS-005, DES-1, DES-16
  */
-import { render, screen } from '../../../test-utils'
+import { render, screen, fireEvent } from '../../../test-utils'
 import { ClassList } from '../ClassList'
 import { useClasses } from '../../../hooks/useClasses'
 
@@ -253,6 +253,81 @@ describe('ClassList', () => {
       render(<ClassList onClassClick={handleClick} />)
       // ClassListItem should be rendered (we tested its click handler in its own tests)
       expect(screen.getByTestId('class-item-1')).toBeInTheDocument()
+    })
+
+    it('should pass onEdit callback to ClassListItem when provided', () => {
+      const handleEdit = jest.fn()
+      mockUseClasses.mockReturnValue({
+        classes: [mockClasses[0]],
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList onEdit={handleEdit} />)
+
+      // Edit button should be present
+      const editButton = screen.getByRole('button', { name: /edit mathematics 101/i })
+      expect(editButton).toBeInTheDocument()
+
+      // Click edit button
+      fireEvent.click(editButton)
+
+      // Handler should be called with the class item
+      expect(handleEdit).toHaveBeenCalledTimes(1)
+      expect(handleEdit).toHaveBeenCalledWith(mockClasses[0])
+    })
+
+    it('should pass onDelete callback to ClassListItem when provided', () => {
+      const handleDelete = jest.fn()
+      const mockDeleteClass = jest.fn().mockResolvedValue(undefined)
+
+      mockUseClasses.mockReturnValue({
+        classes: [mockClasses[0]],
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: mockDeleteClass,
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList onDelete={handleDelete} />)
+
+      // Delete button should be present
+      const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
+      expect(deleteButton).toBeInTheDocument()
+
+      // Click delete button
+      fireEvent.click(deleteButton)
+
+      // Handler should be called with className and a confirmation function
+      expect(handleDelete).toHaveBeenCalledTimes(1)
+      expect(handleDelete).toHaveBeenCalledWith('Mathematics 101', expect.any(Function))
+    })
+
+    it('should not show Edit/Delete buttons when callbacks not provided', () => {
+      mockUseClasses.mockReturnValue({
+        classes: [mockClasses[0]],
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+
+      // Edit and Delete buttons should not be present
+      expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument()
     })
   })
 })

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import { ClassList } from './components/classes/ClassList'
 import { ClassForm } from './components/classes/ClassForm'
+import { ConfirmDialog } from './components/common/ConfirmDialog'
 import type { Class } from './types/Class'
 
 /**
@@ -11,10 +12,20 @@ import type { Class } from './types/Class'
  * Integrates class management features:
  * - View list of classes (US-CLASS-001)
  * - Add new class (US-CLASS-002)
+ * - Edit existing class (US-CLASS-003)
+ * - Delete class (US-CLASS-005)
+ *
+ * Note: ClassList manages its own classes state via useClasses hook.
+ * App.tsx only coordinates UI state (forms, dialogs) and passes callbacks.
  */
 function App() {
   const [showForm, setShowForm] = useState(false)
   const [editingClass, setEditingClass] = useState<Class | undefined>(undefined)
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    isOpen: boolean
+    onConfirm?:() => Promise<void>
+    className?: string
+      }>({ isOpen: false })
 
   const handleAddClass = () => {
     setEditingClass(undefined)
@@ -36,6 +47,32 @@ function App() {
     setEditingClass(undefined)
   }
 
+  // This callback will be called by ClassList when user clicks delete
+  // ClassList passes us the class info and a delete function to call on confirm
+  const handleDeleteRequest = (className: string, onConfirm: () => Promise<void>) => {
+    setDeleteConfirm({
+      isOpen: true,
+      className,
+      onConfirm,
+    })
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (deleteConfirm.onConfirm) {
+      try {
+        await deleteConfirm.onConfirm()
+        setDeleteConfirm({ isOpen: false })
+      } catch (error) {
+        // Error is handled by useClasses hook in ClassList
+        setDeleteConfirm({ isOpen: false })
+      }
+    }
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ isOpen: false })
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -55,9 +92,22 @@ function App() {
               <ClassList
                 onAddClass={handleAddClass}
                 onEdit={handleEditClass}
+                onDelete={handleDeleteRequest}
               />
             )}
       </main>
+
+      {/* Delete confirmation dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        title="Delete Class"
+        message={`Are you sure you want to delete "${deleteConfirm.className}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
     </div>
   )
 }
