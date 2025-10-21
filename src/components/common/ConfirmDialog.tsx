@@ -80,20 +80,21 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="dialog-title"
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black bg-opacity-50"
+        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
         data-testid="dialog-overlay"
         onClick={onCancel}
+        aria-hidden="true"
       />
 
-      {/* Dialog content */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+      {/* Dialog content - centered with max-height */}
+      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
         <h2
           id="dialog-title"
           className="text-xl font-bold text-gray-900 mb-4"

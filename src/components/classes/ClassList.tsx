@@ -17,7 +17,7 @@ interface ClassListProps {
   onClassClick?: (classId: number) => void
   onAddClass?: () => void
   onEdit?: (classItem: Class) => void
-  onDelete?: (classId: number) => void
+  onDelete?: (className: string, onConfirm: () => Promise<void>) => void
 }
 
 /**
@@ -34,7 +34,7 @@ export const ClassList: React.FC<ClassListProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const { classes, isLoading, error, clearError } = useClasses()
+  const { classes, isLoading, error, clearError, deleteClass } = useClasses()
 
   // Memoize event handlers to prevent re-creating functions on every render
   const handleClearError = useCallback(() => {
@@ -57,8 +57,16 @@ export const ClassList: React.FC<ClassListProps> = ({
   }, [classes, onEdit])
 
   const handleDelete = useCallback((classId: number) => {
-    onDelete?.(classId)
-  }, [onDelete])
+    if (onDelete) {
+      const classItem = classes.find(c => c.id === classId)
+      const className = classItem ? classItem.name : `Class ${classId}`
+
+      // Pass className and a confirmation function that actually deletes
+      onDelete(className, async () => {
+        await deleteClass(classId)
+      })
+    }
+  }, [classes, onDelete, deleteClass])
 
   // Loading state - initial load with no data
   if (isLoading && classes.length === 0) {

@@ -3,7 +3,6 @@ import './App.css'
 import { ClassList } from './components/classes/ClassList'
 import { ClassForm } from './components/classes/ClassForm'
 import { ConfirmDialog } from './components/common/ConfirmDialog'
-import { useClasses } from './hooks/useClasses'
 import type { Class } from './types/Class'
 
 /**
@@ -15,17 +14,18 @@ import type { Class } from './types/Class'
  * - Add new class (US-CLASS-002)
  * - Edit existing class (US-CLASS-003)
  * - Delete class (US-CLASS-005)
+ *
+ * Note: ClassList manages its own classes state via useClasses hook.
+ * App.tsx only coordinates UI state (forms, dialogs) and passes callbacks.
  */
 function App() {
   const [showForm, setShowForm] = useState(false)
   const [editingClass, setEditingClass] = useState<Class | undefined>(undefined)
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean
-    classId?: number
+    onConfirm?:() => Promise<void>
     className?: string
-  }>({ isOpen: false })
-
-  const { classes, deleteClass } = useClasses()
+      }>({ isOpen: false })
 
   const handleAddClass = () => {
     setEditingClass(undefined)
@@ -47,23 +47,23 @@ function App() {
     setEditingClass(undefined)
   }
 
-  const handleDeleteRequest = (classId: number) => {
-    // Find the class to get its name for the confirmation dialog
-    const classItem = classes.find(c => c.id === classId)
+  // This callback will be called by ClassList when user clicks delete
+  // ClassList passes us the class info and a delete function to call on confirm
+  const handleDeleteRequest = (className: string, onConfirm: () => Promise<void>) => {
     setDeleteConfirm({
       isOpen: true,
-      classId,
-      className: classItem ? classItem.name : `Class ${classId}`,
+      className,
+      onConfirm,
     })
   }
 
   const handleDeleteConfirm = async () => {
-    if (deleteConfirm.classId) {
+    if (deleteConfirm.onConfirm) {
       try {
-        await deleteClass(deleteConfirm.classId)
+        await deleteConfirm.onConfirm()
         setDeleteConfirm({ isOpen: false })
       } catch (error) {
-        // Error is handled by useClasses hook
+        // Error is handled by useClasses hook in ClassList
         setDeleteConfirm({ isOpen: false })
       }
     }

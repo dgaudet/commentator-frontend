@@ -284,6 +284,8 @@ describe('ClassList', () => {
 
     it('should pass onDelete callback to ClassListItem when provided', () => {
       const handleDelete = jest.fn()
+      const mockDeleteClass = jest.fn().mockResolvedValue(undefined)
+
       mockUseClasses.mockReturnValue({
         classes: [mockClasses[0]],
         isLoading: false,
@@ -291,7 +293,7 @@ describe('ClassList', () => {
         fetchClasses: jest.fn(),
         createClass: jest.fn(),
         updateClass: jest.fn(),
-        deleteClass: jest.fn(),
+        deleteClass: mockDeleteClass,
         clearError: jest.fn(),
       })
 
@@ -304,9 +306,9 @@ describe('ClassList', () => {
       // Click delete button
       fireEvent.click(deleteButton)
 
-      // Handler should be called with the class ID
+      // Handler should be called with className and a confirmation function
       expect(handleDelete).toHaveBeenCalledTimes(1)
-      expect(handleDelete).toHaveBeenCalledWith(1)
+      expect(handleDelete).toHaveBeenCalledWith('Mathematics 101', expect.any(Function))
     })
 
     it('should not show Edit/Delete buttons when callbacks not provided', () => {
