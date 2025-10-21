@@ -50,7 +50,7 @@ test.describe('Class Management E2E', () => {
       }
     })
 
-    test('should show empty state when no classes', async ({ page, request }) => {
+    test('should show empty state when no classes', async ({ page }) => {
       // Note: This test requires a clean database
       // In a real scenario, you'd clean the DB before the test
 
@@ -247,9 +247,10 @@ test.describe('Class Management E2E', () => {
       expect(loadingVisible || true).toBeTruthy()
     })
 
-    test('should handle errors gracefully', async ({ page }) => {
+    test('should handle errors gracefully', async () => {
       // This test would require mocking network failures
       // Skip for now - tested in unit tests
+      // This is a placeholder test
     })
   })
 

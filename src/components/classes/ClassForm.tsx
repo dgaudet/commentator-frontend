@@ -1,9 +1,10 @@
 /**
  * ClassForm Component
  * Form for creating and editing classes with client-side validation
- * Reference: TASK-4.5, US-CLASS-002, US-CLASS-003, DES-3, DES-4
+ * Reference: TASK-4.5, TASK-6.2, US-CLASS-002, US-CLASS-003, DES-3, DES-4
+ * Performance: Uses useCallback for event handlers
  */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useClasses } from '../../hooks/useClasses'
 import { validateClassForm } from '../../services/validation/classValidation'
 import { Input } from '../common/Input'
@@ -62,19 +63,19 @@ export const ClassForm: React.FC<ClassFormProps> = ({
   /**
    * Check for duplicate name+year combination
    */
-  const checkDuplicate = (name: string, year: number): boolean => {
+  const checkDuplicate = useCallback((name: string, year: number): boolean => {
     return classes.some(
       (c) =>
         c.name.toLowerCase() === name.toLowerCase() &&
         c.year === year &&
         c.id !== existingClass?.id,
     )
-  }
+  }, [classes, existingClass?.id])
 
   /**
    * Validate form and check for duplicates
    */
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {}
 
     // Validate using service
@@ -98,12 +99,12 @@ export const ClassForm: React.FC<ClassFormProps> = ({
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
-  }
+  }, [formData, checkDuplicate])
 
   /**
    * Handle form submission
    */
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
 
     // Validate form - this sets errors in state
@@ -132,12 +133,12 @@ export const ClassForm: React.FC<ClassFormProps> = ({
     } finally {
       setIsSubmitting(false)
     }
-  }
+  }, [validateForm, isEditMode, updateClass, existingClass, formData, createClass, onSuccess])
 
   /**
    * Handle input changes
    */
-  const handleChange = (field: keyof FormData, value: string | number) => {
+  const handleChange = useCallback((field: keyof FormData, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
     // Clear errors for this field
     setErrors((prev) => {
@@ -146,7 +147,7 @@ export const ClassForm: React.FC<ClassFormProps> = ({
       delete newErrors.duplicate
       return newErrors
     })
-  }
+  }, [])
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
