@@ -23,6 +23,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     <div
       role="status"
       aria-live="polite"
+      data-testid="loading-spinner"
       className="flex flex-col items-center justify-center py-8"
     >
       <div
