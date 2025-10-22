@@ -29,14 +29,18 @@ const mockOutcomeComments: OutcomeComment[] = [
   {
     id: 1,
     classId: 1,
-    content: 'Students demonstrated excellent problem-solving skills',
+    comment: 'Students demonstrated excellent problem-solving skills',
+    upperRange: 85,
+    lowerRange: 70,
     createdAt: '2024-01-01T10:00:00Z',
     updatedAt: '2024-01-01T10:00:00Z'
   },
   {
     id: 2,
     classId: 1,
-    content: 'Need to focus more on algebra concepts',
+    comment: 'Need to focus more on algebra concepts',
+    upperRange: 65,
+    lowerRange: 50,
     createdAt: '2024-01-02T10:00:00Z',
     updatedAt: '2024-01-02T10:00:00Z'
   }
@@ -112,14 +116,22 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const textarea = screen.getByRole('textbox', { name: /add new outcome comment/i })
+      const upperRangeInput = screen.getByRole('spinbutton', { name: /upper range/i })
+      const lowerRangeInput = screen.getByRole('spinbutton', { name: /lower range/i })
       const submitButton = screen.getByRole('button', { name: /add comment/i })
       
       await user.type(textarea, 'New outcome comment content')
+      await user.clear(upperRangeInput)
+      await user.type(upperRangeInput, '85')
+      await user.clear(lowerRangeInput)
+      await user.type(lowerRangeInput, '70')
       await user.click(submitButton)
       
       expect(defaultProps.onCreateComment).toHaveBeenCalledWith({
         classId: 1,
-        content: 'New outcome comment content'
+        comment: 'New outcome comment content',
+        upperRange: 85,
+        lowerRange: 70
       })
     })
 
@@ -128,12 +140,18 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const textarea = screen.getByRole('textbox', { name: /add new outcome comment/i })
+      const lowerRangeInput = screen.getByLabelText(/lower range/i)
+      const upperRangeInput = screen.getByLabelText(/upper range/i)
       const submitButton = screen.getByRole('button', { name: /add comment/i })
       
       await user.type(textarea, 'New comment')
+      await user.type(lowerRangeInput, '70')
+      await user.type(upperRangeInput, '85')
       await user.click(submitButton)
       
       expect(textarea).toHaveValue('')
+      expect(lowerRangeInput).toHaveValue(null)
+      expect(upperRangeInput).toHaveValue(null)
     })
 
     it('should not submit empty comment', async () => {
@@ -153,7 +171,7 @@ describe('OutcomeCommentsModal', () => {
       const submitButton = screen.getByRole('button', { name: /add comment/i })
       await user.click(submitButton)
       
-      expect(screen.getByText('Comment content is required')).toBeInTheDocument()
+      expect(screen.getByText('Comment is required')).toBeInTheDocument()
     })
   })
 
@@ -185,14 +203,23 @@ describe('OutcomeCommentsModal', () => {
       await user.click(editButtons[0])
       
       const textarea = screen.getByDisplayValue('Students demonstrated excellent problem-solving skills')
+      const upperRangeInput = screen.getByDisplayValue('85')
+      const lowerRangeInput = screen.getByDisplayValue('70')
+      
       await user.clear(textarea)
       await user.type(textarea, 'Updated comment content')
+      await user.clear(upperRangeInput)
+      await user.type(upperRangeInput, '90')
+      await user.clear(lowerRangeInput)
+      await user.type(lowerRangeInput, '75')
       
       const saveButton = screen.getByRole('button', { name: /save/i })
       await user.click(saveButton)
       
       expect(defaultProps.onUpdateComment).toHaveBeenCalledWith(1, {
-        content: 'Updated comment content'
+        comment: 'Updated comment content',
+        upperRange: 90,
+        lowerRange: 75
       })
     })
 

@@ -4,6 +4,7 @@
  * Includes integration tests for Edit/Delete flows
  */
 import { render, screen, waitFor, fireEvent } from '../test-utils'
+import { cleanup } from '@testing-library/react'
 import App from '../App'
 import * as classService from '../services/api/classService'
 
@@ -48,6 +49,11 @@ describe('App', () => {
     mockClassService.delete.mockResolvedValue({ message: 'Deleted', deletedClass: mockClasses[0] })
   })
 
+  afterEach(() => {
+    // Force cleanup between tests to reset component state
+    cleanup()
+  })
+
   it('renders without crashing', () => {
     render(<App />)
     expect(screen.getByText(/commentator/i)).toBeInTheDocument()
@@ -64,29 +70,57 @@ describe('App', () => {
   })
 
   it('renders the ClassList component', async () => {
+    // Setup: Mock API to return classes so ClassList renders with "Your Classes" heading
+    mockClassService.getAll.mockResolvedValue(mockClasses)
+    
     render(<App />)
 
-    // ClassList should render with "My Classes" heading
+    // ClassList should render with "Your Classes" heading (not EmptyState)
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /my classes/i })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: /your classes/i })).toBeInTheDocument()
     })
   })
 
   it('allows users to interact with class management features', async () => {
+    // Setup: Mock API to return classes so ClassList shows "Add Class" button
+    mockClassService.getAll.mockResolvedValue(mockClasses)
+    
     render(<App />)
 
-    // Should show "Add Class" button from ClassList
+    // Should show "Add Class" button from ClassList (not EmptyState)
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /add class/i })).toBeInTheDocument()
     })
   })
 
   describe('Delete Flow Integration', () => {
-    it('should remove class from list after successful deletion', async () => {
-      // Setup: Mock API to return 2 classes initially
-      mockClassService.getAll.mockResolvedValueOnce(mockClasses)
+    let testKey = 0
 
-      render(<App />)
+    beforeEach(() => {
+      // Clear all mocks completely for this test suite
+      jest.clearAllMocks()
+      
+      // Set up fresh mock implementations for each test
+      mockClassService.create.mockResolvedValue(mockClasses[0])
+      mockClassService.update.mockResolvedValue(mockClasses[0])
+      mockClassService.delete.mockResolvedValue({ message: 'Deleted', deletedClass: mockClasses[0] })
+      
+      // Additional cleanup for this test suite
+      cleanup()
+      // Increment key to force component remounting
+      testKey++
+    })
+
+    afterEach(() => {
+      // Force cleanup after each test in this suite
+      cleanup()
+    })
+
+    it('should remove class from list after successful deletion', async () => {
+      // Setup: Mock API to return classes for this test
+      mockClassService.getAll.mockResolvedValue([...mockClasses])
+
+      render(<App key={testKey} />)
 
       // Wait for classes to load
       await waitFor(() => {
@@ -104,8 +138,9 @@ describe('App', () => {
         expect(screen.getByText(/are you sure you want to delete "mathematics 101"/i)).toBeInTheDocument()
       })
 
-      // Mock API to return only 1 class after deletion (simulating server response)
-      mockClassService.getAll.mockResolvedValueOnce([mockClasses[1]])
+      // IMPORTANT: Reset the mock to simulate the updated list after deletion
+      // This simulates the server returning the updated list
+      mockClassService.getAll.mockResolvedValue([mockClasses[1]])
 
       // Confirm deletion
       const confirmButton = screen.getByRole('button', { name: /^delete$/i })
@@ -130,12 +165,17 @@ describe('App', () => {
     })
 
     it('should close dialog and keep class when deletion is cancelled', async () => {
-      // Setup: Mock API to return classes
-      mockClassService.getAll.mockResolvedValue(mockClasses)
+      // Setup: Mock API to return fresh classes for this test
+      mockClassService.getAll.mockResolvedValue([...mockClasses])
 
-      render(<App />)
+      render(<App key={testKey} />)
 
       // Wait for classes to load
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: /your classes/i })).toBeInTheDocument()
+      })
+
+      // Wait for Mathematics 101 to appear
       await waitFor(() => {
         expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
       })
@@ -166,12 +206,12 @@ describe('App', () => {
     })
 
     it('should handle delete errors gracefully', async () => {
-      // Setup: Mock API to return classes
-      mockClassService.getAll.mockResolvedValue(mockClasses)
+      // Setup: Mock API to return fresh classes for this test
+      mockClassService.getAll.mockResolvedValue([...mockClasses])
       // Mock delete to fail
       mockClassService.delete.mockRejectedValueOnce(new Error('Delete failed'))
 
-      render(<App />)
+      render(<App key={testKey} />)
 
       // Wait for classes to load
       await waitFor(() => {

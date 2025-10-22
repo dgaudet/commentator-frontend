@@ -46,16 +46,20 @@ describe('OutcomeCommentService', () => {
     it('create should accept request object', () => {
       const result = outcomeCommentService.create({ 
         classId: 1, 
-        content: 'Test comment' 
+        comment: 'Test comment',
+        upperRange: 85,
+        lowerRange: 70
       })
       expect(result).toBeInstanceOf(Promise)
       // Clean up promise to avoid unhandled rejection
       result.catch(() => {})
     })
 
-    it('update should accept id and request object', () => {
+    it('update should accept request object', () => {
       const result = outcomeCommentService.update(1, { 
-        content: 'Updated comment' 
+        comment: 'Updated comment',
+        upperRange: 90,
+        lowerRange: 75
       })
       expect(result).toBeInstanceOf(Promise)
       // Clean up promise to avoid unhandled rejection

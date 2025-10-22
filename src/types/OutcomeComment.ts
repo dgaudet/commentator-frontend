@@ -10,16 +10,20 @@
  */
 
 /**
- * Outcome Comment entity representing a comment on class outcomes
+ * Outcome Comment entity representing a score-based comment on class outcomes
  * Returned by: GET /outcome-comment, GET /outcome-comment/:id, POST /outcome-comment, PUT /outcome-comment/:id
  */
 export interface OutcomeComment {
   /** Unique identifier (auto-generated integer from backend) */
   id: number
+  /** Upper score range for this comment */
+  upperRange: number
+  /** Lower score range for this comment */
+  lowerRange: number
+  /** Comment text */
+  comment: string
   /** Associated class ID */
   classId: number
-  /** Comment content - Required, 1-1000 characters */
-  content: string
   /** Creation timestamp (ISO 8601) - Auto-generated, immutable */
   createdAt: string
   /** Last update timestamp (ISO 8601) - Auto-updated by backend */
@@ -31,10 +35,14 @@ export interface OutcomeComment {
  * Used by: POST /outcome-comment
  */
 export interface CreateOutcomeCommentRequest {
+  /** Upper score range for this comment - Required */
+  upperRange: number
+  /** Lower score range for this comment - Required */
+  lowerRange: number
+  /** Comment text - Required */
+  comment: string
   /** Associated class ID - Required */
   classId: number
-  /** Comment content - Required */
-  content: string
 }
 
 /**
@@ -42,6 +50,10 @@ export interface CreateOutcomeCommentRequest {
  * Used by: PUT /outcome-comment/:id
  */
 export interface UpdateOutcomeCommentRequest {
-  /** Comment content - Required */
-  content: string
+  /** Upper score range for this comment - Required */
+  upperRange: number
+  /** Lower score range for this comment - Required */
+  lowerRange: number
+  /** Comment text - Required */
+  comment: string
 }

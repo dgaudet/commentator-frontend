@@ -42,8 +42,12 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
   error
 }) => {
   const [newCommentContent, setNewCommentContent] = useState('')
+  const [newUpperRange, setNewUpperRange] = useState<number | ''>('')
+  const [newLowerRange, setNewLowerRange] = useState<number | ''>('')
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editContent, setEditContent] = useState('')
+  const [editUpperRange, setEditUpperRange] = useState<number | ''>('')
+  const [editLowerRange, setEditLowerRange] = useState<number | ''>('')
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
   const [validationError, setValidationError] = useState('')
 
@@ -59,36 +63,75 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
 
   const handleCreateComment = async () => {
     if (!newCommentContent.trim()) {
-      setValidationError('Comment content is required')
+      setValidationError('Comment is required')
+      return
+    }
+
+    if (newUpperRange === '' || newLowerRange === '') {
+      setValidationError('Both upper and lower range values are required')
+      return
+    }
+
+    if (Number(newLowerRange) > Number(newUpperRange)) {
+      setValidationError('Lower range cannot be greater than upper range')
       return
     }
 
     setValidationError('')
     await onCreateComment({
       classId: classData.id,
-      content: newCommentContent.trim()
+      comment: newCommentContent.trim(),
+      upperRange: Number(newUpperRange),
+      lowerRange: Number(newLowerRange)
     })
     setNewCommentContent('')
+    setNewUpperRange('')
+    setNewLowerRange('')
   }
 
   const handleEditStart = (comment: OutcomeComment) => {
     setEditingId(comment.id)
-    setEditContent(comment.content)
+    setEditContent(comment.comment)
+    setEditUpperRange(comment.upperRange)
+    setEditLowerRange(comment.lowerRange)
   }
 
   const handleEditSave = async () => {
-    if (editingId && editContent.trim()) {
+    if (!editContent.trim()) {
+      setValidationError('Comment is required')
+      return
+    }
+
+    if (editUpperRange === '' || editLowerRange === '') {
+      setValidationError('Both upper and lower range values are required')
+      return
+    }
+
+    if (Number(editLowerRange) > Number(editUpperRange)) {
+      setValidationError('Lower range cannot be greater than upper range')
+      return
+    }
+
+    if (editingId) {
+      setValidationError('')
       await onUpdateComment(editingId, {
-        content: editContent.trim()
+        comment: editContent.trim(),
+        upperRange: Number(editUpperRange),
+        lowerRange: Number(editLowerRange)
       })
       setEditingId(null)
       setEditContent('')
+      setEditUpperRange('')
+      setEditLowerRange('')
     }
   }
 
   const handleEditCancel = () => {
     setEditingId(null)
     setEditContent('')
+    setEditUpperRange('')
+    setEditLowerRange('')
+    setValidationError('')
   }
 
   const handleDeleteStart = (id: number) => {
@@ -152,12 +195,36 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
                     className="comment-textarea"
                     rows={3}
                   />
-                  {validationError && (
-                    <div className="validation-error" role="alert">
-                      {validationError}
-                    </div>
-                  )}
                 </div>
+                <div className="score-range-inputs">
+                  <div className="form-group">
+                    <label htmlFor="lower-range">Lower Range:</label>
+                    <input
+                      id="lower-range"
+                      type="number"
+                      value={newLowerRange}
+                      onChange={(e) => setNewLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
+                      placeholder="Min score"
+                      className="range-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="upper-range">Upper Range:</label>
+                    <input
+                      id="upper-range"
+                      type="number"
+                      value={newUpperRange}
+                      onChange={(e) => setNewUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
+                      placeholder="Max score"
+                      className="range-input"
+                    />
+                  </div>
+                </div>
+                {validationError && (
+                  <div className="validation-error" role="alert">
+                    {validationError}
+                  </div>
+                )}
                 <Button
                   onClick={handleCreateComment}
                   variant="primary"
@@ -189,6 +256,28 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
                               className="comment-textarea"
                               rows={3}
                             />
+                            <div className="score-range-inputs">
+                              <div className="form-group">
+                                <label htmlFor={`edit-lower-${comment.id}`}>Lower Range:</label>
+                                <input
+                                  id={`edit-lower-${comment.id}`}
+                                  type="number"
+                                  value={editLowerRange}
+                                  onChange={(e) => setEditLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
+                                  className="range-input"
+                                />
+                              </div>
+                              <div className="form-group">
+                                <label htmlFor={`edit-upper-${comment.id}`}>Upper Range:</label>
+                                <input
+                                  id={`edit-upper-${comment.id}`}
+                                  type="number"
+                                  value={editUpperRange}
+                                  onChange={(e) => setEditUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
+                                  className="range-input"
+                                />
+                              </div>
+                            </div>
                             <div className="edit-actions">
                               <Button
                                 onClick={handleEditSave}
@@ -208,7 +297,10 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
                           /* View Mode */
                           <div className="view-mode">
                             <div className="comment-content">
-                              {comment.content}
+                              {comment.comment}
+                            </div>
+                            <div className="score-range">
+                              Score Range: {comment.lowerRange} - {comment.upperRange}
                             </div>
                             <div className="comment-meta">
                               <span className="comment-date">

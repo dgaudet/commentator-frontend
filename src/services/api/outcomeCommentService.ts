@@ -40,7 +40,11 @@ export const outcomeCommentService = {
     try {
       const response = await apiClient.post<ApiResponse<OutcomeComment>>(
         `/classes/${request.classId}/outcome-comments`,
-        { content: request.content }
+        { 
+          comment: request.comment,
+          upperRange: request.upperRange,
+          lowerRange: request.lowerRange
+        }
       )
       return response.data.data
     } catch (error) {
