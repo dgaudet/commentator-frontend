@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "workspace": {
+    "path": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend",
+    "name": "commentator-frontend"
+  },
+  "latest": {
+    "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/product-owner-1761156994495.md",
+    "timestamp": 1761156994495,
+    "persona": "product-owner",
+    "feature": "user-outcomecomments-clicking",
+    "task": "Can you design stories for a feature where a user can view all the outcome-comments for a class by clicking an edit outcome",
+    "type": "invoke"
+  },
+  "history": [
+    {
+      "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/product-owner-1761156994495.md",
+      "timestamp": 1761156994495,
+      "persona": "product-owner",
+      "feature": "user-outcomecomments-clicking",
+      "task": "Can you design stories for a feature where a user can view all the outcome-comments for a class by clicking an edit outcome",
+      "type": "invoke",
+      "id": "invoke-1761156994495"
+    },
+    {
+      "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/product-owner-1761156867460.md",
+      "timestamp": 1761156867460,
+      "persona": "product-owner",
+      "feature": "user-outcomecomments-clicking",
+      "task": "Can you design stories for a feature where a user can view all the outcome-comments for a class by clicking an edit outcome",
+      "type": "invoke",
+      "id": "invoke-1761156867460"
+    }
+  ],
+  "statistics": {
+    "totalContextsGenerated": 2,
+    "totalHandoffs": 0,
+    "mostUsedPersona": "product-owner",
+    "lastActive": "2025-10-22T18:16:34.499Z"
+  },
+  "created": "2025-10-22T18:14:27.468Z",
+  "updated": "2025-10-22T18:16:34.500Z"
+}
