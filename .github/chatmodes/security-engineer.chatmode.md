@@ -15,7 +15,7 @@ This chatmode file provides a lightweight activation context. For complete behav
 
 **STEP 1 - CRITICAL**: Load and read the complete persona definition from:
 ```
-../../../enverus.persona-driven-development/packs/core-enterprise/personas/security-engineer.md
+.pdd/personas/security-engineer.md
 ```
 
 **STEP 2**: Follow the activation-instructions in that file's YAML block.

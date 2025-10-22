@@ -16,7 +16,7 @@ This chatmode file provides a lightweight activation context. For complete behav
 
 **STEP 1 - CRITICAL**: Load and read the complete persona definition from:
 ```
-../../../enverus.persona-driven-development/packs/core-enterprise/personas/system-architect.md
+.pdd/personas/system-architect.md
 ```
 
 **STEP 2**: Follow the activation-instructions in that file's YAML block.
