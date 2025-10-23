@@ -3,6 +3,7 @@ import './App.css'
 import { ClassList } from './components/classes/ClassList'
 import { ClassForm } from './components/classes/ClassForm'
 import { ConfirmDialog } from './components/common/ConfirmDialog'
+import { OutcomeCommentsModal } from './components/outcomeComments/OutcomeCommentsModal'
 import type { Class } from './types/Class'
 
 /**
@@ -26,6 +27,10 @@ function App() {
     onConfirm?:() => Promise<void>
     className?: string
       }>({ isOpen: false })
+  const [outcomeCommentsModal, setOutcomeCommentsModal] = useState<{
+    isOpen: boolean
+    classItem?: Class
+  }>({ isOpen: false })
 
   const handleAddClass = () => {
     setEditingClass(undefined)
@@ -55,6 +60,18 @@ function App() {
       className,
       onConfirm,
     })
+  }
+
+  // This callback will be called by ClassList when user clicks view outcome comments
+  const handleViewOutcomeComments = (classItem: Class) => {
+    setOutcomeCommentsModal({
+      isOpen: true,
+      classItem,
+    })
+  }
+
+  const handleOutcomeCommentsClose = () => {
+    setOutcomeCommentsModal({ isOpen: false })
   }
 
   const handleDeleteConfirm = async () => {
@@ -93,6 +110,7 @@ function App() {
                 onAddClass={handleAddClass}
                 onEdit={handleEditClass}
                 onDelete={handleDeleteRequest}
+                onViewOutcomeComments={handleViewOutcomeComments}
               />
             )}
       </main>
@@ -101,12 +119,23 @@ function App() {
       <ConfirmDialog
         isOpen={deleteConfirm.isOpen}
         title="Delete Class"
-        message={`Are you sure you want to delete "${deleteConfirm.className}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        variant="danger"
+        message={`Are you sure you want to delete "${deleteConfirm.className || 'this class'}"? This action cannot be undone.`}
+        confirmLabel="Delete"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
+        variant="danger"
+      />
+
+      <OutcomeCommentsModal
+        isOpen={outcomeCommentsModal.isOpen}
+        classData={outcomeCommentsModal.classItem || { id: 0, name: '', year: 2024, createdAt: '', updatedAt: '' }}
+        outcomeComments={[]}
+        onCreateComment={async () => {}}
+        onUpdateComment={async () => {}}
+        onDeleteComment={async () => {}}
+        loading={false}
+        error={null}
+        onClose={handleOutcomeCommentsClose}
       />
     </div>
   )

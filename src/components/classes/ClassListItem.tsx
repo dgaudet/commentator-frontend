@@ -13,6 +13,7 @@ interface ClassListItemProps {
   onEdit?: (id: number) => void
   onDelete?: (id: number) => void
   onView?: (id: number) => void
+  onViewOutcomeComments?: (id: number) => void
 }
 
 export const ClassListItem: React.FC<ClassListItemProps> = React.memo(({
@@ -20,6 +21,7 @@ export const ClassListItem: React.FC<ClassListItemProps> = React.memo(({
   onEdit,
   onDelete,
   onView,
+  onViewOutcomeComments,
 }) => {
   return (
     <div
@@ -49,7 +51,7 @@ export const ClassListItem: React.FC<ClassListItemProps> = React.memo(({
           </div>
         </div>
 
-        {(onEdit || onDelete) && (
+        {(onEdit || onDelete || onViewOutcomeComments) && (
           <div className="flex gap-2">
             {onEdit && (
               <button
@@ -67,6 +69,15 @@ export const ClassListItem: React.FC<ClassListItemProps> = React.memo(({
                 aria-label={`Delete ${classItem.name}`}
               >
                 Delete
+              </button>
+            )}
+            {onViewOutcomeComments && (
+              <button
+                onClick={() => onViewOutcomeComments(classItem.id)}
+                className="text-green-600 hover:text-green-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                aria-label={`View outcome comments for ${classItem.name}`}
+              >
+                Outcome Comments
               </button>
             )}
           </div>

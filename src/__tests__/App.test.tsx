@@ -172,7 +172,7 @@ describe('App', () => {
       mockClassService.getAll.mockResolvedValue([mockClasses[1]])
 
       // Confirm deletion
-      const confirmButton = screen.getByRole('button', { name: /^delete$/i })
+      const confirmButton = screen.getByRole('button', { name: /^Confirm$/i })
       act(() => {
         fireEvent.click(confirmButton)
       })
@@ -269,7 +269,7 @@ describe('App', () => {
       })
 
       // Confirm deletion
-      const confirmButton = screen.getByRole('button', { name: /^delete$/i })
+      const confirmButton = screen.getByRole('button', { name: /^Confirm$/i })
       act(() => {
         fireEvent.click(confirmButton)
       })
@@ -281,6 +281,54 @@ describe('App', () => {
 
       // Class should still be in list (delete failed)
       expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+    })
+  })
+
+  describe('outcome comments modal', () => {
+    it('should show outcome comments modal when outcome comments button clicked', async () => {
+      // Setup: Mock classes data
+      mockClassService.getAll.mockResolvedValue(mockClasses)
+
+      render(<App />)
+
+      // Wait for classes to load
+      await waitFor(() => {
+        expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+      })
+
+      // Find and click the outcome comments button
+      const outcomeCommentsButton = screen.getByRole('button', { name: /outcome comments for mathematics 101/i })
+      fireEvent.click(outcomeCommentsButton)
+
+      // Modal should be visible
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByText('Outcome Comments - Mathematics 101')).toBeInTheDocument()
+    })
+
+    it('should close outcome comments modal when close button clicked', async () => {
+      // Setup: Mock classes data
+      mockClassService.getAll.mockResolvedValue(mockClasses)
+
+      render(<App />)
+
+      // Wait for classes to load
+      await waitFor(() => {
+        expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+      })
+
+      // Open modal
+      const outcomeCommentsButton = screen.getByRole('button', { name: /outcome comments for mathematics 101/i })
+      fireEvent.click(outcomeCommentsButton)
+
+      // Modal should be visible
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+      // Close modal
+      const closeButton = screen.getByRole('button', { name: /close/i })
+      fireEvent.click(closeButton)
+
+      // Modal should be closed
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
   })
 })

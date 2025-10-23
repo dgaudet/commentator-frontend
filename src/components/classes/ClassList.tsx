@@ -18,6 +18,7 @@ interface ClassListProps {
   onAddClass?: () => void
   onEdit?: (classItem: Class) => void
   onDelete?: (className: string, onConfirm: () => Promise<void>) => void
+  onViewOutcomeComments?: (classItem: Class) => void
 }
 
 /**
@@ -33,6 +34,7 @@ export const ClassList: React.FC<ClassListProps> = ({
   onAddClass,
   onEdit,
   onDelete,
+  onViewOutcomeComments,
 }) => {
   const { classes, isLoading, error, clearError, deleteClass } = useClasses()
 
@@ -55,6 +57,13 @@ export const ClassList: React.FC<ClassListProps> = ({
       onEdit(classItem)
     }
   }, [classes, onEdit])
+
+  const handleViewOutcomeComments = useCallback((classId: number) => {
+    const classItem = classes.find(c => c.id === classId)
+    if (classItem && onViewOutcomeComments) {
+      onViewOutcomeComments(classItem)
+    }
+  }, [classes, onViewOutcomeComments])
 
   const handleDelete = useCallback((classId: number) => {
     if (onDelete) {
@@ -117,6 +126,7 @@ export const ClassList: React.FC<ClassListProps> = ({
             onView={handleClassClick}
             onEdit={onEdit ? handleEdit : undefined}
             onDelete={onDelete ? handleDelete : undefined}
+            onViewOutcomeComments={onViewOutcomeComments ? handleViewOutcomeComments : undefined}
           />
         ))}
       </div>
