@@ -7,6 +7,19 @@
  * This avoids MSW v2 + Jest ESM compatibility issues when testing services in isolation
  */
 import { outcomeCommentService } from '../outcomeCommentService'
+import { apiClient } from '../apiClient'
+
+// Mock the API client to prevent actual HTTP requests
+jest.mock('../apiClient', () => ({
+  apiClient: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+  }
+}))
+
+const mockApiClient = apiClient as jest.Mocked<typeof apiClient>
 
 describe('OutcomeCommentService', () => {
   it('should be defined', () => {
@@ -36,41 +49,80 @@ describe('OutcomeCommentService', () => {
   })
 
   describe('method signatures', () => {
-    it('getByClassId should accept number parameter', () => {
-      const result = outcomeCommentService.getByClassId(1)
-      expect(result).toBeInstanceOf(Promise)
-      // Clean up promise to avoid unhandled rejection
-      result.catch(() => {})
+    beforeEach(() => {
+      // Reset all mocks and set up default return values
+      jest.clearAllMocks()
+      
+      // Mock successful responses for all API methods with proper AxiosResponse structure
+      mockApiClient.get.mockResolvedValue({ 
+        data: { data: [], success: true },
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      })
+      mockApiClient.post.mockResolvedValue({ 
+        data: { data: { id: 1, comment: 'test' }, success: true },
+        status: 201,
+        statusText: 'Created',
+        headers: {},
+        config: {} as any
+      })
+      mockApiClient.put.mockResolvedValue({ 
+        data: { data: { id: 1, comment: 'updated' }, success: true },
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      })
+      mockApiClient.delete.mockResolvedValue({ 
+        data: { success: true },
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      })
     })
 
-    it('create should accept request object', () => {
-      const result = outcomeCommentService.create({ 
+    it('getByClassId should accept number parameter', async () => {
+      const result = await outcomeCommentService.getByClassId(1)
+      expect(result).toBeDefined()
+      expect(mockApiClient.get).toHaveBeenCalledWith('/classes/1/outcome-comments')
+    })
+
+    it('create should accept request object', async () => {
+      const request = { 
         classId: 1, 
         comment: 'Test comment',
         upperRange: 85,
         lowerRange: 70
-      })
-      expect(result).toBeInstanceOf(Promise)
-      // Clean up promise to avoid unhandled rejection
-      result.catch(() => {})
+      }
+      const result = await outcomeCommentService.create(request)
+      expect(result).toBeDefined()
+      expect(mockApiClient.post).toHaveBeenCalledWith(
+        '/classes/1/outcome-comments',
+        {
+          comment: 'Test comment',
+          upperRange: 85,
+          lowerRange: 70
+        }
+      )
     })
 
-    it('update should accept request object', () => {
-      const result = outcomeCommentService.update(1, { 
+    it('update should accept request object', async () => {
+      const request = { 
         comment: 'Updated comment',
         upperRange: 90,
         lowerRange: 75
-      })
-      expect(result).toBeInstanceOf(Promise)
-      // Clean up promise to avoid unhandled rejection
-      result.catch(() => {})
+      }
+      const result = await outcomeCommentService.update(1, request)
+      expect(result).toBeDefined()
+      expect(mockApiClient.put).toHaveBeenCalledWith('/outcome-comments/1', request)
     })
 
-    it('delete should accept number parameter', () => {
-      const result = outcomeCommentService.delete(1)
-      expect(result).toBeInstanceOf(Promise)
-      // Clean up promise to avoid unhandled rejection
-      result.catch(() => {})
+    it('delete should accept number parameter', async () => {
+      await outcomeCommentService.delete(1)
+      expect(mockApiClient.delete).toHaveBeenCalledWith('/outcome-comments/1')
     })
   })
 })
