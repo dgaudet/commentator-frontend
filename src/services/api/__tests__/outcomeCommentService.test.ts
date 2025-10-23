@@ -87,7 +87,7 @@ describe('OutcomeCommentService', () => {
     it('getByClassId should accept number parameter', async () => {
       const result = await outcomeCommentService.getByClassId(1)
       expect(result).toBeDefined()
-      expect(mockApiClient.get).toHaveBeenCalledWith('/classes/1/outcome-comments')
+      expect(mockApiClient.get).toHaveBeenCalledWith('/outcome-comment?classId=1')
     })
 
     it('create should accept request object', async () => {
@@ -100,8 +100,9 @@ describe('OutcomeCommentService', () => {
       const result = await outcomeCommentService.create(request)
       expect(result).toBeDefined()
       expect(mockApiClient.post).toHaveBeenCalledWith(
-        '/classes/1/outcome-comments',
+        '/outcome-comment',
         {
+          classId: 1,
           comment: 'Test comment',
           upperRange: 85,
           lowerRange: 70
@@ -117,12 +118,12 @@ describe('OutcomeCommentService', () => {
       }
       const result = await outcomeCommentService.update(1, request)
       expect(result).toBeDefined()
-      expect(mockApiClient.put).toHaveBeenCalledWith('/outcome-comments/1', request)
+      expect(mockApiClient.put).toHaveBeenCalledWith('/outcome-comment/1', request)
     })
 
     it('delete should accept number parameter', async () => {
       await outcomeCommentService.delete(1)
-      expect(mockApiClient.delete).toHaveBeenCalledWith('/outcome-comments/1')
+      expect(mockApiClient.delete).toHaveBeenCalledWith('/outcome-comment/1')
     })
   })
 })

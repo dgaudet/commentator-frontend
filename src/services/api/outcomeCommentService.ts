@@ -3,18 +3,17 @@
  * Service for managing outcome comments with REST API operations
  * 
  * Endpoints:
- * - GET /classes/:classId/outcome-comments - Get all outcome comments for a class
- * - POST /classes/:classId/outcome-comments - Create new outcome comment
- * - PUT /outcome-comments/:id - Update existing outcome comment
- * - DELETE /outcome-comments/:id - Delete outcome comment
+ * - GET /outcome-comment?classId={classId} - Get all outcome comments for a class
+ * - POST /outcome-comment - Create new outcome comment
+ * - PUT /outcome-comment/{id} - Update existing outcome comment
+ * - DELETE /outcome-comment/{id} - Delete outcome comment
  */
 
 import { apiClient } from './apiClient'
 import type { 
   OutcomeComment, 
   CreateOutcomeCommentRequest, 
-  UpdateOutcomeCommentRequest,
-  ApiResponse 
+  UpdateOutcomeCommentRequest
 } from '../../types'
 
 export const outcomeCommentService = {
@@ -23,10 +22,10 @@ export const outcomeCommentService = {
    */
   async getByClassId(classId: number): Promise<OutcomeComment[]> {
     try {
-      const response = await apiClient.get<ApiResponse<OutcomeComment[]>>(
-        `/classes/${classId}/outcome-comments`
+      const response = await apiClient.get<OutcomeComment[]>(
+        `/outcome-comment?classId=${classId}`
       )
-      return response.data.data
+      return response.data
     } catch (error) {
       console.error('Failed to fetch outcome comments:', error)
       throw new Error('Failed to fetch outcome comments')
@@ -38,15 +37,16 @@ export const outcomeCommentService = {
    */
   async create(request: CreateOutcomeCommentRequest): Promise<OutcomeComment> {
     try {
-      const response = await apiClient.post<ApiResponse<OutcomeComment>>(
-        `/classes/${request.classId}/outcome-comments`,
+      const response = await apiClient.post<OutcomeComment>(
+        `/outcome-comment`,
         { 
           comment: request.comment,
           upperRange: request.upperRange,
-          lowerRange: request.lowerRange
+          lowerRange: request.lowerRange,
+          classId: request.classId
         }
       )
-      return response.data.data
+      return response.data
     } catch (error) {
       console.error('Failed to create outcome comment:', error)
       throw new Error('Failed to create outcome comment')
@@ -58,11 +58,11 @@ export const outcomeCommentService = {
    */
   async update(id: number, request: UpdateOutcomeCommentRequest): Promise<OutcomeComment> {
     try {
-      const response = await apiClient.put<ApiResponse<OutcomeComment>>(
-        `/outcome-comments/${id}`,
+      const response = await apiClient.put<OutcomeComment>(
+        `/outcome-comment/${id}`,
         request
       )
-      return response.data.data
+      return response.data
     } catch (error) {
       console.error('Failed to update outcome comment:', error)
       throw new Error('Failed to update outcome comment')
@@ -74,7 +74,7 @@ export const outcomeCommentService = {
    */
   async delete(id: number): Promise<void> {
     try {
-      await apiClient.delete(`/outcome-comments/${id}`)
+      await apiClient.delete(`/outcome-comment/${id}`)
     } catch (error) {
       console.error('Failed to delete outcome comment:', error)
       throw new Error('Failed to delete outcome comment')

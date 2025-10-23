@@ -388,12 +388,21 @@ export const handlers = [
     })
   }),
 
-  // GET /class/:classId/outcome-comments - Get outcome comments for a class
-  http.get(`${BASE_URL}/class/:classId/outcome-comments`, ({ params }) => {
-    const { classId } = params
+  // GET /outcome-comment?classId={classId} - Get outcome comments for a class
+  http.get(`${BASE_URL}/outcome-comment`, ({ request }) => {
+    const url = new URL(request.url)
+    const classId = url.searchParams.get('classId')
+
+    if (!classId) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Class ID is required',
+        statusCode: 400,
+      }, { status: 400 })
+    }
 
     // Validate class ID
-    const validation = validateId(classId as string)
+    const validation = validateId(classId)
     if (!validation.valid) {
       return HttpResponse.json(validation.error, { status: 400 })
     }
@@ -403,27 +412,26 @@ export const handlers = [
     return HttpResponse.json(classComments)
   }),
 
-  // POST /class/:classId/outcome-comments - Create new outcome comment
-  http.post(`${BASE_URL}/class/:classId/outcome-comments`, async ({ params, request }) => {
-    const { classId } = params
-    const body = await request.json() as { comment: string; upperRange: number; lowerRange: number }
-
-    // Validate class ID
-    const idValidation = validateId(classId as string)
-    if (!idValidation.valid) {
-      return HttpResponse.json(idValidation.error, { status: 400 })
-    }
+  // POST /outcome-comment - Create new outcome comment
+  http.post(`${BASE_URL}/outcome-comment`, async ({ request }) => {
+    const body = await request.json() as { classId: number; comment: string; upperRange: number; lowerRange: number }
 
     // Validate request body
-    const bodyValidation = validateOutcomeCommentRequest({ ...body, classId: Number(classId) })
-    if (!bodyValidation.valid) {
-      return HttpResponse.json(bodyValidation.error, { status: 400 })
+    const validation = validateOutcomeCommentRequest(body)
+    if (!validation.valid) {
+      return HttpResponse.json(validation.error, { status: 400 })
     }
 
-    // Create new outcome comment
+    // Validate class ID
+    const classValidation = validateId(String(body.classId))
+    if (!classValidation.valid) {
+      return HttpResponse.json(classValidation.error, { status: 400 })
+    }
+
+    // Create new comment
     const newComment: OutcomeComment = {
       id: nextCommentId++,
-      classId: Number(classId),
+      classId: body.classId,
       comment: body.comment,
       upperRange: body.upperRange,
       lowerRange: body.lowerRange,
@@ -435,8 +443,8 @@ export const handlers = [
     return HttpResponse.json(newComment, { status: 201 })
   }),
 
-  // PUT /outcome-comments/:id - Update outcome comment
-  http.put(`${BASE_URL}/outcome-comments/:id`, async ({ params, request }) => {
+  // PUT /outcome-comment/:id - Update outcome comment
+  http.put(`${BASE_URL}/outcome-comment/:id`, async ({ params, request }) => {
     const { id } = params
     const body = await request.json() as { comment?: string; upperRange?: number; lowerRange?: number }
 
@@ -478,8 +486,8 @@ export const handlers = [
     return HttpResponse.json(updatedComment)
   }),
 
-  // DELETE /outcome-comments/:id - Delete outcome comment
-  http.delete(`${BASE_URL}/outcome-comments/:id`, ({ params }) => {
+  // DELETE /outcome-comment/:id - Delete outcome comment
+  http.delete(`${BASE_URL}/outcome-comment/:id`, ({ params }) => {
     const { id } = params
 
     // Validate ID
