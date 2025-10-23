@@ -11,7 +11,7 @@
  * Testing approach: Test-Driven Development (Red-Green-Refactor)
  */
 
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, within, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { OutcomeCommentsModal } from '../OutcomeCommentsModal'
 import type { Class, OutcomeComment } from '../../../types'
@@ -120,12 +120,17 @@ describe('OutcomeCommentsModal', () => {
       const lowerRangeInput = screen.getByRole('spinbutton', { name: /lower range/i })
       const submitButton = screen.getByRole('button', { name: /add comment/i })
       
-      await user.type(textarea, 'New outcome comment content')
-      await user.clear(upperRangeInput)
-      await user.type(upperRangeInput, '85')
-      await user.clear(lowerRangeInput)
-      await user.type(lowerRangeInput, '70')
-      await user.click(submitButton)
+      await act(async () => {
+        await user.type(textarea, 'New outcome comment content')
+        await user.clear(upperRangeInput)
+        await user.type(upperRangeInput, '85')
+        await user.clear(lowerRangeInput)
+        await user.type(lowerRangeInput, '70')
+      })
+      
+      await act(async () => {
+        await user.click(submitButton)
+      })
       
       expect(defaultProps.onCreateComment).toHaveBeenCalledWith({
         classId: 1,
@@ -144,10 +149,15 @@ describe('OutcomeCommentsModal', () => {
       const upperRangeInput = screen.getByLabelText(/upper range/i)
       const submitButton = screen.getByRole('button', { name: /add comment/i })
       
-      await user.type(textarea, 'New comment')
-      await user.type(lowerRangeInput, '70')
-      await user.type(upperRangeInput, '85')
-      await user.click(submitButton)
+      await act(async () => {
+        await user.type(textarea, 'New comment')
+        await user.type(lowerRangeInput, '70')
+        await user.type(upperRangeInput, '85')
+      })
+      
+      await act(async () => {
+        await user.click(submitButton)
+      })
       
       expect(textarea).toHaveValue('')
       expect(lowerRangeInput).toHaveValue(null)
@@ -159,7 +169,10 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const submitButton = screen.getByRole('button', { name: /add comment/i })
-      await user.click(submitButton)
+      
+      await act(async () => {
+        await user.click(submitButton)
+      })
       
       expect(defaultProps.onCreateComment).not.toHaveBeenCalled()
     })
@@ -169,7 +182,10 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const submitButton = screen.getByRole('button', { name: /add comment/i })
-      await user.click(submitButton)
+      
+      await act(async () => {
+        await user.click(submitButton)
+      })
       
       expect(screen.getByText('Comment is required')).toBeInTheDocument()
     })
@@ -188,7 +204,9 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const editButtons = screen.getAllByRole('button', { name: /edit/i })
-      await user.click(editButtons[0])
+      await act(async () => {
+        await user.click(editButtons[0])
+      })
       
       expect(screen.getByDisplayValue('Students demonstrated excellent problem-solving skills')).toBeInTheDocument()
       expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
@@ -200,21 +218,27 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const editButtons = screen.getAllByRole('button', { name: /edit/i })
-      await user.click(editButtons[0])
+      await act(async () => {
+        await user.click(editButtons[0])
+      })
       
       const textarea = screen.getByDisplayValue('Students demonstrated excellent problem-solving skills')
       const upperRangeInput = screen.getByDisplayValue('85')
       const lowerRangeInput = screen.getByDisplayValue('70')
       
-      await user.clear(textarea)
-      await user.type(textarea, 'Updated comment content')
-      await user.clear(upperRangeInput)
-      await user.type(upperRangeInput, '90')
-      await user.clear(lowerRangeInput)
-      await user.type(lowerRangeInput, '75')
+      await act(async () => {
+        await user.clear(textarea)
+        await user.type(textarea, 'Updated comment content')
+        await user.clear(upperRangeInput)
+        await user.type(upperRangeInput, '90')
+        await user.clear(lowerRangeInput)
+        await user.type(lowerRangeInput, '75')
+      })
       
       const saveButton = screen.getByRole('button', { name: /save/i })
-      await user.click(saveButton)
+      await act(async () => {
+        await user.click(saveButton)
+      })
       
       expect(defaultProps.onUpdateComment).toHaveBeenCalledWith(1, {
         comment: 'Updated comment content',
@@ -228,10 +252,14 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const editButtons = screen.getAllByRole('button', { name: /edit/i })
-      await user.click(editButtons[0])
+      await act(async () => {
+        await user.click(editButtons[0])
+      })
       
       const cancelButton = screen.getByRole('button', { name: /cancel/i })
-      await user.click(cancelButton)
+      await act(async () => {
+        await user.click(cancelButton)
+      })
       
       expect(screen.getByText('Students demonstrated excellent problem-solving skills')).toBeInTheDocument()
       expect(screen.queryByDisplayValue('Students demonstrated excellent problem-solving skills')).not.toBeInTheDocument()
@@ -251,7 +279,9 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const deleteButtons = screen.getAllByRole('button', { name: /delete/i })
-      await user.click(deleteButtons[0])
+      await act(async () => {
+        await user.click(deleteButtons[0])
+      })
       
       expect(screen.getByText('Delete Outcome Comment')).toBeInTheDocument()
       expect(screen.getByText('Are you sure you want to delete this outcome comment? This action cannot be undone.')).toBeInTheDocument()
@@ -262,12 +292,16 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const deleteButtons = screen.getAllByRole('button', { name: /delete/i })
-      await user.click(deleteButtons[0])
+      await act(async () => {
+        await user.click(deleteButtons[0])
+      })
       
       // Look for the confirm button specifically within the confirmation dialog
       const confirmDialog = screen.getByRole('dialog', { name: 'Delete Outcome Comment' })
       const confirmButton = within(confirmDialog).getByRole('button', { name: /delete/i })
-      await user.click(confirmButton)
+      await act(async () => {
+        await user.click(confirmButton)
+      })
       
       expect(defaultProps.onDeleteComment).toHaveBeenCalledWith(1)
     })
@@ -277,10 +311,14 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       const deleteButtons = screen.getAllByRole('button', { name: /delete/i })
-      await user.click(deleteButtons[0])
+      await act(async () => {
+        await user.click(deleteButtons[0])
+      })
       
       const cancelButton = screen.getByRole('button', { name: /cancel/i })
-      await user.click(cancelButton)
+      await act(async () => {
+        await user.click(cancelButton)
+      })
       
       expect(screen.queryByText('Delete Outcome Comment')).not.toBeInTheDocument()
     })
@@ -313,7 +351,9 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
       
       // Should be able to tab through interactive elements
-      await user.tab()
+      await act(async () => {
+        await user.tab()
+      })
       expect(screen.getByRole('button', { name: /close/i })).toHaveFocus()
     })
   })

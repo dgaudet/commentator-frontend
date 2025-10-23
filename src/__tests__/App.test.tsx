@@ -3,7 +3,7 @@
  * Validates testing infrastructure and basic rendering
  * Includes integration tests for Edit/Delete flows
  */
-import { render, screen, waitFor, fireEvent } from '../test-utils'
+import { render, screen, waitFor, fireEvent, act } from '../test-utils'
 import { cleanup } from '@testing-library/react'
 import App from '../App'
 import * as classService from '../services/api/classService'
@@ -54,26 +54,49 @@ describe('App', () => {
     cleanup()
   })
 
-  it('renders without crashing', () => {
-    render(<App />)
-    expect(screen.getByText(/commentator/i)).toBeInTheDocument()
+  it('renders without crashing', async () => {
+    // Mock API to prevent network errors during component mounting
+    mockClassService.getAll.mockResolvedValue([])
+    
+    act(() => {
+      render(<App />)
+    })
+    await waitFor(() => {
+      expect(screen.getByText(/commentator/i)).toBeInTheDocument()
+    })
   })
 
-  it('displays the application title', () => {
-    render(<App />)
-    expect(screen.getByText('Commentator')).toBeInTheDocument()
+  it('displays the application title', async () => {
+    // Mock API to prevent network errors during component mounting
+    mockClassService.getAll.mockResolvedValue([])
+    
+    act(() => {
+      render(<App />)
+    })
+    await waitFor(() => {
+      expect(screen.getByText('Commentator')).toBeInTheDocument()
+    })
   })
 
-  it('displays the subtitle', () => {
-    render(<App />)
-    expect(screen.getByText('Student Report Card Comment Management')).toBeInTheDocument()
+  it('displays the subtitle', async () => {
+    // Mock API to prevent network errors during component mounting
+    mockClassService.getAll.mockResolvedValue([])
+    
+    act(() => {
+      render(<App />)
+    })
+    await waitFor(() => {
+      expect(screen.getByText('Student Report Card Comment Management')).toBeInTheDocument()
+    })
   })
 
   it('renders the ClassList component', async () => {
     // Setup: Mock API to return classes so ClassList renders with "Your Classes" heading
     mockClassService.getAll.mockResolvedValue(mockClasses)
     
-    render(<App />)
+    act(() => {
+      render(<App />)
+    })
 
     // ClassList should render with "Your Classes" heading (not EmptyState)
     await waitFor(() => {
@@ -85,7 +108,9 @@ describe('App', () => {
     // Setup: Mock API to return classes so ClassList shows "Add Class" button
     mockClassService.getAll.mockResolvedValue(mockClasses)
     
-    render(<App />)
+    act(() => {
+      render(<App />)
+    })
 
     // Should show "Add Class" button from ClassList (not EmptyState)
     await waitFor(() => {
@@ -120,7 +145,9 @@ describe('App', () => {
       // Setup: Mock API to return classes for this test
       mockClassService.getAll.mockResolvedValue([...mockClasses])
 
-      render(<App key={testKey} />)
+      act(() => {
+        render(<App key={testKey} />)
+      })
 
       // Wait for classes to load
       await waitFor(() => {
@@ -130,7 +157,9 @@ describe('App', () => {
 
       // Click delete button for Mathematics 101
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
-      fireEvent.click(deleteButton)
+      act(() => {
+        fireEvent.click(deleteButton)
+      })
 
       // Confirmation dialog should appear
       await waitFor(() => {
@@ -144,7 +173,9 @@ describe('App', () => {
 
       // Confirm deletion
       const confirmButton = screen.getByRole('button', { name: /^delete$/i })
-      fireEvent.click(confirmButton)
+      act(() => {
+        fireEvent.click(confirmButton)
+      })
 
       // Wait for dialog to close
       await waitFor(() => {
@@ -168,7 +199,9 @@ describe('App', () => {
       // Setup: Mock API to return fresh classes for this test
       mockClassService.getAll.mockResolvedValue([...mockClasses])
 
-      render(<App key={testKey} />)
+      act(() => {
+        render(<App key={testKey} />)
+      })
 
       // Wait for classes to load
       await waitFor(() => {
@@ -182,7 +215,9 @@ describe('App', () => {
 
       // Click delete button
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
-      fireEvent.click(deleteButton)
+      act(() => {
+        fireEvent.click(deleteButton)
+      })
 
       // Confirmation dialog should appear
       await waitFor(() => {
@@ -191,7 +226,9 @@ describe('App', () => {
 
       // Cancel deletion
       const cancelButton = screen.getByRole('button', { name: /cancel/i })
-      fireEvent.click(cancelButton)
+      act(() => {
+        fireEvent.click(cancelButton)
+      })
 
       // Dialog should close
       await waitFor(() => {
@@ -211,7 +248,9 @@ describe('App', () => {
       // Mock delete to fail
       mockClassService.delete.mockRejectedValueOnce(new Error('Delete failed'))
 
-      render(<App key={testKey} />)
+      act(() => {
+        render(<App key={testKey} />)
+      })
 
       // Wait for classes to load
       await waitFor(() => {
@@ -220,7 +259,9 @@ describe('App', () => {
 
       // Click delete button
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
-      fireEvent.click(deleteButton)
+      act(() => {
+        fireEvent.click(deleteButton)
+      })
 
       // Wait for dialog
       await waitFor(() => {
@@ -229,7 +270,9 @@ describe('App', () => {
 
       // Confirm deletion
       const confirmButton = screen.getByRole('button', { name: /^delete$/i })
-      fireEvent.click(confirmButton)
+      act(() => {
+        fireEvent.click(confirmButton)
+      })
 
       // Dialog should close
       await waitFor(() => {
