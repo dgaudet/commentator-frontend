@@ -172,7 +172,7 @@ describe('App', () => {
       mockClassService.getAll.mockResolvedValue([mockClasses[1]])
 
       // Confirm deletion
-      const confirmButton = screen.getByRole('button', { name: /^Confirm$/i })
+      const confirmButton = screen.getByRole('button', { name: /^Delete$/i })
       act(() => {
         fireEvent.click(confirmButton)
       })
@@ -269,7 +269,7 @@ describe('App', () => {
       })
 
       // Confirm deletion
-      const confirmButton = screen.getByRole('button', { name: /^Confirm$/i })
+      const confirmButton = screen.getByRole('button', { name: /^Delete$/i })
       act(() => {
         fireEvent.click(confirmButton)
       })
