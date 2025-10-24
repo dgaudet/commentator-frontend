@@ -74,6 +74,19 @@ describe('ClassListItem', () => {
     expect(handleDelete).toHaveBeenCalledWith(1)
   })
 
+  it('should render outcome comments button when onViewOutcomeComments provided', () => {
+    const handleViewOutcomeComments = jest.fn()
+    render(<ClassListItem classItem={mockClass} onViewOutcomeComments={handleViewOutcomeComments} />)
+    expect(screen.getByRole('button', { name: /outcome comments for mathematics 101/i })).toBeInTheDocument()
+  })
+
+  it('should call onViewOutcomeComments when outcome comments button clicked', () => {
+    const handleViewOutcomeComments = jest.fn()
+    render(<ClassListItem classItem={mockClass} onViewOutcomeComments={handleViewOutcomeComments} />)
+    fireEvent.click(screen.getByRole('button', { name: /outcome comments/i }))
+    expect(handleViewOutcomeComments).toHaveBeenCalledWith(1)
+  })
+
   it('should not render action buttons when handlers not provided', () => {
     render(<ClassListItem classItem={mockClass} />)
     expect(screen.queryByRole('button')).not.toBeInTheDocument()

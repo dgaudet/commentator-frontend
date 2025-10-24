@@ -1,0 +1,35 @@
+# PDD Core Configuration
+# This file provides project-level context to all personas during activation
+
+project:
+  name: "commentator-frontend"
+  description: "Project managed with Persona-Driven Development"
+  version: "1.0.0"
+
+team:
+  size: "small"  # small, medium, large, enterprise
+  methodology: "agile"  # agile, waterfall, hybrid
+  ci_cd: false  # Enable when CI/CD is configured
+
+technology:
+  languages: []  # e.g., ["TypeScript", "Python", "Go"]
+  frameworks: []  # e.g., ["React", "Express", "FastAPI"]
+  databases: []  # e.g., ["PostgreSQL", "MongoDB", "Redis"]
+  cloud: []      # e.g., ["AWS", "Azure", "GCP"]
+
+standards:
+  code_style: "standard"  # Your code style guide
+  testing: "tdd"  # tdd, bdd, or custom
+  documentation: "inline"  # inline, external, or both
+
+personas:
+  default_pack: "core-enterprise"
+  active: []  # Currently active personas
+
+quality:
+  min_test_coverage: 80
+  performance_budget: "200ms"  # API response time target
+  security_scan: true
+
+# Add custom project-specific configuration below
+custom: {}

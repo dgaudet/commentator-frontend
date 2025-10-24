@@ -3,7 +3,8 @@
  * Validates testing infrastructure and basic rendering
  * Includes integration tests for Edit/Delete flows
  */
-import { render, screen, waitFor, fireEvent } from '../test-utils'
+import { render, screen, waitFor, fireEvent, act } from '../test-utils'
+import { cleanup } from '@testing-library/react'
 import App from '../App'
 import * as classService from '../services/api/classService'
 
@@ -48,45 +49,105 @@ describe('App', () => {
     mockClassService.delete.mockResolvedValue({ message: 'Deleted', deletedClass: mockClasses[0] })
   })
 
-  it('renders without crashing', () => {
-    render(<App />)
-    expect(screen.getByText(/commentator/i)).toBeInTheDocument()
+  afterEach(() => {
+    // Force cleanup between tests to reset component state
+    cleanup()
   })
 
-  it('displays the application title', () => {
-    render(<App />)
-    expect(screen.getByText('Commentator')).toBeInTheDocument()
+  it('renders without crashing', async () => {
+    // Mock API to prevent network errors during component mounting
+    mockClassService.getAll.mockResolvedValue([])
+    
+    act(() => {
+      render(<App />)
+    })
+    await waitFor(() => {
+      expect(screen.getByText(/commentator/i)).toBeInTheDocument()
+    })
   })
 
-  it('displays the subtitle', () => {
-    render(<App />)
-    expect(screen.getByText('Student Report Card Comment Management')).toBeInTheDocument()
+  it('displays the application title', async () => {
+    // Mock API to prevent network errors during component mounting
+    mockClassService.getAll.mockResolvedValue([])
+    
+    act(() => {
+      render(<App />)
+    })
+    await waitFor(() => {
+      expect(screen.getByText('Commentator')).toBeInTheDocument()
+    })
+  })
+
+  it('displays the subtitle', async () => {
+    // Mock API to prevent network errors during component mounting
+    mockClassService.getAll.mockResolvedValue([])
+    
+    act(() => {
+      render(<App />)
+    })
+    await waitFor(() => {
+      expect(screen.getByText('Student Report Card Comment Management')).toBeInTheDocument()
+    })
   })
 
   it('renders the ClassList component', async () => {
-    render(<App />)
+    // Setup: Mock API to return classes so ClassList renders with "Your Classes" heading
+    mockClassService.getAll.mockResolvedValue(mockClasses)
+    
+    act(() => {
+      render(<App />)
+    })
 
-    // ClassList should render with "My Classes" heading
+    // ClassList should render with "Your Classes" heading (not EmptyState)
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /my classes/i })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: /your classes/i })).toBeInTheDocument()
     })
   })
 
   it('allows users to interact with class management features', async () => {
-    render(<App />)
+    // Setup: Mock API to return classes so ClassList shows "Add Class" button
+    mockClassService.getAll.mockResolvedValue(mockClasses)
+    
+    act(() => {
+      render(<App />)
+    })
 
-    // Should show "Add Class" button from ClassList
+    // Should show "Add Class" button from ClassList (not EmptyState)
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /add class/i })).toBeInTheDocument()
     })
   })
 
   describe('Delete Flow Integration', () => {
-    it('should remove class from list after successful deletion', async () => {
-      // Setup: Mock API to return 2 classes initially
-      mockClassService.getAll.mockResolvedValueOnce(mockClasses)
+    let testKey = 0
 
-      render(<App />)
+    beforeEach(() => {
+      // Clear all mocks completely for this test suite
+      jest.clearAllMocks()
+      
+      // Set up fresh mock implementations for each test
+      mockClassService.create.mockResolvedValue(mockClasses[0])
+      mockClassService.update.mockResolvedValue(mockClasses[0])
+      mockClassService.delete.mockResolvedValue({ message: 'Deleted', deletedClass: mockClasses[0] })
+      
+      // Additional cleanup for this test suite
+      cleanup()
+      // Increment key to force component remounting
+      testKey++
+    })
+
+    afterEach(() => {
+      // Force cleanup after each test in this suite
+      cleanup()
+    })
+
+    it('should remove class from list after successful deletion', async () => {
+      // Setup: Mock API to return classes for this test
+      mockClassService.getAll.mockResolvedValue([...mockClasses])
+
+      act(() => {
+        render(<App key={testKey} />)
+      })
 
       // Wait for classes to load
       await waitFor(() => {
@@ -96,7 +157,9 @@ describe('App', () => {
 
       // Click delete button for Mathematics 101
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
-      fireEvent.click(deleteButton)
+      act(() => {
+        fireEvent.click(deleteButton)
+      })
 
       // Confirmation dialog should appear
       await waitFor(() => {
@@ -104,12 +167,15 @@ describe('App', () => {
         expect(screen.getByText(/are you sure you want to delete "mathematics 101"/i)).toBeInTheDocument()
       })
 
-      // Mock API to return only 1 class after deletion (simulating server response)
-      mockClassService.getAll.mockResolvedValueOnce([mockClasses[1]])
+      // IMPORTANT: Reset the mock to simulate the updated list after deletion
+      // This simulates the server returning the updated list
+      mockClassService.getAll.mockResolvedValue([mockClasses[1]])
 
       // Confirm deletion
       const confirmButton = screen.getByRole('button', { name: /^delete$/i })
-      fireEvent.click(confirmButton)
+      act(() => {
+        fireEvent.click(confirmButton)
+      })
 
       // Wait for dialog to close
       await waitFor(() => {
@@ -130,19 +196,28 @@ describe('App', () => {
     })
 
     it('should close dialog and keep class when deletion is cancelled', async () => {
-      // Setup: Mock API to return classes
-      mockClassService.getAll.mockResolvedValue(mockClasses)
+      // Setup: Mock API to return fresh classes for this test
+      mockClassService.getAll.mockResolvedValue([...mockClasses])
 
-      render(<App />)
+      act(() => {
+        render(<App key={testKey} />)
+      })
 
       // Wait for classes to load
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: /your classes/i })).toBeInTheDocument()
+      })
+
+      // Wait for Mathematics 101 to appear
       await waitFor(() => {
         expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
       })
 
       // Click delete button
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
-      fireEvent.click(deleteButton)
+      act(() => {
+        fireEvent.click(deleteButton)
+      })
 
       // Confirmation dialog should appear
       await waitFor(() => {
@@ -151,7 +226,9 @@ describe('App', () => {
 
       // Cancel deletion
       const cancelButton = screen.getByRole('button', { name: /cancel/i })
-      fireEvent.click(cancelButton)
+      act(() => {
+        fireEvent.click(cancelButton)
+      })
 
       // Dialog should close
       await waitFor(() => {
@@ -166,12 +243,14 @@ describe('App', () => {
     })
 
     it('should handle delete errors gracefully', async () => {
-      // Setup: Mock API to return classes
-      mockClassService.getAll.mockResolvedValue(mockClasses)
+      // Setup: Mock API to return fresh classes for this test
+      mockClassService.getAll.mockResolvedValue([...mockClasses])
       // Mock delete to fail
       mockClassService.delete.mockRejectedValueOnce(new Error('Delete failed'))
 
-      render(<App />)
+      act(() => {
+        render(<App key={testKey} />)
+      })
 
       // Wait for classes to load
       await waitFor(() => {
@@ -180,7 +259,9 @@ describe('App', () => {
 
       // Click delete button
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
-      fireEvent.click(deleteButton)
+      act(() => {
+        fireEvent.click(deleteButton)
+      })
 
       // Wait for dialog
       await waitFor(() => {
@@ -189,7 +270,9 @@ describe('App', () => {
 
       // Confirm deletion
       const confirmButton = screen.getByRole('button', { name: /^delete$/i })
-      fireEvent.click(confirmButton)
+      act(() => {
+        fireEvent.click(confirmButton)
+      })
 
       // Dialog should close
       await waitFor(() => {
@@ -198,6 +281,54 @@ describe('App', () => {
 
       // Class should still be in list (delete failed)
       expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+    })
+  })
+
+  describe('outcome comments modal', () => {
+    it('should show outcome comments modal when outcome comments button clicked', async () => {
+      // Setup: Mock classes data
+      mockClassService.getAll.mockResolvedValue(mockClasses)
+
+      render(<App />)
+
+      // Wait for classes to load
+      await waitFor(() => {
+        expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+      })
+
+      // Find and click the outcome comments button
+      const outcomeCommentsButton = screen.getByRole('button', { name: /outcome comments for mathematics 101/i })
+      fireEvent.click(outcomeCommentsButton)
+
+      // Modal should be visible
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByText('Outcome Comments - Mathematics 101')).toBeInTheDocument()
+    })
+
+    it('should close outcome comments modal when close button clicked', async () => {
+      // Setup: Mock classes data
+      mockClassService.getAll.mockResolvedValue(mockClasses)
+
+      render(<App />)
+
+      // Wait for classes to load
+      await waitFor(() => {
+        expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+      })
+
+      // Open modal
+      const outcomeCommentsButton = screen.getByRole('button', { name: /outcome comments for mathematics 101/i })
+      fireEvent.click(outcomeCommentsButton)
+
+      // Modal should be visible
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+      // Close modal
+      const closeButton = screen.getByRole('button', { name: /close/i })
+      fireEvent.click(closeButton)
+
+      // Modal should be closed
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
   })
 })

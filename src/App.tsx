@@ -3,7 +3,10 @@ import './App.css'
 import { ClassList } from './components/classes/ClassList'
 import { ClassForm } from './components/classes/ClassForm'
 import { ConfirmDialog } from './components/common/ConfirmDialog'
+import { OutcomeCommentsModal } from './components/outcomeComments/OutcomeCommentsModal'
+import { useOutcomeComments } from './hooks/useOutcomeComments'
 import type { Class } from './types/Class'
+import type { CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from './types'
 
 /**
  * Main application component
@@ -26,6 +29,22 @@ function App() {
     onConfirm?:() => Promise<void>
     className?: string
       }>({ isOpen: false })
+  const [outcomeCommentsModal, setOutcomeCommentsModal] = useState<{
+    isOpen: boolean
+    classItem?: Class
+  }>({ isOpen: false })
+
+  // Hook for managing outcome comments state and API operations
+  const {
+    outcomeComments,
+    loading: outcomeCommentsLoading,
+    error: outcomeCommentsError,
+    loadOutcomeComments,
+    createComment,
+    updateComment,
+    deleteComment,
+    clearError: clearOutcomeCommentsError
+  } = useOutcomeComments()
 
   const handleAddClass = () => {
     setEditingClass(undefined)
@@ -55,6 +74,37 @@ function App() {
       className,
       onConfirm,
     })
+  }
+
+  // This callback will be called by ClassList when user clicks view outcome comments
+  const handleViewOutcomeComments = async (classItem: Class) => {
+    setOutcomeCommentsModal({
+      isOpen: true,
+      classItem,
+    })
+    // Load outcome comments for this class
+    await loadOutcomeComments(classItem.id)
+  }
+
+  const handleOutcomeCommentsClose = () => {
+    setOutcomeCommentsModal({ isOpen: false })
+    // Clear any error state when closing modal
+    clearOutcomeCommentsError()
+  }
+
+  // Real API handler for creating outcome comments
+  const handleCreateOutcomeComment = async (request: CreateOutcomeCommentRequest) => {
+    await createComment(request)
+  }
+
+  // Real API handler for updating outcome comments
+  const handleUpdateOutcomeComment = async (id: number, request: UpdateOutcomeCommentRequest) => {
+    await updateComment(id, request)
+  }
+
+  // Real API handler for deleting outcome comments
+  const handleDeleteOutcomeComment = async (id: number) => {
+    await deleteComment(id)
   }
 
   const handleDeleteConfirm = async () => {
@@ -93,6 +143,7 @@ function App() {
                 onAddClass={handleAddClass}
                 onEdit={handleEditClass}
                 onDelete={handleDeleteRequest}
+                onViewOutcomeComments={handleViewOutcomeComments}
               />
             )}
       </main>
@@ -101,12 +152,23 @@ function App() {
       <ConfirmDialog
         isOpen={deleteConfirm.isOpen}
         title="Delete Class"
-        message={`Are you sure you want to delete "${deleteConfirm.className}"? This action cannot be undone.`}
+        message={`Are you sure you want to delete "${deleteConfirm.className || 'this class'}"? This action cannot be undone.`}
         confirmText="Delete"
-        cancelText="Cancel"
-        variant="danger"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
+        variant="danger"
+      />
+
+      <OutcomeCommentsModal
+        isOpen={outcomeCommentsModal.isOpen}
+        classData={outcomeCommentsModal.classItem || { id: 0, name: '', year: 2024, createdAt: '', updatedAt: '' }}
+        outcomeComments={outcomeComments}
+        onCreateComment={handleCreateOutcomeComment}
+        onUpdateComment={handleUpdateOutcomeComment}
+        onDeleteComment={handleDeleteOutcomeComment}
+        loading={outcomeCommentsLoading}
+        error={outcomeCommentsError}
+        onClose={handleOutcomeCommentsClose}
       />
     </div>
   )

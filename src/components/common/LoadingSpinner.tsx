@@ -7,11 +7,13 @@ import React from 'react'
 interface LoadingSpinnerProps {
   message?: string
   size?: 'small' | 'medium' | 'large'
+  'data-testid'?: string
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   message = 'Loading...',
   size = 'medium',
+  'data-testid': dataTestId = 'loading-spinner',
 }) => {
   const sizeClasses = {
     small: 'h-4 w-4',
@@ -23,6 +25,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     <div
       role="status"
       aria-live="polite"
+      data-testid={dataTestId}
       className="flex flex-col items-center justify-center py-8"
     >
       <div

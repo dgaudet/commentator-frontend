@@ -8,18 +8,21 @@ interface ErrorMessageProps {
   message: string
   onDismiss?: () => void
   className?: string
+  'data-testid'?: string
 }
 
 export const ErrorMessage: React.FC<ErrorMessageProps> = ({
   message,
   onDismiss,
   className = '',
+  'data-testid': dataTestId,
 }) => {
   return (
     <div
       role="alert"
       aria-live="assertive"
       className={`bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded relative ${className}`}
+      data-testid={dataTestId}
     >
       <div className="flex items-center justify-between">
         <span>{message}</span>
