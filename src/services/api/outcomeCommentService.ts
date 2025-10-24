@@ -1,7 +1,7 @@
 /**
  * Outcome Comments API Service
  * Service for managing outcome comments with REST API operations
- * 
+ *
  * Endpoints:
  * - GET /outcome-comment?classId={classId} - Get all outcome comments for a class
  * - POST /outcome-comment - Create new outcome comment
@@ -10,10 +10,10 @@
  */
 
 import { apiClient } from './apiClient'
-import type { 
-  OutcomeComment, 
-  CreateOutcomeCommentRequest, 
-  UpdateOutcomeCommentRequest
+import type {
+  OutcomeComment,
+  CreateOutcomeCommentRequest,
+  UpdateOutcomeCommentRequest,
 } from '../../types'
 
 export const outcomeCommentService = {
@@ -23,7 +23,7 @@ export const outcomeCommentService = {
   async getByClassId(classId: number): Promise<OutcomeComment[]> {
     try {
       const response = await apiClient.get<OutcomeComment[]>(
-        `/outcome-comment?classId=${classId}`
+        `/outcome-comment?classId=${classId}`,
       )
       return response.data
     } catch (error) {
@@ -38,13 +38,13 @@ export const outcomeCommentService = {
   async create(request: CreateOutcomeCommentRequest): Promise<OutcomeComment> {
     try {
       const response = await apiClient.post<OutcomeComment>(
-        `/outcome-comment`,
-        { 
+        '/outcome-comment',
+        {
           comment: request.comment,
           upperRange: request.upperRange,
           lowerRange: request.lowerRange,
-          classId: request.classId
-        }
+          classId: request.classId,
+        },
       )
       return response.data
     } catch (error) {
@@ -60,7 +60,7 @@ export const outcomeCommentService = {
     try {
       const response = await apiClient.put<OutcomeComment>(
         `/outcome-comment/${id}`,
-        request
+        request,
       )
       return response.data
     } catch (error) {
@@ -79,5 +79,5 @@ export const outcomeCommentService = {
       console.error('Failed to delete outcome comment:', error)
       throw new Error('Failed to delete outcome comment')
     }
-  }
+  },
 }

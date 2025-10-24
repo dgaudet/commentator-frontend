@@ -1,12 +1,12 @@
 /**
  * OutcomeCommentsModal Component
- * 
+ *
  * Modal for viewing, creating, editing, and deleting outcome comments for a class.
  * Implements CRUD operations with proper form validation and accessibility.
- * 
+ *
  * User Stories:
  * 1. View all outcome comments for a class
- * 2. Create new outcome comment for a class  
+ * 2. Create new outcome comment for a class
  * 3. Edit existing outcome comment
  * 4. Delete outcome comment with confirmation
  */
@@ -39,7 +39,7 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
   onUpdateComment,
   onDeleteComment,
   loading,
-  error
+  error,
 }) => {
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newUpperRange, setNewUpperRange] = useState<number | ''>('')
@@ -56,8 +56,8 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'short', 
-      day: 'numeric'
+      month: 'short',
+      day: 'numeric',
     })
   }
 
@@ -82,7 +82,7 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
       classId: classData.id,
       comment: newCommentContent.trim(),
       upperRange: Number(newUpperRange),
-      lowerRange: Number(newLowerRange)
+      lowerRange: Number(newLowerRange),
     })
     setNewCommentContent('')
     setNewUpperRange('')
@@ -117,7 +117,7 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
       await onUpdateComment(editingId, {
         comment: editContent.trim(),
         upperRange: Number(editUpperRange),
-        lowerRange: Number(editLowerRange)
+        lowerRange: Number(editLowerRange),
       })
       setEditingId(null)
       setEditContent('')
@@ -150,7 +150,7 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
   }
 
   return (
-    <div 
+    <div
       className="modal-overlay"
       role="dialog"
       aria-labelledby="modal-title"
@@ -236,66 +236,70 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
               {/* Comments List */}
               <div className="comments-list">
                 <h3>Existing Comments</h3>
-                {outcomeComments.length === 0 ? (
-                  <div className="empty-state">
-                    <p>No outcome comments found</p>
-                    <p className="empty-subtext">
-                      Be the first to add an outcome comment for this class.
-                    </p>
-                  </div>
-                ) : (
+                {outcomeComments.length === 0
+                  ? (
+                      <div className="empty-state">
+                        <p>No outcome comments found</p>
+                        <p className="empty-subtext">
+                          Be the first to add an outcome comment for this class.
+                        </p>
+                      </div>
+                    )
+                  : (
                   <div className="comments">
                     {outcomeComments.map((comment) => (
                       <div key={comment.id} className="comment-item">
-                        {editingId === comment.id ? (
-                          /* Edit Mode */
-                          <div className="edit-mode">
-                            <textarea
-                              value={editContent}
-                              onChange={(e) => setEditContent(e.target.value)}
-                              className="comment-textarea"
-                              rows={3}
-                            />
-                            <div className="score-range-inputs">
-                              <div className="form-group">
-                                <label htmlFor={`edit-lower-${comment.id}`}>Lower Range:</label>
-                                <input
-                                  id={`edit-lower-${comment.id}`}
-                                  type="number"
-                                  value={editLowerRange}
-                                  onChange={(e) => setEditLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
-                                  className="range-input"
+                        {editingId === comment.id
+                          ? (
+                            /* Edit Mode */
+                              <div className="edit-mode">
+                                <textarea
+                                  value={editContent}
+                                  onChange={(e) => setEditContent(e.target.value)}
+                                  className="comment-textarea"
+                                  rows={3}
                                 />
+                                <div className="score-range-inputs">
+                                  <div className="form-group">
+                                    <label htmlFor={`edit-lower-${comment.id}`}>Lower Range:</label>
+                                    <input
+                                      id={`edit-lower-${comment.id}`}
+                                      type="number"
+                                      value={editLowerRange}
+                                      onChange={(e) => setEditLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
+                                      className="range-input"
+                                    />
+                                  </div>
+                                  <div className="form-group">
+                                    <label htmlFor={`edit-upper-${comment.id}`}>Upper Range:</label>
+                                    <input
+                                      id={`edit-upper-${comment.id}`}
+                                      type="number"
+                                      value={editUpperRange}
+                                      onChange={(e) => setEditUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
+                                      className="range-input"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="edit-actions">
+                                  <Button
+                                    onClick={handleEditSave}
+                                    variant="primary"
+                                  >
+                                    Save
+                                  </Button>
+                                  <Button
+                                    onClick={handleEditCancel}
+                                    variant="secondary"
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
                               </div>
-                              <div className="form-group">
-                                <label htmlFor={`edit-upper-${comment.id}`}>Upper Range:</label>
-                                <input
-                                  id={`edit-upper-${comment.id}`}
-                                  type="number"
-                                  value={editUpperRange}
-                                  onChange={(e) => setEditUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
-                                  className="range-input"
-                                />
-                              </div>
-                            </div>
-                            <div className="edit-actions">
-                              <Button
-                                onClick={handleEditSave}
-                                variant="primary"
-                              >
-                                Save
-                              </Button>
-                              <Button
-                                onClick={handleEditCancel}
-                                variant="secondary"
-                              >
-                                Cancel
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          /* View Mode */
-                          <div className="view-mode">
+                            )
+                          : (
+                            /* View Mode */
+                              <div className="view-mode">
                             <div className="comment-content">
                               {comment.comment}
                             </div>
@@ -322,11 +326,11 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
                               </Button>
                             </div>
                           </div>
-                        )}
+                            )}
                       </div>
                     ))}
                   </div>
-                )}
+                    )}
               </div>
             </>
           )}

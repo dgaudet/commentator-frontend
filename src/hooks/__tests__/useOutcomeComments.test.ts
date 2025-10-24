@@ -20,20 +20,20 @@ describe('useOutcomeComments', () => {
     lowerRange: 75,
     comment: 'Test comment',
     createdAt: '2023-01-01T00:00:00Z',
-    updatedAt: '2023-01-01T00:00:00Z'
+    updatedAt: '2023-01-01T00:00:00Z',
   }
 
   const mockCreateRequest: CreateOutcomeCommentRequest = {
     classId: 1,
     upperRange: 85,
     lowerRange: 75,
-    comment: 'New comment'
+    comment: 'New comment',
   }
 
   const mockUpdateRequest: UpdateOutcomeCommentRequest = {
     upperRange: 90,
     lowerRange: 80,
-    comment: 'Updated comment'
+    comment: 'Updated comment',
   }
 
   beforeEach(() => {

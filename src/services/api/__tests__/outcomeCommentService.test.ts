@@ -8,6 +8,7 @@
  */
 import { outcomeCommentService } from '../outcomeCommentService'
 import { apiClient } from '../apiClient'
+import type { InternalAxiosRequestConfig } from 'axios'
 
 // Mock the API client to prevent actual HTTP requests
 jest.mock('../apiClient', () => ({
@@ -16,7 +17,7 @@ jest.mock('../apiClient', () => ({
     post: jest.fn(),
     put: jest.fn(),
     delete: jest.fn(),
-  }
+  },
 }))
 
 const mockApiClient = apiClient as jest.Mocked<typeof apiClient>
@@ -52,35 +53,35 @@ describe('OutcomeCommentService', () => {
     beforeEach(() => {
       // Reset all mocks and set up default return values
       jest.clearAllMocks()
-      
+
       // Mock successful responses for all API methods with proper AxiosResponse structure
-      mockApiClient.get.mockResolvedValue({ 
+      mockApiClient.get.mockResolvedValue({
         data: { data: [], success: true },
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as InternalAxiosRequestConfig,
       })
-      mockApiClient.post.mockResolvedValue({ 
+      mockApiClient.post.mockResolvedValue({
         data: { data: { id: 1, comment: 'test' }, success: true },
         status: 201,
         statusText: 'Created',
         headers: {},
-        config: {} as any
+        config: {} as InternalAxiosRequestConfig,
       })
-      mockApiClient.put.mockResolvedValue({ 
+      mockApiClient.put.mockResolvedValue({
         data: { data: { id: 1, comment: 'updated' }, success: true },
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as InternalAxiosRequestConfig,
       })
-      mockApiClient.delete.mockResolvedValue({ 
+      mockApiClient.delete.mockResolvedValue({
         data: { success: true },
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as InternalAxiosRequestConfig,
       })
     })
 
@@ -91,11 +92,11 @@ describe('OutcomeCommentService', () => {
     })
 
     it('create should accept request object', async () => {
-      const request = { 
-        classId: 1, 
+      const request = {
+        classId: 1,
         comment: 'Test comment',
         upperRange: 85,
-        lowerRange: 70
+        lowerRange: 70,
       }
       const result = await outcomeCommentService.create(request)
       expect(result).toBeDefined()
@@ -105,16 +106,16 @@ describe('OutcomeCommentService', () => {
           classId: 1,
           comment: 'Test comment',
           upperRange: 85,
-          lowerRange: 70
-        }
+          lowerRange: 70,
+        },
       )
     })
 
     it('update should accept request object', async () => {
-      const request = { 
+      const request = {
         comment: 'Updated comment',
         upperRange: 90,
-        lowerRange: 75
+        lowerRange: 75,
       }
       const result = await outcomeCommentService.update(1, request)
       expect(result).toBeDefined()
