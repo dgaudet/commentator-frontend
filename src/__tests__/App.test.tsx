@@ -269,7 +269,7 @@ describe('App', () => {
       })
 
       // Confirm deletion
-      const confirmButton = screen.getByRole('button', { name: /^Delete$/i })
+      const confirmButton = screen.getByRole('button', { name: /^delete$/i })
       act(() => {
         fireEvent.click(confirmButton)
       })
