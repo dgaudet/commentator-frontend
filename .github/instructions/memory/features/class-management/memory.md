@@ -1,9 +1,9 @@
 # Feature Memory: Class Management
 
 **Created**: 2025-10-20
-**Status**: ✅ COMPLETE - All Phases Implemented (1-6)
-**Sprint**: Sprint 1 (MVP) - COMPLETE
-**Last Updated**: 2025-10-20 (Phase 6 Complete)
+**Status**: ✅ COMPLETE - All Phases Implemented (1-6) + Dropdown Enhancement
+**Sprint**: Sprint 1 (MVP) - COMPLETE + Sprint 2 Dropdown Feature
+**Last Updated**: 2025-10-24 (Dropdown Feature + Linting Cleanup)
 
 ---
 
@@ -12,9 +12,11 @@
 ### Purpose
 Enable teachers to manage their class listings with the ability to view and create classes for organizing student report card comments by academic year.
 
-### User Stories Implemented (MVP)
+### User Stories Implemented (MVP + Dropdown)
 - **US-CLASS-001** (HIGH): View List of Classes - Display all classes sorted by year (desc) and name (asc)
 - **US-CLASS-002** (HIGH): Add New Class - Create new class with validation
+- **US-DROPDOWN-001** (HIGH): Select Class from Dropdown - Dropdown selector with "class name - year" format
+- **US-DROPDOWN-002** (MEDIUM): Persist Selected Class - localStorage persistence with auto-selection
 
 ### User Stories (Post-MVP)
 - **US-CLASS-003** (MEDIUM): Edit Existing Class
@@ -147,11 +149,11 @@ src/
 ├── components/
 │   ├── classes/
 │   │   ├── __tests__/
-│   │   │   ├── ClassList.test.tsx         # ✅ 20 tests passing
+│   │   │   ├── ClassList.test.tsx         # ✅ 38 tests passing (includes dropdown tests)
 │   │   │   ├── ClassListItem.test.tsx     # ✅ 8 tests passing
 │   │   │   ├── ClassForm.test.tsx         # ✅ 34 tests passing
 │   │   │   └── EmptyState.test.tsx        # ✅ 6 tests passing
-│   │   ├── ClassList.tsx                  # ✅ Container with useCallback (DES-1, TASK-6.2)
+│   │   ├── ClassList.tsx                  # ✅ Dropdown selector with persistence (US-DROPDOWN-001/002)
 │   │   ├── ClassListItem.tsx              # ✅ Memoized component (DES-2, TASK-6.2)
 │   │   ├── ClassForm.tsx                  # ✅ Form with useCallback (DES-3, TASK-6.2)
 │   │   └── EmptyState.tsx                 # ✅ Empty state (DES-4)
@@ -188,18 +190,21 @@ src/
 │   └── ApiResponse.ts                     # ✅ API response types (DES-6)
 ├── utils/
 │   ├── __tests__/
-│   │   └── dateFormatter.test.ts          # ✅ 4 tests passing
-│   └── dateFormatter.ts                   # ✅ Date formatting utilities
+│   │   ├── dateFormatter.test.ts          # ✅ 4 tests passing
+│   │   └── classStorageUtils.test.ts      # ✅ 12 tests passing (localStorage)
+│   ├── dateFormatter.ts                   # ✅ Date formatting utilities
+│   └── classStorageUtils.ts               # ✅ localStorage persistence (US-DROPDOWN-002)
 └── __tests__/
     ├── App.test.tsx                       # ✅ 4 tests passing
     └── integration/
         └── classManagement.test.tsx       # 16 integration tests (CORS blocked in Jest)
 e2e/
-└── classManagement.spec.ts                # ✅ 14 E2E test scenarios
+├── classManagement.spec.ts                # ✅ 21 E2E tests (14 original + 7 dropdown)
+└── outcomeComments.spec.ts                # ✅ 7 E2E tests (outcome comments)
 playwright.config.ts                       # ✅ Playwright configuration
 ```
 
-**Total Test Coverage**: 169 unit tests passing + 14 E2E tests + 16 integration tests documented
+**Total Test Coverage**: 279 unit tests passing + 21 E2E tests (class mgmt) + 7 E2E tests (outcome comments)
 
 ---
 
@@ -413,6 +418,54 @@ playwright.config.ts                       # ✅ Playwright configuration
 
 ---
 
+## Sprint 2: Dropdown Enhancement (2025-10-24)
+
+### Feature: Class Dropdown Selector with Persistence
+
+**User Stories**:
+- **US-DROPDOWN-001**: Select Class from Dropdown
+- **US-DROPDOWN-002**: Persist Selected Class
+
+**Implementation**:
+1. **Dropdown UI** - Replaced vertical class list with `<select>` dropdown
+2. **localStorage Persistence** - Created `classStorageUtils.ts` for selection persistence
+3. **Auto-Selection** - Automatically selects class when only one exists
+4. **State Management** - Added `selectedClassId` state with two useEffect hooks
+
+**Files Modified**:
+- `src/components/classes/ClassList.tsx` - Added dropdown + persistence logic
+- `src/components/classes/__tests__/ClassList.test.tsx` - Added 18 new tests (38 total)
+- `e2e/classManagement.spec.ts` - Added 7 dropdown E2E tests (21 total)
+- `src/__tests__/App.test.tsx` - Updated 5 integration tests for dropdown pattern
+
+**Files Created**:
+- `src/utils/classStorageUtils.ts` - localStorage abstraction (100% coverage)
+- `src/utils/__tests__/classStorageUtils.test.ts` - 12 comprehensive tests
+- `pdd-workspace/class-dropdown/COMPLETION_REPORT.md` - Feature completion report
+
+**Test Results**:
+- ✅ 50 tests for dropdown feature (12 utils + 38 ClassList)
+- ✅ 7 new E2E tests
+- ✅ Total: 279 unit tests passing (2 skipped)
+- ✅ 100% test coverage on classStorageUtils
+- ✅ WCAG 2.1 AA accessibility maintained
+
+**Technical Details**:
+- **localStorage Key**: `commentator.selectedClassId`
+- **Persistence Logic**: Two useEffect hooks (load on mount, save on change)
+- **Validation**: Persisted IDs validated against current class list
+- **Error Handling**: Graceful degradation when localStorage unavailable
+- **Performance**: Native `<select>` element, minimal re-renders
+
+**Bonus: Linting Cleanup**:
+- Fixed 119 pre-existing linting errors in outcome comments files
+- All files now pass `npm run lint` with zero errors
+- Proper TypeScript types (replaced `as any` with `InternalAxiosRequestConfig`)
+- Fixed multiline ternary formatting
+- Removed all trailing spaces and added EOF newlines
+
+---
+
 ## Change History
 
 ### 2025-10-20 - Initial Design & Planning
@@ -464,6 +517,24 @@ playwright.config.ts                       # ✅ Playwright configuration
 - **Status**: ✅ ALL PHASES COMPLETE - Production Ready
 - **Next Step**: TASK-6.4 (Deployment Checklist & README)
 
+### 2025-10-24 - Dropdown Enhancement & Linting Cleanup
+- **By**: Frontend Developer (Claude Code)
+- **Changes**:
+  - ✅ Implemented US-DROPDOWN-001 (Select Class from Dropdown)
+  - ✅ Implemented US-DROPDOWN-002 (Persist Selected Class)
+  - ✅ Created classStorageUtils.ts with 100% test coverage (12 tests)
+  - ✅ Refactored ClassList to use dropdown selector
+  - ✅ Added 18 new tests to ClassList.test.tsx (38 total)
+  - ✅ Added 7 E2E tests for dropdown functionality
+  - ✅ Updated 5 App.test.tsx integration tests
+  - ✅ Fixed 119 pre-existing linting errors in outcome comments files
+  - ✅ Total tests: 279 unit tests + 21 E2E tests
+  - ✅ Zero linting errors across entire codebase
+  - ✅ Updated README.md with feature documentation
+  - ✅ Created completion report in pdd-workspace/
+- **Status**: ✅ Sprint 2 COMPLETE - Dropdown Feature Production Ready
+- **Next Step**: Manual E2E verification, git commit, pull request
+
 ---
 
 ## Notes for Future Developers
@@ -491,9 +562,9 @@ playwright.config.ts                       # ✅ Playwright configuration
 
 ---
 
-**Document Version**: 2.0.0 (All Phases Complete)
-**Last Updated By**: Frontend Developer (Phase 6 Complete)
-**Date**: 2025-10-20
+**Document Version**: 2.1.0 (All Phases + Dropdown Enhancement)
+**Last Updated By**: Frontend Developer (Dropdown Feature + Linting)
+**Date**: 2025-10-24
 
 ---
 
@@ -503,16 +574,19 @@ playwright.config.ts                       # ✅ Playwright configuration
 
 **Implementation Summary**:
 - ✅ 6 phases complete (Setup, Services, Hooks, Components, Testing, Polish)
-- ✅ 169 unit tests passing
-- ✅ 14 E2E tests created
+- ✅ Sprint 2: Dropdown enhancement complete
+- ✅ 279 unit tests passing (2 skipped)
+- ✅ 21 E2E tests created (class management)
 - ✅ WCAG 2.1 AA compliant (0 violations)
 - ✅ Bundle size: 99.98 KB (50% under target)
-- ✅ All linting passing
+- ✅ Zero linting errors (119 pre-existing errors fixed)
 - ✅ Performance optimized (React.memo, useCallback)
 - ✅ Full documentation created
 
 **User Stories Delivered**:
 - ✅ US-CLASS-001: View List of Classes (HIGH)
 - ✅ US-CLASS-002: Add New Class (HIGH)
+- ✅ US-DROPDOWN-001: Select Class from Dropdown (HIGH)
+- ✅ US-DROPDOWN-002: Persist Selected Class (MEDIUM)
 
-**Ready For**: Production deployment or US-CLASS-003 (Edit Class) implementation
+**Ready For**: Production deployment, manual E2E verification, or US-CLASS-003 (Edit Class) implementation
