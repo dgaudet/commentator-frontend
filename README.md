@@ -2,7 +2,7 @@
 
 A React application for managing student report card comments. Teachers can create and manage classes, and associate comments with students for report card generation.
 
-[![Tests](https://img.shields.io/badge/tests-169%20passing-brightgreen)](.)
+[![Tests](https://img.shields.io/badge/tests-279%20passing-brightgreen)](.)
 [![Bundle Size](https://img.shields.io/badge/bundle-99.98%20KB%20gzipped-success)](.)
 [![Accessibility](https://img.shields.io/badge/WCAG-2.1%20AA-blue)](.)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue)](.)
@@ -13,18 +13,26 @@ A React application for managing student report card comments. Teachers can crea
 
 ### Class Management (MVP - Complete)
 
-- ✅ **View Classes**: Display all classes sorted by year (descending) and name (ascending)
+- ✅ **View Classes**: Dropdown selector with persistent selection across page reloads
 - ✅ **Add Classes**: Create new classes with validation (name + year)
+- ✅ **Class Selection**: Auto-selection for single class, localStorage persistence
 - ✅ **Form Validation**: Client-side and server-side validation with duplicate detection
 - ✅ **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation and screen reader support
 - ✅ **Performance**: Optimized bundle size (99.98 KB gzipped) with React.memo() and useCallback()
+
+### Outcome Comments Management (Complete)
+
+- ✅ **View Comments**: Display outcome comments filtered by class
+- ✅ **Add Comments**: Create outcome comments with score range validation
+- ✅ **Edit Comments**: Update existing comments with validation
+- ✅ **Delete Comments**: Remove comments with confirmation dialog
+- ✅ **Modal Interface**: Full CRUD operations in accessible modal
 
 ### Coming Soon
 
 - Edit existing classes
 - View class details
 - Delete classes
-- Outcome comments management
 - Personalized comments
 - Final comment generation
 
@@ -132,7 +140,7 @@ npm run test:e2e:ui       # Run E2E tests with UI mode
 npm run test:e2e:headed   # Run E2E tests in headed mode (visible browser)
 ```
 
-**Test Coverage**: 169 unit tests + 14 E2E test scenarios
+**Test Coverage**: 279 unit tests + 21 E2E test scenarios
 
 ### Code Quality
 
@@ -166,28 +174,35 @@ commentator-frontend/
 ├── src/
 │   ├── components/
 │   │   ├── classes/                     # Class management components
-│   │   │   ├── ClassList.tsx
+│   │   │   ├── ClassList.tsx            # Dropdown selector with persistence
 │   │   │   ├── ClassListItem.tsx
 │   │   │   ├── ClassForm.tsx
 │   │   │   └── EmptyState.tsx
+│   │   ├── outcomeComments/             # Outcome comments components
+│   │   │   └── OutcomeCommentsModal.tsx # Full CRUD modal interface
 │   │   └── common/                      # Reusable components
 │   │       ├── Button.tsx
 │   │       ├── Input.tsx
 │   │       ├── LoadingSpinner.tsx
-│   │       └── ErrorMessage.tsx
+│   │       ├── ErrorMessage.tsx
+│   │       └── ConfirmDialog.tsx
 │   ├── hooks/
-│   │   └── useClasses.ts                # CRUD hook for classes
+│   │   ├── useClasses.ts                # CRUD hook for classes
+│   │   └── useOutcomeComments.ts        # CRUD hook for outcome comments
 │   ├── services/
 │   │   ├── api/
 │   │   │   ├── apiClient.ts             # Axios HTTP client
-│   │   │   └── classService.ts          # Class API service
+│   │   │   ├── classService.ts          # Class API service
+│   │   │   └── outcomeCommentService.ts # Outcome comment API service
 │   │   └── validation/
 │   │       └── classValidation.ts       # Form validation
 │   ├── types/
 │   │   ├── Class.ts                     # Type definitions
+│   │   ├── OutcomeComment.ts
 │   │   └── ApiResponse.ts
 │   ├── utils/
-│   │   └── dateFormatter.ts             # Date formatting utilities
+│   │   ├── dateFormatter.ts             # Date formatting utilities
+│   │   └── classStorageUtils.ts         # localStorage persistence
 │   ├── App.tsx                          # Main app component
 │   └── main.tsx                         # React entry point
 ├── playwright.config.ts                 # Playwright configuration
@@ -259,11 +274,12 @@ cors({
 **Framework**: Jest + React Testing Library
 
 **Coverage**:
-- ✅ 169 tests passing
+- ✅ 279 tests passing (2 skipped)
 - ✅ 90%+ coverage across all layers
-- ✅ Services: 47 tests
-- ✅ Hooks: 16 tests
-- ✅ Components: 102 tests
+- ✅ Services: 50+ tests
+- ✅ Hooks: 20+ tests
+- ✅ Components: 180+ tests
+- ✅ Utils: 12+ tests
 
 **Running Tests**:
 ```bash
@@ -277,12 +293,9 @@ npm run test:coverage   # Generate coverage report
 **Framework**: Playwright
 
 **Coverage**:
-- ✅ 14 E2E test scenarios
-- ✅ US-CLASS-001: View List of Classes (3 tests)
-- ✅ US-CLASS-002: Add New Class (6 tests)
-- ✅ Complete workflows (1 test)
-- ✅ Accessibility (2 tests)
-- ✅ Loading/Error states (2 tests)
+- ✅ 21 E2E test scenarios
+- ✅ Class Management: 14 tests (view, add, dropdown, persistence, accessibility)
+- ✅ Outcome Comments: 7 tests (CRUD operations, validation, workflows)
 
 **Running E2E Tests**:
 ```bash
@@ -541,8 +554,9 @@ This project was developed following specification-first TDD methodology with co
 - Axios + date-fns
 
 **Quality Metrics**:
-- ✅ 169 unit tests passing
-- ✅ 14 E2E tests
+- ✅ 279 unit tests passing
+- ✅ 21 E2E tests
 - ✅ WCAG 2.1 AA compliant (0 violations)
 - ✅ 99.98 KB bundle (50% under target)
 - ✅ 90%+ test coverage
+- ✅ Zero linting errors

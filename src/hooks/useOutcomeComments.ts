@@ -6,10 +6,10 @@
 
 import { useState, useCallback } from 'react'
 import { outcomeCommentService } from '../services/api/outcomeCommentService'
-import type { 
-  OutcomeComment, 
-  CreateOutcomeCommentRequest, 
-  UpdateOutcomeCommentRequest 
+import type {
+  OutcomeComment,
+  CreateOutcomeCommentRequest,
+  UpdateOutcomeCommentRequest,
 } from '../types'
 
 interface UseOutcomeCommentsReturn {
@@ -70,8 +70,8 @@ export const useOutcomeComments = (): UseOutcomeCommentsReturn => {
     setError(null)
     try {
       const updatedComment = await outcomeCommentService.update(id, request)
-      setOutcomeComments(prev => 
-        prev.map(comment => comment.id === id ? updatedComment : comment)
+      setOutcomeComments(prev =>
+        prev.map(comment => comment.id === id ? updatedComment : comment),
       )
     } catch (error) {
       handleError(error, 'update outcome comment')
@@ -103,6 +103,6 @@ export const useOutcomeComments = (): UseOutcomeCommentsReturn => {
     createComment,
     updateComment,
     deleteComment,
-    clearError
+    clearError,
   }
 }

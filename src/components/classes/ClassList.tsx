@@ -1,10 +1,10 @@
 /**
  * ClassList Container Component
- * Displays list of classes with loading, error, and empty states
- * Reference: TASK-4.4, TASK-6.2, US-CLASS-001, US-CLASS-003, US-CLASS-005, DES-1, DES-16
+ * Displays dropdown selector for classes with single selected class view
+ * Reference: TASK-2.1, TASK-2.2, TASK-2.3, US-DROPDOWN-001, US-DROPDOWN-002, DES-1, DES-16
  * Performance: Uses useCallback for event handlers
  */
-import React, { useCallback } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { useClasses } from '../../hooks/useClasses'
 import { ClassListItem } from './ClassListItem'
 import { EmptyState } from './EmptyState'
@@ -12,6 +12,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { Class } from '../../types/Class'
+import { getSelectedClassId, saveSelectedClassId, clearSelectedClassId } from '../../utils/classStorageUtils'
 
 interface ClassListProps {
   onClassClick?: (classId: number) => void
@@ -38,10 +39,41 @@ export const ClassList: React.FC<ClassListProps> = ({
 }) => {
   const { classes, isLoading, error, clearError, deleteClass } = useClasses()
 
+  // TASK-2.1: Add state for selected class ID
+  const [selectedClassId, setSelectedClassId] = useState<number | null>(null)
+
+  // TASK-2.3: Load persisted selection on mount
+  // TASK-3.1: Auto-select if only one class exists
+  useEffect(() => {
+    const storedId = getSelectedClassId()
+    if (storedId !== null && classes.find(c => c.id === storedId)) {
+      // Persisted selection takes precedence
+      setSelectedClassId(storedId)
+    } else if (classes.length === 1) {
+      // Auto-select if only one class
+      setSelectedClassId(classes[0].id)
+    }
+  }, [classes]) // Re-run when classes load/change
+
+  // TASK-2.3: Save selection to localStorage when it changes
+  useEffect(() => {
+    if (selectedClassId !== null) {
+      saveSelectedClassId(selectedClassId)
+    } else {
+      clearSelectedClassId()
+    }
+  }, [selectedClassId])
+
   // Memoize event handlers to prevent re-creating functions on every render
   const handleClearError = useCallback(() => {
     clearError()
   }, [clearError])
+
+  // TASK-2.1: Handler for dropdown selection
+  const handleSelectClass = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    const classId = parseInt(event.target.value, 10)
+    setSelectedClassId(isNaN(classId) ? null : classId)
+  }, [])
 
   const handleAddClass = useCallback(() => {
     onAddClass?.()
@@ -100,7 +132,7 @@ export const ClassList: React.FC<ClassListProps> = ({
     return <EmptyState onCreateFirst={handleAddClass} />
   }
 
-  // Success state - render list of classes
+  // Success state - render dropdown selector + selected class
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -118,18 +150,46 @@ export const ClassList: React.FC<ClassListProps> = ({
         </div>
       )}
 
-      <div className="space-y-3">
-        {classes.map((classItem) => (
+      {/* TASK-2.1: Dropdown selector */}
+      <div className="mb-6">
+        <label htmlFor="class-selector" className="block text-sm font-medium text-gray-700 mb-2">
+          Select a Class
+        </label>
+        <select
+          id="class-selector"
+          value={selectedClassId ?? ''}
+          onChange={handleSelectClass}
+          disabled={isLoading}
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          aria-label="Select a class to view"
+        >
+          <option value="">
+            {isLoading ? 'Loading classes...' : 'Select a class...'}
+          </option>
+          {classes.map((classItem) => (
+            <option key={classItem.id} value={classItem.id}>
+              {classItem.name} - {classItem.year}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* TASK-2.2: Conditional single ClassListItem rendering */}
+      {selectedClassId && (() => {
+        const selectedClass = classes.find(c => c.id === selectedClassId)
+        return selectedClass
+          ? (
           <ClassListItem
-            key={classItem.id}
-            classItem={classItem}
+            key={selectedClass.id}
+            classItem={selectedClass}
             onView={handleClassClick}
             onEdit={onEdit ? handleEdit : undefined}
             onDelete={onDelete ? handleDelete : undefined}
             onViewOutcomeComments={onViewOutcomeComments ? handleViewOutcomeComments : undefined}
           />
-        ))}
-      </div>
+            )
+          : null
+      })()}
 
       {isLoading && (
         <div className="flex justify-center mt-4">

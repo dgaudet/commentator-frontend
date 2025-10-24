@@ -23,19 +23,32 @@ test.describe('Class Management E2E', () => {
       // Wait for classes to load (or empty state)
       await page.waitForTimeout(1000)
 
-      // Should show either classes or empty state
-      const hasClasses = await page.locator('[data-testid^="class-item-"]').count() > 0
+      // Should show either dropdown with classes or empty state
+      const dropdown = page.locator('select#class-selector')
+      const hasDropdown = await dropdown.isVisible()
+      const hasOptions = await page.locator('select#class-selector option').count() > 1 // More than just placeholder
       const hasEmptyState = await page.locator('text=No classes found').isVisible()
 
-      expect(hasClasses || hasEmptyState).toBeTruthy()
+      expect(hasDropdown || hasEmptyState).toBeTruthy()
+      if (hasDropdown) {
+        expect(hasOptions || hasEmptyState).toBeTruthy()
+      }
     })
 
     test('should display class details correctly', async ({ page }) => {
-      // Check if we have any classes
-      const classCount = await page.locator('[data-testid^="class-item-"]').count()
+      // Check if we have any classes in dropdown
+      const dropdown = page.locator('select#class-selector')
+      const options = await dropdown.locator('option').count()
 
-      if (classCount > 0) {
-        // Get first class item
+      if (options > 1) { // More than just placeholder
+        // Select first class from dropdown
+        const firstValue = await dropdown.locator('option').nth(1).getAttribute('value')
+        await dropdown.selectOption(firstValue!)
+
+        // Wait for ClassListItem to render
+        await page.waitForTimeout(500)
+
+        // Get the displayed class item
         const firstClass = page.locator('[data-testid^="class-item-"]').first()
 
         // Should display name
@@ -57,12 +70,12 @@ test.describe('Class Management E2E', () => {
       // Navigate to app
       await page.goto('/')
 
-      // Check if empty state OR classes are shown
+      // Check if empty state OR dropdown with classes are shown
       const emptyStateVisible = await page.locator('text=No classes found').isVisible().catch(() => false)
-      const classesVisible = await page.locator('[data-testid^="class-item-"]').count() > 0
+      const dropdownVisible = await page.locator('select#class-selector').isVisible()
 
       // One of these should be true
-      expect(emptyStateVisible || classesVisible).toBeTruthy()
+      expect(emptyStateVisible || dropdownVisible).toBeTruthy()
     })
   })
 
@@ -141,8 +154,9 @@ test.describe('Class Management E2E', () => {
         // Wait for form to close and class to appear
         await page.waitForTimeout(1000)
 
-        // Verify class appears in list
-        await expect(page.locator(`text=${uniqueName}`)).toBeVisible({ timeout: 5000 })
+        // Verify class appears in dropdown options
+        const optionWithName = page.locator(`select#class-selector option:has-text("${uniqueName}")`)
+        await expect(optionWithName).toHaveCount(1, { timeout: 5000 })
       }
     })
 
@@ -207,8 +221,9 @@ test.describe('Class Management E2E', () => {
         await page.waitForTimeout(1000)
       }
 
-      // 2. READ: Verify class appears in list
-      await expect(page.locator(`text=${className}`)).toBeVisible({ timeout: 5000 })
+      // 2. READ: Verify class appears in dropdown
+      const optionWithName = page.locator(`select#class-selector option:has-text("${className}")`)
+      await expect(optionWithName).toHaveCount(1, { timeout: 5000 })
 
       // 3. UPDATE: Edit class (if edit button exists)
       const editButton = page.locator(`[data-testid*="class-item"]:has-text("${className}") button:has-text("Edit")`).first()
@@ -276,6 +291,209 @@ test.describe('Class Management E2E', () => {
 
         // Should have either text content or aria-label
         expect(hasText || hasAriaLabel).toBeTruthy()
+      }
+    })
+  })
+
+  test.describe('US-DROPDOWN-001 & US-DROPDOWN-002: Class Dropdown Selector (TASK-4.2)', () => {
+    test('should display dropdown with all classes', async ({ page }) => {
+      // Wait for classes to load
+      await page.waitForTimeout(1000)
+
+      // Check if we have classes
+      const dropdownVisible = await page.locator('select#class-selector').isVisible().catch(() => false)
+
+      if (dropdownVisible) {
+        // Dropdown should be visible
+        await expect(page.locator('select#class-selector')).toBeVisible()
+
+        // Should have placeholder option (check count instead of visibility)
+        const placeholderCount = await page.locator('select#class-selector option:has-text("Select a class")').count()
+        expect(placeholderCount).toBeGreaterThan(0)
+
+        // Should have class options (if classes exist)
+        const optionCount = await page.locator('select#class-selector option').count()
+        expect(optionCount).toBeGreaterThan(0)
+      }
+    })
+
+    test('should select class and display ClassListItem', async ({ page }) => {
+      // Wait for classes to load
+      await page.waitForTimeout(1000)
+
+      const dropdownVisible = await page.locator('select#class-selector').isVisible().catch(() => false)
+
+      if (dropdownVisible) {
+        // Get dropdown options (excluding placeholder)
+        const options = await page.locator('select#class-selector option[value]:not([value=""])').all()
+
+        if (options.length > 0) {
+          // Select first class
+          const firstOption = options[0]
+          const value = await firstOption.getAttribute('value')
+
+          await page.selectOption('select#class-selector', value!)
+
+          // ClassListItem should appear
+          await expect(page.locator(`[data-testid="class-item-${value}"]`)).toBeVisible({ timeout: 2000 })
+
+          // Dropdown should remain visible
+          await expect(page.locator('select#class-selector')).toBeVisible()
+        }
+      }
+    })
+
+    test('should persist selected class across page reload', async ({ page }) => {
+      // Wait for classes to load
+      await page.waitForTimeout(1000)
+
+      const dropdownVisible = await page.locator('select#class-selector').isVisible().catch(() => false)
+
+      if (dropdownVisible) {
+        // Get dropdown options
+        const options = await page.locator('select#class-selector option[value]:not([value=""])').all()
+
+        if (options.length > 0) {
+          // Select a class
+          const firstOption = options[0]
+          const value = await firstOption.getAttribute('value')
+          await page.selectOption('select#class-selector', value!)
+
+          // Wait for selection to be saved to localStorage
+          await page.waitForTimeout(1000)
+
+          // Reload page
+          await page.reload()
+          await page.waitForLoadState('networkidle')
+          await page.waitForTimeout(1500)
+
+          // Selection should persist (give more time for localStorage to load)
+          const dropdown = page.locator('select#class-selector')
+          await expect(dropdown).toHaveValue(value!, { timeout: 3000 })
+
+          // ClassListItem should still be visible
+          await expect(page.locator(`[data-testid="class-item-${value}"]`)).toBeVisible({ timeout: 2000 })
+        }
+      }
+    })
+
+    test('should allow changing selection', async ({ page }) => {
+      // Wait for classes to load
+      await page.waitForTimeout(1000)
+
+      const dropdownVisible = await page.locator('select#class-selector').isVisible().catch(() => false)
+
+      if (dropdownVisible) {
+        // Get dropdown options
+        const options = await page.locator('select#class-selector option[value]:not([value=""])').all()
+
+        if (options.length >= 2) {
+          // Select first class
+          const firstOption = options[0]
+          const firstValue = await firstOption.getAttribute('value')
+          await page.selectOption('select#class-selector', firstValue!)
+          await page.waitForTimeout(300)
+
+          // First class should be visible
+          await expect(page.locator(`[data-testid="class-item-${firstValue}"]`)).toBeVisible()
+
+          // Select second class
+          const secondOption = options[1]
+          const secondValue = await secondOption.getAttribute('value')
+          await page.selectOption('select#class-selector', secondValue!)
+          await page.waitForTimeout(300)
+
+          // Second class should be visible, first should be hidden
+          await expect(page.locator(`[data-testid="class-item-${secondValue}"]`)).toBeVisible()
+          await expect(page.locator(`[data-testid="class-item-${firstValue}"]`)).not.toBeVisible()
+        }
+      }
+    })
+
+    test('should auto-select when only one class exists', async ({ page }) => {
+      // This test requires a database with exactly one class
+      // It's more of a manual test scenario, but we can check the behavior
+
+      await page.waitForTimeout(1000)
+
+      const dropdownVisible = await page.locator('select#class-selector').isVisible().catch(() => false)
+
+      if (dropdownVisible) {
+        const options = await page.locator('select#class-selector option[value]:not([value=""])').all()
+
+        if (options.length === 1) {
+          // Should auto-select the only class
+          const value = await options[0].getAttribute('value')
+          const dropdown = page.locator('select#class-selector')
+
+          await expect(dropdown).toHaveValue(value!)
+
+          // ClassListItem should be visible
+          await expect(page.locator(`[data-testid="class-item-${value}"]`)).toBeVisible()
+        }
+      }
+    })
+
+    test('should support keyboard navigation', async ({ page }) => {
+      await page.waitForTimeout(1000)
+
+      const dropdownVisible = await page.locator('select#class-selector').isVisible().catch(() => false)
+
+      if (dropdownVisible) {
+        // Focus dropdown with keyboard
+        await page.keyboard.press('Tab')
+
+        // Dropdown should be focusable
+        const focusedElement = await page.evaluate(() => document.activeElement?.tagName)
+        expect(['SELECT', 'BUTTON', 'INPUT'].includes(focusedElement || '')).toBeTruthy()
+
+        // Can navigate with arrow keys and select with Enter
+        // (Native <select> behavior, already tested by browser)
+      }
+    })
+
+    test('should clear selection when deleted class was selected', async ({ page }) => {
+      // This is a complex scenario requiring:
+      // 1. Select a class
+      // 2. Delete that class
+      // 3. Verify selection is cleared
+
+      await page.waitForTimeout(1000)
+
+      const dropdownVisible = await page.locator('select#class-selector').isVisible().catch(() => false)
+
+      if (dropdownVisible) {
+        const options = await page.locator('select#class-selector option[value]:not([value=""])').all()
+
+        if (options.length > 0) {
+          // Select a class
+          const firstValue = await options[0].getAttribute('value')
+          await page.selectOption('select#class-selector', firstValue!)
+          await page.waitForTimeout(500)
+
+          // Try to delete it (if delete button exists)
+          const deleteButton = page.locator(`[data-testid="class-item-${firstValue}"] button:has-text("Delete")`).first()
+
+          if (await deleteButton.isVisible().catch(() => false)) {
+            await deleteButton.click()
+
+            // Confirm deletion if modal appears
+            const confirmButton = page.locator('button:has-text("Confirm"), button:has-text("Yes"), button:has-text("Delete")').first()
+            if (await confirmButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+              await confirmButton.click()
+            }
+
+            await page.waitForTimeout(2000) // Give time for deletion and state update
+
+            // After deletion, the class should not be in the dropdown
+            const optionStillExists = await page.locator(`select#class-selector option[value="${firstValue}"]`).count()
+            expect(optionStillExists).toBe(0)
+
+            // And the ClassListItem should not be visible (selection cleared)
+            const classItemVisible = await page.locator(`[data-testid="class-item-${firstValue}"]`).isVisible().catch(() => false)
+            expect(classItemVisible).toBeFalsy()
+          }
+        }
       }
     })
   })

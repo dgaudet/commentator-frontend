@@ -1,0 +1,105 @@
+{
+  "aiModels": {
+    "preferred": "claude-3-5-sonnet",
+    "fallback": "gpt-4",
+    "available": [
+      "claude-3-5-sonnet",
+      "gpt-4",
+      "gpt-4-turbo",
+      "claude-3-opus",
+      "claude-3-haiku"
+    ]
+  },
+  "conversationTracking": {
+    "enabled": true,
+    "logDirectory": ".pdd",
+    "autoFeatureDetection": true,
+    "hybridLogging": true
+  },
+  "personas": [
+    {
+      "name": "backend-engineer",
+      "role": "Principal Backend Engineer",
+      "promptFile": "personas/backend-engineer.md",
+      "active": false
+    },
+    {
+      "name": "business-analyst",
+      "role": "Principal Business Analyst",
+      "promptFile": "personas/business-analyst.md",
+      "active": false
+    },
+    {
+      "name": "creative-strategist",
+      "role": "Principal Creative Strategist",
+      "promptFile": "personas/creative-strategist.md",
+      "active": false
+    },
+    {
+      "name": "data-engineer",
+      "role": "Principal Data Engineer",
+      "promptFile": "personas/data-engineer.md",
+      "active": false
+    },
+    {
+      "name": "devops-engineer",
+      "role": "Principal DevOps Engineer",
+      "promptFile": "personas/devops-engineer.md",
+      "active": false
+    },
+    {
+      "name": "frontend-engineer",
+      "role": "Principal Frontend Engineer",
+      "promptFile": "personas/frontend-engineer.md",
+      "active": false
+    },
+    {
+      "name": "product-owner",
+      "role": "Principal Product Owner",
+      "promptFile": "personas/product-owner.md",
+      "active": false
+    },
+    {
+      "name": "qa-engineer",
+      "role": "Principal QA Engineer",
+      "promptFile": "personas/qa-engineer.md",
+      "active": false
+    },
+    {
+      "name": "security-engineer",
+      "role": "Principal Security Engineer",
+      "promptFile": "personas/security-engineer.md",
+      "active": false
+    },
+    {
+      "name": "system-architect",
+      "role": "Principal System Architect",
+      "promptFile": "personas/system-architect.md",
+      "active": false
+    },
+    {
+      "name": "technical-writer",
+      "role": "Principal Technical Writer",
+      "promptFile": "personas/technical-writer.md",
+      "active": false
+    }
+  ],
+  "opencode": {
+    "autoSave": true,
+    "smartCompletion": true,
+    "contextAware": true,
+    "seamlessHandoffs": {
+      "enabled": true,
+      "handoffTrigger": "@handoff",
+      "autoTerminate": true
+    }
+  },
+  "integration": {
+    "pddFramework": {
+      "enabled": true,
+      "version": "0.2.0",
+      "featureDirectories": true,
+      "conversationLogging": true
+    }
+  }
+}

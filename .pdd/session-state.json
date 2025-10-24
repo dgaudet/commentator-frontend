@@ -5,14 +5,32 @@
     "name": "commentator-frontend"
   },
   "latest": {
-    "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/qa-engineer-1761245670964.md",
-    "timestamp": 1761245670964,
-    "persona": "qa-engineer",
+    "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/Frontend Developer-1761341503576.md",
+    "timestamp": 1761341503576,
+    "persona": "Frontend Developer",
     "feature": "user-outcomecomments-clicking",
-    "task": "Critical outcome comments CRUD functionality failures - delete and update operations failing in production. Feature implementation complete with 244/244 tests passing, but user reports 'I can't delete an outcome comment' and 'I can't update an outcome comment either'. See HANDOFF_TO_QA.md for comprehensive testing documentation. Priority: Investigate delete/update operations in browser environment.",
+    "task": "Implement class dropdown feature following TDD methodology. See technical design at pdd-workspace/class-dropdown/architecture/tech-spec.md for complete implementation plan with 8 atomic tasks (Red-Green-Refactor cycle). Key changes: Add dropdown UI to ClassList component, create classStorageUtils for localStorage persistence, maintain all existing functionality. Target: 2 days, 90%+ test coverage, WCAG 2.1 AA compliance.",
     "type": "handoff"
   },
   "history": [
+    {
+      "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/Frontend Developer-1761341503576.md",
+      "timestamp": 1761341503576,
+      "persona": "Frontend Developer",
+      "feature": "user-outcomecomments-clicking",
+      "task": "Implement class dropdown feature following TDD methodology. See technical design at pdd-workspace/class-dropdown/architecture/tech-spec.md for complete implementation plan with 8 atomic tasks (Red-Green-Refactor cycle). Key changes: Add dropdown UI to ClassList component, create classStorageUtils for localStorage persistence, maintain all existing functionality. Target: 2 days, 90%+ test coverage, WCAG 2.1 AA compliance.",
+      "type": "handoff",
+      "id": "handoff-1761341503576"
+    },
+    {
+      "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/System Architect-1761340103568.md",
+      "timestamp": 1761340103568,
+      "persona": "System Architect",
+      "feature": "user-outcomecomments-clicking",
+      "task": "Quick technical design for class dropdown refactor\n\n## Context\nI've completed the product requirements for a class dropdown selector feature (L1-MICRO complexity, ~1 week, 8 story points total).\n\n## Feature Overview\nTransform the existing ClassList component from a vertical list display into a dropdown selector where:\n1. User selects a class from dropdown (format: 'name - year')\n2. Selected class's ClassListItem displays below the dropdown\n3. Dropdown remains visible for easy class switching\n4. Selection persists in localStorage across sessions\n\n## User Stories (2 total - 8 story points)\n- **US-DROPDOWN-001**: Select Class from Dropdown (5 pts, HIGH)\n- **US-DROPDOWN-002**: Persist Selected Class (3 pts, MEDIUM)\n\n## Key Requirements\n- Refactor existing ClassList component (src/components/classes/ClassList.tsx)\n- Reuse ClassListItem component for selected class display\n- Use native HTML <select> for accessibility (MVP - no custom dropdown)\n- Integrate with existing useClasses hook\n- Maintain all existing functionality (Add, Edit, Delete, View Outcome Comments)\n- Persist selection in localStorage (key: commentator.selectedClassId)\n- Handle edge cases: deleted classes, empty list, API errors\n\n## Technical Constraints\n- Must maintain 90%+ test coverage\n- Must pass WCAG 2.1 AA accessibility audit\n- No API changes required (uses existing GET /class)\n- Must work with existing Class type and useClasses hook\n\n## Existing Architecture\n- ClassList currently renders array of ClassListItem components\n- useClasses hook provides: classes[], isLoading, error, clearError, deleteClass\n- ClassListItem accepts: classItem, onView, onEdit, onDelete, onViewOutcomeComments\n\n## What I Need From You\n1. **Component Architecture**: How to refactor ClassList (new components? state structure?)\n2. **State Management**: Local state vs. custom hook? How to handle persistence?\n3. **localStorage Utilities**: Pattern for get/set/validate stored class ID\n4. **TDD Task Breakdown**: Atomic tasks with Red-Green-Refactor sequence\n5. **Risk Assessment**: Potential issues with component refactoring\n\n## Reference Artifacts\n- Complete PRD: pdd-workspace/class-dropdown/planning/minimal-prd.md\n- Existing ClassList: src/components/classes/ClassList.tsx\n- Existing ClassListItem: src/components/classes/ClassListItem.tsx (user is currently viewing this file)\n- Class type: src/types/Class.ts\n\n## Request\nPlease create a quick technical design following the specification-first TDD methodology. The design should be production-ready and enable the frontend developer to implement with confidence.\n\n**Architecture Review Status**: SKIPPED (L1-MICRO - this is a quick design review, not a formal architecture gate)",
+      "type": "handoff",
+      "id": "handoff-1761340103568"
+    },
     {
       "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/qa-engineer-1761245670964.md",
       "timestamp": 1761245670964,
@@ -60,11 +78,11 @@
     }
   ],
   "statistics": {
-    "totalContextsGenerated": 5,
-    "totalHandoffs": 3,
+    "totalContextsGenerated": 7,
+    "totalHandoffs": 5,
     "mostUsedPersona": "product-owner",
-    "lastActive": "2025-10-23T18:54:30.975Z"
+    "lastActive": "2025-10-24T21:31:43.582Z"
   },
   "created": "2025-10-22T18:14:27.468Z",
-  "updated": "2025-10-23T18:54:30.975Z"
+  "updated": "2025-10-24T21:31:43.582Z"
 }
