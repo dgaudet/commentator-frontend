@@ -1,0 +1,55 @@
+{
+  "feature": "class-dropdown",
+  "complexity": {
+    "level": "L1-MICRO",
+    "reasoning": "Small feature with 1-2 user stories, ~1 week duration, simple Class API integration, small team (frontend + QA), no external dependencies or migrations. Straightforward UI reorganization with state persistence.",
+    "assessedAt": "2025-10-24",
+    "scopeAssessment": {
+      "storyCount": "1-2 stories",
+      "duration": "~1 week",
+      "epicCount": 1
+    },
+    "technicalAssessment": {
+      "externalIntegrations": false,
+      "dataMigrations": false,
+      "performanceCritical": false,
+      "apiChanges": "none - uses existing Class API"
+    },
+    "teamAssessment": {
+      "teamSize": "small (2 people)",
+      "specializedSkills": false,
+      "complianceRequirements": false
+    }
+  },
+  "artifacts": {
+    "required": ["minimal-prd.md", "tech-spec.md"],
+    "optional": [],
+    "architectureReview": "SKIPPED"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "design": "COMPLETE",
+    "implementation": "NOT_STARTED",
+    "validation": "NOT_STARTED"
+  },
+  "createdAt": "2025-10-24",
+  "updatedAt": "2025-10-24",
+  "designCompletedAt": "2025-10-24",
+  "designCompletedBy": "system-architect-persona",
+  "userStories": [
+    {
+      "id": "US-DROPDOWN-001",
+      "title": "Select Class from Dropdown",
+      "priority": "HIGH",
+      "effort": 5,
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "US-DROPDOWN-002",
+      "title": "Persist Selected Class",
+      "priority": "MEDIUM",
+      "effort": 3,
+      "status": "NOT_STARTED"
+    }
+  ]
+}
