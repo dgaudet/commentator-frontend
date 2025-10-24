@@ -43,7 +43,7 @@ function App() {
     createComment,
     updateComment,
     deleteComment,
-    clearError: clearOutcomeCommentsError
+    clearError: clearOutcomeCommentsError,
   } = useOutcomeComments()
 
   const handleAddClass = () => {

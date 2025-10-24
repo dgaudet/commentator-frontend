@@ -177,7 +177,8 @@ export const ClassList: React.FC<ClassListProps> = ({
       {/* TASK-2.2: Conditional single ClassListItem rendering */}
       {selectedClassId && (() => {
         const selectedClass = classes.find(c => c.id === selectedClassId)
-        return selectedClass ? (
+        return selectedClass
+          ? (
           <ClassListItem
             key={selectedClass.id}
             classItem={selectedClass}
@@ -186,7 +187,8 @@ export const ClassList: React.FC<ClassListProps> = ({
             onDelete={onDelete ? handleDelete : undefined}
             onViewOutcomeComments={onViewOutcomeComments ? handleViewOutcomeComments : undefined}
           />
-        ) : null
+            )
+          : null
       })()}
 
       {isLoading && (

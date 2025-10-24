@@ -80,7 +80,7 @@ describe('ClassList', () => {
       expect(screen.getByText('Failed to fetch classes')).toBeInTheDocument()
     })
 
-    it('should show error message above list when error and classes exist', () => {
+    it('should show error message above dropdown when error and classes exist', () => {
       mockUseClasses.mockReturnValue({
         classes: mockClasses,
         isLoading: false,
@@ -94,7 +94,8 @@ describe('ClassList', () => {
 
       render(<ClassList />)
       expect(screen.getByText('Something went wrong')).toBeInTheDocument()
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+      // Dropdown should still be visible
+      expect(screen.getByRole('combobox', { name: /select a class/i })).toBeInTheDocument()
     })
   })
 
@@ -134,7 +135,7 @@ describe('ClassList', () => {
   })
 
   describe('success state', () => {
-    it('should render list of classes', () => {
+    it('should render dropdown with all classes as options', () => {
       mockUseClasses.mockReturnValue({
         classes: mockClasses,
         isLoading: false,
@@ -147,9 +148,10 @@ describe('ClassList', () => {
       })
 
       render(<ClassList />)
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-      expect(screen.getByText('English 201')).toBeInTheDocument()
-      expect(screen.getByText('Science 301')).toBeInTheDocument()
+      // Dropdown should contain all classes
+      expect(screen.getByRole('option', { name: 'Mathematics 101 - 2024' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'English 201 - 2024' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'Science 301 - 2025' })).toBeInTheDocument()
     })
 
     it('should render "Your Classes" heading', () => {
@@ -201,7 +203,7 @@ describe('ClassList', () => {
       expect(screen.queryByRole('button', { name: /add class/i })).not.toBeInTheDocument()
     })
 
-    it('should render all classes from hook', () => {
+    it('should render all classes from hook in dropdown', () => {
       // Note: useClasses hook already handles sorting (tested in its own tests)
       mockUseClasses.mockReturnValue({
         classes: mockClasses,
@@ -215,10 +217,10 @@ describe('ClassList', () => {
       })
 
       render(<ClassList />)
-      // Verify all classes are rendered
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-      expect(screen.getByText('English 201')).toBeInTheDocument()
-      expect(screen.getByText('Science 301')).toBeInTheDocument()
+      // Verify all classes are in dropdown options
+      expect(screen.getByRole('option', { name: 'Mathematics 101 - 2024' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'English 201 - 2024' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'Science 301 - 2025' })).toBeInTheDocument()
     })
 
     it('should show loading spinner while background loading', () => {
@@ -234,14 +236,14 @@ describe('ClassList', () => {
       })
 
       render(<ClassList />)
-      // Should show list AND loading indicator
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+      // Should show dropdown AND loading indicator
+      expect(screen.getByRole('combobox', { name: /select a class/i })).toBeInTheDocument()
       expect(screen.getByText('Updating...')).toBeInTheDocument()
     })
   })
 
   describe('interactions', () => {
-    it('should pass onClassClick to ClassListItem when provided', () => {
+    it('should pass onClassClick to ClassListItem when class selected', () => {
       const handleClick = jest.fn()
       mockUseClasses.mockReturnValue({
         classes: [mockClasses[0]],
@@ -255,11 +257,11 @@ describe('ClassList', () => {
       })
 
       render(<ClassList onClassClick={handleClick} />)
-      // ClassListItem should be rendered (we tested its click handler in its own tests)
+      // With single class, it should auto-select
       expect(screen.getByTestId('class-item-1')).toBeInTheDocument()
     })
 
-    it('should pass onEdit callback to ClassListItem when provided', () => {
+    it('should pass onEdit callback to ClassListItem when class selected', () => {
       const handleEdit = jest.fn()
       mockUseClasses.mockReturnValue({
         classes: [mockClasses[0]],
@@ -274,7 +276,7 @@ describe('ClassList', () => {
 
       render(<ClassList onEdit={handleEdit} />)
 
-      // Edit button should be present
+      // With single class, it auto-selects - Edit button should be present
       const editButton = screen.getByRole('button', { name: /edit mathematics 101/i })
       expect(editButton).toBeInTheDocument()
 
@@ -286,7 +288,7 @@ describe('ClassList', () => {
       expect(handleEdit).toHaveBeenCalledWith(mockClasses[0])
     })
 
-    it('should pass onDelete callback to ClassListItem when provided', () => {
+    it('should pass onDelete callback to ClassListItem when class selected', () => {
       const handleDelete = jest.fn()
       const mockDeleteClass = jest.fn().mockResolvedValue(undefined)
 
@@ -303,7 +305,7 @@ describe('ClassList', () => {
 
       render(<ClassList onDelete={handleDelete} />)
 
-      // Delete button should be present
+      // With single class, it auto-selects - Delete button should be present
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
       expect(deleteButton).toBeInTheDocument()
 
@@ -696,6 +698,157 @@ describe('ClassList', () => {
       // Should use persisted selection, not auto-select
       expect(screen.getByTestId('class-item-2')).toBeInTheDocument()
       expect(screen.queryByTestId('class-item-1')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('accessibility (TASK-4.1)', () => {
+    beforeEach(() => {
+      const mockGetSelectedClassId = classStorageUtils.getSelectedClassId as jest.MockedFunction<typeof classStorageUtils.getSelectedClassId>
+      mockGetSelectedClassId.mockReturnValue(null)
+    })
+
+    it('should have accessible combobox role for dropdown', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      expect(dropdown).toBeInTheDocument()
+    })
+
+    it('should have proper aria-label on dropdown', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByLabelText('Select a class to view')
+      expect(dropdown).toBeInTheDocument()
+      expect(dropdown.tagName).toBe('SELECT')
+    })
+
+    it('should have accessible label element linked to dropdown', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const label = screen.getByText('Select a Class')
+      const dropdown = screen.getByRole('combobox')
+
+      expect(label).toBeInTheDocument()
+      expect(label.tagName).toBe('LABEL')
+      expect(label.getAttribute('for')).toBe('class-selector')
+      expect(dropdown.getAttribute('id')).toBe('class-selector')
+    })
+
+    it('should support keyboard navigation (Tab to dropdown)', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox')
+
+      // Dropdown should be focusable
+      dropdown.focus()
+      expect(document.activeElement).toBe(dropdown)
+    })
+
+    it('should support keyboard selection (Arrow keys + Enter)', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox') as HTMLSelectElement
+
+      // Focus dropdown
+      dropdown.focus()
+
+      // Simulate selecting with keyboard
+      fireEvent.change(dropdown, { target: { value: '2' } })
+
+      // Should update selection
+      expect(dropdown.value).toBe('2')
+      expect(screen.getByTestId('class-item-2')).toBeInTheDocument()
+    })
+
+    it('should announce loading state to screen readers', () => {
+      mockUseClasses.mockReturnValue({
+        classes: [],
+        isLoading: true,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const loadingSpinner = screen.getByRole('status')
+      expect(loadingSpinner).toBeInTheDocument()
+      expect(loadingSpinner).toHaveAttribute('aria-live', 'polite')
+    })
+
+    it('should maintain focus on dropdown after selection', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox') as HTMLSelectElement
+
+      // Focus and select
+      dropdown.focus()
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      // Dropdown should still be in the DOM (not removed)
+      expect(screen.getByRole('combobox')).toBeInTheDocument()
     })
   })
 })

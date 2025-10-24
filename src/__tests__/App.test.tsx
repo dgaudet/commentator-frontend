@@ -57,7 +57,7 @@ describe('App', () => {
   it('renders without crashing', async () => {
     // Mock API to prevent network errors during component mounting
     mockClassService.getAll.mockResolvedValue([])
-    
+
     act(() => {
       render(<App />)
     })
@@ -69,7 +69,7 @@ describe('App', () => {
   it('displays the application title', async () => {
     // Mock API to prevent network errors during component mounting
     mockClassService.getAll.mockResolvedValue([])
-    
+
     act(() => {
       render(<App />)
     })
@@ -81,7 +81,7 @@ describe('App', () => {
   it('displays the subtitle', async () => {
     // Mock API to prevent network errors during component mounting
     mockClassService.getAll.mockResolvedValue([])
-    
+
     act(() => {
       render(<App />)
     })
@@ -93,7 +93,7 @@ describe('App', () => {
   it('renders the ClassList component', async () => {
     // Setup: Mock API to return classes so ClassList renders with "Your Classes" heading
     mockClassService.getAll.mockResolvedValue(mockClasses)
-    
+
     act(() => {
       render(<App />)
     })
@@ -107,7 +107,7 @@ describe('App', () => {
   it('allows users to interact with class management features', async () => {
     // Setup: Mock API to return classes so ClassList shows "Add Class" button
     mockClassService.getAll.mockResolvedValue(mockClasses)
-    
+
     act(() => {
       render(<App />)
     })
@@ -124,12 +124,12 @@ describe('App', () => {
     beforeEach(() => {
       // Clear all mocks completely for this test suite
       jest.clearAllMocks()
-      
+
       // Set up fresh mock implementations for each test
       mockClassService.create.mockResolvedValue(mockClasses[0])
       mockClassService.update.mockResolvedValue(mockClasses[0])
       mockClassService.delete.mockResolvedValue({ message: 'Deleted', deletedClass: mockClasses[0] })
-      
+
       // Additional cleanup for this test suite
       cleanup()
       // Increment key to force component remounting
@@ -149,10 +149,21 @@ describe('App', () => {
         render(<App key={testKey} />)
       })
 
-      // Wait for classes to load
+      // Wait for classes to load in dropdown
+      await waitFor(() => {
+        const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        expect(dropdown).toBeInTheDocument()
+      })
+
+      // Select Mathematics 101 from dropdown to display the ClassListItem
+      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      act(() => {
+        fireEvent.change(dropdown, { target: { value: '1' } })
+      })
+
+      // Wait for ClassListItem to render
       await waitFor(() => {
         expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
-        expect(screen.getByText('English 201')).toBeInTheDocument()
       })
 
       // Click delete button for Mathematics 101
@@ -186,13 +197,20 @@ describe('App', () => {
       expect(mockClassService.delete).toHaveBeenCalledWith(1)
       expect(mockClassService.delete).toHaveBeenCalledTimes(1)
 
-      // CRITICAL: Verify the class was removed from the UI
+      // CRITICAL: Verify the class was removed from the dropdown options
       await waitFor(() => {
-        expect(screen.queryByText('Mathematics 101')).not.toBeInTheDocument()
+        const updatedDropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        const mathOption = Array.from(updatedDropdown.querySelectorAll('option')).find(
+          option => option.textContent?.includes('Mathematics 101'),
+        )
+        expect(mathOption).toBeUndefined()
       })
 
-      // Verify other class is still there
-      expect(screen.getByText('English 201')).toBeInTheDocument()
+      // Verify other class is still in dropdown
+      const englishOption = Array.from(dropdown.querySelectorAll('option')).find(
+        option => option.textContent?.includes('English 201'),
+      )
+      expect(englishOption).toBeDefined()
     })
 
     it('should close dialog and keep class when deletion is cancelled', async () => {
@@ -208,7 +226,13 @@ describe('App', () => {
         expect(screen.getByRole('heading', { name: /your classes/i })).toBeInTheDocument()
       })
 
-      // Wait for Mathematics 101 to appear
+      // Select Mathematics 101 from dropdown
+      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      act(() => {
+        fireEvent.change(dropdown, { target: { value: '1' } })
+      })
+
+      // Wait for ClassListItem to render
       await waitFor(() => {
         expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
       })
@@ -238,7 +262,7 @@ describe('App', () => {
       // Verify deleteClass API was NOT called
       expect(mockClassService.delete).not.toHaveBeenCalled()
 
-      // Verify class is still in the list
+      // Verify class is still in the ClassListItem
       expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
     })
 
@@ -252,7 +276,19 @@ describe('App', () => {
         render(<App key={testKey} />)
       })
 
-      // Wait for classes to load
+      // Wait for dropdown to load
+      await waitFor(() => {
+        const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        expect(dropdown).toBeInTheDocument()
+      })
+
+      // Select Mathematics 101 from dropdown
+      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      act(() => {
+        fireEvent.change(dropdown, { target: { value: '1' } })
+      })
+
+      // Wait for ClassListItem to render
       await waitFor(() => {
         expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
       })
@@ -279,7 +315,7 @@ describe('App', () => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       })
 
-      // Class should still be in list (delete failed)
+      // Class should still be in ClassListItem (delete failed)
       expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
     })
   })
@@ -291,7 +327,16 @@ describe('App', () => {
 
       render(<App />)
 
-      // Wait for classes to load
+      // Wait for dropdown to appear and select Mathematics 101
+      await waitFor(() => {
+        const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        expect(dropdown).toBeInTheDocument()
+      })
+
+      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      // Wait for ClassListItem to render
       await waitFor(() => {
         expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
       })
@@ -311,7 +356,17 @@ describe('App', () => {
 
       render(<App />)
 
-      // Wait for classes to load
+      // Wait for dropdown to appear
+      await waitFor(() => {
+        const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        expect(dropdown).toBeInTheDocument()
+      })
+
+      // Select Mathematics 101 from dropdown
+      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      // Wait for ClassListItem to render
       await waitFor(() => {
         expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
       })

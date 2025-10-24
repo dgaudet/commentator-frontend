@@ -92,7 +92,7 @@ describe('classStorageUtils', () => {
       expect(result).toBeNull()
       expect(consoleSpy).toHaveBeenCalledWith(
         'Failed to read from localStorage:',
-        expect.any(Error)
+        expect.any(Error),
       )
 
       consoleSpy.mockRestore()
@@ -125,7 +125,7 @@ describe('classStorageUtils', () => {
       expect(() => saveSelectedClassId(123)).not.toThrow()
       expect(consoleSpy).toHaveBeenCalledWith(
         'Failed to write to localStorage:',
-        expect.any(Error)
+        expect.any(Error),
       )
 
       consoleSpy.mockRestore()
@@ -157,7 +157,7 @@ describe('classStorageUtils', () => {
       expect(() => clearSelectedClassId()).not.toThrow()
       expect(consoleSpy).toHaveBeenCalledWith(
         'Failed to clear localStorage:',
-        expect.any(Error)
+        expect.any(Error),
       )
 
       consoleSpy.mockRestore()
