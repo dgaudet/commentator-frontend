@@ -6,9 +6,13 @@
 import { render, screen, fireEvent } from '../../../test-utils'
 import { ClassList } from '../ClassList'
 import { useClasses } from '../../../hooks/useClasses'
+import * as classStorageUtils from '../../../utils/classStorageUtils'
 
 // Mock the useClasses hook
 jest.mock('../../../hooks/useClasses')
+
+// Mock classStorageUtils
+jest.mock('../../../utils/classStorageUtils')
 
 const mockUseClasses = useClasses as jest.MockedFunction<typeof useClasses>
 
@@ -328,6 +332,370 @@ describe('ClassList', () => {
       // Edit and Delete buttons should not be present
       expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument()
       expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('dropdown selector (TASK-2.1)', () => {
+    it('should render dropdown with "Select a class..." placeholder', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i })
+      expect(dropdown).toBeInTheDocument()
+      expect(screen.getByText('Select a class...')).toBeInTheDocument()
+    })
+
+    it('should render dropdown with all classes as options', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      expect(screen.getByRole('option', { name: 'Mathematics 101 - 2024' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'English 201 - 2024' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'Science 301 - 2025' })).toBeInTheDocument()
+    })
+
+    it('should disable dropdown when loading with existing classes', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: true,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i })
+      expect(dropdown).toBeDisabled()
+    })
+
+    it('should show "Loading classes..." in dropdown placeholder when loading', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: true,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i })
+      expect(dropdown).toBeInTheDocument()
+      expect(screen.getByText('Loading classes...')).toBeInTheDocument()
+    })
+
+    it('should update selectedClassId when dropdown option selected', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i }) as HTMLSelectElement
+
+      // Select a class
+      fireEvent.change(dropdown, { target: { value: '2' } })
+
+      // Dropdown should reflect selected value
+      expect(dropdown.value).toBe('2')
+    })
+  })
+
+  describe('conditional ClassListItem rendering (TASK-2.2)', () => {
+    it('should not render ClassListItem when no class selected', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+
+      // Should not render any ClassListItem components initially
+      expect(screen.queryByTestId('class-item-1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('class-item-2')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('class-item-3')).not.toBeInTheDocument()
+    })
+
+    it('should render single ClassListItem when class selected', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i })
+
+      // Select a class
+      fireEvent.change(dropdown, { target: { value: '2' } })
+
+      // Should render only the selected ClassListItem
+      expect(screen.queryByTestId('class-item-1')).not.toBeInTheDocument()
+      expect(screen.getByTestId('class-item-2')).toBeInTheDocument()
+      expect(screen.queryByTestId('class-item-3')).not.toBeInTheDocument()
+    })
+
+    it('should update ClassListItem when different class selected', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i })
+
+      // Select first class
+      fireEvent.change(dropdown, { target: { value: '1' } })
+      expect(screen.getByTestId('class-item-1')).toBeInTheDocument()
+      expect(screen.queryByTestId('class-item-3')).not.toBeInTheDocument()
+
+      // Select different class
+      fireEvent.change(dropdown, { target: { value: '3' } })
+      expect(screen.queryByTestId('class-item-1')).not.toBeInTheDocument()
+      expect(screen.getByTestId('class-item-3')).toBeInTheDocument()
+    })
+  })
+
+  describe('persistence logic (TASK-2.3)', () => {
+    let mockGetSelectedClassId: jest.MockedFunction<typeof classStorageUtils.getSelectedClassId>
+    let mockSaveSelectedClassId: jest.MockedFunction<typeof classStorageUtils.saveSelectedClassId>
+    let mockClearSelectedClassId: jest.MockedFunction<typeof classStorageUtils.clearSelectedClassId>
+
+    beforeEach(() => {
+      mockGetSelectedClassId = classStorageUtils.getSelectedClassId as jest.MockedFunction<typeof classStorageUtils.getSelectedClassId>
+      mockSaveSelectedClassId = classStorageUtils.saveSelectedClassId as jest.MockedFunction<typeof classStorageUtils.saveSelectedClassId>
+      mockClearSelectedClassId = classStorageUtils.clearSelectedClassId as jest.MockedFunction<typeof classStorageUtils.clearSelectedClassId>
+
+      // Reset mocks
+      mockGetSelectedClassId.mockReturnValue(null)
+      mockSaveSelectedClassId.mockImplementation(() => {})
+      mockClearSelectedClassId.mockImplementation(() => {})
+    })
+
+    it('should load persisted selection on mount if valid', () => {
+      mockGetSelectedClassId.mockReturnValue(2)
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+
+      // Should auto-select the persisted class
+      expect(mockGetSelectedClassId).toHaveBeenCalled()
+      expect(screen.getByTestId('class-item-2')).toBeInTheDocument()
+    })
+
+    it('should not load persisted selection if ID does not exist in classes', () => {
+      mockGetSelectedClassId.mockReturnValue(999) // Non-existent ID
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+
+      // Should not render any ClassListItem
+      expect(mockGetSelectedClassId).toHaveBeenCalled()
+      expect(screen.queryByTestId('class-item-1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('class-item-2')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('class-item-3')).not.toBeInTheDocument()
+    })
+
+    it('should save selection to localStorage when class selected', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i })
+
+      // Select a class
+      fireEvent.change(dropdown, { target: { value: '3' } })
+
+      // Should save to localStorage
+      expect(mockSaveSelectedClassId).toHaveBeenCalledWith(3)
+    })
+
+    it('should clear selection from localStorage when deselecting', () => {
+      mockGetSelectedClassId.mockReturnValue(2)
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i })
+
+      // Deselect by choosing placeholder
+      fireEvent.change(dropdown, { target: { value: '' } })
+
+      // Should clear from localStorage
+      expect(mockClearSelectedClassId).toHaveBeenCalled()
+    })
+
+    it('should handle getSelectedClassId returning null gracefully', () => {
+      mockGetSelectedClassId.mockReturnValue(null)
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+
+      // Should render dropdown without selection
+      expect(mockGetSelectedClassId).toHaveBeenCalled()
+      expect(screen.getByRole('combobox', { name: /select a class/i })).toBeInTheDocument()
+      expect(screen.queryByTestId('class-item-1')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('auto-selection (TASK-3.1)', () => {
+    let mockGetSelectedClassId: jest.MockedFunction<typeof classStorageUtils.getSelectedClassId>
+
+    beforeEach(() => {
+      mockGetSelectedClassId = classStorageUtils.getSelectedClassId as jest.MockedFunction<typeof classStorageUtils.getSelectedClassId>
+      mockGetSelectedClassId.mockReturnValue(null)
+    })
+
+    it('should auto-select when only one class exists', () => {
+      const singleClass = [mockClasses[0]]
+      mockUseClasses.mockReturnValue({
+        classes: singleClass,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+
+      // Should auto-select the only class
+      expect(screen.getByTestId('class-item-1')).toBeInTheDocument()
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i }) as HTMLSelectElement
+      expect(dropdown.value).toBe('1')
+    })
+
+    it('should not auto-select when multiple classes exist', () => {
+      mockUseClasses.mockReturnValue({
+        classes: mockClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+
+      // Should not auto-select
+      expect(screen.queryByTestId('class-item-1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('class-item-2')).not.toBeInTheDocument()
+      const dropdown = screen.getByRole('combobox', { name: /select a class/i }) as HTMLSelectElement
+      expect(dropdown.value).toBe('')
+    })
+
+    it('should prefer persisted selection over auto-selection', () => {
+      mockGetSelectedClassId.mockReturnValue(2)
+      const twoClasses = [mockClasses[0], mockClasses[1]]
+      mockUseClasses.mockReturnValue({
+        classes: twoClasses,
+        isLoading: false,
+        error: null,
+        fetchClasses: jest.fn(),
+        createClass: jest.fn(),
+        updateClass: jest.fn(),
+        deleteClass: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<ClassList />)
+
+      // Should use persisted selection, not auto-select
+      expect(screen.getByTestId('class-item-2')).toBeInTheDocument()
+      expect(screen.queryByTestId('class-item-1')).not.toBeInTheDocument()
     })
   })
 })
