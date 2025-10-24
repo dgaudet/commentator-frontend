@@ -62,7 +62,7 @@ test.describe('Outcome Comments E2E', () => {
       
       // Verify modal has create form
       await expect(modal.locator('textarea[placeholder*="comment"]')).toBeVisible()
-      await expect(modal.locator('input[type="range"]')).toHaveCount(2) // Should have lower and upper range inputs
+      await expect(modal.locator('input[type="number"]')).toHaveCount(2) // Should have lower and upper number inputs
     })
 
     test('should display existing outcome comments in modal', async () => {
