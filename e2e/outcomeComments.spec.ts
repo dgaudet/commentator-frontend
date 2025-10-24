@@ -62,7 +62,7 @@ test.describe('Outcome Comments E2E', () => {
       
       // Verify modal has create form
       await expect(modal.locator('textarea[placeholder*="comment"]')).toBeVisible()
-      await expect(modal.locator('input[type="number"]')).toBeVisible()
+      await expect(modal.locator('input[type="range"]')).toHaveCount(2) // Should have lower and upper range inputs
     })
 
     test('should display existing outcome comments in modal', async () => {
@@ -107,13 +107,15 @@ test.describe('Outcome Comments E2E', () => {
       
       // Fill out create form
       const textarea = modal.locator('textarea[placeholder*="comment"]')
-      const scoreInput = modal.locator('input[type="range"]')
-      const createButton = modal.locator('button:has-text("Create Comment")')
+      const lowerRangeInput = modal.locator('#lower-range')
+      const upperRangeInput = modal.locator('#upper-range')
+      const createButton = modal.locator('button:has-text("Add Comment")')
       
       // Enter test data
       const testComment = `E2E Test Comment - ${Date.now()}`
       await textarea.fill(testComment)
-      await scoreInput.fill('8')
+      await lowerRangeInput.fill('8')
+      await upperRangeInput.fill('8')
       
       // Submit form
       await createButton.click()
@@ -125,13 +127,14 @@ test.describe('Outcome Comments E2E', () => {
       const newComment = modal.locator(`text="${testComment}"`).first()
       await expect(newComment).toBeVisible()
       
-      // Verify score is displayed
-      const scoreElement = modal.locator('text="Score: 8"')
-      await expect(scoreElement).toBeVisible()
+      // Verify score is displayed on the new comment
+      const newCommentScore = newComment.locator('.score-range')
+      await expect(newCommentScore).toHaveText('Score Range: 8 - 8')
       
       // Verify form is cleared
       await expect(textarea).toHaveValue('')
-      await expect(scoreInput).toHaveValue('5') // Default value
+      await expect(lowerRangeInput).toHaveValue('5') // Default value
+      await expect(upperRangeInput).toHaveValue('5') // Default value
     })
 
     test('should validate required fields before creating', async () => {
@@ -139,7 +142,7 @@ test.describe('Outcome Comments E2E', () => {
       await openOutcomeCommentsModal(page)
       
       const modal = page.locator('[role="dialog"]').first()
-      const createButton = modal.locator('button:has-text("Create Comment")')
+      const createButton = modal.locator('button:has-text("Add Comment")')
       
       // Try to submit empty form
       await createButton.click()
@@ -147,7 +150,7 @@ test.describe('Outcome Comments E2E', () => {
       // Should see validation error or button disabled
       const textarea = modal.locator('textarea[placeholder*="comment"]')
       const isRequired = await textarea.getAttribute('required')
-      expect(isRequired).toBeTruthy()
+      expect(isRequired).not.toBeNull() // required attribute exists, even if empty string
     })
   })
 
@@ -169,12 +172,14 @@ test.describe('Outcome Comments E2E', () => {
       
       // Should see edit form
       const editTextarea = commentItem.locator('textarea')
-      const editScoreInput = commentItem.locator('input[type="range"]')
+      const editLowerRangeInput = commentItem.locator('#edit-lower-range')
+      const editUpperRangeInput = commentItem.locator('#edit-upper-range')
       const saveButton = commentItem.locator('button:has-text("Save")')
       const cancelButton = commentItem.locator('button:has-text("Cancel")')
       
       await expect(editTextarea).toBeVisible()
-      await expect(editScoreInput).toBeVisible()
+      await expect(editLowerRangeInput).toBeVisible()
+      await expect(editUpperRangeInput).toBeVisible()
       await expect(saveButton).toBeVisible()
       await expect(cancelButton).toBeVisible()
       
@@ -182,7 +187,8 @@ test.describe('Outcome Comments E2E', () => {
       const updatedComment = `UPDATED - ${testComment}`
       await editTextarea.clear()
       await editTextarea.fill(updatedComment)
-      await editScoreInput.fill('9')
+      await editLowerRangeInput.fill('9')
+      await editUpperRangeInput.fill('9')
       
       // Save changes
       await saveButton.click()
@@ -191,8 +197,12 @@ test.describe('Outcome Comments E2E', () => {
       await page.waitForTimeout(2000)
       
       // Verify updated content appears
-      await expect(modal.locator(`text="${updatedComment}"`)).toBeVisible()
-      await expect(modal.locator('text="Score: 9"')).toBeVisible()
+      const updatedCommentElement = modal.locator(`text="${updatedComment}"`).first()
+      await expect(updatedCommentElement).toBeVisible()
+      
+      // Verify updated score is displayed on the specific comment
+      const updatedCommentScore = updatedCommentElement.locator('..').locator('.score-range')
+      await expect(updatedCommentScore).toHaveText('Score Range: 9 - 9')
       
       // Verify edit form is hidden
       await expect(editTextarea).not.toBeVisible()
@@ -420,11 +430,13 @@ async function createComment(page: Page, commentText: string, score: string) {
   const modal = page.locator('[role="dialog"]').first()
   
   const textarea = modal.locator('textarea[placeholder*="comment"]')
-  const scoreInput = modal.locator('input[type="range"]')
-  const createButton = modal.locator('button:has-text("Create Comment")')
+  const lowerRangeInput = modal.locator('#lower-range')
+  const upperRangeInput = modal.locator('#upper-range')
+  const createButton = modal.locator('button:has-text("Add Comment")')
   
   await textarea.fill(commentText)
-  await scoreInput.fill(score)
+  await lowerRangeInput.fill(score)
+  await upperRangeInput.fill(score)
   await createButton.click()
   
   // Wait for creation to complete
