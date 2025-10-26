@@ -5,14 +5,23 @@
     "name": "commentator-frontend"
   },
   "latest": {
-    "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/Frontend Developer-1761341503576.md",
-    "timestamp": 1761341503576,
+    "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/Frontend Developer-1761516336933.md",
+    "timestamp": 1761516336933,
     "persona": "Frontend Developer",
     "feature": "user-outcomecomments-clicking",
-    "task": "Implement class dropdown feature following TDD methodology. See technical design at pdd-workspace/class-dropdown/architecture/tech-spec.md for complete implementation plan with 8 atomic tasks (Red-Green-Refactor cycle). Key changes: Add dropdown UI to ClassList component, create classStorageUtils for localStorage persistence, maintain all existing functionality. Target: 2 days, 90%+ test coverage, WCAG 2.1 AA compliance.",
+    "task": "Implement Class to Subject refactoring following user stories in pdd-workspace/class-to-subject-refactor/planning/user-stories.md\n\nContext:\n- 12 user stories created for refactoring frontend 'Class' entity to 'Subject' \n- Backend API already has /subject endpoints (confirmed via OpenAPI docs)\n- 23 files need renaming across types, services, components, tests, and E2E\n- Key change: Remove 'year' field (Subject only has id, name, createdAt, updatedAt)\n\nStart with Sprint 1 - Foundational Refactoring (Week 1):\n1. US-REFACTOR-001: Rename Type Definitions (2 pts, HIGH)\n2. US-REFACTOR-002: Update API Service Layer (3 pts, HIGH) \n3. US-REFACTOR-003: Update Validation Logic (2 pts, HIGH)\n4. US-REFACTOR-004: Rename Custom Hooks (3 pts, HIGH)\n5. US-REFACTOR-008: Update Storage Utilities (2 pts, MEDIUM)\n\nRequirements:\n- Follow TDD Red-Green-Refactor methodology (MANDATORY)\n- Maintain 90%+ test coverage (currently 279 tests)\n- Keep zero ESLint errors\n- Preserve WCAG 2.1 AA accessibility compliance\n- No bundle size increase (currently 99.98 KB gzipped)\n\nAll user stories include:\n- EARS-format acceptance criteria\n- Definition of Done checklists\n- Risk assessment and dependencies\n- Detailed API field mapping\n\nComplete documentation in: pdd-workspace/class-to-subject-refactor/planning/user-stories.md",
     "type": "handoff"
   },
   "history": [
+    {
+      "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/Frontend Developer-1761516336933.md",
+      "timestamp": 1761516336933,
+      "persona": "Frontend Developer",
+      "feature": "user-outcomecomments-clicking",
+      "task": "Implement Class to Subject refactoring following user stories in pdd-workspace/class-to-subject-refactor/planning/user-stories.md\n\nContext:\n- 12 user stories created for refactoring frontend 'Class' entity to 'Subject' \n- Backend API already has /subject endpoints (confirmed via OpenAPI docs)\n- 23 files need renaming across types, services, components, tests, and E2E\n- Key change: Remove 'year' field (Subject only has id, name, createdAt, updatedAt)\n\nStart with Sprint 1 - Foundational Refactoring (Week 1):\n1. US-REFACTOR-001: Rename Type Definitions (2 pts, HIGH)\n2. US-REFACTOR-002: Update API Service Layer (3 pts, HIGH) \n3. US-REFACTOR-003: Update Validation Logic (2 pts, HIGH)\n4. US-REFACTOR-004: Rename Custom Hooks (3 pts, HIGH)\n5. US-REFACTOR-008: Update Storage Utilities (2 pts, MEDIUM)\n\nRequirements:\n- Follow TDD Red-Green-Refactor methodology (MANDATORY)\n- Maintain 90%+ test coverage (currently 279 tests)\n- Keep zero ESLint errors\n- Preserve WCAG 2.1 AA accessibility compliance\n- No bundle size increase (currently 99.98 KB gzipped)\n\nAll user stories include:\n- EARS-format acceptance criteria\n- Definition of Done checklists\n- Risk assessment and dependencies\n- Detailed API field mapping\n\nComplete documentation in: pdd-workspace/class-to-subject-refactor/planning/user-stories.md",
+      "type": "handoff",
+      "id": "handoff-1761516336933"
+    },
     {
       "contextFile": "/Users/dean.gaudet/Documents/code/non-work/commentator-repos/commentator-frontend/.pdd/user-outcomecomments-clicking/Frontend Developer-1761341503576.md",
       "timestamp": 1761341503576,
@@ -78,11 +87,11 @@
     }
   ],
   "statistics": {
-    "totalContextsGenerated": 7,
-    "totalHandoffs": 5,
+    "totalContextsGenerated": 8,
+    "totalHandoffs": 6,
     "mostUsedPersona": "product-owner",
-    "lastActive": "2025-10-24T21:31:43.582Z"
+    "lastActive": "2025-10-26T22:05:36.938Z"
   },
   "created": "2025-10-22T18:14:27.468Z",
-  "updated": "2025-10-24T21:31:43.582Z"
+  "updated": "2025-10-26T22:05:36.938Z"
 }

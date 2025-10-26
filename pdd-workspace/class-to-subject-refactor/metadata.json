@@ -1,0 +1,19 @@
+{
+  "featureName": "class-to-subject-refactor",
+  "description": "Refactor frontend Class entity to Subject to align with backend API structure",
+  "complexity": {
+    "level": "L2-SMALL",
+    "reasoning": "8-12 user stories, 2-3 weeks duration, moderate refactoring with API changes. Extensive file renaming across components, services, types, tests, and E2E. Backend API now uses hierarchical Subject → Class structure.",
+    "assessedAt": "2025-10-26",
+    "assessedBy": "Product Owner"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "OPTIONAL",
+    "implementation": "NOT_STARTED",
+    "testing": "NOT_STARTED",
+    "delivery": "NOT_STARTED"
+  },
+  "createdAt": "2025-10-26",
+  "lastUpdated": "2025-10-26"
+}
