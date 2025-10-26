@@ -2,15 +2,17 @@
  * App Component Tests
  * Validates testing infrastructure and basic rendering
  * Includes integration tests for Edit/Delete flows
+ *
+ * Updated to use Subject instead of Class (US-REFACTOR-005)
  */
 import { render, screen, waitFor, fireEvent, act } from '../test-utils'
 import { cleanup } from '@testing-library/react'
 import App from '../App'
-import * as classService from '../services/api/classService'
+import * as subjectService from '../services/api/subjectService'
 
-// Mock the classService to avoid real API calls
-jest.mock('../services/api/classService', () => ({
-  classService: {
+// Mock the subjectService to avoid real API calls
+jest.mock('../services/api/subjectService', () => ({
+  subjectService: {
     getAll: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
@@ -18,24 +20,22 @@ jest.mock('../services/api/classService', () => ({
   },
 }))
 
-const mockClasses = [
+const mockSubjects = [
   {
     id: 1,
     name: 'Mathematics 101',
-    year: 2024,
     createdAt: '2024-01-15T10:00:00.000Z',
     updatedAt: '2024-01-15T10:00:00.000Z',
   },
   {
     id: 2,
     name: 'English 201',
-    year: 2024,
     createdAt: '2024-01-16T10:00:00.000Z',
     updatedAt: '2024-01-16T10:00:00.000Z',
   },
 ]
 
-const mockClassService = classService.classService as jest.Mocked<typeof classService.classService>
+const mockSubjectService = subjectService.subjectService as jest.Mocked<typeof subjectService.subjectService>
 
 describe('App', () => {
   beforeEach(() => {
@@ -43,10 +43,10 @@ describe('App', () => {
     jest.clearAllMocks()
 
     // Default mock implementations
-    mockClassService.getAll.mockResolvedValue([])
-    mockClassService.create.mockResolvedValue(mockClasses[0])
-    mockClassService.update.mockResolvedValue(mockClasses[0])
-    mockClassService.delete.mockResolvedValue({ message: 'Deleted', deletedClass: mockClasses[0] })
+    mockSubjectService.getAll.mockResolvedValue([])
+    mockSubjectService.create.mockResolvedValue(mockSubjects[0])
+    mockSubjectService.update.mockResolvedValue(mockSubjects[0])
+    mockSubjectService.delete.mockResolvedValue({ message: 'Deleted', deletedSubject: mockSubjects[0] })
   })
 
   afterEach(() => {
@@ -56,7 +56,7 @@ describe('App', () => {
 
   it('renders without crashing', async () => {
     // Mock API to prevent network errors during component mounting
-    mockClassService.getAll.mockResolvedValue([])
+    mockSubjectService.getAll.mockResolvedValue([])
 
     act(() => {
       render(<App />)
@@ -68,7 +68,7 @@ describe('App', () => {
 
   it('displays the application title', async () => {
     // Mock API to prevent network errors during component mounting
-    mockClassService.getAll.mockResolvedValue([])
+    mockSubjectService.getAll.mockResolvedValue([])
 
     act(() => {
       render(<App />)
@@ -80,7 +80,7 @@ describe('App', () => {
 
   it('displays the subtitle', async () => {
     // Mock API to prevent network errors during component mounting
-    mockClassService.getAll.mockResolvedValue([])
+    mockSubjectService.getAll.mockResolvedValue([])
 
     act(() => {
       render(<App />)
@@ -90,31 +90,31 @@ describe('App', () => {
     })
   })
 
-  it('renders the ClassList component', async () => {
-    // Setup: Mock API to return classes so ClassList renders with "Your Classes" heading
-    mockClassService.getAll.mockResolvedValue(mockClasses)
+  it('renders the SubjectList component', async () => {
+    // Setup: Mock API to return subjects so SubjectList renders with "Your Subjects" heading
+    mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
     act(() => {
       render(<App />)
     })
 
-    // ClassList should render with "Your Classes" heading (not EmptyState)
+    // SubjectList should render with "Your Subjects" heading (not EmptyState)
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /your classes/i })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: /your subjects/i })).toBeInTheDocument()
     })
   })
 
-  it('allows users to interact with class management features', async () => {
-    // Setup: Mock API to return classes so ClassList shows "Add Class" button
-    mockClassService.getAll.mockResolvedValue(mockClasses)
+  it('allows users to interact with subject management features', async () => {
+    // Setup: Mock API to return subjects so SubjectList shows "Add Subject" button
+    mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
     act(() => {
       render(<App />)
     })
 
-    // Should show "Add Class" button from ClassList (not EmptyState)
+    // Should show "Add Subject" button from SubjectList (not EmptyState)
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /add class/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /add subject/i })).toBeInTheDocument()
     })
   })
 
@@ -126,9 +126,9 @@ describe('App', () => {
       jest.clearAllMocks()
 
       // Set up fresh mock implementations for each test
-      mockClassService.create.mockResolvedValue(mockClasses[0])
-      mockClassService.update.mockResolvedValue(mockClasses[0])
-      mockClassService.delete.mockResolvedValue({ message: 'Deleted', deletedClass: mockClasses[0] })
+      mockSubjectService.create.mockResolvedValue(mockSubjects[0])
+      mockSubjectService.update.mockResolvedValue(mockSubjects[0])
+      mockSubjectService.delete.mockResolvedValue({ message: 'Deleted', deletedClass: mockSubjects[0] })
 
       // Additional cleanup for this test suite
       cleanup()
@@ -141,29 +141,29 @@ describe('App', () => {
       cleanup()
     })
 
-    it('should remove class from list after successful deletion', async () => {
-      // Setup: Mock API to return classes for this test
-      mockClassService.getAll.mockResolvedValue([...mockClasses])
+    it('should remove subject from list after successful deletion', async () => {
+      // Setup: Mock API to return subjects for this test
+      mockSubjectService.getAll.mockResolvedValue([...mockSubjects])
 
       act(() => {
         render(<App key={testKey} />)
       })
 
-      // Wait for classes to load in dropdown
+      // Wait for subjects to load in dropdown
       await waitFor(() => {
-        const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
         expect(dropdown).toBeInTheDocument()
       })
 
-      // Select Mathematics 101 from dropdown to display the ClassListItem
-      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      // Select Mathematics 101 from dropdown to display the SubjectListItem
+      const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
       act(() => {
         fireEvent.change(dropdown, { target: { value: '1' } })
       })
 
-      // Wait for ClassListItem to render
+      // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
       })
 
       // Click delete button for Mathematics 101
@@ -180,7 +180,7 @@ describe('App', () => {
 
       // IMPORTANT: Reset the mock to simulate the updated list after deletion
       // This simulates the server returning the updated list
-      mockClassService.getAll.mockResolvedValue([mockClasses[1]])
+      mockSubjectService.getAll.mockResolvedValue([mockSubjects[1]])
 
       // Confirm deletion
       const confirmButton = screen.getByRole('button', { name: /^delete$/i })
@@ -193,48 +193,48 @@ describe('App', () => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       })
 
-      // Verify deleteClass API was called
-      expect(mockClassService.delete).toHaveBeenCalledWith(1)
-      expect(mockClassService.delete).toHaveBeenCalledTimes(1)
+      // Verify deleteSubject API was called
+      expect(mockSubjectService.delete).toHaveBeenCalledWith(1)
+      expect(mockSubjectService.delete).toHaveBeenCalledTimes(1)
 
-      // CRITICAL: Verify the class was removed from the dropdown options
+      // CRITICAL: Verify the subject was removed from the dropdown options
       await waitFor(() => {
-        const updatedDropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        const updatedDropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
         const mathOption = Array.from(updatedDropdown.querySelectorAll('option')).find(
           option => option.textContent?.includes('Mathematics 101'),
         )
         expect(mathOption).toBeUndefined()
       })
 
-      // Verify other class is still in dropdown
+      // Verify other subject is still in dropdown
       const englishOption = Array.from(dropdown.querySelectorAll('option')).find(
         option => option.textContent?.includes('English 201'),
       )
       expect(englishOption).toBeDefined()
     })
 
-    it('should close dialog and keep class when deletion is cancelled', async () => {
-      // Setup: Mock API to return fresh classes for this test
-      mockClassService.getAll.mockResolvedValue([...mockClasses])
+    it('should close dialog and keep subject when deletion is cancelled', async () => {
+      // Setup: Mock API to return fresh subjects for this test
+      mockSubjectService.getAll.mockResolvedValue([...mockSubjects])
 
       act(() => {
         render(<App key={testKey} />)
       })
 
-      // Wait for classes to load
+      // Wait for subjects to load
       await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /your classes/i })).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: /your subjects/i })).toBeInTheDocument()
       })
 
       // Select Mathematics 101 from dropdown
-      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
       act(() => {
         fireEvent.change(dropdown, { target: { value: '1' } })
       })
 
-      // Wait for ClassListItem to render
+      // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
       })
 
       // Click delete button
@@ -259,18 +259,18 @@ describe('App', () => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       })
 
-      // Verify deleteClass API was NOT called
-      expect(mockClassService.delete).not.toHaveBeenCalled()
+      // Verify deleteSubject API was NOT called
+      expect(mockSubjectService.delete).not.toHaveBeenCalled()
 
-      // Verify class is still in the ClassListItem
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+      // Verify subject is still in the SubjectListItem
+      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
     })
 
     it('should handle delete errors gracefully', async () => {
-      // Setup: Mock API to return fresh classes for this test
-      mockClassService.getAll.mockResolvedValue([...mockClasses])
+      // Setup: Mock API to return fresh subjects for this test
+      mockSubjectService.getAll.mockResolvedValue([...mockSubjects])
       // Mock delete to fail
-      mockClassService.delete.mockRejectedValueOnce(new Error('Delete failed'))
+      mockSubjectService.delete.mockRejectedValueOnce(new Error('Delete failed'))
 
       act(() => {
         render(<App key={testKey} />)
@@ -278,19 +278,19 @@ describe('App', () => {
 
       // Wait for dropdown to load
       await waitFor(() => {
-        const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
         expect(dropdown).toBeInTheDocument()
       })
 
       // Select Mathematics 101 from dropdown
-      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
       act(() => {
         fireEvent.change(dropdown, { target: { value: '1' } })
       })
 
-      // Wait for ClassListItem to render
+      // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
       })
 
       // Click delete button
@@ -315,30 +315,30 @@ describe('App', () => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       })
 
-      // Class should still be in ClassListItem (delete failed)
-      expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+      // Subject should still be in SubjectListItem (delete failed)
+      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
     })
   })
 
   describe('outcome comments modal', () => {
     it('should show outcome comments modal when outcome comments button clicked', async () => {
-      // Setup: Mock classes data
-      mockClassService.getAll.mockResolvedValue(mockClasses)
+      // Setup: Mock subjects data
+      mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
       render(<App />)
 
       // Wait for dropdown to appear and select Mathematics 101
       await waitFor(() => {
-        const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
         expect(dropdown).toBeInTheDocument()
       })
 
-      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
       fireEvent.change(dropdown, { target: { value: '1' } })
 
-      // Wait for ClassListItem to render
+      // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
       })
 
       // Find and click the outcome comments button
@@ -351,24 +351,24 @@ describe('App', () => {
     })
 
     it('should close outcome comments modal when close button clicked', async () => {
-      // Setup: Mock classes data
-      mockClassService.getAll.mockResolvedValue(mockClasses)
+      // Setup: Mock subjects data
+      mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
       render(<App />)
 
       // Wait for dropdown to appear
       await waitFor(() => {
-        const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+        const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
         expect(dropdown).toBeInTheDocument()
       })
 
       // Select Mathematics 101 from dropdown
-      const dropdown = screen.getByRole('combobox', { name: /select a class to view/i })
+      const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
       fireEvent.change(dropdown, { target: { value: '1' } })
 
-      // Wait for ClassListItem to render
+      // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByText('Mathematics 101')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
       })
 
       // Open modal
