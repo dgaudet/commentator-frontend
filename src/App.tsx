@@ -1,37 +1,37 @@
 import { useState } from 'react'
 import './App.css'
-import { ClassList } from './components/classes/ClassList'
-import { ClassForm } from './components/classes/ClassForm'
+import { SubjectList } from './components/subjects/SubjectList'
+import { SubjectForm } from './components/subjects/SubjectForm'
 import { ConfirmDialog } from './components/common/ConfirmDialog'
 import { OutcomeCommentsModal } from './components/outcomeComments/OutcomeCommentsModal'
 import { useOutcomeComments } from './hooks/useOutcomeComments'
-import type { Class } from './types/Class'
+import type { Subject } from './types/Subject'
 import type { CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from './types'
 
 /**
  * Main application component
  * Entry point for the Commentator frontend
  *
- * Integrates class management features:
- * - View list of classes (US-CLASS-001)
- * - Add new class (US-CLASS-002)
- * - Edit existing class (US-CLASS-003)
- * - Delete class (US-CLASS-005)
+ * Integrates subject management features:
+ * - View list of subjects (US-REFACTOR-005)
+ * - Add new subject (US-REFACTOR-007)
+ * - Edit existing subject (US-REFACTOR-007)
+ * - Delete subject
  *
- * Note: ClassList manages its own classes state via useClasses hook.
+ * Note: SubjectList manages its own subjects state via useSubjects hook.
  * App.tsx only coordinates UI state (forms, dialogs) and passes callbacks.
  */
 function App() {
   const [showForm, setShowForm] = useState(false)
-  const [editingClass, setEditingClass] = useState<Class | undefined>(undefined)
+  const [editingSubject, setEditingSubject] = useState<Subject | undefined>(undefined)
   const [deleteConfirm, setDeleteConfirm] = useState<{
     isOpen: boolean
     onConfirm?:() => Promise<void>
-    className?: string
+    subjectName?: string
       }>({ isOpen: false })
   const [outcomeCommentsModal, setOutcomeCommentsModal] = useState<{
     isOpen: boolean
-    classItem?: Class
+    subjectItem?: Subject
   }>({ isOpen: false })
 
   // Hook for managing outcome comments state and API operations
@@ -46,44 +46,44 @@ function App() {
     clearError: clearOutcomeCommentsError,
   } = useOutcomeComments()
 
-  const handleAddClass = () => {
-    setEditingClass(undefined)
+  const handleAddSubject = () => {
+    setEditingSubject(undefined)
     setShowForm(true)
   }
 
-  const handleEditClass = (classItem: Class) => {
-    setEditingClass(classItem)
+  const handleEditSubject = (subjectItem: Subject) => {
+    setEditingSubject(subjectItem)
     setShowForm(true)
   }
 
   const handleFormSuccess = () => {
     setShowForm(false)
-    setEditingClass(undefined)
+    setEditingSubject(undefined)
   }
 
   const handleFormCancel = () => {
     setShowForm(false)
-    setEditingClass(undefined)
+    setEditingSubject(undefined)
   }
 
-  // This callback will be called by ClassList when user clicks delete
-  // ClassList passes us the class info and a delete function to call on confirm
-  const handleDeleteRequest = (className: string, onConfirm: () => Promise<void>) => {
+  // This callback will be called by SubjectList when user clicks delete
+  // SubjectList passes us the subject info and a delete function to call on confirm
+  const handleDeleteRequest = (subjectName: string, onConfirm: () => Promise<void>) => {
     setDeleteConfirm({
       isOpen: true,
-      className,
+      subjectName,
       onConfirm,
     })
   }
 
-  // This callback will be called by ClassList when user clicks view outcome comments
-  const handleViewOutcomeComments = async (classItem: Class) => {
+  // This callback will be called by SubjectList when user clicks view outcome comments
+  const handleViewOutcomeComments = async (subjectItem: Subject) => {
     setOutcomeCommentsModal({
       isOpen: true,
-      classItem,
+      subjectItem,
     })
-    // Load outcome comments for this class
-    await loadOutcomeComments(classItem.id)
+    // Load outcome comments for this subject
+    await loadOutcomeComments(subjectItem.id)
   }
 
   const handleOutcomeCommentsClose = () => {
@@ -132,16 +132,16 @@ function App() {
       <main className="app-main">
         {showForm
           ? (
-              <ClassForm
-                existingClass={editingClass}
+              <SubjectForm
+                existingSubject={editingSubject}
                 onSuccess={handleFormSuccess}
                 onCancel={handleFormCancel}
               />
             )
           : (
-              <ClassList
-                onAddClass={handleAddClass}
-                onEdit={handleEditClass}
+              <SubjectList
+                onAddSubject={handleAddSubject}
+                onEdit={handleEditSubject}
                 onDelete={handleDeleteRequest}
                 onViewOutcomeComments={handleViewOutcomeComments}
               />
@@ -151,8 +151,8 @@ function App() {
       {/* Delete confirmation dialog */}
       <ConfirmDialog
         isOpen={deleteConfirm.isOpen}
-        title="Delete Class"
-        message={`Are you sure you want to delete "${deleteConfirm.className || 'this class'}"? This action cannot be undone.`}
+        title="Delete Subject"
+        message={`Are you sure you want to delete "${deleteConfirm.subjectName || 'this subject'}"? This action cannot be undone.`}
         confirmText="Delete"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
@@ -161,7 +161,9 @@ function App() {
 
       <OutcomeCommentsModal
         isOpen={outcomeCommentsModal.isOpen}
-        classData={outcomeCommentsModal.classItem || { id: 0, name: '', year: 2024, createdAt: '', updatedAt: '' }}
+        classData={outcomeCommentsModal.subjectItem
+          ? { ...outcomeCommentsModal.subjectItem, year: new Date().getFullYear() }
+          : { id: 0, name: '', year: 2024, createdAt: '', updatedAt: '' }}
         outcomeComments={outcomeComments}
         onCreateComment={handleCreateOutcomeComment}
         onUpdateComment={handleUpdateOutcomeComment}

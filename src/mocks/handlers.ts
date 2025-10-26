@@ -4,23 +4,35 @@
  *
  * Implements all 5 class endpoints with proper validation and error handling
  * Reference: TASK-1.4
+ *
+ * Also implements Subject endpoints (US-REFACTOR-012)
+ * Key Difference: Subject has NO year field, only name validation
  */
 import { http, HttpResponse } from 'msw'
 import { mockClasses } from './data/classes'
+import { mockSubjects } from './data/subjects'
 import { Class } from '../types/Class'
+import { Subject } from '../types/Subject'
 import { OutcomeComment } from '../types/OutcomeComment'
 
 const BASE_URL = 'http://localhost:3000'
 
 // In-memory storage for test data (resets between test runs)
 const classes: Class[] = [...mockClasses]
-let nextId = 4
+let nextClassId = 4
+
+const subjects: Subject[] = [...mockSubjects]
+let nextSubjectId = 4
 
 // Reset function for test isolation
 export function resetMockData() {
   classes.length = 0
   classes.push(...mockClasses)
-  nextId = 4
+  nextClassId = 4
+
+  subjects.length = 0
+  subjects.push(...mockSubjects)
+  nextSubjectId = 4
 }
 
 // Mock outcome comments storage
@@ -117,6 +129,39 @@ function validateId(id: string): ValidationResult {
       },
     }
   }
+  return { valid: true }
+}
+
+/**
+ * Validation helper: Check if subject name is valid (NO year field)
+ */
+function validateSubjectRequest(body: Record<string, unknown>): ValidationResult {
+  const name = body.name
+
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return {
+      valid: false,
+      error: {
+        error: 'Bad Request',
+        message: 'Subject name is required',
+        statusCode: 400,
+        details: { name: ['Subject name is required'] },
+      },
+    }
+  }
+
+  if (name.length > 100) {
+    return {
+      valid: false,
+      error: {
+        error: 'Bad Request',
+        message: 'Subject name must be between 1 and 100 characters',
+        statusCode: 400,
+        details: { name: ['Subject name must be between 1 and 100 characters'] },
+      },
+    }
+  }
+
   return { valid: true }
 }
 
@@ -276,7 +321,7 @@ export const handlers = [
 
     // Create new class
     const newClass: Class = {
-      id: nextId++,
+      id: nextClassId++,
       name: body.name,
       year: body.year,
       createdAt: new Date().toISOString(),
@@ -516,6 +561,136 @@ export const handlers = [
     return HttpResponse.json({
       message: 'Outcome comment deleted successfully',
       deletedComment,
+    })
+  }),
+
+  // ==================== SUBJECT ENDPOINTS ====================
+  // Subject has NO year field - only id, name, createdAt, updatedAt
+
+  // GET /subject - List all subjects
+  http.get(`${BASE_URL}/subject`, () => {
+    return HttpResponse.json(subjects)
+  }),
+
+  // POST /subject - Create new subject (name only, no year)
+  http.post(`${BASE_URL}/subject`, async ({ request }) => {
+    const body = await request.json() as { name: string }
+
+    // Validate request (name only)
+    const validation = validateSubjectRequest(body)
+    if (!validation.valid) {
+      return HttpResponse.json(validation.error, { status: 400 })
+    }
+
+    // Create new subject
+    const newSubject: Subject = {
+      id: nextSubjectId++,
+      name: body.name,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    subjects.push(newSubject)
+    return HttpResponse.json(newSubject, { status: 201 })
+  }),
+
+  // GET /subject/:id - Get subject by ID
+  http.get(`${BASE_URL}/subject/:id`, ({ params }) => {
+    const { id } = params
+
+    // Validate ID
+    const validation = validateId(id as string)
+    if (!validation.valid) {
+      return HttpResponse.json(validation.error, { status: 400 })
+    }
+
+    // Find subject
+    const subject = subjects.find((s) => s.id === Number(id))
+    if (!subject) {
+      return HttpResponse.json(
+        {
+          error: 'Not Found',
+          message: 'Subject not found',
+          statusCode: 404,
+        },
+        { status: 404 },
+      )
+    }
+
+    return HttpResponse.json(subject)
+  }),
+
+  // PUT /subject/:id - Update subject (name only)
+  http.put(`${BASE_URL}/subject/:id`, async ({ params, request }) => {
+    const { id } = params
+    const body = await request.json() as { name: string }
+
+    // Validate ID
+    const idValidation = validateId(id as string)
+    if (!idValidation.valid) {
+      return HttpResponse.json(idValidation.error, { status: 400 })
+    }
+
+    // Validate request body
+    const bodyValidation = validateSubjectRequest(body)
+    if (!bodyValidation.valid) {
+      return HttpResponse.json(bodyValidation.error, { status: 400 })
+    }
+
+    // Find subject
+    const subjectIndex = subjects.findIndex((s) => s.id === Number(id))
+    if (subjectIndex === -1) {
+      return HttpResponse.json(
+        {
+          error: 'Not Found',
+          message: 'Subject not found',
+          statusCode: 404,
+        },
+        { status: 404 },
+      )
+    }
+
+    // Update subject
+    const updatedSubject: Subject = {
+      ...subjects[subjectIndex],
+      name: body.name,
+      updatedAt: new Date().toISOString(),
+    }
+
+    subjects[subjectIndex] = updatedSubject
+    return HttpResponse.json(updatedSubject)
+  }),
+
+  // DELETE /subject/:id - Delete subject
+  http.delete(`${BASE_URL}/subject/:id`, ({ params }) => {
+    const { id } = params
+
+    // Validate ID
+    const validation = validateId(id as string)
+    if (!validation.valid) {
+      return HttpResponse.json(validation.error, { status: 400 })
+    }
+
+    // Find subject
+    const subjectIndex = subjects.findIndex((s) => s.id === Number(id))
+    if (subjectIndex === -1) {
+      return HttpResponse.json(
+        {
+          error: 'Not Found',
+          message: 'Subject not found',
+          statusCode: 404,
+        },
+        { status: 404 },
+      )
+    }
+
+    // Delete subject
+    const deletedSubject = subjects[subjectIndex]
+    subjects.splice(subjectIndex, 1)
+
+    return HttpResponse.json({
+      message: 'Subject deleted successfully',
+      deletedSubject,
     })
   }),
 ]
