@@ -2,8 +2,7 @@
  * App Component Tests
  * Validates testing infrastructure and basic rendering
  * Includes integration tests for Edit/Delete flows
- *
- * Updated to use Subject instead of Class (US-REFACTOR-005)
+ * Updated to use Subject instead of Class
  */
 import { render, screen, waitFor, fireEvent, act } from '../test-utils'
 import { cleanup } from '@testing-library/react'
@@ -91,28 +90,28 @@ describe('App', () => {
   })
 
   it('renders the SubjectList component', async () => {
-    // Setup: Mock API to return subjects so SubjectList renders with "Your Subjects" heading
+    // Setup: Mock API to return subjects soClassList renders with "Your Classes" heading
     mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
     act(() => {
       render(<App />)
     })
 
-    // SubjectList should render with "Your Subjects" heading (not EmptyState)
+    // ClassList should render with "Your Classes" heading (not EmptyState)
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /your subjects/i })).toBeInTheDocument()
     })
   })
 
   it('allows users to interact with subject management features', async () => {
-    // Setup: Mock API to return subjects so SubjectList shows "Add Subject" button
+    // Setup: Mock API to return subjects soClassList shows "Add Class" button
     mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
     act(() => {
       render(<App />)
     })
 
-    // Should show "Add Subject" button from SubjectList (not EmptyState)
+    // Should show "Add Class" button from ClassList (not EmptyState)
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /add subject/i })).toBeInTheDocument()
     })
@@ -142,7 +141,7 @@ describe('App', () => {
     })
 
     it('should remove subject from list after successful deletion', async () => {
-      // Setup: Mock API to return subjects for this test
+      // Setup: Mock API to return classes for this test
       mockSubjectService.getAll.mockResolvedValue([...mockSubjects])
 
       act(() => {
@@ -197,7 +196,7 @@ describe('App', () => {
       expect(mockSubjectService.delete).toHaveBeenCalledWith(1)
       expect(mockSubjectService.delete).toHaveBeenCalledTimes(1)
 
-      // CRITICAL: Verify the subject was removed from the dropdown options
+      // CRITICAL: Verify the subjectwas removed from the dropdown options
       await waitFor(() => {
         const updatedDropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
         const mathOption = Array.from(updatedDropdown.querySelectorAll('option')).find(
@@ -206,7 +205,7 @@ describe('App', () => {
         expect(mathOption).toBeUndefined()
       })
 
-      // Verify other subject is still in dropdown
+      // Verify other class is still in dropdown
       const englishOption = Array.from(dropdown.querySelectorAll('option')).find(
         option => option.textContent?.includes('English 201'),
       )
@@ -214,7 +213,7 @@ describe('App', () => {
     })
 
     it('should close dialog and keep subject when deletion is cancelled', async () => {
-      // Setup: Mock API to return fresh subjects for this test
+      // Setup: Mock API to return fresh classes for this test
       mockSubjectService.getAll.mockResolvedValue([...mockSubjects])
 
       act(() => {
@@ -267,7 +266,7 @@ describe('App', () => {
     })
 
     it('should handle delete errors gracefully', async () => {
-      // Setup: Mock API to return fresh subjects for this test
+      // Setup: Mock API to return fresh classes for this test
       mockSubjectService.getAll.mockResolvedValue([...mockSubjects])
       // Mock delete to fail
       mockSubjectService.delete.mockRejectedValueOnce(new Error('Delete failed'))
@@ -322,7 +321,7 @@ describe('App', () => {
 
   describe('outcome comments modal', () => {
     it('should show outcome comments modal when outcome comments button clicked', async () => {
-      // Setup: Mock subjects data
+      // Setup: Mock classes data
       mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
       render(<App />)
@@ -351,7 +350,7 @@ describe('App', () => {
     })
 
     it('should close outcome comments modal when close button clicked', async () => {
-      // Setup: Mock subjects data
+      // Setup: Mock classes data
       mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
       render(<App />)

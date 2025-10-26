@@ -1,7 +1,10 @@
 # To Do Items
-## need to rename the current class to subject, and shouldn't require a year
-### looks like creating an outcome comment for a subject isn't working
-## Need the code for classes
+## need to rename the current class to subject
+### ask it about the known technical debt, and ask it to work on it
+1. OutcomeCommentsModal: Still expects Class type with year field (temporary workaround in place)
+2. E2E Tests: Still reference Class components (Sprint 3 task)
+3. Documentation: README and inline docs still reference Class terminology (Sprint 3 task)
+## Need a the code for classes
 
 ## Need a page to add/edit PersonalizedComments for a class
 - this page should also show the final comments for the class
