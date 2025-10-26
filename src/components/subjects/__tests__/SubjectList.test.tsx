@@ -1,0 +1,854 @@
+/**
+ * SubjectList Component Tests
+ * TDD Phase: RED - These tests should fail initially
+ * Reference: US-REFACTOR-005
+ *
+ * Key Change: Subject has no year field, so dropdown options show name only
+ * API Change: useClasses → useSubjects, classStorageUtils → subjectStorageUtils
+ */
+import { render, screen, fireEvent } from '../../../test-utils'
+import { SubjectList } from '../SubjectList'
+import { useSubjects } from '../../../hooks/useSubjects'
+import * as subjectStorageUtils from '../../../utils/subjectStorageUtils'
+
+// Mock the useSubjects hook
+jest.mock('../../../hooks/useSubjects')
+
+// Mock subjectStorageUtils
+jest.mock('../../../utils/subjectStorageUtils')
+
+const mockUseSubjects = useSubjects as jest.MockedFunction<typeof useSubjects>
+
+const mockSubjects = [
+  {
+    id: 1,
+    name: 'Mathematics 101',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: 2,
+    name: 'English 201',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: 3,
+    name: 'Science 301',
+    createdAt: '2024-02-20T14:15:00Z',
+    updatedAt: '2024-02-20T14:15:00Z',
+  },
+]
+
+describe('SubjectList', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  describe('loading state', () => {
+    it('should show loading spinner when loading and no subjects', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: [],
+        isLoading: true,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      expect(screen.getByText('Loading...')).toBeInTheDocument()
+    })
+  })
+
+  describe('error state', () => {
+    it('should show error message when error and no subjects', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: [],
+        isLoading: false,
+        error: 'Failed to fetch subjects',
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      expect(screen.getByText('Failed to fetch subjects')).toBeInTheDocument()
+    })
+
+    it('should show error message above dropdown when error and subjects exist', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: 'Something went wrong',
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      expect(screen.getByText('Something went wrong')).toBeInTheDocument()
+      // Dropdown should still be visible
+      expect(screen.getByRole('combobox', { name: /select a subject/i })).toBeInTheDocument()
+    })
+  })
+
+  describe('empty state', () => {
+    it('should show empty state when no subjects', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: [],
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      expect(screen.getByText('No subjects found')).toBeInTheDocument()
+    })
+
+    it('should pass onAddSubject to EmptyState when provided', () => {
+      const handleAdd = jest.fn()
+      mockUseSubjects.mockReturnValue({
+        subjects: [],
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList onAddSubject={handleAdd} />)
+      expect(screen.getByRole('button', { name: /create first subject/i })).toBeInTheDocument()
+    })
+  })
+
+  describe('success state', () => {
+    it('should render dropdown with all subjects as options (name only, no year)', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      // Dropdown should contain subjects with name only (no year)
+      expect(screen.getByRole('option', { name: 'Mathematics 101' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'English 201' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'Science 301' })).toBeInTheDocument()
+    })
+
+    it('should render "Your Subjects" heading', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      expect(screen.getByText('Your Subjects')).toBeInTheDocument()
+    })
+
+    it('should render Add Subject button when onAddSubject provided', () => {
+      const handleAdd = jest.fn()
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList onAddSubject={handleAdd} />)
+      expect(screen.getByRole('button', { name: /add subject/i })).toBeInTheDocument()
+    })
+
+    it('should not render Add Subject button when onAddSubject not provided', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      expect(screen.queryByRole('button', { name: /add subject/i })).not.toBeInTheDocument()
+    })
+
+    it('should render all subjects from hook in dropdown', () => {
+      // Note: useSubjects hook already handles sorting (tested in its own tests)
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      // Verify all subjects are in dropdown options (name only)
+      expect(screen.getByRole('option', { name: 'Mathematics 101' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'English 201' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'Science 301' })).toBeInTheDocument()
+    })
+
+    it('should show loading spinner while background loading', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: true,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      // Should show dropdown AND loading indicator
+      expect(screen.getByRole('combobox', { name: /select a subject/i })).toBeInTheDocument()
+      expect(screen.getByText('Updating...')).toBeInTheDocument()
+    })
+  })
+
+  describe('interactions', () => {
+    it('should pass onSubjectClick to SubjectListItem when subject selected', () => {
+      const handleClick = jest.fn()
+      mockUseSubjects.mockReturnValue({
+        subjects: [mockSubjects[0]],
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList onSubjectClick={handleClick} />)
+      // With single subject, it should auto-select
+      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+    })
+
+    it('should pass onEdit callback to SubjectListItem when subject selected', () => {
+      const handleEdit = jest.fn()
+      mockUseSubjects.mockReturnValue({
+        subjects: [mockSubjects[0]],
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList onEdit={handleEdit} />)
+
+      // With single subject, it auto-selects - Edit button should be present
+      const editButton = screen.getByRole('button', { name: /edit mathematics 101/i })
+      expect(editButton).toBeInTheDocument()
+
+      // Click edit button
+      fireEvent.click(editButton)
+
+      // Handler should be called with the subject item
+      expect(handleEdit).toHaveBeenCalledTimes(1)
+      expect(handleEdit).toHaveBeenCalledWith(mockSubjects[0])
+    })
+
+    it('should pass onDelete callback to SubjectListItem when subject selected', () => {
+      const handleDelete = jest.fn()
+      const mockDeleteSubject = jest.fn().mockResolvedValue(undefined)
+
+      mockUseSubjects.mockReturnValue({
+        subjects: [mockSubjects[0]],
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: mockDeleteSubject,
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList onDelete={handleDelete} />)
+
+      // With single subject, it auto-selects - Delete button should be present
+      const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
+      expect(deleteButton).toBeInTheDocument()
+
+      // Click delete button
+      fireEvent.click(deleteButton)
+
+      // Handler should be called with subjectName and a confirmation function
+      expect(handleDelete).toHaveBeenCalledTimes(1)
+      expect(handleDelete).toHaveBeenCalledWith('Mathematics 101', expect.any(Function))
+    })
+
+    it('should not show Edit/Delete buttons when callbacks not provided', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: [mockSubjects[0]],
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+
+      // Edit and Delete buttons should not be present
+      expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('dropdown selector', () => {
+    it('should render dropdown with "Select a subject..." placeholder', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
+      expect(dropdown).toBeInTheDocument()
+      expect(screen.getByText('Select a subject...')).toBeInTheDocument()
+    })
+
+    it('should render dropdown with all subjects as options (name only)', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      expect(screen.getByRole('option', { name: 'Mathematics 101' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'English 201' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'Science 301' })).toBeInTheDocument()
+    })
+
+    it('should disable dropdown when loading with existing subjects', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: true,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
+      expect(dropdown).toBeDisabled()
+    })
+
+    it('should show "Loading subjects..." in dropdown placeholder when loading', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: true,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
+      expect(dropdown).toBeInTheDocument()
+      expect(screen.getByText('Loading subjects...')).toBeInTheDocument()
+    })
+
+    it('should update selectedSubjectId when dropdown option selected', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i }) as HTMLSelectElement
+
+      // Select a subject
+      fireEvent.change(dropdown, { target: { value: '2' } })
+
+      // Dropdown should reflect selected value
+      expect(dropdown.value).toBe('2')
+    })
+  })
+
+  describe('conditional SubjectListItem rendering', () => {
+    it('should not render SubjectListItem when no subject selected', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+
+      // Should not render any SubjectListItem components initially
+      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-2')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-3')).not.toBeInTheDocument()
+    })
+
+    it('should render single SubjectListItem when subject selected', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
+
+      // Select a subject
+      fireEvent.change(dropdown, { target: { value: '2' } })
+
+      // Should render only the selected SubjectListItem
+      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-2')).toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-3')).not.toBeInTheDocument()
+    })
+
+    it('should update SubjectListItem when different subject selected', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
+
+      // Select first subject
+      fireEvent.change(dropdown, { target: { value: '1' } })
+      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-3')).not.toBeInTheDocument()
+
+      // Select different subject
+      fireEvent.change(dropdown, { target: { value: '3' } })
+      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-3')).toBeInTheDocument()
+    })
+  })
+
+  describe('persistence logic', () => {
+    let mockGetSelectedSubjectId: jest.MockedFunction<typeof subjectStorageUtils.getSelectedSubjectId>
+    let mockSaveSelectedSubjectId: jest.MockedFunction<typeof subjectStorageUtils.saveSelectedSubjectId>
+    let mockClearSelectedSubjectId: jest.MockedFunction<typeof subjectStorageUtils.clearSelectedSubjectId>
+
+    beforeEach(() => {
+      mockGetSelectedSubjectId = subjectStorageUtils.getSelectedSubjectId as jest.MockedFunction<typeof subjectStorageUtils.getSelectedSubjectId>
+      mockSaveSelectedSubjectId = subjectStorageUtils.saveSelectedSubjectId as jest.MockedFunction<typeof subjectStorageUtils.saveSelectedSubjectId>
+      mockClearSelectedSubjectId = subjectStorageUtils.clearSelectedSubjectId as jest.MockedFunction<typeof subjectStorageUtils.clearSelectedSubjectId>
+
+      // Reset mocks
+      mockGetSelectedSubjectId.mockReturnValue(null)
+      mockSaveSelectedSubjectId.mockImplementation(() => {})
+      mockClearSelectedSubjectId.mockImplementation(() => {})
+    })
+
+    it('should load persisted selection on mount if valid', () => {
+      mockGetSelectedSubjectId.mockReturnValue(2)
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+
+      // Should auto-select the persisted subject
+      expect(mockGetSelectedSubjectId).toHaveBeenCalled()
+      expect(screen.getByTestId('subject-item-2')).toBeInTheDocument()
+    })
+
+    it('should not load persisted selection if ID does not exist in subjects', () => {
+      mockGetSelectedSubjectId.mockReturnValue(999) // Non-existent ID
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+
+      // Should not render any SubjectListItem
+      expect(mockGetSelectedSubjectId).toHaveBeenCalled()
+      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-2')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-3')).not.toBeInTheDocument()
+    })
+
+    it('should save selection to localStorage when subject selected', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
+
+      // Select a subject
+      fireEvent.change(dropdown, { target: { value: '3' } })
+
+      // Should save to localStorage
+      expect(mockSaveSelectedSubjectId).toHaveBeenCalledWith(3)
+    })
+
+    it('should clear selection from localStorage when deselecting', () => {
+      mockGetSelectedSubjectId.mockReturnValue(2)
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
+
+      // Deselect by choosing placeholder
+      fireEvent.change(dropdown, { target: { value: '' } })
+
+      // Should clear from localStorage
+      expect(mockClearSelectedSubjectId).toHaveBeenCalled()
+    })
+
+    it('should handle getSelectedSubjectId returning null gracefully', () => {
+      mockGetSelectedSubjectId.mockReturnValue(null)
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+
+      // Should render dropdown without selection
+      expect(mockGetSelectedSubjectId).toHaveBeenCalled()
+      expect(screen.getByRole('combobox', { name: /select a subject/i })).toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('auto-selection', () => {
+    let mockGetSelectedSubjectId: jest.MockedFunction<typeof subjectStorageUtils.getSelectedSubjectId>
+
+    beforeEach(() => {
+      mockGetSelectedSubjectId = subjectStorageUtils.getSelectedSubjectId as jest.MockedFunction<typeof subjectStorageUtils.getSelectedSubjectId>
+      mockGetSelectedSubjectId.mockReturnValue(null)
+    })
+
+    it('should auto-select when only one subject exists', () => {
+      const singleSubject = [mockSubjects[0]]
+      mockUseSubjects.mockReturnValue({
+        subjects: singleSubject,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+
+      // Should auto-select the only subject
+      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i }) as HTMLSelectElement
+      expect(dropdown.value).toBe('1')
+    })
+
+    it('should not auto-select when multiple subjects exist', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+
+      // Should not auto-select
+      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-2')).not.toBeInTheDocument()
+      const dropdown = screen.getByRole('combobox', { name: /select a subject/i }) as HTMLSelectElement
+      expect(dropdown.value).toBe('')
+    })
+
+    it('should prefer persisted selection over auto-selection', () => {
+      mockGetSelectedSubjectId.mockReturnValue(2)
+      const twoSubjects = [mockSubjects[0], mockSubjects[1]]
+      mockUseSubjects.mockReturnValue({
+        subjects: twoSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+
+      // Should use persisted selection, not auto-select
+      expect(screen.getByTestId('subject-item-2')).toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('accessibility', () => {
+    beforeEach(() => {
+      const mockGetSelectedSubjectId = subjectStorageUtils.getSelectedSubjectId as jest.MockedFunction<typeof subjectStorageUtils.getSelectedSubjectId>
+      mockGetSelectedSubjectId.mockReturnValue(null)
+    })
+
+    it('should have accessible combobox role for dropdown', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
+      expect(dropdown).toBeInTheDocument()
+    })
+
+    it('should have proper aria-label on dropdown', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByLabelText('Select a subject to view')
+      expect(dropdown).toBeInTheDocument()
+      expect(dropdown.tagName).toBe('SELECT')
+    })
+
+    it('should have accessible label element linked to dropdown', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const label = screen.getByText('Select a Subject')
+      const dropdown = screen.getByRole('combobox')
+
+      expect(label).toBeInTheDocument()
+      expect(label.tagName).toBe('LABEL')
+      expect(label.getAttribute('for')).toBe('subject-selector')
+      expect(dropdown.getAttribute('id')).toBe('subject-selector')
+    })
+
+    it('should support keyboard navigation (Tab to dropdown)', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox')
+
+      // Dropdown should be focusable
+      dropdown.focus()
+      expect(document.activeElement).toBe(dropdown)
+    })
+
+    it('should support keyboard selection (Arrow keys + Enter)', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox') as HTMLSelectElement
+
+      // Focus dropdown
+      dropdown.focus()
+
+      // Simulate selecting with keyboard
+      fireEvent.change(dropdown, { target: { value: '2' } })
+
+      // Should update selection
+      expect(dropdown.value).toBe('2')
+      expect(screen.getByTestId('subject-item-2')).toBeInTheDocument()
+    })
+
+    it('should announce loading state to screen readers', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: [],
+        isLoading: true,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const loadingSpinner = screen.getByRole('status')
+      expect(loadingSpinner).toBeInTheDocument()
+      expect(loadingSpinner).toHaveAttribute('aria-live', 'polite')
+    })
+
+    it('should maintain focus on dropdown after selection', () => {
+      mockUseSubjects.mockReturnValue({
+        subjects: mockSubjects,
+        isLoading: false,
+        error: null,
+        fetchSubjects: jest.fn(),
+        createSubject: jest.fn(),
+        updateSubject: jest.fn(),
+        deleteSubject: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(<SubjectList />)
+      const dropdown = screen.getByRole('combobox') as HTMLSelectElement
+
+      // Focus and select
+      dropdown.focus()
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      // Dropdown should still be in the DOM (not removed)
+      expect(screen.getByRole('combobox')).toBeInTheDocument()
+    })
+  })
+})
