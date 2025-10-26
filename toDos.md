@@ -13,3 +13,4 @@
 ## show a count of which comment you are on ex: 1 out of 100
 ## how should we order them?
 The act function seems to be deprecated but it's used in tests and code
+## When you create a subject, it should be selected automatically even if it's not the only subject created

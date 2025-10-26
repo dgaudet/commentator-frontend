@@ -113,7 +113,7 @@ function App() {
         await deleteConfirm.onConfirm()
         setDeleteConfirm({ isOpen: false })
       } catch (error) {
-        // Error is handled by useClasses hook in ClassList
+        // Error is handled by useSubjects hook in SubjectList
         setDeleteConfirm({ isOpen: false })
       }
     }
