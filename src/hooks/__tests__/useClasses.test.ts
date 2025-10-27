@@ -59,6 +59,7 @@ describe('useClasses', () => {
 
       // Trigger load
       act(() => {
+        // eslint-disable-next-line no-void
         void result.current.loadClasses(5)
       })
 
@@ -82,6 +83,7 @@ describe('useClasses', () => {
       const { result } = renderHook(() => useClasses())
 
       act(() => {
+        // eslint-disable-next-line no-void
         void result.current.loadClasses(5)
       })
 
@@ -175,11 +177,6 @@ describe('useClasses', () => {
       mockedClassService.update.mockResolvedValueOnce(updatedClass)
 
       const { result } = renderHook(() => useClasses())
-
-      // Set initial classes
-      act(() => {
-        result.current['classes'] = [existingClass]
-      })
 
       // Manually set the initial state by simulating a load
       mockedClassService.getBySubjectId.mockResolvedValueOnce([existingClass])
@@ -284,6 +281,7 @@ describe('useClasses', () => {
 
       // Trigger an error
       act(() => {
+        // eslint-disable-next-line no-void
         void result.current.loadClasses(5)
       })
 

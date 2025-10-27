@@ -5,14 +5,18 @@ import { SubjectForm } from './components/subjects/SubjectForm'
 import { ConfirmDialog } from './components/common/ConfirmDialog'
 import { OutcomeCommentsModal } from './components/outcomeComments/OutcomeCommentsModal'
 import { PersonalizedCommentsModal } from './components/personalizedComments/PersonalizedCommentsModal'
+import { ClassManagementModal } from './components/classes/ClassManagementModal'
 import { useOutcomeComments } from './hooks/useOutcomeComments'
 import { usePersonalizedComments } from './hooks/usePersonalizedComments'
+import { useClasses } from './hooks/useClasses'
 import type { Subject } from './types/Subject'
 import type {
   CreateOutcomeCommentRequest,
   UpdateOutcomeCommentRequest,
   CreatePersonalizedCommentRequest,
   UpdatePersonalizedCommentRequest,
+  CreateClassRequest,
+  UpdateClassRequest,
 } from './types'
 
 /**
@@ -46,6 +50,11 @@ function App() {
     subjectItem?: Subject
   }>({ isOpen: false })
 
+  const [classManagementModal, setClassManagementModal] = useState<{
+    isOpen: boolean
+    subjectItem?: Subject
+  }>({ isOpen: false })
+
   // Hook for managing outcome comments state and API operations
   const {
     outcomeComments,
@@ -69,6 +78,18 @@ function App() {
     deleteComment: deletePersonalizedComment,
     clearError: clearPersonalizedCommentsError,
   } = usePersonalizedComments()
+
+  // Hook for managing classes state and API operations
+  const {
+    classes,
+    loading: classesLoading,
+    error: classesError,
+    loadClasses,
+    createClass,
+    updateClass,
+    deleteClass,
+    clearError: clearClassesError,
+  } = useClasses()
 
   const handleAddSubject = () => {
     setEditingSubject(undefined)
@@ -162,6 +183,37 @@ function App() {
     await deletePersonalizedComment(id)
   }
 
+  // This callback will be called by SubjectList when user clicks manage classes
+  const handleViewClasses = async (subjectItem: Subject) => {
+    setClassManagementModal({
+      isOpen: true,
+      subjectItem,
+    })
+    // Load classes for this subject
+    await loadClasses(subjectItem.id)
+  }
+
+  const handleClassManagementClose = () => {
+    setClassManagementModal({ isOpen: false })
+    // Clear any error state when closing modal
+    clearClassesError()
+  }
+
+  // Real API handler for creating classes
+  const handleCreateClass = async (request: CreateClassRequest) => {
+    await createClass(request)
+  }
+
+  // Real API handler for updating classes
+  const handleUpdateClass = async (id: number, request: UpdateClassRequest) => {
+    await updateClass(id, request)
+  }
+
+  // Real API handler for deleting classes
+  const handleDeleteClass = async (id: number) => {
+    await deleteClass(id)
+  }
+
   const handleDeleteConfirm = async () => {
     if (deleteConfirm.onConfirm) {
       try {
@@ -200,6 +252,7 @@ function App() {
                 onDelete={handleDeleteRequest}
                 onViewOutcomeComments={handleViewOutcomeComments}
                 onViewPersonalizedComments={handleViewPersonalizedComments}
+                onViewClasses={handleViewClasses}
               />
             )}
       </main>
@@ -237,6 +290,18 @@ function App() {
         loading={personalizedCommentsLoading}
         error={personalizedCommentsError}
         onClose={handlePersonalizedCommentsClose}
+      />
+
+      <ClassManagementModal
+        isOpen={classManagementModal.isOpen}
+        entityData={classManagementModal.subjectItem || { id: 0, name: '', createdAt: '', updatedAt: '' }}
+        classes={classes}
+        onCreateClass={handleCreateClass}
+        onUpdateClass={handleUpdateClass}
+        onDeleteClass={handleDeleteClass}
+        loading={classesLoading}
+        error={classesError}
+        onClose={handleClassManagementClose}
       />
     </div>
   )
