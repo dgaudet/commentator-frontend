@@ -84,7 +84,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
 
     setValidationError('')
     await onCreateComment({
-      classId: entityData.id,
+      subjectId: entityData.id,
       comment: newCommentContent.trim(),
       upperRange: Number(newUpperRange),
       lowerRange: Number(newLowerRange),

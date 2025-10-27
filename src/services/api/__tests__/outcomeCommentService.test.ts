@@ -28,9 +28,9 @@ describe('OutcomeCommentService', () => {
   })
 
   describe('API methods', () => {
-    it('should have getByClassId method', () => {
-      expect(outcomeCommentService.getByClassId).toBeDefined()
-      expect(typeof outcomeCommentService.getByClassId).toBe('function')
+    it('should have getBySubjectId method', () => {
+      expect(outcomeCommentService.getBySubjectId).toBeDefined()
+      expect(typeof outcomeCommentService.getBySubjectId).toBe('function')
     })
 
     it('should have create method', () => {
@@ -85,15 +85,15 @@ describe('OutcomeCommentService', () => {
       })
     })
 
-    it('getByClassId should accept number parameter', async () => {
-      const result = await outcomeCommentService.getByClassId(1)
+    it('getBySubjectId should accept number parameter', async () => {
+      const result = await outcomeCommentService.getBySubjectId(1)
       expect(result).toBeDefined()
-      expect(mockApiClient.get).toHaveBeenCalledWith('/outcome-comment?classId=1')
+      expect(mockApiClient.get).toHaveBeenCalledWith('/outcome-comment?subjectId=1')
     })
 
     it('create should accept request object', async () => {
       const request = {
-        classId: 1,
+        subjectId: 1,
         comment: 'Test comment',
         upperRange: 85,
         lowerRange: 70,
@@ -103,7 +103,7 @@ describe('OutcomeCommentService', () => {
       expect(mockApiClient.post).toHaveBeenCalledWith(
         '/outcome-comment',
         {
-          classId: 1,
+          subjectId: 1,
           comment: 'Test comment',
           upperRange: 85,
           lowerRange: 70,

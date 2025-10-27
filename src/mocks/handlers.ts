@@ -36,10 +36,11 @@ export function resetMockData() {
 }
 
 // Mock outcome comments storage
+// Related: TD-002 (OutcomeComment classId → subjectId Migration)
 const outcomeComments: OutcomeComment[] = [
   {
     id: 1,
-    classId: 1,
+    subjectId: 1,
     comment: 'Students demonstrated excellent problem-solving skills',
     upperRange: 85,
     lowerRange: 70,
@@ -48,7 +49,7 @@ const outcomeComments: OutcomeComment[] = [
   },
   {
     id: 2,
-    classId: 1,
+    subjectId: 1,
     comment: 'Strong collaboration and teamwork observed',
     upperRange: 90,
     lowerRange: 75,
@@ -169,7 +170,7 @@ function validateSubjectRequest(body: Record<string, unknown>): ValidationResult
  * Validation helper: Check if outcome comment request is valid
  */
 function validateOutcomeCommentRequest(body: Record<string, unknown>): ValidationResult {
-  const { comment, upperRange, lowerRange, classId } = body
+  const { comment, upperRange, lowerRange, subjectId } = body
 
   if (!comment || typeof comment !== 'string' || comment.trim() === '') {
     return {
@@ -219,14 +220,14 @@ function validateOutcomeCommentRequest(body: Record<string, unknown>): Validatio
     }
   }
 
-  if (classId !== undefined && (typeof classId !== 'number' || !Number.isInteger(classId))) {
+  if (subjectId !== undefined && (typeof subjectId !== 'number' || !Number.isInteger(subjectId))) {
     return {
       valid: false,
       error: {
         error: 'Bad Request',
-        message: 'Valid class ID is required',
+        message: 'Valid subject ID is required',
         statusCode: 400,
-        details: { classId: ['Valid class ID is required'] },
+        details: { subjectId: ['Valid subject ID is required'] },
       },
     }
   }
@@ -235,7 +236,7 @@ function validateOutcomeCommentRequest(body: Record<string, unknown>): Validatio
 }
 
 function validateOutcomeCommentUpdateRequest(body: Record<string, unknown>): ValidationResult {
-  const { comment, upperRange, lowerRange, classId } = body
+  const { comment, upperRange, lowerRange, subjectId } = body
 
   if (comment !== undefined && (typeof comment !== 'string' || comment.trim() === '')) {
     return {
@@ -285,14 +286,14 @@ function validateOutcomeCommentUpdateRequest(body: Record<string, unknown>): Val
     }
   }
 
-  if (classId !== undefined && (typeof classId !== 'number' || !Number.isInteger(classId))) {
+  if (subjectId !== undefined && (typeof subjectId !== 'number' || !Number.isInteger(subjectId))) {
     return {
       valid: false,
       error: {
         error: 'Bad Request',
-        message: 'Valid class ID is required',
+        message: 'Valid subject ID is required',
         statusCode: 400,
-        details: { classId: ['Valid class ID is required'] },
+        details: { subjectId: ['Valid subject ID is required'] },
       },
     }
   }
@@ -433,33 +434,34 @@ export const handlers = [
     })
   }),
 
-  // GET /outcome-comment?classId={classId} - Get outcome comments for a class
+  // GET /outcome-comment?subjectId={subjectId} - Get outcome comments for a subject
+  // Related: TD-002 (OutcomeComment classId → subjectId Migration)
   http.get(`${BASE_URL}/outcome-comment`, ({ request }) => {
     const url = new URL(request.url)
-    const classId = url.searchParams.get('classId')
+    const subjectId = url.searchParams.get('subjectId')
 
-    if (!classId) {
+    if (!subjectId) {
       return HttpResponse.json({
         error: 'Bad Request',
-        message: 'Class ID is required',
+        message: 'Subject ID is required',
         statusCode: 400,
       }, { status: 400 })
     }
 
-    // Validate class ID
-    const validation = validateId(classId)
+    // Validate subject ID
+    const validation = validateId(subjectId)
     if (!validation.valid) {
       return HttpResponse.json(validation.error, { status: 400 })
     }
 
-    // Filter comments for this class
-    const classComments = outcomeComments.filter(comment => comment.classId === Number(classId))
-    return HttpResponse.json(classComments)
+    // Filter comments for this subject
+    const subjectComments = outcomeComments.filter(comment => comment.subjectId === Number(subjectId))
+    return HttpResponse.json(subjectComments)
   }),
 
   // POST /outcome-comment - Create new outcome comment
   http.post(`${BASE_URL}/outcome-comment`, async ({ request }) => {
-    const body = await request.json() as { classId: number; comment: string; upperRange: number; lowerRange: number }
+    const body = await request.json() as { subjectId: number; comment: string; upperRange: number; lowerRange: number }
 
     // Validate request body
     const validation = validateOutcomeCommentRequest(body)
@@ -467,16 +469,16 @@ export const handlers = [
       return HttpResponse.json(validation.error, { status: 400 })
     }
 
-    // Validate class ID
-    const classValidation = validateId(String(body.classId))
-    if (!classValidation.valid) {
-      return HttpResponse.json(classValidation.error, { status: 400 })
+    // Validate subject ID
+    const subjectValidation = validateId(String(body.subjectId))
+    if (!subjectValidation.valid) {
+      return HttpResponse.json(subjectValidation.error, { status: 400 })
     }
 
     // Create new comment
     const newComment: OutcomeComment = {
       id: nextCommentId++,
-      classId: body.classId,
+      subjectId: body.subjectId,
       comment: body.comment,
       upperRange: body.upperRange,
       lowerRange: body.lowerRange,

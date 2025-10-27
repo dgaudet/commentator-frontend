@@ -28,7 +28,7 @@ const mockSubject: Subject = {
 const mockOutcomeComments: OutcomeComment[] = [
   {
     id: 1,
-    classId: 1,
+    subjectId: 1,
     comment: 'Students demonstrated excellent problem-solving skills',
     upperRange: 85,
     lowerRange: 70,
@@ -37,7 +37,7 @@ const mockOutcomeComments: OutcomeComment[] = [
   },
   {
     id: 2,
-    classId: 1,
+    subjectId: 1,
     comment: 'Need to focus more on algebra concepts',
     upperRange: 65,
     lowerRange: 50,
@@ -133,7 +133,7 @@ describe('OutcomeCommentsModal', () => {
       })
 
       expect(defaultProps.onCreateComment).toHaveBeenCalledWith({
-        classId: 1,
+        subjectId: 1,
         comment: 'New outcome comment content',
         upperRange: 85,
         lowerRange: 70,

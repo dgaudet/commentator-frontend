@@ -15,7 +15,7 @@ const mockOutcomeCommentService = outcomeCommentService as jest.Mocked<typeof ou
 describe('useOutcomeComments', () => {
   const mockComment: OutcomeComment = {
     id: 1,
-    classId: 1,
+    subjectId: 1,
     upperRange: 85,
     lowerRange: 75,
     comment: 'Test comment',
@@ -24,7 +24,7 @@ describe('useOutcomeComments', () => {
   }
 
   const mockCreateRequest: CreateOutcomeCommentRequest = {
-    classId: 1,
+    subjectId: 1,
     upperRange: 85,
     lowerRange: 75,
     comment: 'New comment',
@@ -59,7 +59,7 @@ describe('useOutcomeComments', () => {
   describe('loadOutcomeComments', () => {
     it('should load outcome comments successfully', async () => {
       const comments = [mockComment]
-      mockOutcomeCommentService.getByClassId.mockResolvedValue(comments)
+      mockOutcomeCommentService.getBySubjectId.mockResolvedValue(comments)
 
       const { result } = renderHook(() => useOutcomeComments())
 
@@ -67,7 +67,7 @@ describe('useOutcomeComments', () => {
         await result.current.loadOutcomeComments(1)
       })
 
-      expect(mockOutcomeCommentService.getByClassId).toHaveBeenCalledWith(1)
+      expect(mockOutcomeCommentService.getBySubjectId).toHaveBeenCalledWith(1)
       expect(result.current.outcomeComments).toEqual(comments)
       expect(result.current.loading).toBe(false)
       expect(result.current.error).toBeNull()
@@ -78,7 +78,7 @@ describe('useOutcomeComments', () => {
       const promise = new Promise<OutcomeComment[]>((resolve) => {
         resolvePromise = resolve
       })
-      mockOutcomeCommentService.getByClassId.mockReturnValue(promise)
+      mockOutcomeCommentService.getBySubjectId.mockReturnValue(promise)
 
       const { result } = renderHook(() => useOutcomeComments())
 
@@ -97,7 +97,7 @@ describe('useOutcomeComments', () => {
 
     it('should handle errors when loading comments', async () => {
       const error = new Error('Failed to load')
-      mockOutcomeCommentService.getByClassId.mockRejectedValue(error)
+      mockOutcomeCommentService.getBySubjectId.mockRejectedValue(error)
 
       const { result } = renderHook(() => useOutcomeComments())
 
@@ -108,7 +108,7 @@ describe('useOutcomeComments', () => {
       expect(result.current.outcomeComments).toEqual([])
       expect(result.current.loading).toBe(false)
       expect(result.current.error).toBe('Failed to load')
-      expect(console.error).toHaveBeenCalledWith('Failed to load outcome comments:', error)
+      expect(console.error).toHaveBeenCalledWith('Failed to load outcome comments for subject:', error)
     })
   })
 
@@ -147,7 +147,7 @@ describe('useOutcomeComments', () => {
 
   describe('updateComment', () => {
     beforeEach(async () => {
-      mockOutcomeCommentService.getByClassId.mockResolvedValue([mockComment])
+      mockOutcomeCommentService.getBySubjectId.mockResolvedValue([mockComment])
     })
 
     it('should update comment successfully', async () => {
@@ -194,7 +194,7 @@ describe('useOutcomeComments', () => {
 
   describe('deleteComment', () => {
     beforeEach(async () => {
-      mockOutcomeCommentService.getByClassId.mockResolvedValue([mockComment])
+      mockOutcomeCommentService.getBySubjectId.mockResolvedValue([mockComment])
     })
 
     it('should delete comment successfully', async () => {
@@ -241,7 +241,7 @@ describe('useOutcomeComments', () => {
   describe('clearError', () => {
     it('should clear error state', async () => {
       const error = new Error('Test error')
-      mockOutcomeCommentService.getByClassId.mockRejectedValue(error)
+      mockOutcomeCommentService.getBySubjectId.mockRejectedValue(error)
 
       const { result } = renderHook(() => useOutcomeComments())
 
