@@ -866,3 +866,562 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
     })
   })
 })
+
+describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
+  const mockHandlers = {
+    onClose: jest.fn(),
+    onCreateComment: jest.fn(),
+    onUpdateComment: jest.fn(),
+    onDeleteComment: jest.fn(),
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockHandlers.onDeleteComment.mockResolvedValue(undefined)
+  })
+
+  describe('Delete Button (AC 1)', () => {
+    it('should display delete button for each final comment', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const deleteButtons = screen.getAllByRole('button', { name: /Delete/i })
+      // Should have 3 delete buttons (one for each comment)
+      expect(deleteButtons.length).toBeGreaterThanOrEqual(3)
+    })
+  })
+
+  describe('Delete Confirmation Dialog (AC 2, 3, 4)', () => {
+    it('should show confirmation dialog when delete button clicked', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[mockFinalComments[0]]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/delete the final comment for/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should display student name in confirmation dialog', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[mockFinalComments[0]]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/delete the final comment for "John Doe"/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should have Cancel and Delete buttons in confirmation dialog', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[mockFinalComments[0]]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /^Delete$/i })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument()
+      })
+    })
+
+    it('should close dialog without deleting when Cancel clicked', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[mockFinalComments[0]]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      await waitFor(() => {
+        const cancelButton = screen.getByRole('button', { name: /Cancel/i })
+        fireEvent.click(cancelButton)
+      })
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Are you sure you want to delete/i)).not.toBeInTheDocument()
+      })
+
+      expect(mockHandlers.onDeleteComment).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('Successful Deletion (AC 5)', () => {
+    it('should call onDeleteComment with correct id when confirmed', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[mockFinalComments[0]]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      await waitFor(() => {
+        const confirmButton = screen.getByRole('button', { name: /^Delete$/i })
+        fireEvent.click(confirmButton)
+      })
+
+      await waitFor(() => {
+        expect(mockHandlers.onDeleteComment).toHaveBeenCalledWith(1)
+      })
+    })
+
+    it('should close confirmation dialog after successful deletion', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[mockFinalComments[0]]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      await waitFor(() => {
+        const confirmButton = screen.getByRole('button', { name: /^Delete$/i })
+        fireEvent.click(confirmButton)
+      })
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Are you sure you want to delete/i)).not.toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('Error Handling (AC 7, 8)', () => {
+    it('should display error message when deletion fails', async () => {
+      mockHandlers.onDeleteComment.mockRejectedValueOnce(new Error('API Error'))
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[mockFinalComments[0]]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      await waitFor(() => {
+        const confirmButton = screen.getByRole('button', { name: /^Delete$/i })
+        fireEvent.click(confirmButton)
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText(/Failed to delete final comment/i)).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('US-FINAL-004: Edit Existing Final Comment', () => {
+    describe('Edit Button and Form Display (AC 1, 2)', () => {
+      it('should display edit button for each final comment', () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={mockFinalComments}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButtons = screen.getAllByRole('button', { name: /Edit/i })
+        expect(editButtons.length).toBeGreaterThanOrEqual(3)
+      })
+
+      it('should show inline edit form when edit button clicked', async () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          expect(screen.getByDisplayValue('John')).toBeInTheDocument()
+          expect(screen.getByDisplayValue('Doe')).toBeInTheDocument()
+          expect(screen.getByDisplayValue('85')).toBeInTheDocument()
+        })
+      })
+
+      it('should pre-populate edit form with existing values', async () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          const firstNameInput = screen.getByDisplayValue('John')
+          const lastNameInput = screen.getByDisplayValue('Doe')
+          const gradeInput = screen.getByDisplayValue('85')
+          const commentTextarea = screen.getByDisplayValue('Excellent work this semester!')
+
+          expect(firstNameInput).toBeInTheDocument()
+          expect(lastNameInput).toBeInTheDocument()
+          expect(gradeInput).toBeInTheDocument()
+          expect(commentTextarea).toBeInTheDocument()
+        })
+      })
+
+      it('should show Save and Cancel buttons in edit mode', async () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          expect(screen.getByRole('button', { name: /Save/i })).toBeInTheDocument()
+          expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument()
+        })
+      })
+    })
+
+    describe('Edit Form Validation (AC 3)', () => {
+      it('should validate First Name is required in edit mode', async () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          const firstNameInput = screen.getByDisplayValue('John')
+          fireEvent.change(firstNameInput, { target: { value: '' } })
+        })
+
+        const saveButton = screen.getByRole('button', { name: /Save/i })
+        fireEvent.click(saveButton)
+
+        await waitFor(() => {
+          expect(screen.getByText(/First name is required/i)).toBeInTheDocument()
+        })
+      })
+
+      it('should validate Grade range in edit mode', async () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          const gradeInput = screen.getByDisplayValue('85')
+          fireEvent.change(gradeInput, { target: { value: '150' } })
+        })
+
+        const saveButton = screen.getByRole('button', { name: /Save/i })
+        fireEvent.click(saveButton)
+
+        await waitFor(() => {
+          expect(screen.getByText(/Grade must be between 0 and 100/i)).toBeInTheDocument()
+        })
+      })
+
+      it('should validate Comment max length in edit mode', async () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          const commentTextarea = screen.getByDisplayValue('Excellent work this semester!')
+          fireEvent.change(commentTextarea, { target: { value: 'a'.repeat(1001) } })
+        })
+
+        const saveButton = screen.getByRole('button', { name: /Save/i })
+        fireEvent.click(saveButton)
+
+        await waitFor(() => {
+          expect(screen.getByText(/Comment cannot exceed 1000 characters/i)).toBeInTheDocument()
+        })
+      })
+    })
+
+    describe('Successful Update (AC 4, 5)', () => {
+      it('should call onUpdateComment with correct data when saved', async () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          const firstNameInput = screen.getByDisplayValue('John')
+          fireEvent.change(firstNameInput, { target: { value: 'Jane' } })
+        })
+
+        const saveButton = screen.getByRole('button', { name: /Save/i })
+        fireEvent.click(saveButton)
+
+        await waitFor(() => {
+          expect(mockHandlers.onUpdateComment).toHaveBeenCalledWith(1, {
+            classId: 1,
+            firstName: 'Jane',
+            lastName: 'Doe',
+            grade: 85,
+            comment: 'Excellent work this semester!',
+          })
+        })
+      })
+
+      it('should exit edit mode after successful update', async () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          const saveButton = screen.getByRole('button', { name: /Save/i })
+          fireEvent.click(saveButton)
+        })
+
+        await waitFor(() => {
+          expect(screen.queryByRole('button', { name: /Save/i })).not.toBeInTheDocument()
+        })
+      })
+    })
+
+    describe('Cancel Edit (AC 6)', () => {
+      it('should revert changes and exit edit mode when cancelled', async () => {
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          const firstNameInput = screen.getByDisplayValue('John')
+          fireEvent.change(firstNameInput, { target: { value: 'Jane' } })
+        })
+
+        const cancelButton = screen.getByRole('button', { name: /Cancel/i })
+        fireEvent.click(cancelButton)
+
+        await waitFor(() => {
+          expect(screen.queryByRole('button', { name: /Save/i })).not.toBeInTheDocument()
+          expect(screen.queryByDisplayValue('Jane')).not.toBeInTheDocument()
+        })
+      })
+    })
+
+    describe('Error Handling (AC 7, 8)', () => {
+      it('should display error message when update fails', async () => {
+        mockHandlers.onUpdateComment.mockRejectedValueOnce(new Error('API Error'))
+
+        render(
+          <FinalCommentsModal
+            isOpen={true}
+            onClose={mockHandlers.onClose}
+            entityData={mockClass}
+            finalComments={[mockFinalComments[0]]}
+            onCreateComment={mockHandlers.onCreateComment}
+            onUpdateComment={mockHandlers.onUpdateComment}
+            onDeleteComment={mockHandlers.onDeleteComment}
+            loading={false}
+            error={null}
+          />,
+        )
+
+        const editButton = screen.getByRole('button', { name: /Edit/i })
+        fireEvent.click(editButton)
+
+        await waitFor(() => {
+          const saveButton = screen.getByRole('button', { name: /Save/i })
+          fireEvent.click(saveButton)
+        })
+
+        await waitFor(() => {
+          expect(screen.getByText(/Failed to update final comment/i)).toBeInTheDocument()
+        })
+      })
+    })
+  })
+})

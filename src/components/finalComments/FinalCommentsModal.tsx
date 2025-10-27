@@ -18,10 +18,15 @@
  */
 
 import { useState } from 'react'
-import type { FinalComment, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
+import type {
+  FinalComment,
+  CreateFinalCommentRequest,
+  UpdateFinalCommentRequest,
+} from '../../types'
 import { Button } from '../common/Button'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
+import { ConfirmDialog } from '../common/ConfirmDialog'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -41,6 +46,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   entityData,
   finalComments,
   onCreateComment,
+  onUpdateComment,
+  onDeleteComment,
   loading,
   error,
 }: FinalCommentsModalProps<T>) => {
@@ -51,6 +58,18 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const [comment, setComment] = useState('')
   const [validationError, setValidationError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+
+  // Delete confirmation state
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
+  const [deleteStudentName, setDeleteStudentName] = useState('')
+
+  // Edit state
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editFirstName, setEditFirstName] = useState('')
+  const [editLastName, setEditLastName] = useState('')
+  const [editGrade, setEditGrade] = useState<number | ''>('')
+  const [editComment, setEditComment] = useState('')
+  const [editValidationError, setEditValidationError] = useState('')
 
   if (!isOpen) return null
 
@@ -133,6 +152,124 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     }
   }
 
+  // Handle delete start - show confirmation dialog
+  const handleDeleteStart = (finalComment: FinalComment) => {
+    setDeleteConfirmId(finalComment.id)
+    const fullName = finalComment.lastName
+      ? `${finalComment.firstName} ${finalComment.lastName}`
+      : finalComment.firstName
+    setDeleteStudentName(fullName)
+  }
+
+  // Handle delete confirmation
+  const handleDeleteConfirm = async () => {
+    if (deleteConfirmId) {
+      try {
+        await onDeleteComment(deleteConfirmId)
+        setDeleteConfirmId(null)
+        setDeleteStudentName('')
+      } catch (err) {
+        setValidationError('Failed to delete final comment. Please try again.')
+      }
+    }
+  }
+
+  // Handle delete cancellation
+  const handleDeleteCancel = () => {
+    setDeleteConfirmId(null)
+    setDeleteStudentName('')
+  }
+
+  // Handle edit start - populate form with existing values
+  const handleEditStart = (finalComment: FinalComment) => {
+    setEditingId(finalComment.id)
+    setEditFirstName(finalComment.firstName)
+    setEditLastName(finalComment.lastName || '')
+    setEditGrade(finalComment.grade)
+    setEditComment(finalComment.comment || '')
+    setEditValidationError('')
+  }
+
+  // Validation helper for edit form (same rules as create)
+  const validateEditForm = (): string | null => {
+    const trimmedFirstName = editFirstName.trim()
+    const trimmedLastName = editLastName.trim()
+
+    if (!trimmedFirstName) {
+      return 'First name is required'
+    }
+
+    if (editGrade === '') {
+      return 'Grade is required'
+    }
+
+    const gradeNum = Number(editGrade)
+    if (gradeNum < 0 || gradeNum > 100) {
+      return 'Grade must be between 0 and 100'
+    }
+
+    if (editComment.length > 1000) {
+      return 'Comment cannot exceed 1000 characters'
+    }
+
+    // LastName validation only if provided
+    if (trimmedLastName.length > 0 && trimmedLastName.length < 1) {
+      return 'Last name must be at least 1 character'
+    }
+
+    return null
+  }
+
+  // Handle edit save
+  const handleEditSave = async () => {
+    if (editingId === null) return
+
+    const error = validateEditForm()
+    if (error) {
+      setEditValidationError(error)
+      return
+    }
+
+    setEditValidationError('')
+
+    try {
+      const request: UpdateFinalCommentRequest = {
+        classId: entityData.id,
+        firstName: editFirstName.trim(),
+        grade: Number(editGrade),
+      }
+
+      // Add optional fields only if provided
+      if (editLastName.trim()) {
+        request.lastName = editLastName.trim()
+      }
+      if (editComment.trim()) {
+        request.comment = editComment.trim()
+      }
+
+      await onUpdateComment(editingId, request)
+
+      // Exit edit mode on success
+      setEditingId(null)
+      setEditFirstName('')
+      setEditLastName('')
+      setEditGrade('')
+      setEditComment('')
+    } catch (err) {
+      setEditValidationError('Failed to update final comment. Please try again.')
+    }
+  }
+
+  // Handle edit cancel
+  const handleEditCancel = () => {
+    setEditingId(null)
+    setEditFirstName('')
+    setEditLastName('')
+    setEditGrade('')
+    setEditComment('')
+    setEditValidationError('')
+  }
+
   // Sort final comments by firstName alphabetically (A-Z)
   const sortedComments = [...finalComments].sort((a, b) =>
     a.firstName.localeCompare(b.firstName),
@@ -192,27 +329,130 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       <div className="comments">
                         {sortedComments.map((comment) => (
                           <div key={comment.id} className="comment-item">
-                            <div className="student-header">
-                              <h4 className="student-name">
-                                {comment.firstName}
-                                {comment.lastName ? ` ${comment.lastName}` : ''}
-                              </h4>
-                              <div className="grade-display">
-                                Grade: {comment.grade}
-                              </div>
-                            </div>
+                            {editingId === comment.id
+                              ? (
+                                /* Edit Form - US-FINAL-004 */
+                                  <div className="edit-form">
+                                    <div className="form-group">
+                                      <label htmlFor={`edit-first-name-${comment.id}`}>
+                                        First Name <span className="required">*</span>
+                                      </label>
+                                      <input
+                                        id={`edit-first-name-${comment.id}`}
+                                        type="text"
+                                        value={editFirstName}
+                                        onChange={(e) => setEditFirstName(e.target.value)}
+                                        className="final-comment-input"
+                                      />
+                                    </div>
 
-                            {comment.comment && (
-                              <div className="comment-text">
-                                {comment.comment}
-                              </div>
-                            )}
+                                    <div className="form-group">
+                                      <label htmlFor={`edit-last-name-${comment.id}`}>
+                                        Last Name
+                                      </label>
+                                      <input
+                                        id={`edit-last-name-${comment.id}`}
+                                        type="text"
+                                        value={editLastName}
+                                        onChange={(e) => setEditLastName(e.target.value)}
+                                        className="final-comment-input"
+                                      />
+                                    </div>
 
-                            <div className="comment-meta">
-                              <span className="comment-date">
-                                Created: {formatDate(comment.createdAt)}
-                              </span>
-                            </div>
+                                    <div className="form-group">
+                                      <label htmlFor={`edit-grade-${comment.id}`}>
+                                        Grade <span className="required">*</span>
+                                      </label>
+                                      <input
+                                        id={`edit-grade-${comment.id}`}
+                                        type="number"
+                                        value={editGrade}
+                                        onChange={(e) => setEditGrade(e.target.value === '' ? '' : Number(e.target.value))}
+                                        min={0}
+                                        max={100}
+                                        className="grade-input"
+                                      />
+                                    </div>
+
+                                    <div className="form-group">
+                                      <label htmlFor={`edit-comment-${comment.id}`}>
+                                        Comment
+                                      </label>
+                                      <textarea
+                                        id={`edit-comment-${comment.id}`}
+                                        value={editComment}
+                                        onChange={(e) => setEditComment(e.target.value)}
+                                        className="comment-textarea"
+                                        rows={3}
+                                        maxLength={1000}
+                                      />
+                                      <div className="character-counter">
+                                        {editComment.length}/1000 characters
+                                      </div>
+                                    </div>
+
+                                    {editValidationError && (
+                                      <div className="validation-error" role="alert">
+                                        {editValidationError}
+                                      </div>
+                                    )}
+
+                                    <div className="edit-actions">
+                                      <Button
+                                        onClick={handleEditSave}
+                                        variant="primary"
+                                      >
+                                        Save
+                                      </Button>
+                                      <Button
+                                        onClick={handleEditCancel}
+                                        variant="secondary"
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )
+                              : (
+                                /* Display View */
+                                  <>
+                                    <div className="student-header">
+                                      <h4 className="student-name">
+                                        {comment.firstName}
+                                        {comment.lastName ? ` ${comment.lastName}` : ''}
+                                      </h4>
+                                      <div className="grade-display">
+                                        Grade: {comment.grade}
+                                      </div>
+                                    </div>
+
+                                    {comment.comment && (
+                                      <div className="comment-text">
+                                        {comment.comment}
+                                      </div>
+                                    )}
+
+                                    <div className="comment-meta">
+                                      <span className="comment-date">
+                                        Created: {formatDate(comment.createdAt)}
+                                      </span>
+                                      <Button
+                                        variant="secondary"
+                                        onClick={() => handleEditStart(comment)}
+                                        aria-label={`Edit final comment for ${comment.firstName}${comment.lastName ? ` ${comment.lastName}` : ''}`}
+                                      >
+                                        Edit
+                                      </Button>
+                                      <Button
+                                        variant="danger"
+                                        onClick={() => handleDeleteStart(comment)}
+                                        aria-label={`Delete final comment for ${comment.firstName}${comment.lastName ? ` ${comment.lastName}` : ''}`}
+                                      >
+                                        Delete
+                                      </Button>
+                                    </div>
+                                  </>
+                                )}
                           </div>
                         ))}
                       </div>
@@ -306,6 +546,17 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirmId !== null}
+        title="Delete Final Comment"
+        message={`Are you sure you want to delete the final comment for "${deleteStudentName}"? This action cannot be undone.`}
+        confirmText="Delete"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        variant="danger"
+      />
     </div>
   )
 }
