@@ -11,6 +11,9 @@
 // Subject entity types
 export type { Subject, CreateSubjectRequest, UpdateSubjectRequest } from './Subject'
 
+// Class entity types
+export type { Class, CreateClassRequest, UpdateClassRequest } from './Class'
+
 // Outcome Comment entity types
 export type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from './OutcomeComment'
 
