@@ -376,9 +376,9 @@ pdd handoff "system architect" "Design technical architecture for these prioriti
 - Constraints (budget, timeline, resources)
 - Non-functional requirements
 
-**To Backend Developer**:
+**To Backend Engineer**:
 ```bash
-pdd handoff "backend developer" "Implement these user stories following TDD and architectural guidelines"
+pdd handoff "backend engineer" "Implement these user stories following TDD and architectural guidelines"
 ```
 
 **To Business Analyst**:
@@ -827,9 +827,9 @@ pdd handoff "system architect" "Design technical architecture for these prioriti
 - Constraints (budget, timeline, resources)
 - Non-functional requirements
 
-**To Backend Developer**:
+**To Backend Engineer**:
 ```bash
-pdd handoff "backend developer" "Implement these user stories following TDD and architectural guidelines"
+pdd handoff "backend engineer" "Implement these user stories following TDD and architectural guidelines"
 ```
 
 **To Business Analyst**:
