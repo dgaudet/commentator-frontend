@@ -31,6 +31,7 @@ interface ClassManagementModalProps<T extends { id: number; name: string }> {
   onCreateClass: (request: CreateClassRequest) => Promise<void>
   onUpdateClass: (id: number, request: UpdateClassRequest) => Promise<void>
   onDeleteClass: (id: number) => Promise<void>
+  onViewFinalComments?: (classData: Class) => void
   loading: boolean
   error: string | null
 }
@@ -43,6 +44,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
   onCreateClass,
   onUpdateClass,
   onDeleteClass,
+  onViewFinalComments,
   loading,
   error,
 }: ClassManagementModalProps<T>) => {
@@ -287,6 +289,19 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                           >
                             Delete Class
                           </Button>
+                          {onViewFinalComments && selectedClassId && (
+                            <Button
+                              onClick={() => {
+                                const selectedClass = classes.find(c => c.id === selectedClassId)
+                                if (selectedClass) {
+                                  onViewFinalComments(selectedClass)
+                                }
+                              }}
+                              variant="secondary"
+                            >
+                              Final Comments
+                            </Button>
+                          )}
                         </>
                       )
                     : (

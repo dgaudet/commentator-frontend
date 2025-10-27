@@ -38,6 +38,7 @@ describe('ClassManagementModal', () => {
   const mockOnCreateClass = jest.fn()
   const mockOnUpdateClass = jest.fn()
   const mockOnDeleteClass = jest.fn()
+  const mockOnViewFinalComments = jest.fn()
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -392,6 +393,106 @@ describe('ClassManagementModal', () => {
       await waitFor(() => {
         expect(mockOnDeleteClass).toHaveBeenCalledWith(1)
       })
+    })
+  })
+
+  describe('Final Comments Button (US-FINAL-001)', () => {
+    it('should display Final Comments button when class is selected and onViewFinalComments is provided', async () => {
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          onClose={mockOnClose}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          onViewFinalComments={mockOnViewFinalComments}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Select a class
+      const dropdown = screen.getByLabelText(/Select a class/i)
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /Final Comments/i })).toBeInTheDocument()
+      })
+    })
+
+    it('should NOT display Final Comments button when no class is selected', () => {
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          onClose={mockOnClose}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          onViewFinalComments={mockOnViewFinalComments}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      expect(screen.queryByRole('button', { name: /Final Comments/i })).not.toBeInTheDocument()
+    })
+
+    it('should call onViewFinalComments with class data when Final Comments button clicked', async () => {
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          onClose={mockOnClose}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          onViewFinalComments={mockOnViewFinalComments}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Select a class
+      const dropdown = screen.getByLabelText(/Select a class/i)
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      await waitFor(() => {
+        const finalCommentsButton = screen.getByRole('button', { name: /Final Comments/i })
+        fireEvent.click(finalCommentsButton)
+      })
+
+      expect(mockOnViewFinalComments).toHaveBeenCalledWith(mockClasses[0])
+    })
+
+    it('should NOT display Final Comments button when onViewFinalComments is not provided', async () => {
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          onClose={mockOnClose}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Select a class
+      const dropdown = screen.getByLabelText(/Select a class/i)
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /Update Class/i })).toBeInTheDocument()
+      })
+
+      expect(screen.queryByRole('button', { name: /Final Comments/i })).not.toBeInTheDocument()
     })
   })
 

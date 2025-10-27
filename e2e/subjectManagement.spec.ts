@@ -31,7 +31,7 @@ test.describe('Subject Management E2E', () => {
       const emptyState = page.locator('text=No subjects found')
       await Promise.race([
         dropdown.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null),
-        emptyState.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null)
+        emptyState.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null),
       ])
 
       // Should show either dropdown with subjects or empty state
