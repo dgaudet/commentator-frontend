@@ -4,9 +4,16 @@ import { SubjectList } from './components/subjects/SubjectList'
 import { SubjectForm } from './components/subjects/SubjectForm'
 import { ConfirmDialog } from './components/common/ConfirmDialog'
 import { OutcomeCommentsModal } from './components/outcomeComments/OutcomeCommentsModal'
+import { PersonalizedCommentsModal } from './components/personalizedComments/PersonalizedCommentsModal'
 import { useOutcomeComments } from './hooks/useOutcomeComments'
+import { usePersonalizedComments } from './hooks/usePersonalizedComments'
 import type { Subject } from './types/Subject'
-import type { CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from './types'
+import type {
+  CreateOutcomeCommentRequest,
+  UpdateOutcomeCommentRequest,
+  CreatePersonalizedCommentRequest,
+  UpdatePersonalizedCommentRequest,
+} from './types'
 
 /**
  * Main application component
@@ -34,6 +41,11 @@ function App() {
     subjectItem?: Subject
   }>({ isOpen: false })
 
+  const [personalizedCommentsModal, setPersonalizedCommentsModal] = useState<{
+    isOpen: boolean
+    subjectItem?: Subject
+  }>({ isOpen: false })
+
   // Hook for managing outcome comments state and API operations
   const {
     outcomeComments,
@@ -45,6 +57,18 @@ function App() {
     deleteComment,
     clearError: clearOutcomeCommentsError,
   } = useOutcomeComments()
+
+  // Hook for managing personalized comments state and API operations
+  const {
+    personalizedComments,
+    loading: personalizedCommentsLoading,
+    error: personalizedCommentsError,
+    loadPersonalizedComments,
+    createComment: createPersonalizedComment,
+    updateComment: updatePersonalizedComment,
+    deleteComment: deletePersonalizedComment,
+    clearError: clearPersonalizedCommentsError,
+  } = usePersonalizedComments()
 
   const handleAddSubject = () => {
     setEditingSubject(undefined)
@@ -107,6 +131,37 @@ function App() {
     await deleteComment(id)
   }
 
+  // This callback will be called by SubjectList when user clicks view personalized comments
+  const handleViewPersonalizedComments = async (subjectItem: Subject) => {
+    setPersonalizedCommentsModal({
+      isOpen: true,
+      subjectItem,
+    })
+    // Load personalized comments for this subject
+    await loadPersonalizedComments(subjectItem.id)
+  }
+
+  const handlePersonalizedCommentsClose = () => {
+    setPersonalizedCommentsModal({ isOpen: false })
+    // Clear any error state when closing modal
+    clearPersonalizedCommentsError()
+  }
+
+  // Real API handler for creating personalized comments
+  const handleCreatePersonalizedComment = async (request: CreatePersonalizedCommentRequest) => {
+    await createPersonalizedComment(request)
+  }
+
+  // Real API handler for updating personalized comments
+  const handleUpdatePersonalizedComment = async (id: number, request: UpdatePersonalizedCommentRequest) => {
+    await updatePersonalizedComment(id, request)
+  }
+
+  // Real API handler for deleting personalized comments
+  const handleDeletePersonalizedComment = async (id: number) => {
+    await deletePersonalizedComment(id)
+  }
+
   const handleDeleteConfirm = async () => {
     if (deleteConfirm.onConfirm) {
       try {
@@ -144,6 +199,7 @@ function App() {
                 onEdit={handleEditSubject}
                 onDelete={handleDeleteRequest}
                 onViewOutcomeComments={handleViewOutcomeComments}
+                onViewPersonalizedComments={handleViewPersonalizedComments}
               />
             )}
       </main>
@@ -169,6 +225,18 @@ function App() {
         loading={outcomeCommentsLoading}
         error={outcomeCommentsError}
         onClose={handleOutcomeCommentsClose}
+      />
+
+      <PersonalizedCommentsModal
+        isOpen={personalizedCommentsModal.isOpen}
+        entityData={personalizedCommentsModal.subjectItem || { id: 0, name: '', createdAt: '', updatedAt: '' }}
+        personalizedComments={personalizedComments}
+        onCreateComment={handleCreatePersonalizedComment}
+        onUpdateComment={handleUpdatePersonalizedComment}
+        onDeleteComment={handleDeletePersonalizedComment}
+        loading={personalizedCommentsLoading}
+        error={personalizedCommentsError}
+        onClose={handlePersonalizedCommentsClose}
       />
     </div>
   )

@@ -16,6 +16,7 @@ interface SubjectListItemProps {
   onDelete?: (id: number) => void
   onView?: (id: number) => void
   onViewOutcomeComments?: (id: number) => void
+  onViewPersonalizedComments?: (id: number) => void
 }
 
 export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
@@ -24,6 +25,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onDelete,
   onView,
   onViewOutcomeComments,
+  onViewPersonalizedComments,
 }) => {
   return (
     <div
@@ -52,7 +54,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
           </div>
         </div>
 
-        {(onEdit || onDelete || onViewOutcomeComments) && (
+        {(onEdit || onDelete || onViewOutcomeComments || onViewPersonalizedComments) && (
           <div className="flex gap-2">
             {onEdit && (
               <button
@@ -79,6 +81,15 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                 aria-label={`View outcome comments for ${subjectItem.name}`}
               >
                 Outcome Comments
+              </button>
+            )}
+            {onViewPersonalizedComments && (
+              <button
+                onClick={() => onViewPersonalizedComments(subjectItem.id)}
+                className="text-purple-600 hover:text-purple-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+                aria-label={`View personalized comments for ${subjectItem.name}`}
+              >
+                Personalized Comments
               </button>
             )}
           </div>

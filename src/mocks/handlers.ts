@@ -594,7 +594,7 @@ export const handlers = [
 
     // Check for duplicate comment (case-insensitive)
     const isDuplicate = personalizedComments.some(
-      c => c.subjectId === body.subjectId && c.comment.toLowerCase() === trimmedComment.toLowerCase()
+      c => c.subjectId === body.subjectId && c.comment.toLowerCase() === trimmedComment.toLowerCase(),
     )
 
     if (isDuplicate) {
@@ -680,7 +680,7 @@ export const handlers = [
     // Check for duplicate comment (case-insensitive, excluding current comment)
     const isDuplicate = personalizedComments.some(
       c => c.id !== numId && c.subjectId === personalizedComments[commentIndex].subjectId &&
-           c.comment.toLowerCase() === trimmedComment.toLowerCase()
+           c.comment.toLowerCase() === trimmedComment.toLowerCase(),
     )
 
     if (isDuplicate) {

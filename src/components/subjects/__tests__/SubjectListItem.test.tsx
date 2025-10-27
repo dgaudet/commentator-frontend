@@ -88,6 +88,19 @@ describe('SubjectListItem', () => {
     expect(handleViewOutcomeComments).toHaveBeenCalledWith(1)
   })
 
+  it('should render personalized comments button when onViewPersonalizedComments provided', () => {
+    const handleViewPersonalizedComments = jest.fn()
+    render(<SubjectListItem subjectItem={mockSubject} onViewPersonalizedComments={handleViewPersonalizedComments} />)
+    expect(screen.getByRole('button', { name: /personalized comments for mathematics 101/i })).toBeInTheDocument()
+  })
+
+  it('should call onViewPersonalizedComments when personalized comments button clicked', () => {
+    const handleViewPersonalizedComments = jest.fn()
+    render(<SubjectListItem subjectItem={mockSubject} onViewPersonalizedComments={handleViewPersonalizedComments} />)
+    fireEvent.click(screen.getByRole('button', { name: /personalized comments/i }))
+    expect(handleViewPersonalizedComments).toHaveBeenCalledWith(1)
+  })
+
   it('should not render action buttons when handlers not provided', () => {
     render(<SubjectListItem subjectItem={mockSubject} />)
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
