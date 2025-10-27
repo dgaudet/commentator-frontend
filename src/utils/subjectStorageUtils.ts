@@ -1,8 +1,8 @@
 /**
  * Utilities for persisting subject selection in browser localStorage
- * Reference: US-REFACTOR-008
+ * Reference: US-REFACTOR-008, TD-004 (localStorage Keys Use Different Conventions)
  *
- * Storage Key: "commentator.selectedSubjectId"
+ * Storage Key: "commentator.selectedSubjectId" (from STORAGE_KEYS constant)
  * Key Change: classId → subjectId, storage key renamed
  *
  * Business Rules:
@@ -12,7 +12,7 @@
  * - Handle localStorage unavailable (private browsing, quota exceeded)
  */
 
-const STORAGE_KEY = 'commentator.selectedSubjectId'
+import { STORAGE_KEYS, getStorageItem, setStorageItem, removeStorageItem } from '../constants/storageKeys'
 
 /**
  * Get selected subject ID from localStorage
@@ -26,7 +26,7 @@ const STORAGE_KEY = 'commentator.selectedSubjectId'
  */
 export function getSelectedSubjectId(): number | null {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
+    const stored = getStorageItem(STORAGE_KEYS.SELECTED_SUBJECT_ID)
     if (stored === null) return null
 
     const parsed = parseInt(stored, 10)
@@ -47,7 +47,7 @@ export function getSelectedSubjectId(): number | null {
  */
 export function saveSelectedSubjectId(subjectId: number): void {
   try {
-    localStorage.setItem(STORAGE_KEY, subjectId.toString())
+    setStorageItem(STORAGE_KEYS.SELECTED_SUBJECT_ID, subjectId.toString())
   } catch (error) {
     // Handle localStorage unavailable or quota exceeded
     console.warn('Failed to write to localStorage:', error)
@@ -62,7 +62,7 @@ export function saveSelectedSubjectId(subjectId: number): void {
  */
 export function clearSelectedSubjectId(): void {
   try {
-    localStorage.removeItem(STORAGE_KEY)
+    removeStorageItem(STORAGE_KEYS.SELECTED_SUBJECT_ID)
   } catch (error) {
     console.warn('Failed to clear localStorage:', error)
   }

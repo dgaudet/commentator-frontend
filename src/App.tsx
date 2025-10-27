@@ -161,9 +161,7 @@ function App() {
 
       <OutcomeCommentsModal
         isOpen={outcomeCommentsModal.isOpen}
-        classData={outcomeCommentsModal.subjectItem
-          ? { ...outcomeCommentsModal.subjectItem, year: new Date().getFullYear() }
-          : { id: 0, name: '', year: 2024, createdAt: '', updatedAt: '' }}
+        entityData={outcomeCommentsModal.subjectItem || { id: 0, name: '', createdAt: '', updatedAt: '' }}
         outcomeComments={outcomeComments}
         onCreateComment={handleCreateOutcomeComment}
         onUpdateComment={handleUpdateOutcomeComment}

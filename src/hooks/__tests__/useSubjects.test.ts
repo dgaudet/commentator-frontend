@@ -12,6 +12,7 @@
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { useSubjects } from '../useSubjects'
 import { subjectService } from '../../services/api/subjectService'
+import type { Subject } from '../../types'
 
 // Mock the subjectService
 jest.mock('../../services/api/subjectService')
@@ -139,7 +140,7 @@ describe('useSubjects', () => {
     })
 
     it('should set loading state during fetch', async () => {
-      let resolvePromise: (value: unknown) => void
+      let resolvePromise: (value: Subject[]) => void
       mockSubjectService.getAll.mockReturnValue(
         new Promise((resolve) => {
           resolvePromise = resolve

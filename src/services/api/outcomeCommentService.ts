@@ -2,8 +2,11 @@
  * Outcome Comments API Service
  * Service for managing outcome comments with REST API operations
  *
+ * Related: TD-002 (OutcomeComment classId → subjectId Migration)
+ * Change: API now uses subjectId parameter instead of classId
+ *
  * Endpoints:
- * - GET /outcome-comment?classId={classId} - Get all outcome comments for a class
+ * - GET /outcome-comment?subjectId={subjectId} - Get all outcome comments for a subject
  * - POST /outcome-comment - Create new outcome comment
  * - PUT /outcome-comment/{id} - Update existing outcome comment
  * - DELETE /outcome-comment/{id} - Delete outcome comment
@@ -18,22 +21,23 @@ import type {
 
 export const outcomeCommentService = {
   /**
-   * Get all outcome comments for a specific class
+   * Get all outcome comments for a specific subject
+   * @param subjectId - The ID of the subject to fetch comments for
    */
-  async getByClassId(classId: number): Promise<OutcomeComment[]> {
+  async getBySubjectId(subjectId: number): Promise<OutcomeComment[]> {
     try {
       const response = await apiClient.get<OutcomeComment[]>(
-        `/outcome-comment?classId=${classId}`,
+        `/outcome-comment?subjectId=${subjectId}`,
       )
       return response.data
     } catch (error) {
       console.error('Failed to fetch outcome comments:', error)
-      throw new Error('Failed to fetch outcome comments')
+      throw new Error('Failed to fetch outcome comments for subject')
     }
   },
 
   /**
-   * Create a new outcome comment for a class
+   * Create a new outcome comment for a subject
    */
   async create(request: CreateOutcomeCommentRequest): Promise<OutcomeComment> {
     try {
@@ -43,7 +47,7 @@ export const outcomeCommentService = {
           comment: request.comment,
           upperRange: request.upperRange,
           lowerRange: request.lowerRange,
-          classId: request.classId,
+          subjectId: request.subjectId,
         },
       )
       return response.data

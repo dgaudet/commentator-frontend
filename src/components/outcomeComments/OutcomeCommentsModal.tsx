@@ -1,27 +1,32 @@
 /**
  * OutcomeCommentsModal Component
  *
- * Modal for viewing, creating, editing, and deleting outcome comments for a class.
+ * Modal for viewing, creating, editing, and deleting outcome comments for a class or subject.
  * Implements CRUD operations with proper form validation and accessibility.
  *
+ * Generic Type Parameter:
+ * - T extends { id: number; name: string } - Supports both Class and Subject types
+ *
  * User Stories:
- * 1. View all outcome comments for a class
- * 2. Create new outcome comment for a class
+ * 1. View all outcome comments for an entity (class/subject)
+ * 2. Create new outcome comment for an entity
  * 3. Edit existing outcome comment
  * 4. Delete outcome comment with confirmation
+ *
+ * Related: TD-001 (OutcomeCommentsModal Subject Type Compatibility)
  */
 
-import React, { useState } from 'react'
-import type { Class, OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from '../../types'
+import { useState } from 'react'
+import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from '../../types'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmDialog } from '../common/ConfirmDialog'
 
-interface OutcomeCommentsModalProps {
+interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
   onClose: () => void
-  classData: Class
+  entityData: T
   outcomeComments: OutcomeComment[]
   onCreateComment: (request: CreateOutcomeCommentRequest) => Promise<void>
   onUpdateComment: (id: number, request: UpdateOutcomeCommentRequest) => Promise<void>
@@ -30,17 +35,17 @@ interface OutcomeCommentsModalProps {
   error: string | null
 }
 
-export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
+export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   isOpen,
   onClose,
-  classData,
+  entityData,
   outcomeComments,
   onCreateComment,
   onUpdateComment,
   onDeleteComment,
   loading,
   error,
-}) => {
+}: OutcomeCommentsModalProps<T>) => {
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newUpperRange, setNewUpperRange] = useState<number | ''>('')
   const [newLowerRange, setNewLowerRange] = useState<number | ''>('')
@@ -79,7 +84,7 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
 
     setValidationError('')
     await onCreateComment({
-      classId: classData.id,
+      subjectId: entityData.id,
       comment: newCommentContent.trim(),
       upperRange: Number(newUpperRange),
       lowerRange: Number(newLowerRange),
@@ -159,7 +164,7 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
       <div className="modal-content">
         <div className="modal-header">
           <h2 id="modal-title">
-            Outcome Comments - {classData.name}
+            Outcome Comments - {entityData.name}
           </h2>
           <Button
             variant="secondary"
@@ -241,7 +246,7 @@ export const OutcomeCommentsModal: React.FC<OutcomeCommentsModalProps> = ({
                       <div className="empty-state">
                         <p>No outcome comments found</p>
                         <p className="empty-subtext">
-                          Be the first to add an outcome comment for this class.
+                          Be the first to add an outcome comment.
                         </p>
                       </div>
                     )

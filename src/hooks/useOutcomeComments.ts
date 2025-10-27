@@ -1,7 +1,10 @@
 /**
  * Custom hook for managing outcome comments
  * Provides CRUD operations and state management for outcome comments
- * Follows the same pattern as useClasses hook
+ * Follows the same pattern as useSubjects hook
+ *
+ * Related: TD-002 (OutcomeComment classId → subjectId Migration)
+ * Change: loadOutcomeComments now takes subjectId parameter instead of classId
  */
 
 import { useState, useCallback } from 'react'
@@ -16,7 +19,7 @@ interface UseOutcomeCommentsReturn {
   outcomeComments: OutcomeComment[]
   loading: boolean
   error: string | null
-  loadOutcomeComments: (classId: number) => Promise<void>
+  loadOutcomeComments: (subjectId: number) => Promise<void>
   createComment: (request: CreateOutcomeCommentRequest) => Promise<void>
   updateComment: (id: number, request: UpdateOutcomeCommentRequest) => Promise<void>
   deleteComment: (id: number) => Promise<void>
@@ -38,14 +41,14 @@ export const useOutcomeComments = (): UseOutcomeCommentsReturn => {
     setError(message)
   }, [])
 
-  const loadOutcomeComments = useCallback(async (classId: number) => {
+  const loadOutcomeComments = useCallback(async (subjectId: number) => {
     setLoading(true)
     setError(null)
     try {
-      const comments = await outcomeCommentService.getByClassId(classId)
+      const comments = await outcomeCommentService.getBySubjectId(subjectId)
       setOutcomeComments(comments)
     } catch (error) {
-      handleError(error, 'load outcome comments')
+      handleError(error, 'load outcome comments for subject')
     } finally {
       setLoading(false)
     }
