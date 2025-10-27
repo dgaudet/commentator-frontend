@@ -20,5 +20,8 @@ export type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentR
 // Personalized Comment entity types
 export type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from './PersonalizedComment'
 
+// Final Comment entity types
+export type { FinalComment, CreateFinalCommentRequest, UpdateFinalCommentRequest } from './FinalComment'
+
 // API response types
 export type { ApiResponse, ApiError } from './ApiResponse'

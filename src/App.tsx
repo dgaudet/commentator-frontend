@@ -6,17 +6,22 @@ import { ConfirmDialog } from './components/common/ConfirmDialog'
 import { OutcomeCommentsModal } from './components/outcomeComments/OutcomeCommentsModal'
 import { PersonalizedCommentsModal } from './components/personalizedComments/PersonalizedCommentsModal'
 import { ClassManagementModal } from './components/classes/ClassManagementModal'
+import { FinalCommentsModal } from './components/finalComments/FinalCommentsModal'
 import { useOutcomeComments } from './hooks/useOutcomeComments'
 import { usePersonalizedComments } from './hooks/usePersonalizedComments'
 import { useClasses } from './hooks/useClasses'
+import { useFinalComments } from './hooks/useFinalComments'
 import type { Subject } from './types/Subject'
 import type {
+  Class,
   CreateOutcomeCommentRequest,
   UpdateOutcomeCommentRequest,
   CreatePersonalizedCommentRequest,
   UpdatePersonalizedCommentRequest,
   CreateClassRequest,
   UpdateClassRequest,
+  CreateFinalCommentRequest,
+  UpdateFinalCommentRequest,
 } from './types'
 
 /**
@@ -55,6 +60,11 @@ function App() {
     subjectItem?: Subject
   }>({ isOpen: false })
 
+  const [finalCommentsModal, setFinalCommentsModal] = useState<{
+    isOpen: boolean
+    classItem?: Class
+  }>({ isOpen: false })
+
   // Hook for managing outcome comments state and API operations
   const {
     outcomeComments,
@@ -90,6 +100,18 @@ function App() {
     deleteClass,
     clearError: clearClassesError,
   } = useClasses()
+
+  // Hook for managing final comments state and API operations
+  const {
+    finalComments,
+    loading: finalCommentsLoading,
+    error: finalCommentsError,
+    loadFinalComments,
+    createComment: createFinalComment,
+    updateComment: updateFinalComment,
+    deleteComment: deleteFinalComment,
+    clearError: clearFinalCommentsError,
+  } = useFinalComments()
 
   const handleAddSubject = () => {
     setEditingSubject(undefined)
@@ -214,6 +236,37 @@ function App() {
     await deleteClass(id)
   }
 
+  // This callback will be called by ClassManagementModal when user clicks Final Comments button
+  const handleViewFinalComments = async (classItem: Class) => {
+    setFinalCommentsModal({
+      isOpen: true,
+      classItem,
+    })
+    // Load final comments for this class
+    await loadFinalComments(classItem.id)
+  }
+
+  const handleFinalCommentsClose = () => {
+    setFinalCommentsModal({ isOpen: false })
+    // Clear any error state when closing modal
+    clearFinalCommentsError()
+  }
+
+  // Real API handler for creating final comments
+  const handleCreateFinalComment = async (request: CreateFinalCommentRequest) => {
+    await createFinalComment(request)
+  }
+
+  // Real API handler for updating final comments
+  const handleUpdateFinalComment = async (id: number, request: UpdateFinalCommentRequest) => {
+    await updateFinalComment(id, request)
+  }
+
+  // Real API handler for deleting final comments
+  const handleDeleteFinalComment = async (id: number) => {
+    await deleteFinalComment(id)
+  }
+
   const handleDeleteConfirm = async () => {
     if (deleteConfirm.onConfirm) {
       try {
@@ -299,9 +352,22 @@ function App() {
         onCreateClass={handleCreateClass}
         onUpdateClass={handleUpdateClass}
         onDeleteClass={handleDeleteClass}
+        onViewFinalComments={handleViewFinalComments}
         loading={classesLoading}
         error={classesError}
         onClose={handleClassManagementClose}
+      />
+
+      <FinalCommentsModal
+        isOpen={finalCommentsModal.isOpen}
+        entityData={finalCommentsModal.classItem || { id: 0, name: '', year: 2024, subjectId: 0, createdAt: '', updatedAt: '' }}
+        finalComments={finalComments}
+        onCreateComment={handleCreateFinalComment}
+        onUpdateComment={handleUpdateFinalComment}
+        onDeleteComment={handleDeleteFinalComment}
+        loading={finalCommentsLoading}
+        error={finalCommentsError}
+        onClose={handleFinalCommentsClose}
       />
     </div>
   )

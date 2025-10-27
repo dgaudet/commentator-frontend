@@ -32,7 +32,7 @@ test.describe('Outcome Comments E2E', () => {
     const emptyState = page.locator('text=No classes yet')
     await Promise.race([
       classItems.first().waitFor({ state: 'visible', timeout: 3000 }).catch(() => null),
-      emptyState.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null)
+      emptyState.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null),
     ])
   })
 
