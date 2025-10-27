@@ -85,7 +85,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   // Validation helper
   const validateForm = (): string | null => {
     const trimmedFirstName = firstName.trim()
-    const trimmedLastName = lastName.trim()
 
     if (!trimmedFirstName) {
       return 'First name is required'
@@ -102,11 +101,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
 
     if (comment.length > 1000) {
       return 'Comment cannot exceed 1000 characters'
-    }
-
-    // LastName validation only if provided
-    if (trimmedLastName.length > 0 && trimmedLastName.length < 1) {
-      return 'Last name must be at least 1 character'
     }
 
     return null
@@ -193,7 +187,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   // Validation helper for edit form (same rules as create)
   const validateEditForm = (): string | null => {
     const trimmedFirstName = editFirstName.trim()
-    const trimmedLastName = editLastName.trim()
 
     if (!trimmedFirstName) {
       return 'First name is required'
@@ -212,10 +205,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       return 'Comment cannot exceed 1000 characters'
     }
 
-    // LastName validation only if provided
-    if (trimmedLastName.length > 0 && trimmedLastName.length < 1) {
-      return 'Last name must be at least 1 character'
-    }
+    // LastName validation: If provided and trimmed, any length > 0 is valid
+    // No additional validation needed - the trim already ensures this
 
     return null
   }
