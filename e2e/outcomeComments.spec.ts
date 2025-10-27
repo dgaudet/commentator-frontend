@@ -27,8 +27,13 @@ test.describe('Outcome Comments E2E', () => {
     // Wait for initial load
     await page.waitForLoadState('networkidle')
 
-    // Wait for classes to load
-    await page.waitForTimeout(2000)
+    // Wait for classes to load (deterministic wait - check for class items or empty state)
+    const classItems = page.locator('[data-testid^="class-item-"]')
+    const emptyState = page.locator('text=No classes yet')
+    await Promise.race([
+      classItems.first().waitFor({ state: 'visible', timeout: 3000 }).catch(() => null),
+      emptyState.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null)
+    ])
   })
 
   test.describe('Modal Access and Display', () => {
@@ -40,7 +45,9 @@ test.describe('Outcome Comments E2E', () => {
       if (classCount === 0) {
         // Create a test class first if none exist
         await createTestClass(page)
-        await page.waitForTimeout(1000)
+
+        // Wait for class to be created (deterministic wait)
+        await expect(page.locator('[data-testid^="class-item-"]').first()).toBeVisible({ timeout: 3000 })
       }
 
       // Click the first class's "Outcome Comments" button
@@ -120,12 +127,9 @@ test.describe('Outcome Comments E2E', () => {
       // Submit form
       await createButton.click()
 
-      // Wait for creation to complete
-      await page.waitForTimeout(2000)
-
-      // Verify comment appears in list
+      // Verify comment appears in list (deterministic wait)
       const newComment = modal.locator(`text="${testComment}"`).first()
-      await expect(newComment).toBeVisible()
+      await expect(newComment).toBeVisible({ timeout: 3000 })
 
       // Verify score is displayed on the new comment
       const newCommentScore = newComment.locator('.score-range')
@@ -193,12 +197,9 @@ test.describe('Outcome Comments E2E', () => {
       // Save changes
       await saveButton.click()
 
-      // Wait for update to complete
-      await page.waitForTimeout(2000)
-
-      // Verify updated content appears
+      // Verify updated content appears (deterministic wait)
       const updatedCommentElement = modal.locator(`text="${updatedComment}"`).first()
-      await expect(updatedCommentElement).toBeVisible()
+      await expect(updatedCommentElement).toBeVisible({ timeout: 3000 })
 
       // Verify updated score is displayed on the specific comment
       const updatedCommentScore = updatedCommentElement.locator('..').locator('.score-range')
@@ -264,11 +265,8 @@ test.describe('Outcome Comments E2E', () => {
       const confirmButton = confirmDialog.locator('button:has-text("Delete")')
       await confirmButton.click()
 
-      // Wait for deletion to complete
-      await page.waitForTimeout(2000)
-
-      // Verify comment is removed
-      await expect(modal.locator(`text="${testComment}"`)).not.toBeVisible()
+      // Verify comment is removed (deterministic wait)
+      await expect(modal.locator(`text="${testComment}"`)).not.toBeVisible({ timeout: 3000 })
 
       // Verify confirmation dialog closes
       await expect(confirmDialog).not.toBeVisible()
@@ -387,7 +385,9 @@ async function openOutcomeCommentsModal(page: Page) {
 
   if (classCount === 0) {
     await createTestClass(page)
-    await page.waitForTimeout(1000)
+
+    // Wait for class to be created (deterministic wait)
+    await expect(page.locator('[data-testid^="class-item-"]').first()).toBeVisible({ timeout: 3000 })
   }
 
   // Click outcome comments button
@@ -419,7 +419,8 @@ async function createTestClass(page: Page) {
     await yearInput.fill('2024')
     await submitButton.click()
 
-    await page.waitForTimeout(1000)
+    // Wait for class to be created (deterministic wait)
+    await expect(page.locator('[data-testid^="class-item-"]').first()).toBeVisible({ timeout: 3000 })
   }
 }
 
@@ -439,6 +440,6 @@ async function createComment(page: Page, commentText: string, score: string) {
   await upperRangeInput.fill(score)
   await createButton.click()
 
-  // Wait for creation to complete
-  await page.waitForTimeout(2000)
+  // Wait for comment to appear (deterministic wait)
+  await expect(modal.locator(`text="${commentText}"`).first()).toBeVisible({ timeout: 3000 })
 }

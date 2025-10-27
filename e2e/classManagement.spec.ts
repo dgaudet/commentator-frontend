@@ -36,10 +36,7 @@ test.describe('Class Management E2E', () => {
       const firstValue = await options[0].getAttribute('value')
       await subjectSelector.selectOption(firstValue!)
 
-      // Wait for SubjectListItem to render
-      await page.waitForTimeout(500)
-
-      // Click "Manage Classes" button
+      // Click "Manage Classes" button (wait for it to appear after subject selection)
       const manageClassesButton = page.locator('button:has-text("Manage Classes")')
       await expect(manageClassesButton).toBeVisible({ timeout: 2000 })
       await manageClassesButton.click()
@@ -184,10 +181,7 @@ test.describe('Class Management E2E', () => {
           // Submit
           await addButton.click()
 
-          // Wait for class to be created
-          await page.waitForTimeout(1000)
-
-          // Class should appear in dropdown
+          // Class should appear in dropdown (deterministic wait)
           const dropdown = page.locator('select#class-dropdown')
           const optionWithName = dropdown.locator(`option:has-text("${uniqueName}")`)
           await expect(optionWithName).toHaveCount(1, { timeout: 3000 })
@@ -220,11 +214,10 @@ test.describe('Class Management E2E', () => {
 
             // Select the class
             await dropdown.selectOption(firstValue!)
-            await page.waitForTimeout(500)
 
-            // Form should be populated
+            // Form should be populated (wait for value to update)
             const nameInput = page.locator('input#class-name-input')
-            await expect(nameInput).toHaveValue(className)
+            await expect(nameInput).toHaveValue(className, { timeout: 2000 })
 
             // Should show Update button instead of Add button
             await expect(page.locator('button:has-text("Update Class")')).toBeVisible()
@@ -247,20 +240,19 @@ test.describe('Class Management E2E', () => {
             // Select first class
             const firstValue = await options[0].getAttribute('value')
             await dropdown.selectOption(firstValue!)
-            await page.waitForTimeout(500)
+
+            // Wait for Update button to appear (indicates form is populated)
+            const updateButton = page.locator('button:has-text("Update Class")')
+            await expect(updateButton).toBeVisible({ timeout: 2000 })
 
             // Modify the name
             const updatedName = `Updated Class ${Date.now()}`
             await page.fill('input#class-name-input', updatedName)
 
             // Click Update
-            const updateButton = page.locator('button:has-text("Update Class")')
             await updateButton.click()
 
-            // Wait for update
-            await page.waitForTimeout(1000)
-
-            // Updated class should appear in dropdown
+            // Updated class should appear in dropdown (deterministic wait)
             const optionWithName = dropdown.locator(`option:has-text("${updatedName}")`)
             await expect(optionWithName).toHaveCount(1, { timeout: 3000 })
           }
@@ -284,10 +276,10 @@ test.describe('Class Management E2E', () => {
             // Select a class
             const firstValue = await options[0].getAttribute('value')
             await dropdown.selectOption(firstValue!)
-            await page.waitForTimeout(500)
 
-            // Click Delete button
+            // Wait for Delete button to appear (indicates class is selected)
             const deleteButton = page.locator('button:has-text("Delete Class")')
+            await expect(deleteButton).toBeVisible({ timeout: 2000 })
             await deleteButton.click()
 
             // Confirmation dialog should appear
@@ -314,19 +306,19 @@ test.describe('Class Management E2E', () => {
 
             // Select and try to delete
             await dropdown.selectOption(firstValue!)
-            await page.waitForTimeout(500)
 
+            // Wait for Delete button to appear
             const deleteButton = page.locator('button:has-text("Delete Class")')
+            await expect(deleteButton).toBeVisible({ timeout: 2000 })
             await deleteButton.click()
 
             // Cancel the deletion
             const cancelButton = page.locator('button:has-text("Cancel")').last()
             await cancelButton.click()
 
-            // Class should still exist
-            await page.waitForTimeout(500)
+            // Class should still exist (deterministic check)
             const optionStillExists = dropdown.locator(`option:has-text("${firstText}")`)
-            await expect(optionStillExists).toHaveCount(1)
+            await expect(optionStillExists).toHaveCount(1, { timeout: 2000 })
           }
         }
       }
@@ -345,31 +337,28 @@ test.describe('Class Management E2E', () => {
           await page.fill('input#class-name-input', uniqueName)
           await page.fill('input#class-year-input', '2025')
           await addButton.click()
-          await page.waitForTimeout(1000)
 
-          // Now select and delete it
+          // Wait for class to appear in dropdown
           const dropdown = page.locator('select#class-dropdown')
           const optionToDelete = dropdown.locator(`option:has-text("${uniqueName}")`)
+          await expect(optionToDelete).toHaveCount(1, { timeout: 3000 })
+
           const value = await optionToDelete.getAttribute('value')
 
           if (value) {
             await dropdown.selectOption(value)
-            await page.waitForTimeout(500)
 
-            // Delete the class
+            // Wait for Delete button to appear (indicates class is selected)
             const deleteButton = page.locator('button:has-text("Delete Class")')
+            await expect(deleteButton).toBeVisible({ timeout: 2000 })
             await deleteButton.click()
 
             // Confirm deletion
             const confirmButton = page.locator('button:has-text("Delete")').last()
             await confirmButton.click()
 
-            // Wait for deletion
-            await page.waitForTimeout(1000)
-
-            // Class should be removed from dropdown
-            const optionCount = await dropdown.locator(`option:has-text("${uniqueName}")`).count()
-            expect(optionCount).toBe(0)
+            // Class should be removed from dropdown (deterministic wait)
+            await expect(dropdown.locator(`option:has-text("${uniqueName}")`)).toHaveCount(0, { timeout: 3000 })
           }
         }
       }
@@ -457,9 +446,8 @@ test.describe('Class Management E2E', () => {
           await page.fill('input#class-name-input', uniqueName)
           await page.fill('input#class-year-input', '2025')
           await addButton.click()
-          await page.waitForTimeout(1000)
 
-          // 2. READ - Verify it exists
+          // 2. READ - Verify it exists (deterministic wait)
           const dropdown = page.locator('select#class-dropdown')
           const createdOption = dropdown.locator(`option:has-text("${uniqueName}")`)
           await expect(createdOption).toHaveCount(1, { timeout: 3000 })
@@ -468,16 +456,16 @@ test.describe('Class Management E2E', () => {
           const value = await createdOption.getAttribute('value')
           if (value) {
             await dropdown.selectOption(value)
-            await page.waitForTimeout(500)
+
+            // Wait for Update button to appear (indicates form is ready)
+            const updateButton = page.locator('button:has-text("Update Class")')
+            await expect(updateButton).toBeVisible({ timeout: 2000 })
 
             const updatedName = `${uniqueName} Updated`
             await page.fill('input#class-name-input', updatedName)
-
-            const updateButton = page.locator('button:has-text("Update Class")')
             await updateButton.click()
-            await page.waitForTimeout(1000)
 
-            // Verify update
+            // Verify update (deterministic wait)
             const updatedOption = dropdown.locator(`option:has-text("${updatedName}")`)
             await expect(updatedOption).toHaveCount(1, { timeout: 3000 })
 
@@ -485,18 +473,17 @@ test.describe('Class Management E2E', () => {
             const updatedValue = await updatedOption.getAttribute('value')
             if (updatedValue) {
               await dropdown.selectOption(updatedValue)
-              await page.waitForTimeout(500)
 
+              // Wait for Delete button to appear
               const deleteButton = page.locator('button:has-text("Delete Class")')
+              await expect(deleteButton).toBeVisible({ timeout: 2000 })
               await deleteButton.click()
 
               const confirmButton = page.locator('button:has-text("Delete")').last()
               await confirmButton.click()
-              await page.waitForTimeout(1000)
 
-              // Verify deletion
-              const deletedOptionCount = await dropdown.locator(`option:has-text("${updatedName}")`).count()
-              expect(deletedOptionCount).toBe(0)
+              // Verify deletion (deterministic wait)
+              await expect(dropdown.locator(`option:has-text("${updatedName}")`)).toHaveCount(0, { timeout: 3000 })
             }
           }
         }

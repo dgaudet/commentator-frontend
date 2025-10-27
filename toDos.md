@@ -1,5 +1,6 @@
 # To Do Items
 ## Need a page to add/edit FinalComments for a class
+* Can you create stories to add FinalComments components. The api documentation for this can be found here http://localhost:3000/api-docs. A user should be able to add/edit/view/delete final comments for a class. You should be able to access final comment management by clicking a Final Comments button on the edit class component.
 # Personalized Comments
 ## show a count of which comment you are on ex: 1 out of 100
 ## how should we order them?
