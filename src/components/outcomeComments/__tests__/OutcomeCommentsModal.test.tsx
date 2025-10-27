@@ -3,24 +3,24 @@
  * Test Suite for viewing, creating, editing, and deleting outcome comments
  *
  * User Stories:
- * - View all outcome comments for a class
- * - Create new outcome comment for a class
+ * - View all outcome comments for a subject
+ * - Create new outcome comment for a subject
  * - Edit existing outcome comment
  * - Delete outcome comment
  *
  * Testing approach: Test-Driven Development (Red-Green-Refactor)
+ * Related: TD-001 (OutcomeCommentsModal Subject Type Compatibility)
  */
 
 import { render, screen, within, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { OutcomeCommentsModal } from '../OutcomeCommentsModal'
-import type { Class, OutcomeComment } from '../../../types'
+import type { Subject, OutcomeComment } from '../../../types'
 
 // Mock data
-const mockClass: Class = {
+const mockSubject: Subject = {
   id: 1,
   name: 'Mathematics 101',
-  year: 2024,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 }
@@ -50,7 +50,7 @@ describe('OutcomeCommentsModal', () => {
   const defaultProps = {
     isOpen: true,
     onClose: jest.fn(),
-    classData: mockClass,
+    entityData: mockSubject,
     outcomeComments: mockOutcomeComments,
     onCreateComment: jest.fn(),
     onUpdateComment: jest.fn(),
@@ -81,7 +81,7 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
 
       expect(screen.getByText('No outcome comments found')).toBeInTheDocument()
-      expect(screen.getByText('Be the first to add an outcome comment for this class.')).toBeInTheDocument()
+      expect(screen.getByText('Be the first to add an outcome comment.')).toBeInTheDocument()
     })
 
     it('should display comment creation date', () => {

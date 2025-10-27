@@ -127,7 +127,7 @@ describe('App', () => {
       // Set up fresh mock implementations for each test
       mockSubjectService.create.mockResolvedValue(mockSubjects[0])
       mockSubjectService.update.mockResolvedValue(mockSubjects[0])
-      mockSubjectService.delete.mockResolvedValue({ message: 'Deleted', deletedClass: mockSubjects[0] })
+      mockSubjectService.delete.mockResolvedValue({ message: 'Deleted', deletedSubject: mockSubjects[0] })
 
       // Additional cleanup for this test suite
       cleanup()
