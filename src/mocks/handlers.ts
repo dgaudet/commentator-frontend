@@ -10,9 +10,11 @@
 import { http, HttpResponse } from 'msw'
 import { mockSubjects } from './data/subjects'
 import { mockPersonalizedComments } from './data/personalizedComments'
+import { mockClasses } from './data/classes'
 import { Subject } from '../types/Subject'
 import { OutcomeComment } from '../types/OutcomeComment'
 import { PersonalizedComment } from '../types/PersonalizedComment'
+import { Class } from '../types/Class'
 
 const BASE_URL = 'http://localhost:3000'
 
@@ -20,11 +22,18 @@ const BASE_URL = 'http://localhost:3000'
 const subjects: Subject[] = [...mockSubjects]
 let nextSubjectId = 4
 
+const classes: Class[] = [...mockClasses]
+let nextClassId = 7
+
 // Reset function for test isolation
 export function resetMockData() {
   subjects.length = 0
   subjects.push(...mockSubjects)
   nextSubjectId = 4
+
+  classes.length = 0
+  classes.push(...mockClasses)
+  nextClassId = 7
 }
 
 // Mock outcome comments storage
@@ -80,6 +89,78 @@ function validateId(id: string): ValidationResult {
       },
     }
   }
+  return { valid: true }
+}
+
+/**
+ * Validation helper: Check if class request is valid
+ */
+function validateClassRequest(body: Record<string, unknown>): ValidationResult {
+  const { name, year, subjectId } = body
+
+  // Validate name
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return {
+      valid: false,
+      error: {
+        error: 'Bad Request',
+        message: 'Class name is required',
+        statusCode: 400,
+        details: { name: ['Class name is required'] },
+      },
+    }
+  }
+
+  if (name.length > 100) {
+    return {
+      valid: false,
+      error: {
+        error: 'Bad Request',
+        message: 'Class name must be between 1 and 100 characters',
+        statusCode: 400,
+        details: { name: ['Class name must be between 1 and 100 characters'] },
+      },
+    }
+  }
+
+  // Validate year
+  if (year === undefined || typeof year !== 'number' || !Number.isInteger(year)) {
+    return {
+      valid: false,
+      error: {
+        error: 'Bad Request',
+        message: 'Valid year is required',
+        statusCode: 400,
+        details: { year: ['Valid year is required'] },
+      },
+    }
+  }
+
+  if (year < 2000 || year > 2099) {
+    return {
+      valid: false,
+      error: {
+        error: 'Bad Request',
+        message: 'Year must be between 2000 and 2099',
+        statusCode: 400,
+        details: { year: ['Year must be between 2000 and 2099'] },
+      },
+    }
+  }
+
+  // Validate subjectId (only for create requests)
+  if (subjectId !== undefined && (typeof subjectId !== 'number' || !Number.isInteger(subjectId))) {
+    return {
+      valid: false,
+      error: {
+        error: 'Bad Request',
+        message: 'Valid subject ID is required',
+        statusCode: 400,
+        details: { subjectId: ['Valid subject ID is required'] },
+      },
+    }
+  }
+
   return { valid: true }
 }
 
@@ -252,10 +333,171 @@ function validateOutcomeCommentUpdateRequest(body: Record<string, unknown>): Val
 }
 
 /**
- * API request handlers for Subject and OutcomeComment endpoints
- * Related: TD-003 (Class infrastructure removed)
+ * API request handlers for Subject, Class, OutcomeComment, and PersonalizedComment endpoints
  */
 export const handlers = [
+  // ==================== CLASS ENDPOINTS ====================
+
+  // GET /class?subjectId={subjectId} - Get all classes for a subject
+  http.get(`${BASE_URL}/class`, ({ request }) => {
+    const url = new URL(request.url)
+    const subjectId = url.searchParams.get('subjectId')
+
+    if (!subjectId) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Subject ID is required',
+        statusCode: 400,
+      }, { status: 400 })
+    }
+
+    // Validate subject ID
+    const validation = validateId(subjectId)
+    if (!validation.valid) {
+      return HttpResponse.json(validation.error, { status: 400 })
+    }
+
+    // Filter classes for this subject
+    const subjectClasses = classes.filter(c => c.subjectId === Number(subjectId))
+    return HttpResponse.json(subjectClasses)
+  }),
+
+  // POST /class - Create new class
+  http.post(`${BASE_URL}/class`, async ({ request }) => {
+    const body = await request.json() as { subjectId: number; name: string; year: number }
+
+    // Validate request body
+    const validation = validateClassRequest(body)
+    if (!validation.valid) {
+      return HttpResponse.json(validation.error, { status: 400 })
+    }
+
+    // Check for duplicate (subjectId + name + year combination must be unique, case-insensitive)
+    const isDuplicate = classes.some(
+      c => c.subjectId === body.subjectId &&
+           c.name.toLowerCase() === body.name.trim().toLowerCase() &&
+           c.year === body.year,
+    )
+
+    if (isDuplicate) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'A class with this name and year already exists for this subject',
+        statusCode: 400,
+        details: { name: ['A class with this name and year already exists for this subject'] },
+      }, { status: 400 })
+    }
+
+    // Create new class
+    const newClass: Class = {
+      id: nextClassId++,
+      subjectId: body.subjectId,
+      name: body.name.trim(),
+      year: body.year,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    classes.push(newClass)
+    return HttpResponse.json(newClass, { status: 201 })
+  }),
+
+  // PUT /class/:id - Update existing class
+  http.put(`${BASE_URL}/class/:id`, async ({ params, request }) => {
+    const { id } = params
+    const body = await request.json() as { name: string; year: number }
+
+    // Validate ID
+    const idValidation = validateId(id as string)
+    if (!idValidation.valid) {
+      return HttpResponse.json(idValidation.error, { status: 400 })
+    }
+
+    // Find class
+    const classIndex = classes.findIndex(c => c.id === Number(id))
+    if (classIndex === -1) {
+      return HttpResponse.json(
+        {
+          error: 'Not Found',
+          message: 'Class not found',
+          statusCode: 404,
+        },
+        { status: 404 },
+      )
+    }
+
+    // Validate request body
+    const bodyValidation = validateClassRequest(body)
+    if (!bodyValidation.valid) {
+      return HttpResponse.json(bodyValidation.error, { status: 400 })
+    }
+
+    const existingClass = classes[classIndex]
+
+    // Check for duplicate (excluding current class)
+    const isDuplicate = classes.some(
+      c => c.id !== existingClass.id &&
+           c.subjectId === existingClass.subjectId &&
+           c.name.toLowerCase() === body.name.trim().toLowerCase() &&
+           c.year === body.year,
+    )
+
+    if (isDuplicate) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'A class with this name and year already exists for this subject',
+        statusCode: 400,
+        details: { name: ['A class with this name and year already exists for this subject'] },
+      }, { status: 400 })
+    }
+
+    // Update class
+    const updatedClass: Class = {
+      ...existingClass,
+      name: body.name.trim(),
+      year: body.year,
+      updatedAt: new Date().toISOString(),
+    }
+
+    classes[classIndex] = updatedClass
+    return HttpResponse.json(updatedClass)
+  }),
+
+  // DELETE /class/:id - Delete class
+  http.delete(`${BASE_URL}/class/:id`, ({ params }) => {
+    const { id } = params
+
+    // Validate ID
+    const validation = validateId(id as string)
+    if (!validation.valid) {
+      return HttpResponse.json(validation.error, { status: 400 })
+    }
+
+    // Find class
+    const classIndex = classes.findIndex(c => c.id === Number(id))
+    if (classIndex === -1) {
+      return HttpResponse.json(
+        {
+          error: 'Not Found',
+          message: 'Class not found',
+          statusCode: 404,
+        },
+        { status: 404 },
+      )
+    }
+
+    // Delete class
+    const deletedClass = classes[classIndex]
+    classes.splice(classIndex, 1)
+
+    return HttpResponse.json({
+      message: 'Class deleted successfully',
+      deletedClass,
+    })
+  }),
+
+  // ==================== OUTCOME COMMENT ENDPOINTS ====================
+
   // GET /outcome-comment?subjectId={subjectId} - Get outcome comments for a subject
   // Related: TD-002 (OutcomeComment classId → subjectId Migration)
   http.get(`${BASE_URL}/outcome-comment`, ({ request }) => {

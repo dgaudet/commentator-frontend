@@ -26,11 +26,15 @@ test.describe('Subject Management E2E', () => {
 
   test.describe('US-REFACTOR-005: View List of Subjects', () => {
     test('should display list of subjects', async ({ page }) => {
-      // Wait for subjects to load (or empty state)
-      await page.waitForTimeout(1000)
+      // Wait for subjects to load (deterministic wait for dropdown or empty state)
+      const dropdown = page.locator('select#subject-selector')
+      const emptyState = page.locator('text=No subjects found')
+      await Promise.race([
+        dropdown.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null),
+        emptyState.waitFor({ state: 'visible', timeout: 3000 }).catch(() => null)
+      ])
 
       // Should show either dropdown with subjects or empty state
-      const dropdown = page.locator('select#subject-selector')
       const hasDropdown = await dropdown.isVisible()
       const hasOptions = await page.locator('select#subject-selector option').count() > 1 // More than just placeholder
       const hasEmptyState = await page.locator('text=No subjects found').isVisible()
@@ -51,11 +55,9 @@ test.describe('Subject Management E2E', () => {
         const firstValue = await dropdown.locator('option').nth(1).getAttribute('value')
         await dropdown.selectOption(firstValue!)
 
-        // Wait for SubjectListItem to render
-        await page.waitForTimeout(500)
-
-        // Get the displayed subject item
+        // Wait for SubjectListItem to render (deterministic wait)
         const firstSubject = page.locator('[data-testid^="subject-item-"]').first()
+        await expect(firstSubject).toBeVisible({ timeout: 2000 })
 
         // Should display name
         await expect(firstSubject).toContainText(/[A-Za-z]/)
@@ -155,10 +157,7 @@ test.describe('Subject Management E2E', () => {
         // Submit
         await page.locator('button:has-text("Create Subject")').click()
 
-        // Wait for form to close and subject to appear
-        await page.waitForTimeout(1000)
-
-        // Verify subject appears in dropdown options
+        // Verify subject appears in dropdown options (deterministic wait)
         const optionWithName = page.locator(`select#subject-selector option:has-text("${uniqueName}")`)
         await expect(optionWithName).toHaveCount(1, { timeout: 5000 })
       }
@@ -195,7 +194,10 @@ test.describe('Subject Management E2E', () => {
         const uniqueName = `Duplicate Test ${Date.now()}`
         await page.fill('input[id*="subject-name"]', uniqueName)
         await page.locator('button:has-text("Create Subject")').click()
-        await page.waitForTimeout(1000)
+
+        // Wait for subject to be created (deterministic wait)
+        const createdOption = page.locator(`select#subject-selector option:has-text("${uniqueName}")`)
+        await expect(createdOption).toHaveCount(1, { timeout: 3000 })
 
         // Try to create duplicate (same name)
         await page.locator('button:has-text("Add Subject")').click()
@@ -217,7 +219,10 @@ test.describe('Subject Management E2E', () => {
         const uniqueName = `CaseSensitive Test ${Date.now()}`
         await page.fill('input[id*="subject-name"]', uniqueName)
         await page.locator('button:has-text("Create Subject")').click()
-        await page.waitForTimeout(1000)
+
+        // Wait for subject to be created (deterministic wait)
+        const createdOption = page.locator(`select#subject-selector option:has-text("${uniqueName}")`)
+        await expect(createdOption).toHaveCount(1, { timeout: 3000 })
 
         // Try to create duplicate with different case
         await page.locator('button:has-text("Add Subject")').click()
@@ -241,10 +246,9 @@ test.describe('Subject Management E2E', () => {
         await addButton.click()
         await page.fill('input[id*="subject-name"]', subjectName)
         await page.locator('button:has-text("Create Subject")').click()
-        await page.waitForTimeout(1000)
       }
 
-      // 2. READ: Verify subject appears in dropdown
+      // 2. READ: Verify subject appears in dropdown (deterministic wait)
       const optionWithName = page.locator(`select#subject-selector option:has-text("${subjectName}")`)
       await expect(optionWithName).toHaveCount(1, { timeout: 5000 })
 
@@ -254,8 +258,9 @@ test.describe('Subject Management E2E', () => {
         await editButton.click()
         await page.fill('input[id*="subject-name"]', `${subjectName} Updated`)
         await page.locator('button:has-text("Save")').click()
-        await page.waitForTimeout(1000)
-        await expect(page.locator(`text=${subjectName} Updated`)).toBeVisible()
+
+        // Wait for update to complete (deterministic wait)
+        await expect(page.locator(`text=${subjectName} Updated`)).toBeVisible({ timeout: 3000 })
       }
 
       // 4. DELETE: Remove subject (if delete button exists)
@@ -267,8 +272,9 @@ test.describe('Subject Management E2E', () => {
         if (await confirmButton.isVisible().catch(() => false)) {
           await confirmButton.click()
         }
-        await page.waitForTimeout(1000)
-        await expect(page.locator(`text=${subjectName}`)).not.toBeVisible()
+
+        // Wait for deletion to complete (deterministic wait)
+        await expect(page.locator(`text=${subjectName}`)).not.toBeVisible({ timeout: 3000 })
       }
     })
   })
@@ -320,11 +326,12 @@ test.describe('Subject Management E2E', () => {
 
   test.describe('Subject Dropdown Selector', () => {
     test('should display dropdown with all subjects', async ({ page }) => {
-      // Wait for subjects to load
-      await page.waitForTimeout(1000)
+      // Wait for dropdown to be visible (deterministic wait)
+      const dropdown = page.locator('select#subject-selector')
+      await expect(dropdown).toBeVisible({ timeout: 3000 })
 
       // Check if we have subjects
-      const dropdownVisible = await page.locator('select#subject-selector').isVisible().catch(() => false)
+      const dropdownVisible = await dropdown.isVisible().catch(() => false)
 
       if (dropdownVisible) {
         // Dropdown should be visible
@@ -341,10 +348,11 @@ test.describe('Subject Management E2E', () => {
     })
 
     test('should select subject and display SubjectListItem', async ({ page }) => {
-      // Wait for subjects to load
-      await page.waitForTimeout(1000)
+      // Wait for dropdown to be visible (deterministic wait)
+      const dropdown = page.locator('select#subject-selector')
+      await expect(dropdown).toBeVisible({ timeout: 3000 })
 
-      const dropdownVisible = await page.locator('select#subject-selector').isVisible().catch(() => false)
+      const dropdownVisible = await dropdown.isVisible().catch(() => false)
 
       if (dropdownVisible) {
         // Get dropdown options (excluding placeholder)
@@ -367,10 +375,11 @@ test.describe('Subject Management E2E', () => {
     })
 
     test('should persist selected subject across page reload', async ({ page }) => {
-      // Wait for subjects to load
-      await page.waitForTimeout(1000)
+      // Wait for dropdown to be visible (deterministic wait)
+      const dropdown = page.locator('select#subject-selector')
+      await expect(dropdown).toBeVisible({ timeout: 3000 })
 
-      const dropdownVisible = await page.locator('select#subject-selector').isVisible().catch(() => false)
+      const dropdownVisible = await dropdown.isVisible().catch(() => false)
 
       if (dropdownVisible) {
         // Get dropdown options
@@ -382,13 +391,16 @@ test.describe('Subject Management E2E', () => {
           const value = await firstOption.getAttribute('value')
           await page.selectOption('select#subject-selector', value!)
 
-          // Wait for selection to be saved to localStorage (commentator.selectedSubjectId)
-          await page.waitForTimeout(1000)
+          // Wait for SubjectListItem to be visible (indicates selection was processed)
+          await expect(page.locator(`[data-testid="subject-item-${value}"]`)).toBeVisible({ timeout: 2000 })
 
           // Reload page
           await page.reload()
           await page.waitForLoadState('networkidle')
-          await page.waitForTimeout(1500)
+
+          // Wait for dropdown to reload (deterministic wait)
+          const reloadedDropdown = page.locator('select#subject-selector')
+          await expect(reloadedDropdown).toBeVisible({ timeout: 3000 })
 
           // Selection should persist
           const dropdown = page.locator('select#subject-selector')
@@ -401,10 +413,11 @@ test.describe('Subject Management E2E', () => {
     })
 
     test('should allow changing selection', async ({ page }) => {
-      // Wait for subjects to load
-      await page.waitForTimeout(1000)
+      // Wait for dropdown to be visible (deterministic wait)
+      const dropdown = page.locator('select#subject-selector')
+      await expect(dropdown).toBeVisible({ timeout: 3000 })
 
-      const dropdownVisible = await page.locator('select#subject-selector').isVisible().catch(() => false)
+      const dropdownVisible = await dropdown.isVisible().catch(() => false)
 
       if (dropdownVisible) {
         // Get dropdown options
@@ -415,16 +428,17 @@ test.describe('Subject Management E2E', () => {
           const firstOption = options[0]
           const firstValue = await firstOption.getAttribute('value')
           await page.selectOption('select#subject-selector', firstValue!)
-          await page.waitForTimeout(300)
 
-          // First subject should be visible
-          await expect(page.locator(`[data-testid="subject-item-${firstValue}"]`)).toBeVisible()
+          // Wait for first subject to be visible (deterministic wait)
+          await expect(page.locator(`[data-testid="subject-item-${firstValue}"]`)).toBeVisible({ timeout: 2000 })
 
           // Select second subject
           const secondOption = options[1]
           const secondValue = await secondOption.getAttribute('value')
           await page.selectOption('select#subject-selector', secondValue!)
-          await page.waitForTimeout(300)
+
+          // Wait for second subject to be visible (deterministic wait)
+          await expect(page.locator(`[data-testid="subject-item-${secondValue}"]`)).toBeVisible({ timeout: 2000 })
 
           // Second subject should be visible, first should be hidden
           await expect(page.locator(`[data-testid="subject-item-${secondValue}"]`)).toBeVisible()
@@ -437,9 +451,11 @@ test.describe('Subject Management E2E', () => {
       // This test requires a database with exactly one subject
       // It's more of a manual test scenario, but we can check the behavior
 
-      await page.waitForTimeout(1000)
+      // Wait for dropdown to be visible (deterministic wait)
+      const dropdown = page.locator('select#subject-selector')
+      await expect(dropdown).toBeVisible({ timeout: 3000 })
 
-      const dropdownVisible = await page.locator('select#subject-selector').isVisible().catch(() => false)
+      const dropdownVisible = await dropdown.isVisible().catch(() => false)
 
       if (dropdownVisible) {
         const options = await page.locator('select#subject-selector option[value]:not([value=""])').all()
@@ -458,9 +474,11 @@ test.describe('Subject Management E2E', () => {
     })
 
     test('should support keyboard navigation', async ({ page }) => {
-      await page.waitForTimeout(1000)
+      // Wait for dropdown to be visible (deterministic wait)
+      const dropdown = page.locator('select#subject-selector')
+      await expect(dropdown).toBeVisible({ timeout: 3000 })
 
-      const dropdownVisible = await page.locator('select#subject-selector').isVisible().catch(() => false)
+      const dropdownVisible = await dropdown.isVisible().catch(() => false)
 
       if (dropdownVisible) {
         // Focus dropdown with keyboard
@@ -481,9 +499,11 @@ test.describe('Subject Management E2E', () => {
       // 2. Delete that subject
       // 3. Verify selection is cleared
 
-      await page.waitForTimeout(1000)
+      // Wait for dropdown to be visible (deterministic wait)
+      const dropdown = page.locator('select#subject-selector')
+      await expect(dropdown).toBeVisible({ timeout: 3000 })
 
-      const dropdownVisible = await page.locator('select#subject-selector').isVisible().catch(() => false)
+      const dropdownVisible = await dropdown.isVisible().catch(() => false)
 
       if (dropdownVisible) {
         const options = await page.locator('select#subject-selector option[value]:not([value=""])').all()
@@ -492,7 +512,9 @@ test.describe('Subject Management E2E', () => {
           // Select a subject
           const firstValue = await options[0].getAttribute('value')
           await page.selectOption('select#subject-selector', firstValue!)
-          await page.waitForTimeout(500)
+
+          // Wait for SubjectListItem to be visible (deterministic wait)
+          await expect(page.locator(`[data-testid="subject-item-${firstValue}"]`)).toBeVisible({ timeout: 2000 })
 
           // Try to delete it (if delete button exists)
           const deleteButton = page.locator(`[data-testid="subject-item-${firstValue}"] button:has-text("Delete")`).first()
@@ -506,11 +528,8 @@ test.describe('Subject Management E2E', () => {
               await confirmButton.click()
             }
 
-            await page.waitForTimeout(2000) // Give time for deletion and state update
-
-            // After deletion, the subject should not be in the dropdown
-            const optionStillExists = await page.locator(`select#subject-selector option[value="${firstValue}"]`).count()
-            expect(optionStillExists).toBe(0)
+            // After deletion, the subject should not be in the dropdown (deterministic wait)
+            await expect(page.locator(`select#subject-selector option[value="${firstValue}"]`)).toHaveCount(0, { timeout: 3000 })
 
             // And the SubjectListItem should not be visible (selection cleared)
             const subjectItemVisible = await page.locator(`[data-testid="subject-item-${firstValue}"]`).isVisible().catch(() => false)
