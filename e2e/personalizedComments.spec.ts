@@ -24,8 +24,8 @@ test.describe('Personalized Comments E2E', () => {
     // Wait for initial load
     await page.waitForLoadState('networkidle')
 
-    // Wait for subjects to load
-    await page.waitForTimeout(2000)
+    // Wait for subjects to load - deterministic wait for subject selector or empty state
+    await page.waitForSelector('select#subject-selector, [data-testid="empty-state"]', { timeout: 10000 })
   })
 
   test.describe('Modal Access and Display', () => {
@@ -37,7 +37,8 @@ test.describe('Personalized Comments E2E', () => {
       if (subjectCount === 0) {
         // Create a test subject first if none exist
         await createTestSubject(page)
-        await page.waitForTimeout(1000)
+        // Wait for the new subject item to appear
+        await page.waitForSelector('[data-testid^="subject-item-"]', { timeout: 5000 })
       }
 
       // Click the first subject's "Personalized Comments" button
@@ -118,12 +119,9 @@ test.describe('Personalized Comments E2E', () => {
       // Submit form
       await createButton.click()
 
-      // Wait for creation to complete
-      await page.waitForTimeout(2000)
-
-      // Verify comment appears in list
+      // Wait for creation to complete - wait for the new comment to appear
       const newComment = modal.locator(`text="${testComment}"`).first()
-      await expect(newComment).toBeVisible()
+      await expect(newComment).toBeVisible({ timeout: 5000 })
 
       // Verify form is cleared
       await expect(textarea).toHaveValue('')
@@ -208,12 +206,9 @@ test.describe('Personalized Comments E2E', () => {
       // Save changes
       await saveButton.click()
 
-      // Wait for update to complete
-      await page.waitForTimeout(2000)
-
-      // Verify updated content appears
+      // Wait for update to complete - wait for updated text to appear
       const updatedCommentElement = modal.locator(`text="${updatedComment}"`).first()
-      await expect(updatedCommentElement).toBeVisible()
+      await expect(updatedCommentElement).toBeVisible({ timeout: 5000 })
 
       // Verify edit form is hidden
       await expect(editTextarea).not.toBeVisible()
@@ -299,11 +294,8 @@ test.describe('Personalized Comments E2E', () => {
       const confirmButton = confirmDialog.locator('button:has-text("Delete")')
       await confirmButton.click()
 
-      // Wait for deletion to complete
-      await page.waitForTimeout(2000)
-
-      // Verify comment is removed
-      await expect(modal.locator(`text="${testComment}"`)).not.toBeVisible()
+      // Wait for deletion to complete - wait for comment to disappear
+      await expect(modal.locator(`text="${testComment}"`)).not.toBeVisible({ timeout: 5000 })
 
       // Verify confirmation dialog closes
       await expect(confirmDialog).not.toBeVisible()
@@ -405,7 +397,8 @@ async function openPersonalizedCommentsModal(page: Page) {
 
   if (subjectCount === 0) {
     await createTestSubject(page)
-    await page.waitForTimeout(1000)
+    // Wait for the new subject item to appear
+    await page.waitForSelector('[data-testid^="subject-item-"]', { timeout: 5000 })
   }
 
   // Click personalized comments button
@@ -435,7 +428,8 @@ async function createTestSubject(page: Page) {
     await nameInput.fill(`E2E Test Subject - ${Date.now()}`)
     await submitButton.click()
 
-    await page.waitForTimeout(1000)
+    // Wait for the form to close (submit button should disappear)
+    await expect(submitButton).not.toBeVisible({ timeout: 5000 })
   }
 }
 
@@ -451,6 +445,6 @@ async function createPersonalizedComment(page: Page, commentText: string) {
   await textarea.fill(commentText)
   await createButton.click()
 
-  // Wait for creation to complete
-  await page.waitForTimeout(2000)
+  // Wait for creation to complete - wait for the new comment to appear in the list
+  await expect(modal.locator(`text="${commentText}"`)).toBeVisible({ timeout: 5000 })
 }
