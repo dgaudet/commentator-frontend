@@ -1,13 +1,13 @@
 /**
  * FinalCommentsModal Component Tests
- * TDD Phase: RED - Writing failing tests before implementation
+ * TDD Phase: GREEN - All tests passing
  * Reference: US-FINAL-001 (Modal opens from Final Comments button)
  *           US-FINAL-002 (View list of final comments)
+ *           US-FINAL-003 (Create new final comment)
  *
- * Initial test suite focuses on modal rendering and basic structure
- * US-FINAL-003 tests will be added in subsequent phase
+ * Comprehensive test suite covering all MVP functionality
  */
-import { render, screen } from '../../../test-utils'
+import { render, screen, fireEvent, waitFor } from '../../../test-utils'
 import { FinalCommentsModal } from '../FinalCommentsModal'
 import type { Class, FinalComment } from '../../../types'
 
@@ -392,6 +392,477 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       expect(names[0].textContent).toContain('Alice')
       expect(names[1].textContent).toContain('Bob')
       expect(names[2].textContent).toContain('John')
+    })
+  })
+})
+
+describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
+  const mockHandlers = {
+    onClose: jest.fn(),
+    onCreateComment: jest.fn(),
+    onUpdateComment: jest.fn(),
+    onDeleteComment: jest.fn(),
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockHandlers.onCreateComment.mockResolvedValue(undefined)
+  })
+
+  describe('Form Rendering (AC 1)', () => {
+    it('should display create form with all fields', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      expect(screen.getByLabelText(/First Name/i, { selector: 'input' })).toBeInTheDocument()
+      expect(screen.getByLabelText(/Last Name/i, { selector: 'input' })).toBeInTheDocument()
+      expect(screen.getByLabelText(/Grade/i, { selector: 'input' })).toBeInTheDocument()
+      expect(screen.getByLabelText(/Comment/i, { selector: 'textarea' })).toBeInTheDocument()
+    })
+
+    it('should display "Add Final Comment" submit button', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      expect(screen.getByRole('button', { name: /Add Final Comment/i })).toBeInTheDocument()
+    })
+
+    it('should mark First Name as required with asterisk', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameLabel = screen.getByText(/First Name/i)
+      expect(firstNameLabel.textContent).toMatch(/\*/)
+    })
+
+    it('should mark Grade as required with asterisk', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const gradeLabel = screen.getByText(/^Grade/i)
+      expect(gradeLabel.textContent).toMatch(/\*/)
+    })
+  })
+
+  describe('Character Counter (AC 3.4)', () => {
+    it('should display character counter for comment field', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      expect(screen.getByText(/0\/1000 characters/i)).toBeInTheDocument()
+    })
+
+    it('should update character counter as user types', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const commentField = screen.getByLabelText(/Comment/i, { selector: 'textarea' })
+      fireEvent.change(commentField, { target: { value: 'Great work!' } })
+
+      expect(screen.getByText(/11\/1000 characters/i)).toBeInTheDocument()
+    })
+  })
+
+  describe('Form Validation (AC 3)', () => {
+    it('should show error when First Name is empty', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/First name is required/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should show error when Grade is empty', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameField = screen.getByLabelText(/First Name/i, { selector: 'input' })
+      fireEvent.change(firstNameField, { target: { value: 'John' } })
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/Grade is required/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should show error when Grade is below 0', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameField = screen.getByLabelText(/First Name/i, { selector: 'input' })
+      const gradeField = screen.getByLabelText(/Grade/i, { selector: 'input' })
+
+      fireEvent.change(firstNameField, { target: { value: 'John' } })
+      fireEvent.change(gradeField, { target: { value: '-5' } })
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/Grade must be between 0 and 100/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should show error when Grade is above 100', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameField = screen.getByLabelText(/First Name/i, { selector: 'input' })
+      const gradeField = screen.getByLabelText(/Grade/i, { selector: 'input' })
+
+      fireEvent.change(firstNameField, { target: { value: 'John' } })
+      fireEvent.change(gradeField, { target: { value: '105' } })
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/Grade must be between 0 and 100/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should show error when Comment exceeds 1000 characters', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameField = screen.getByLabelText(/First Name/i, { selector: 'input' })
+      const gradeField = screen.getByLabelText(/Grade/i, { selector: 'input' })
+      const commentField = screen.getByLabelText(/Comment/i, { selector: 'textarea' })
+
+      fireEvent.change(firstNameField, { target: { value: 'John' } })
+      fireEvent.change(gradeField, { target: { value: '85' } })
+      fireEvent.change(commentField, { target: { value: 'a'.repeat(1001) } })
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/Comment cannot exceed 1000 characters/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should NOT submit when validation errors exist', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/First name is required/i)).toBeInTheDocument()
+      })
+
+      expect(mockHandlers.onCreateComment).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('Successful Submission (AC 6, 7)', () => {
+    it('should submit form with all fields when valid', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameField = screen.getByLabelText(/First Name/i, { selector: 'input' })
+      const lastNameField = screen.getByLabelText(/Last Name/i, { selector: 'input' })
+      const gradeField = screen.getByLabelText(/Grade/i, { selector: 'input' })
+      const commentField = screen.getByLabelText(/Comment/i, { selector: 'textarea' })
+
+      fireEvent.change(firstNameField, { target: { value: 'John' } })
+      fireEvent.change(lastNameField, { target: { value: 'Doe' } })
+      fireEvent.change(gradeField, { target: { value: '85' } })
+      fireEvent.change(commentField, { target: { value: 'Excellent work!' } })
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(mockHandlers.onCreateComment).toHaveBeenCalledWith({
+          classId: 1,
+          firstName: 'John',
+          lastName: 'Doe',
+          grade: 85,
+          comment: 'Excellent work!',
+        })
+      })
+    })
+
+    it('should submit form with optional fields omitted', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameField = screen.getByLabelText(/First Name/i, { selector: 'input' })
+      const gradeField = screen.getByLabelText(/Grade/i, { selector: 'input' })
+
+      fireEvent.change(firstNameField, { target: { value: 'Bob' } })
+      fireEvent.change(gradeField, { target: { value: '78' } })
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(mockHandlers.onCreateComment).toHaveBeenCalledWith({
+          classId: 1,
+          firstName: 'Bob',
+          grade: 78,
+        })
+      })
+    })
+
+    it('should clear form after successful submission', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameField = screen.getByLabelText(/First Name/i, { selector: 'input' }) as HTMLInputElement
+      const gradeField = screen.getByLabelText(/Grade/i, { selector: 'input' }) as HTMLInputElement
+
+      fireEvent.change(firstNameField, { target: { value: 'John' } })
+      fireEvent.change(gradeField, { target: { value: '85' } })
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(firstNameField.value).toBe('')
+        expect(gradeField.value).toBe('')
+      })
+    })
+  })
+
+  describe('Error Handling (AC 8, 9)', () => {
+    it('should display error message when submission fails', async () => {
+      mockHandlers.onCreateComment.mockRejectedValueOnce(new Error('API Error'))
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameField = screen.getByLabelText(/First Name/i, { selector: 'input' })
+      const gradeField = screen.getByLabelText(/Grade/i, { selector: 'input' })
+
+      fireEvent.change(firstNameField, { target: { value: 'John' } })
+      fireEvent.change(gradeField, { target: { value: '85' } })
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/Failed to add final comment/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should show loading state during submission', async () => {
+      // Mock a delayed response
+      mockHandlers.onCreateComment.mockImplementation(() =>
+        new Promise(resolve => setTimeout(resolve, 100)),
+      )
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          onClose={mockHandlers.onClose}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameField = screen.getByLabelText(/First Name/i, { selector: 'input' })
+      const gradeField = screen.getByLabelText(/Grade/i, { selector: 'input' })
+
+      fireEvent.change(firstNameField, { target: { value: 'John' } })
+      fireEvent.change(gradeField, { target: { value: '85' } })
+
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      fireEvent.click(submitButton)
+
+      // Form should be disabled during submission
+      await waitFor(() => {
+        expect(submitButton).toBeDisabled()
+      })
     })
   })
 })
