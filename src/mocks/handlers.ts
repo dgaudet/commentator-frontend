@@ -9,8 +9,10 @@
  */
 import { http, HttpResponse } from 'msw'
 import { mockSubjects } from './data/subjects'
+import { mockPersonalizedComments } from './data/personalizedComments'
 import { Subject } from '../types/Subject'
 import { OutcomeComment } from '../types/OutcomeComment'
+import { PersonalizedComment } from '../types/PersonalizedComment'
 
 const BASE_URL = 'http://localhost:3000'
 
@@ -48,6 +50,10 @@ const outcomeComments: OutcomeComment[] = [
   },
 ]
 let nextCommentId = 3
+
+// Mock personalized comments storage
+const personalizedComments: PersonalizedComment[] = [...mockPersonalizedComments]
+let nextPersonalizedCommentId = 4
 
 interface ValidationResult {
   valid: boolean
@@ -509,6 +515,228 @@ export const handlers = [
     return HttpResponse.json({
       message: 'Subject deleted successfully',
       deletedSubject,
+    })
+  }),
+
+  // ==================== PERSONALIZED COMMENT ENDPOINTS ====================
+
+  // GET /personalized-comment?subjectId={subjectId} - Get personalized comments for a subject
+  http.get(`${BASE_URL}/personalized-comment`, ({ request }) => {
+    const url = new URL(request.url)
+    const subjectId = url.searchParams.get('subjectId')
+
+    if (!subjectId) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Subject ID is required',
+        statusCode: 400,
+      }, { status: 400 })
+    }
+
+    // Validate subject ID
+    const numId = Number(subjectId)
+    if (isNaN(numId) || !Number.isInteger(numId)) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Invalid ID format',
+        statusCode: 400,
+      }, { status: 400 })
+    }
+
+    // Filter comments for this subject
+    const subjectComments = personalizedComments.filter(comment => comment.subjectId === numId)
+    return HttpResponse.json(subjectComments)
+  }),
+
+  // POST /personalized-comment - Create new personalized comment
+  http.post(`${BASE_URL}/personalized-comment`, async ({ request }) => {
+    const body = await request.json() as { subjectId: number; comment: string }
+
+    // Validate comment text
+    if (!body.comment || typeof body.comment !== 'string' || body.comment.trim() === '') {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Comment is required',
+        statusCode: 400,
+        details: { comment: ['Comment is required'] },
+      }, { status: 400 })
+    }
+
+    const trimmedComment = body.comment.trim()
+
+    if (trimmedComment.length < 10) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Comment must be at least 10 characters',
+        statusCode: 400,
+        details: { comment: ['Comment must be at least 10 characters'] },
+      }, { status: 400 })
+    }
+
+    if (trimmedComment.length > 500) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Comment cannot exceed 500 characters',
+        statusCode: 400,
+        details: { comment: ['Comment cannot exceed 500 characters'] },
+      }, { status: 400 })
+    }
+
+    // Validate subject ID
+    if (!body.subjectId || typeof body.subjectId !== 'number' || !Number.isInteger(body.subjectId)) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Valid subject ID is required',
+        statusCode: 400,
+        details: { subjectId: ['Valid subject ID is required'] },
+      }, { status: 400 })
+    }
+
+    // Check for duplicate comment (case-insensitive)
+    const isDuplicate = personalizedComments.some(
+      c => c.subjectId === body.subjectId && c.comment.toLowerCase() === trimmedComment.toLowerCase(),
+    )
+
+    if (isDuplicate) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'This comment already exists for this subject',
+        statusCode: 400,
+        details: { comment: ['This comment already exists for this subject'] },
+      }, { status: 400 })
+    }
+
+    // Create new comment
+    const newComment: PersonalizedComment = {
+      id: nextPersonalizedCommentId++,
+      comment: trimmedComment,
+      subjectId: body.subjectId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    personalizedComments.push(newComment)
+    return HttpResponse.json(newComment, { status: 201 })
+  }),
+
+  // PUT /personalized-comment/:id - Update personalized comment
+  http.put(`${BASE_URL}/personalized-comment/:id`, async ({ params, request }) => {
+    const { id } = params
+    const body = await request.json() as { comment: string }
+
+    // Validate ID
+    const numId = Number(id)
+    if (isNaN(numId) || !Number.isInteger(numId)) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Invalid ID format',
+        statusCode: 400,
+      }, { status: 400 })
+    }
+
+    // Find comment
+    const commentIndex = personalizedComments.findIndex((c) => c.id === numId)
+    if (commentIndex === -1) {
+      return HttpResponse.json(
+        {
+          error: 'Not Found',
+          message: 'Personalized comment not found',
+          statusCode: 404,
+        },
+        { status: 404 },
+      )
+    }
+
+    // Validate comment text
+    if (!body.comment || typeof body.comment !== 'string' || body.comment.trim() === '') {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Comment is required',
+        statusCode: 400,
+        details: { comment: ['Comment is required'] },
+      }, { status: 400 })
+    }
+
+    const trimmedComment = body.comment.trim()
+
+    if (trimmedComment.length < 10) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Comment must be at least 10 characters',
+        statusCode: 400,
+        details: { comment: ['Comment must be at least 10 characters'] },
+      }, { status: 400 })
+    }
+
+    if (trimmedComment.length > 500) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Comment cannot exceed 500 characters',
+        statusCode: 400,
+        details: { comment: ['Comment cannot exceed 500 characters'] },
+      }, { status: 400 })
+    }
+
+    // Check for duplicate comment (case-insensitive, excluding current comment)
+    const isDuplicate = personalizedComments.some(
+      c => c.id !== numId && c.subjectId === personalizedComments[commentIndex].subjectId &&
+           c.comment.toLowerCase() === trimmedComment.toLowerCase(),
+    )
+
+    if (isDuplicate) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'This comment already exists for this subject',
+        statusCode: 400,
+        details: { comment: ['This comment already exists for this subject'] },
+      }, { status: 400 })
+    }
+
+    // Update comment
+    const updatedComment: PersonalizedComment = {
+      ...personalizedComments[commentIndex],
+      comment: trimmedComment,
+      updatedAt: new Date().toISOString(),
+    }
+
+    personalizedComments[commentIndex] = updatedComment
+    return HttpResponse.json(updatedComment)
+  }),
+
+  // DELETE /personalized-comment/:id - Delete personalized comment
+  http.delete(`${BASE_URL}/personalized-comment/:id`, ({ params }) => {
+    const { id } = params
+
+    // Validate ID
+    const numId = Number(id)
+    if (isNaN(numId) || !Number.isInteger(numId)) {
+      return HttpResponse.json({
+        error: 'Bad Request',
+        message: 'Invalid ID format',
+        statusCode: 400,
+      }, { status: 400 })
+    }
+
+    // Find comment
+    const commentIndex = personalizedComments.findIndex((c) => c.id === numId)
+    if (commentIndex === -1) {
+      return HttpResponse.json(
+        {
+          error: 'Not Found',
+          message: 'Personalized comment not found',
+          statusCode: 404,
+        },
+        { status: 404 },
+      )
+    }
+
+    // Delete comment
+    const deletedComment = personalizedComments[commentIndex]
+    personalizedComments.splice(commentIndex, 1)
+
+    return HttpResponse.json({
+      message: 'Personalized comment deleted successfully',
+      deletedComment,
     })
   }),
 ]

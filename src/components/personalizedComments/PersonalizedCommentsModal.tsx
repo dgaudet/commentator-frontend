@@ -1,0 +1,328 @@
+/**
+ * PersonalizedCommentsModal Component
+ *
+ * Modal for viewing, creating, editing, and deleting personalized comments for a subject.
+ * Implements CRUD operations with proper form validation and accessibility.
+ *
+ * Simpler than OutcomeCommentsModal - no upperRange/lowerRange fields
+ *
+ * Generic Type Parameter:
+ * - T extends { id: number; name: string } - Supports Subject type
+ *
+ * User Stories:
+ * - US-PERS-001: View all personalized comments for a subject
+ * - US-PERS-002: Create new personalized comment
+ * - US-PERS-003: Edit existing personalized comment
+ * - US-PERS-004: Delete personalized comment with confirmation
+ * - US-PERS-005: Navigate back to subject list
+ */
+
+import { useState } from 'react'
+import type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from '../../types'
+import { LoadingSpinner } from '../common/LoadingSpinner'
+import { ErrorMessage } from '../common/ErrorMessage'
+import { Button } from '../common/Button'
+import { ConfirmDialog } from '../common/ConfirmDialog'
+
+interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
+  isOpen: boolean
+  onClose: () => void
+  entityData: T
+  personalizedComments: PersonalizedComment[]
+  onCreateComment: (request: CreatePersonalizedCommentRequest) => Promise<void>
+  onUpdateComment: (id: number, request: UpdatePersonalizedCommentRequest) => Promise<void>
+  onDeleteComment: (id: number) => Promise<void>
+  loading: boolean
+  error: string | null
+}
+
+export const PersonalizedCommentsModal = <T extends { id: number; name: string }>({
+  isOpen,
+  onClose,
+  entityData,
+  personalizedComments,
+  onCreateComment,
+  onUpdateComment,
+  onDeleteComment,
+  loading,
+  error,
+}: PersonalizedCommentsModalProps<T>) => {
+  const [newCommentContent, setNewCommentContent] = useState('')
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editContent, setEditContent] = useState('')
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
+  const [validationError, setValidationError] = useState('')
+
+  if (!isOpen) return null
+
+  const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  }
+
+  const validateComment = (comment: string): string | null => {
+    const trimmed = comment.trim()
+    if (!trimmed) {
+      return 'Comment is required'
+    }
+    if (trimmed.length < 10) {
+      return 'Comment must be at least 10 characters'
+    }
+    if (trimmed.length > 500) {
+      return 'Comment cannot exceed 500 characters'
+    }
+    return null
+  }
+
+  const handleCreateComment = async () => {
+    const error = validateComment(newCommentContent)
+    if (error) {
+      setValidationError(error)
+      return
+    }
+
+    setValidationError('')
+    await onCreateComment({
+      subjectId: entityData.id,
+      comment: newCommentContent.trim(),
+    })
+    setNewCommentContent('')
+  }
+
+  const handleEditStart = (comment: PersonalizedComment) => {
+    setEditingId(comment.id)
+    setEditContent(comment.comment)
+    setValidationError('')
+  }
+
+  const handleEditSave = async () => {
+    const error = validateComment(editContent)
+    if (error) {
+      setValidationError(error)
+      return
+    }
+
+    if (editingId) {
+      setValidationError('')
+      await onUpdateComment(editingId, {
+        comment: editContent.trim(),
+      })
+      setEditingId(null)
+      setEditContent('')
+    }
+  }
+
+  const handleEditCancel = () => {
+    setEditingId(null)
+    setEditContent('')
+    setValidationError('')
+  }
+
+  const handleDeleteStart = (id: number) => {
+    setDeleteConfirmId(id)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (deleteConfirmId) {
+      await onDeleteComment(deleteConfirmId)
+      setDeleteConfirmId(null)
+    }
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmId(null)
+  }
+
+  // Character count for new comment
+  const newCommentCharCount = newCommentContent.trim().length
+  const newCommentIsValid = newCommentCharCount >= 10 && newCommentCharCount <= 500
+
+  // Character count for edit comment
+  const editCommentCharCount = editContent.trim().length
+  const editCommentIsValid = editCommentCharCount >= 10 && editCommentCharCount <= 500
+
+  return (
+    <div
+      className="modal-overlay"
+      role="dialog"
+      aria-labelledby="modal-title"
+      aria-modal="true"
+    >
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2 id="modal-title">
+            Personalized Comments - {entityData.name}
+          </h2>
+          <Button
+            variant="secondary"
+            onClick={onClose}
+            aria-label="Close modal"
+          >
+            ×
+          </Button>
+        </div>
+
+        <div className="modal-body">
+          {loading && (
+            <div className="loading-container">
+              <LoadingSpinner data-testid="loading-spinner" />
+            </div>
+          )}
+
+          {error && (
+            <ErrorMessage message={error} />
+          )}
+
+          {!loading && !error && (
+            <>
+              {/* Create Comment Form */}
+              <div className="create-comment-section">
+                <h3>Add New Personalized Comment</h3>
+                <div className="form-group">
+                  <textarea
+                    value={newCommentContent}
+                    onChange={(e) => setNewCommentContent(e.target.value)}
+                    placeholder="Enter personalized comment (10-500 characters)..."
+                    aria-label="Add new personalized comment"
+                    className="comment-textarea"
+                    rows={4}
+                    maxLength={500}
+                  />
+                  <div className="character-counter">
+                    <span className={newCommentIsValid ? 'valid' : 'invalid'}>
+                      {newCommentCharCount} / 500 characters
+                    </span>
+                    {newCommentCharCount > 0 && newCommentCharCount < 10 && (
+                      <span className="hint"> (minimum 10)</span>
+                    )}
+                  </div>
+                </div>
+                {validationError && (
+                  <div className="validation-error" role="alert">
+                    {validationError}
+                  </div>
+                )}
+                <Button
+                  onClick={handleCreateComment}
+                  variant="primary"
+                  disabled={!newCommentIsValid}
+                >
+                  Add Comment
+                </Button>
+              </div>
+
+              {/* Comments List */}
+              <div className="comments-list">
+                <h3>Existing Comments</h3>
+                {personalizedComments.length === 0
+                  ? (
+                      <div className="empty-state">
+                        <p>No personalized comments yet</p>
+                        <p className="empty-subtext">
+                          Add your first personalized comment above.
+                        </p>
+                      </div>
+                    )
+                  : (
+                  <div className="comments">
+                    {personalizedComments.map((comment) => (
+                      <div key={comment.id} className="comment-item">
+                        {editingId === comment.id
+                          ? (
+                            /* Edit Mode */
+                              <div className="edit-mode">
+                                <textarea
+                                  value={editContent}
+                                  onChange={(e) => setEditContent(e.target.value)}
+                                  className="comment-textarea"
+                                  rows={4}
+                                  maxLength={500}
+                                />
+                                <div className="character-counter">
+                                  <span className={editCommentIsValid ? 'valid' : 'invalid'}>
+                                    {editCommentCharCount} / 500 characters
+                                  </span>
+                                  {editCommentCharCount > 0 && editCommentCharCount < 10 && (
+                                    <span className="hint"> (minimum 10)</span>
+                                  )}
+                                </div>
+                                {validationError && (
+                                  <div className="validation-error" role="alert">
+                                    {validationError}
+                                  </div>
+                                )}
+                                <div className="edit-actions">
+                                  <Button
+                                    onClick={handleEditSave}
+                                    variant="primary"
+                                    disabled={!editCommentIsValid}
+                                  >
+                                    Save
+                                  </Button>
+                                  <Button
+                                    onClick={handleEditCancel}
+                                    variant="secondary"
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </div>
+                            )
+                          : (
+                            /* View Mode */
+                              <div className="view-mode">
+                            <div className="comment-content">
+                              {comment.comment}
+                            </div>
+                            <div className="comment-meta">
+                              <span className="comment-date">
+                                Created: {formatDate(comment.createdAt)}
+                              </span>
+                              {comment.updatedAt !== comment.createdAt && (
+                                <span className="comment-date updated">
+                                  {' '} • Updated: {formatDate(comment.updatedAt)}
+                                </span>
+                              )}
+                            </div>
+                            <div className="comment-actions">
+                              <Button
+                                onClick={() => handleEditStart(comment)}
+                                variant="secondary"
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                onClick={() => handleDeleteStart(comment.id)}
+                                variant="danger"
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          </div>
+                            )}
+                      </div>
+                    ))}
+                  </div>
+                    )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirmId !== null}
+        title="Delete Personalized Comment"
+        message="Are you sure you want to delete this personalized comment? This action cannot be undone."
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
+    </div>
+  )
+}

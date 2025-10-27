@@ -14,5 +14,8 @@ export type { Subject, CreateSubjectRequest, UpdateSubjectRequest } from './Subj
 // Outcome Comment entity types
 export type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from './OutcomeComment'
 
+// Personalized Comment entity types
+export type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from './PersonalizedComment'
+
 // API response types
 export type { ApiResponse, ApiError } from './ApiResponse'

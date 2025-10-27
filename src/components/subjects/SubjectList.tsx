@@ -24,6 +24,7 @@ interface SubjectListProps {
   onEdit?: (subjectItem: Subject) => void
   onDelete?: (subjectName: string, onConfirm: () => Promise<void>) => void
   onViewOutcomeComments?: (subjectItem: Subject) => void
+  onViewPersonalizedComments?: (subjectItem: Subject) => void
 }
 
 /**
@@ -38,6 +39,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   onEdit,
   onDelete,
   onViewOutcomeComments,
+  onViewPersonalizedComments,
 }) => {
   const { subjects, isLoading, error, clearError, deleteSubject } = useSubjects()
 
@@ -98,6 +100,13 @@ export const SubjectList: React.FC<SubjectListProps> = ({
       onViewOutcomeComments(subjectItem)
     }
   }, [subjects, onViewOutcomeComments])
+
+  const handleViewPersonalizedComments = useCallback((subjectId: number) => {
+    const subjectItem = subjects.find(s => s.id === subjectId)
+    if (subjectItem && onViewPersonalizedComments) {
+      onViewPersonalizedComments(subjectItem)
+    }
+  }, [subjects, onViewPersonalizedComments])
 
   const handleDelete = useCallback((subjectId: number) => {
     if (onDelete) {
@@ -188,6 +197,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             onEdit={onEdit ? handleEdit : undefined}
             onDelete={onDelete ? handleDelete : undefined}
             onViewOutcomeComments={onViewOutcomeComments ? handleViewOutcomeComments : undefined}
+            onViewPersonalizedComments={onViewPersonalizedComments ? handleViewPersonalizedComments : undefined}
           />
             )
           : null
