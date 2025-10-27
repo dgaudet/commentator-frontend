@@ -2,15 +2,14 @@
  * Type Definitions Index
  * Central export point for all type definitions
  *
+ * Related: TD-003 (Class infrastructure removed)
+ *
  * Usage:
- * import { Class, CreateClassRequest, ApiError } from '@/types'
+ * import { Subject, CreateSubjectRequest, ApiError } from '@/types'
  */
 
-// Subject entity types (new API structure)
+// Subject entity types
 export type { Subject, CreateSubjectRequest, UpdateSubjectRequest } from './Subject'
-
-// Class entity types (legacy - being migrated to Subject)
-export type { Class, CreateClassRequest, UpdateClassRequest } from './Class'
 
 // Outcome Comment entity types
 export type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from './OutcomeComment'
