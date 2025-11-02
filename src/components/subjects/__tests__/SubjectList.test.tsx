@@ -276,12 +276,12 @@ describe('SubjectList', () => {
 
       render(<SubjectList onEdit={handleEdit} />)
 
-      // With single subject, it auto-selects - Edit button should be present
-      const editButton = screen.getByRole('button', { name: /edit mathematics 101/i })
-      expect(editButton).toBeInTheDocument()
+      // With single subject, it auto-selects - Edit tab should be present (US-TAB-002)
+      const editTab = screen.getByRole('tab', { name: 'Edit' })
+      expect(editTab).toBeInTheDocument()
 
-      // Click edit button
-      fireEvent.click(editButton)
+      // Click edit tab
+      fireEvent.click(editTab)
 
       // Handler should be called with the subject item
       expect(handleEdit).toHaveBeenCalledTimes(1)
