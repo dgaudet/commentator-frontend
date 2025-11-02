@@ -14,6 +14,7 @@ If you have an subject selected, and you open the outcome comments, then switch 
 ## lower priority
 ### we should have a way to bulk add students with their grade
 ### The lable for selecting a class should be `Select a Class to work with`
+# all confirmation options should use the confirmation modal component
 remove the console.error methods from services
 
 Can you create stories to modify the SubjectListItem component to use tabs for each of the buttons for edit/outcome comments/personalized comments/manage classes.

@@ -7,7 +7,6 @@
  * - Keyboard accessible (Tab, Enter, Escape)
  * - Focus management (Cancel button focused by default)
  * - Loading states for async operations
- * - Using Enverus design tokens
  * - WCAG 2.1 AA compliant
  */
 import React, { useEffect, useRef } from 'react'

@@ -80,7 +80,7 @@ describe('ConfirmationModal (US-SUBJ-DELETE-002)', () => {
       expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument()
     })
 
-    it('should style Delete button with danger colors using design tokens', () => {
+    it('should style Delete button with danger colors', () => {
       render(
         <ConfirmationModal
           isOpen={true}
@@ -92,7 +92,8 @@ describe('ConfirmationModal (US-SUBJ-DELETE-002)', () => {
       )
 
       const deleteButton = screen.getByRole('button', { name: /delete/i })
-      expect(deleteButton).toHaveClass('button-danger')
+      // Should have danger button class
+      expect(deleteButton.className).toContain('button-danger')
     })
   })
 

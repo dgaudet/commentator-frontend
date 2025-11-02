@@ -1,9 +1,6 @@
 /**
  * ConfirmationModal Styles
- * Using Enverus Design System Tokens
  * Reference: US-SUBJ-DELETE-002
- *
- * MANDATORY: All styling uses design tokens from enverus-ux-guidelines.md
  */
 
 /* Modal overlay */
@@ -18,16 +15,16 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: var(--size-padding-regular);
+  padding: 1rem;
 }
 
 /* Modal dialog container */
 .modal-dialog {
-  background: var(--env-theme-surface-elevated);
-  border: 1px solid var(--env-theme-navbar-border);
-  border-radius: var(--size-radius-400);
-  padding: var(--size-padding-large);
-  max-width: 500px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  max-width: 28rem;
   width: 100%;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   position: relative;
@@ -35,28 +32,26 @@
 
 /* Modal header */
 .modal-header {
-  margin-bottom: var(--size-padding-regular);
+  margin-bottom: 1rem;
 }
 
 .modal-title {
-  font-size: var(--text-headline-size);
-  font-weight: var(--text-headline-weight);
-  line-height: var(--text-headline-line);
-  color: var(--env-theme-text-body);
-  font-family: var(--text-body-font-family);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+  color: #111827;
   margin: 0;
 }
 
 /* Modal body */
 .modal-body {
-  margin-bottom: var(--size-padding-large);
+  margin-bottom: 1.5rem;
 }
 
 .modal-message {
-  font-size: var(--text-body-size);
-  line-height: var(--text-body-line);
-  color: var(--env-theme-text-body);
-  font-family: var(--text-body-font-family);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: #374151;
   margin: 0;
 }
 
@@ -64,7 +59,7 @@
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: var(--size-measure-200);
+  gap: 0.75rem;
 }
 
 /* Cancel button */
@@ -72,27 +67,29 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: var(--size-button-height-regular);
-  padding: 0 var(--size-padding-regular);
-  background: var(--env-theme-button-background);
-  color: var(--env-theme-button-text);
-  border: 1px solid var(--env-theme-button-border);
-  border-radius: var(--size-radius-100);
-  font-family: var(--text-body-font-family);
-  font-size: var(--text-body-size);
-  font-weight: var(--text-title-weight);
-  line-height: var(--text-body-line);
+  padding: 0.5rem 1rem;
+  background: #e5e7eb;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.button-cancel:hover {
-  background: var(--env-theme-button-background-hover);
+.button-cancel:hover:not(:disabled) {
+  background: #d1d5db;
 }
 
 .button-cancel:focus-visible {
-  outline: var(--size-measure-050) solid var(--env-theme-text-link);
-  outline-offset: var(--size-measure-050);
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.button-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Danger button (Delete/Confirm) */
@@ -100,30 +97,27 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: var(--size-button-height-regular);
-  padding: 0 var(--size-padding-regular);
-  background: var(--env-theme-danger);
-  color: var(--env-theme-accent-text-on-brand);
-  border: 1px solid var(--env-theme-danger);
-  border-radius: var(--size-radius-100);
-  font-family: var(--text-body-font-family);
-  font-size: var(--text-body-size);
-  font-weight: var(--text-title-weight);
-  line-height: var(--text-body-line);
+  padding: 0.5rem 1rem;
+  background: #dc2626;
+  color: white;
+  border: 1px solid #dc2626;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  gap: 0.5rem;
   white-space: nowrap;
-  gap: var(--size-measure-200);
 }
 
 .button-danger:hover:not(:disabled) {
-  background: var(--env-theme-warning);
-  border-color: var(--env-theme-warning);
+  background: #b91c1c;
+  border-color: #b91c1c;
 }
 
 .button-danger:focus-visible {
-  outline: var(--size-measure-050) solid var(--env-theme-text-link);
-  outline-offset: var(--size-measure-050);
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
 }
 
 .button-danger:disabled {
@@ -138,7 +132,7 @@
   height: 14px;
   border: 2px solid currentColor;
   border-right-color: transparent;
-  border-radius: var(--size-radius-full);
+  border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
 
