@@ -9,7 +9,7 @@
  * - Loading states for async operations
  * - WCAG 2.1 AA compliant
  */
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useId } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './ConfirmationModal.module.css'
 
@@ -35,8 +35,8 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   cancelButtonText = 'Cancel',
 }) => {
   const cancelButtonRef = useRef<HTMLButtonElement>(null)
-  const titleId = 'modal-title'
-  const descriptionId = 'modal-description'
+  const titleId = useId()
+  const descriptionId = useId()
 
   // Focus Cancel button when modal opens (safe default)
   useEffect(() => {
