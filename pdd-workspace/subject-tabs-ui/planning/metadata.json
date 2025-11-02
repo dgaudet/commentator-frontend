@@ -1,0 +1,34 @@
+{
+  "feature": "subject-tabs-ui",
+  "title": "Convert SubjectListItem Buttons to Tab Interface",
+  "complexity": {
+    "level": "L1-MICRO",
+    "reasoning": "Simple UI refactoring (3-5 stories, 1 week), creating reusable Tab component and converting existing button group. No external integrations, maintains existing callbacks and visual hierarchy. Standard accessibility requirements.",
+    "assessedAt": "2025-11-02",
+    "estimatedStories": "3-5",
+    "estimatedDuration": "1 week",
+    "estimatedPoints": 10
+  },
+  "scope": {
+    "description": "Convert the SubjectListItem component's action button group (Edit, Outcome Comments, Personalized Comments, Manage Classes) into a tabbed interface while maintaining the same visual hierarchy and triggering the same callbacks.",
+    "includes": [
+      "New reusable Tab component",
+      "SubjectListItem integration with tabs",
+      "Accessibility compliance (WCAG 2.1 AA)",
+      "Keyboard navigation support"
+    ],
+    "excludes": [
+      "Changes to callback implementations",
+      "Backend API modifications",
+      "New functionality beyond UI conversion"
+    ]
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "validation": "PENDING"
+  },
+  "createdAt": "2025-11-02",
+  "updatedAt": "2025-11-02"
+}
