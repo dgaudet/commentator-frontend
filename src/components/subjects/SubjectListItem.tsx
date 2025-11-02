@@ -1,9 +1,11 @@
 /**
  * SubjectListItem Component
  * Displays a single subject in the list with formatted dates
- * Reference: US-REFACTOR-006
+ * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001
  *
- * Key Change: Subject has no year field, so year display removed
+ * Key Changes:
+ * - Subject has no year field, so year display removed
+ * - Delete button relocated beside subject name (US-SUBJ-DELETE-001)
  * Performance: Memoized to prevent unnecessary re-renders
  */
 import React from 'react'
@@ -31,33 +33,52 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
 }) => {
   return (
     <div
-      className="border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow"
+      className="border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow bg-white"
       data-testid={`subject-item-${subjectItem.id}`}
     >
       <div className="flex justify-between items-start">
+        {/* Left side: Subject name with inline delete button + dates */}
         <div className="flex-1">
-          <h3
-            className="text-lg font-semibold text-gray-900 mb-1 cursor-pointer hover:text-blue-600"
-            onClick={() => onView?.(subjectItem.id)}
-            role={onView ? 'button' : undefined}
-            tabIndex={onView ? 0 : undefined}
-            onKeyDown={(e) => {
-              if (onView && (e.key === 'Enter' || e.key === ' ')) {
-                e.preventDefault()
-                onView(subjectItem.id)
-              }
-            }}
-          >
-            {subjectItem.name}
-          </h3>
+          {/* Subject name + delete button on same line */}
+          <div className="flex items-center gap-3 mb-2">
+            <h3
+              className="text-lg font-semibold text-gray-900 cursor-pointer hover:text-blue-600"
+              onClick={() => onView?.(subjectItem.id)}
+              role={onView ? 'button' : undefined}
+              tabIndex={onView ? 0 : undefined}
+              onKeyDown={(e) => {
+                if (onView && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault()
+                  onView(subjectItem.id)
+                }
+              }}
+            >
+              {subjectItem.name}
+            </h3>
+
+            {/* Delete button beside subject name (US-SUBJ-DELETE-001) */}
+            {onDelete && (
+              <button
+                onClick={() => onDelete(subjectItem.id)}
+                className="text-red-600 hover:text-red-700 border border-red-600 hover:bg-red-50 font-medium px-3 py-1 rounded text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+                aria-label={`Delete ${subjectItem.name}`}
+                data-position="beside-name"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+
+          {/* Created/Updated dates */}
           <div className="text-sm text-gray-500">
             <p>Created: {formatDate(subjectItem.createdAt)}</p>
             <p>Updated: {formatDate(subjectItem.updatedAt)}</p>
           </div>
         </div>
 
-        {(onEdit || onDelete || onViewOutcomeComments || onViewPersonalizedComments || onViewClasses) && (
-          <div className="flex gap-2">
+        {/* Right side: Action buttons */}
+        {(onEdit || onViewOutcomeComments || onViewPersonalizedComments || onViewClasses) && (
+          <div className="flex gap-2 ml-4">
             {onEdit && (
               <button
                 onClick={() => onEdit(subjectItem.id)}
@@ -65,15 +86,6 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                 aria-label={`Edit ${subjectItem.name}`}
               >
                 Edit
-              </button>
-            )}
-            {onDelete && (
-              <button
-                onClick={() => onDelete(subjectItem.id)}
-                className="text-red-600 hover:text-red-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-                aria-label={`Delete ${subjectItem.name}`}
-              >
-                Delete
               </button>
             )}
             {onViewOutcomeComments && (

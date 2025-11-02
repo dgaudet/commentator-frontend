@@ -1,10 +1,12 @@
 /**
  * SubjectList Container Component
  * Displays dropdown selector for subjects with single selected subject view
- * Reference: US-REFACTOR-005
+ * Reference: US-REFACTOR-005, US-SUBJ-DELETE-002
  *
- * Key Change: Subject has no year field, so dropdown shows name only
- * API Change: useClasses → useSubjects, classStorageUtils → subjectStorageUtils
+ * Key Changes:
+ * - Subject has no year field, so dropdown shows name only
+ * - API Change: useClasses → useSubjects, classStorageUtils → subjectStorageUtils
+ * - Delete confirmation modal integrated (US-SUBJ-DELETE-002)
  *
  * Performance: Uses useCallback for event handlers
  */
@@ -15,6 +17,7 @@ import { SubjectEmptyState } from './SubjectEmptyState'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
+import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Subject } from '../../types/Subject'
 import { getSelectedSubjectId, saveSelectedSubjectId, clearSelectedSubjectId } from '../../utils/subjectStorageUtils'
 
@@ -22,7 +25,6 @@ interface SubjectListProps {
   onSubjectClick?: (subjectId: number) => void
   onAddSubject?: () => void
   onEdit?: (subjectItem: Subject) => void
-  onDelete?: (subjectName: string, onConfirm: () => Promise<void>) => void
   onViewOutcomeComments?: (subjectItem: Subject) => void
   onViewPersonalizedComments?: (subjectItem: Subject) => void
   onViewClasses?: (subjectItem: Subject) => void
@@ -38,15 +40,19 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   onSubjectClick,
   onAddSubject,
   onEdit,
-  onDelete,
   onViewOutcomeComments,
   onViewPersonalizedComments,
   onViewClasses,
 }) => {
   const { subjects, isLoading, error, clearError, deleteSubject } = useSubjects()
 
-  // Add state for selected subject ID
+  // State for selected subject ID
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null)
+
+  // State for delete confirmation modal (US-SUBJ-DELETE-002)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [subjectToDelete, setSubjectToDelete] = useState<Subject | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // Load persisted selection on mount
   // Auto-select if only one subject exists
@@ -117,17 +123,45 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     }
   }, [subjects, onViewClasses])
 
+  // Handle delete button click - show confirmation modal (US-SUBJ-DELETE-002 AC1)
   const handleDelete = useCallback((subjectId: number) => {
-    if (onDelete) {
-      const subjectItem = subjects.find(s => s.id === subjectId)
-      const subjectName = subjectItem ? subjectItem.name : `Subject ${subjectId}`
-
-      // Pass subjectName and a confirmation function that actually deletes
-      onDelete(subjectName, async () => {
-        await deleteSubject(subjectId)
-      })
+    const subjectItem = subjects.find(s => s.id === subjectId)
+    if (subjectItem) {
+      setSubjectToDelete(subjectItem)
+      setDeleteModalOpen(true)
     }
-  }, [subjects, onDelete, deleteSubject])
+  }, [subjects])
+
+  // Handle delete confirmation (US-SUBJ-DELETE-002 AC4, AC5)
+  const handleConfirmDelete = useCallback(async () => {
+    if (!subjectToDelete) return
+
+    try {
+      setIsDeleting(true)
+      await deleteSubject(subjectToDelete.id)
+
+      // Clear selection if deleted subject was selected (US-SUBJ-DELETE-002 AC5)
+      if (selectedSubjectId === subjectToDelete.id) {
+        setSelectedSubjectId(null)
+      }
+
+      // Close modal and reset state
+      setDeleteModalOpen(false)
+      setSubjectToDelete(null)
+    } catch (err) {
+      // Error is handled by useSubjects hook
+      // Keep modal open so user can retry (US-SUBJ-DELETE-002 AC6)
+    } finally {
+      setIsDeleting(false)
+    }
+  }, [subjectToDelete, deleteSubject, selectedSubjectId])
+
+  // Handle delete cancellation (US-SUBJ-DELETE-002 AC3)
+  const handleCancelDelete = useCallback(() => {
+    setDeleteModalOpen(false)
+    setSubjectToDelete(null)
+    setIsDeleting(false)
+  }, [])
 
   // Loading state - initial load with no data
   if (isLoading && subjects.length === 0) {
@@ -204,7 +238,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             subjectItem={selectedSubject}
             onView={handleSubjectClick}
             onEdit={onEdit ? handleEdit : undefined}
-            onDelete={onDelete ? handleDelete : undefined}
+            onDelete={handleDelete}
             onViewOutcomeComments={onViewOutcomeComments ? handleViewOutcomeComments : undefined}
             onViewPersonalizedComments={onViewPersonalizedComments ? handleViewPersonalizedComments : undefined}
             onViewClasses={onViewClasses ? handleViewClasses : undefined}
@@ -218,6 +252,18 @@ export const SubjectList: React.FC<SubjectListProps> = ({
           <LoadingSpinner size="small" message="Updating..." />
         </div>
       )}
+
+      {/* Delete Confirmation Modal (US-SUBJ-DELETE-002) */}
+      <ConfirmationModal
+        isOpen={deleteModalOpen}
+        title="Delete Subject"
+        message={`Are you sure you want to delete '${subjectToDelete?.name}'? This action cannot be undone.`}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        isLoading={isDeleting}
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+      />
     </div>
   )
 }
