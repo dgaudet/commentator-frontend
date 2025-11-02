@@ -288,8 +288,7 @@ describe('SubjectList', () => {
       expect(handleEdit).toHaveBeenCalledWith(mockSubjects[0])
     })
 
-    it('should pass onDelete callback to SubjectListItem when subject selected', () => {
-      const handleDelete = jest.fn()
+    it('should show delete confirmation modal when delete button clicked (US-SUBJ-DELETE-002)', () => {
       const mockDeleteSubject = jest.fn().mockResolvedValue(undefined)
 
       mockUseSubjects.mockReturnValue({
@@ -303,7 +302,7 @@ describe('SubjectList', () => {
         clearError: jest.fn(),
       })
 
-      render(<SubjectList onDelete={handleDelete} />)
+      render(<SubjectList />)
 
       // With single subject, it auto-selects - Delete button should be present
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
@@ -312,12 +311,12 @@ describe('SubjectList', () => {
       // Click delete button
       fireEvent.click(deleteButton)
 
-      // Handler should be called with subjectName and a confirmation function
-      expect(handleDelete).toHaveBeenCalledTimes(1)
-      expect(handleDelete).toHaveBeenCalledWith('Mathematics 101', expect.any(Function))
+      // Confirmation modal should appear (US-SUBJ-DELETE-002 AC1)
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByText(/are you sure you want to delete 'mathematics 101'/i)).toBeInTheDocument()
     })
 
-    it('should not show Edit/Delete buttons when callbacks not provided', () => {
+    it('should not show Edit button when onEdit callback not provided', () => {
       mockUseSubjects.mockReturnValue({
         subjects: [mockSubjects[0]],
         isLoading: false,
@@ -331,9 +330,11 @@ describe('SubjectList', () => {
 
       render(<SubjectList />)
 
-      // Edit and Delete buttons should not be present
+      // Edit button should not be present when callback not provided
       expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument()
+
+      // Delete button SHOULD be present (US-SUBJ-DELETE-001 - always available when subject selected)
+      expect(screen.getByRole('button', { name: /delete mathematics 101/i })).toBeInTheDocument()
     })
   })
 

@@ -1,0 +1,22 @@
+{
+  "feature": "subject-delete-relocation",
+  "complexity": {
+    "level": "L1-MICRO",
+    "reasoning": "Small UI enhancement with 2-3 user stories, affects single component (SubjectListItem), simple state management, no external integrations or data migrations. Estimated < 1 week effort for single developer.",
+    "assessedAt": "2025-11-02",
+    "storyCount": 3,
+    "estimatedDuration": "3-5 days",
+    "teamSize": "1 developer",
+    "architecture": "SKIPPED"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "COMPLETE",
+    "validation": "COMPLETE"
+  },
+  "artifacts": {
+    "required": ["user-stories.md"],
+    "optional": []
+  }
+}

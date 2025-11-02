@@ -174,7 +174,7 @@ describe('App', () => {
       // Confirmation dialog should appear
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument()
-        expect(screen.getByText(/are you sure you want to delete "mathematics 101"/i)).toBeInTheDocument()
+        expect(screen.getByText(/are you sure you want to delete 'mathematics 101'/i)).toBeInTheDocument()
       })
 
       // IMPORTANT: Reset the mock to simulate the updated list after deletion
@@ -309,13 +309,21 @@ describe('App', () => {
         fireEvent.click(confirmButton)
       })
 
-      // Dialog should close
+      // Wait for loading state to finish
       await waitFor(() => {
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+        expect(screen.queryByText(/deleting/i)).not.toBeInTheDocument()
       })
+
+      // Dialog should STAY OPEN on error (US-SUBJ-DELETE-002 AC6: allow retry)
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
 
       // Subject should still be in SubjectListItem (delete failed)
       expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+
+      // Error message should be displayed
+      await waitFor(() => {
+        expect(screen.getByText(/delete failed/i)).toBeInTheDocument()
+      })
     })
   })
 

@@ -1,14 +1,18 @@
 /**
  * SubjectListItem Component
  * Displays a single subject in the list with formatted dates
- * Reference: US-REFACTOR-006
+ * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001
  *
- * Key Change: Subject has no year field, so year display removed
+ * Key Changes:
+ * - Subject has no year field, so year display removed
+ * - Delete button relocated beside subject name (US-SUBJ-DELETE-001)
+ * - Using Enverus design tokens via CSS modules
  * Performance: Memoized to prevent unnecessary re-renders
  */
 import React from 'react'
 import { Subject } from '../../types/Subject'
 import { formatDate } from '../../utils/dateFormatter'
+import styles from './SubjectListItem.module.css'
 
 interface SubjectListItemProps {
   subjectItem: Subject
@@ -29,57 +33,75 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onViewPersonalizedComments,
   onViewClasses,
 }) => {
+  // Handler for delete button keyboard events
+  const handleDeleteKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      onDelete?.(subjectItem.id)
+    }
+  }
+
   return (
     <div
-      className="border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow"
+      className={styles['subject-item']}
       data-testid={`subject-item-${subjectItem.id}`}
     >
-      <div className="flex justify-between items-start">
-        <div className="flex-1">
-          <h3
-            className="text-lg font-semibold text-gray-900 mb-1 cursor-pointer hover:text-blue-600"
-            onClick={() => onView?.(subjectItem.id)}
-            role={onView ? 'button' : undefined}
-            tabIndex={onView ? 0 : undefined}
-            onKeyDown={(e) => {
-              if (onView && (e.key === 'Enter' || e.key === ' ')) {
-                e.preventDefault()
-                onView(subjectItem.id)
-              }
-            }}
-          >
-            {subjectItem.name}
-          </h3>
-          <div className="text-sm text-gray-500">
+      <div className={styles['subject-header']}>
+        <div className={styles['subject-content']}>
+          {/* Subject name + delete button container (US-SUBJ-DELETE-001) */}
+          <div className={styles['name-delete-container']}>
+            <h3
+              className={styles['subject-name']}
+              onClick={() => onView?.(subjectItem.id)}
+              role={onView ? 'button' : undefined}
+              tabIndex={onView ? 0 : undefined}
+              onKeyDown={(e) => {
+                if (onView && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault()
+                  onView(subjectItem.id)
+                }
+              }}
+            >
+              {subjectItem.name}
+            </h3>
+
+            {/* Delete button beside subject name (US-SUBJ-DELETE-001 AC1, AC3) */}
+            {onDelete && (
+              <button
+                onClick={() => onDelete(subjectItem.id)}
+                onKeyDown={handleDeleteKeyDown}
+                className={styles['button-danger']}
+                aria-label={`Delete ${subjectItem.name}`}
+                tabIndex={0}
+                data-position="beside-name"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+
+          <div className={styles['subject-dates']}>
             <p>Created: {formatDate(subjectItem.createdAt)}</p>
             <p>Updated: {formatDate(subjectItem.updatedAt)}</p>
           </div>
         </div>
 
-        {(onEdit || onDelete || onViewOutcomeComments || onViewPersonalizedComments || onViewClasses) && (
-          <div className="flex gap-2">
+        {/* Action buttons (edit, view comments, etc.) */}
+        {(onEdit || onViewOutcomeComments || onViewPersonalizedComments || onViewClasses) && (
+          <div className={styles['action-buttons']}>
             {onEdit && (
               <button
                 onClick={() => onEdit(subjectItem.id)}
-                className="text-blue-600 hover:text-blue-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`${styles['button-action']} ${styles.edit}`}
                 aria-label={`Edit ${subjectItem.name}`}
               >
                 Edit
               </button>
             )}
-            {onDelete && (
-              <button
-                onClick={() => onDelete(subjectItem.id)}
-                className="text-red-600 hover:text-red-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-                aria-label={`Delete ${subjectItem.name}`}
-              >
-                Delete
-              </button>
-            )}
             {onViewOutcomeComments && (
               <button
                 onClick={() => onViewOutcomeComments(subjectItem.id)}
-                className="text-green-600 hover:text-green-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                className={`${styles['button-action']} ${styles['view-outcome']}`}
                 aria-label={`View outcome comments for ${subjectItem.name}`}
               >
                 Outcome Comments
@@ -88,7 +110,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
             {onViewPersonalizedComments && (
               <button
                 onClick={() => onViewPersonalizedComments(subjectItem.id)}
-                className="text-purple-600 hover:text-purple-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className={`${styles['button-action']} ${styles['view-personalized']}`}
                 aria-label={`View personalized comments for ${subjectItem.name}`}
               >
                 Personalized Comments
@@ -97,7 +119,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
             {onViewClasses && (
               <button
                 onClick={() => onViewClasses(subjectItem.id)}
-                className="text-indigo-600 hover:text-indigo-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`${styles['button-action']} ${styles['view-classes']}`}
                 aria-label={`Manage classes for ${subjectItem.name}`}
               >
                 Manage Classes

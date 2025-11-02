@@ -1,0 +1,149 @@
+/**
+ * ConfirmationModal Styles
+ * Using Enverus Design System Tokens
+ * Reference: US-SUBJ-DELETE-002
+ *
+ * MANDATORY: All styling uses design tokens from enverus-ux-guidelines.md
+ */
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--size-padding-regular);
+}
+
+/* Modal dialog container */
+.modal-dialog {
+  background: var(--env-theme-surface-elevated);
+  border: 1px solid var(--env-theme-navbar-border);
+  border-radius: var(--size-radius-400);
+  padding: var(--size-padding-large);
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* Modal header */
+.modal-header {
+  margin-bottom: var(--size-padding-regular);
+}
+
+.modal-title {
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  line-height: var(--text-headline-line);
+  color: var(--env-theme-text-body);
+  font-family: var(--text-body-font-family);
+  margin: 0;
+}
+
+/* Modal body */
+.modal-body {
+  margin-bottom: var(--size-padding-large);
+}
+
+.modal-message {
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line);
+  color: var(--env-theme-text-body);
+  font-family: var(--text-body-font-family);
+  margin: 0;
+}
+
+/* Modal footer with buttons */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--size-measure-200);
+}
+
+/* Cancel button */
+.button-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--size-button-height-regular);
+  padding: 0 var(--size-padding-regular);
+  background: var(--env-theme-button-background);
+  color: var(--env-theme-button-text);
+  border: 1px solid var(--env-theme-button-border);
+  border-radius: var(--size-radius-100);
+  font-family: var(--text-body-font-family);
+  font-size: var(--text-body-size);
+  font-weight: var(--text-title-weight);
+  line-height: var(--text-body-line);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button-cancel:hover {
+  background: var(--env-theme-button-background-hover);
+}
+
+.button-cancel:focus-visible {
+  outline: var(--size-measure-050) solid var(--env-theme-text-link);
+  outline-offset: var(--size-measure-050);
+}
+
+/* Danger button (Delete/Confirm) */
+.button-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--size-button-height-regular);
+  padding: 0 var(--size-padding-regular);
+  background: var(--env-theme-danger);
+  color: var(--env-theme-accent-text-on-brand);
+  border: 1px solid var(--env-theme-danger);
+  border-radius: var(--size-radius-100);
+  font-family: var(--text-body-font-family);
+  font-size: var(--text-body-size);
+  font-weight: var(--text-title-weight);
+  line-height: var(--text-body-line);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  gap: var(--size-measure-200);
+}
+
+.button-danger:hover:not(:disabled) {
+  background: var(--env-theme-warning);
+  border-color: var(--env-theme-warning);
+}
+
+.button-danger:focus-visible {
+  outline: var(--size-measure-050) solid var(--env-theme-text-link);
+  outline-offset: var(--size-measure-050);
+}
+
+.button-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading indicator inside button */
+.button-loading {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--size-radius-full);
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

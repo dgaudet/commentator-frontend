@@ -1,0 +1,151 @@
+/**
+ * SubjectListItem Styles
+ * Using Enverus Design System Tokens
+ * Reference: US-SUBJ-DELETE-001
+ *
+ * MANDATORY: All styling uses design tokens from enverus-ux-guidelines.md
+ */
+
+.subject-item {
+  border: 1px solid var(--env-theme-navbar-border);
+  border-radius: var(--size-radius-200);
+  padding: var(--size-padding-regular);
+  margin-bottom: var(--size-measure-300);
+  background: var(--env-theme-surface-elevated);
+  transition: box-shadow 0.2s ease;
+}
+
+.subject-item:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.subject-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.subject-content {
+  flex: 1;
+}
+
+/* Container for subject name + delete button */
+.name-delete-container {
+  display: flex;
+  align-items: center;
+  gap: var(--size-padding-small); /* 12px spacing */
+  margin-bottom: var(--size-measure-100);
+}
+
+.subject-name {
+  font-size: var(--text-headline-size);
+  font-weight: var(--text-headline-weight);
+  line-height: var(--text-headline-line);
+  color: var(--env-theme-text-body);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.subject-name:hover {
+  color: var(--env-theme-text-link);
+}
+
+.subject-dates {
+  font-size: var(--text-small-size);
+  line-height: var(--text-small-line);
+  color: var(--env-theme-text-muted);
+}
+
+.subject-dates p {
+  margin: 0;
+}
+
+/* Action buttons container */
+.action-buttons {
+  display: flex;
+  gap: var(--size-measure-200);
+}
+
+/* Danger button (delete) beside subject name */
+.button-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--size-button-height-small); /* Small button for inline placement */
+  padding: 0 var(--size-padding-small);
+  background: transparent;
+  color: var(--env-theme-danger);
+  border: 1px solid var(--env-theme-danger);
+  border-radius: var(--size-radius-100);
+  font-family: var(--text-body-font-family);
+  font-size: var(--text-small-size);
+  font-weight: var(--text-title-weight);
+  line-height: var(--text-body-line);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.button-danger:hover {
+  background: var(--env-theme-danger);
+  color: var(--env-theme-accent-text-on-brand);
+}
+
+.button-danger:focus-visible {
+  outline: var(--size-measure-050) solid var(--env-theme-text-link);
+  outline-offset: var(--size-measure-050);
+}
+
+.button-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Action buttons (edit, view, etc.) */
+.button-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--size-button-height-regular);
+  padding: 0 var(--size-padding-regular);
+  background: var(--env-theme-button-background);
+  color: var(--env-theme-button-text);
+  border: 1px solid var(--env-theme-button-border);
+  border-radius: var(--size-radius-100);
+  font-family: var(--text-body-font-family);
+  font-size: var(--text-body-size);
+  font-weight: var(--text-title-weight);
+  line-height: var(--text-body-line);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.button-action:hover {
+  background: var(--env-theme-button-background-hover);
+}
+
+.button-action:focus-visible {
+  outline: var(--size-measure-050) solid var(--env-theme-text-link);
+  outline-offset: var(--size-measure-050);
+}
+
+.button-action.edit {
+  color: var(--env-theme-text-link);
+  border-color: var(--env-theme-text-link);
+}
+
+.button-action.view-outcome {
+  color: var(--env-theme-accent-brand);
+  border-color: var(--env-theme-accent-brand);
+}
+
+.button-action.view-personalized {
+  color: var(--env-theme-accent-purple);
+  border-color: var(--env-theme-accent-purple);
+}
+
+.button-action.view-classes {
+  color: var(--env-theme-info);
+  border-color: var(--env-theme-info);
+}
