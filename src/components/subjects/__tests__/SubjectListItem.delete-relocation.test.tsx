@@ -53,18 +53,19 @@ describe('SubjectListItem - Delete Button Relocation (US-SUBJ-DELETE-001)', () =
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
       expect(subjectNameParent).toContainElement(deleteButton)
 
-      // Container should use flex layout with gap (design token)
-      expect(subjectNameParent).toHaveClass('name-delete-container')
+      // Container should use flex layout
+      expect(subjectNameParent).toHaveClass('flex')
     })
 
-    it('should use Enverus design tokens for danger color scheme', () => {
+    it('should use danger styling for delete button', () => {
       const handleDelete = jest.fn()
       render(<SubjectListItem subjectItem={mockSubject} onDelete={handleDelete} />)
 
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
 
-      // Should have class that applies danger tokens (not hardcoded Tailwind)
-      expect(deleteButton).toHaveClass('button-danger')
+      // Should have red/danger color classes
+      expect(deleteButton).toHaveClass('text-red-600')
+      expect(deleteButton).toHaveClass('border-red-600')
     })
   })
 
@@ -77,9 +78,9 @@ describe('SubjectListItem - Delete Button Relocation (US-SUBJ-DELETE-001)', () =
       const subjectName = screen.getByText('Mathematics 101')
       expect(subjectName).not.toHaveClass('truncate')
 
-      // Container should use responsive layout class
+      // Container should use flex layout
       const nameDeleteContainer = screen.getByText('Mathematics 101').parentElement
-      expect(nameDeleteContainer).toHaveClass('name-delete-container')
+      expect(nameDeleteContainer).toHaveClass('flex')
     })
   })
 

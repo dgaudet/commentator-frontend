@@ -6,13 +6,11 @@
  * Key Changes:
  * - Subject has no year field, so year display removed
  * - Delete button relocated beside subject name (US-SUBJ-DELETE-001)
- * - Using Enverus design tokens via CSS modules
  * Performance: Memoized to prevent unnecessary re-renders
  */
 import React from 'react'
 import { Subject } from '../../types/Subject'
 import { formatDate } from '../../utils/dateFormatter'
-import styles from './SubjectListItem.module.css'
 
 interface SubjectListItemProps {
   subjectItem: Subject
@@ -43,15 +41,16 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
 
   return (
     <div
-      className={styles['subject-item']}
+      className="border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow bg-white"
       data-testid={`subject-item-${subjectItem.id}`}
     >
-      <div className={styles['subject-header']}>
-        <div className={styles['subject-content']}>
-          {/* Subject name + delete button container (US-SUBJ-DELETE-001) */}
-          <div className={styles['name-delete-container']}>
+      <div className="flex justify-between items-start">
+        {/* Left side: Subject name with inline delete button + dates */}
+        <div className="flex-1">
+          {/* Subject name + delete button on same line */}
+          <div className="flex items-center gap-3 mb-2">
             <h3
-              className={styles['subject-name']}
+              className="text-lg font-semibold text-gray-900 cursor-pointer hover:text-blue-600"
               onClick={() => onView?.(subjectItem.id)}
               role={onView ? 'button' : undefined}
               tabIndex={onView ? 0 : undefined}
@@ -65,12 +64,12 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
               {subjectItem.name}
             </h3>
 
-            {/* Delete button beside subject name (US-SUBJ-DELETE-001 AC1, AC3) */}
+            {/* Delete button beside subject name (US-SUBJ-DELETE-001) */}
             {onDelete && (
               <button
                 onClick={() => onDelete(subjectItem.id)}
                 onKeyDown={handleDeleteKeyDown}
-                className={styles['button-danger']}
+                className="text-red-600 hover:text-red-700 border border-red-600 hover:bg-red-50 font-medium px-3 py-1 rounded text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
                 aria-label={`Delete ${subjectItem.name}`}
                 tabIndex={0}
                 data-position="beside-name"
@@ -80,19 +79,20 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
             )}
           </div>
 
-          <div className={styles['subject-dates']}>
+          {/* Created/Updated dates */}
+          <div className="text-sm text-gray-500">
             <p>Created: {formatDate(subjectItem.createdAt)}</p>
             <p>Updated: {formatDate(subjectItem.updatedAt)}</p>
           </div>
         </div>
 
-        {/* Action buttons (edit, view comments, etc.) */}
+        {/* Right side: Action buttons */}
         {(onEdit || onViewOutcomeComments || onViewPersonalizedComments || onViewClasses) && (
-          <div className={styles['action-buttons']}>
+          <div className="flex gap-2 ml-4">
             {onEdit && (
               <button
                 onClick={() => onEdit(subjectItem.id)}
-                className={`${styles['button-action']} ${styles.edit}`}
+                className="text-blue-600 hover:text-blue-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 aria-label={`Edit ${subjectItem.name}`}
               >
                 Edit
@@ -101,7 +101,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
             {onViewOutcomeComments && (
               <button
                 onClick={() => onViewOutcomeComments(subjectItem.id)}
-                className={`${styles['button-action']} ${styles['view-outcome']}`}
+                className="text-green-600 hover:text-green-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
                 aria-label={`View outcome comments for ${subjectItem.name}`}
               >
                 Outcome Comments
@@ -110,7 +110,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
             {onViewPersonalizedComments && (
               <button
                 onClick={() => onViewPersonalizedComments(subjectItem.id)}
-                className={`${styles['button-action']} ${styles['view-personalized']}`}
+                className="text-purple-600 hover:text-purple-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                 aria-label={`View personalized comments for ${subjectItem.name}`}
               >
                 Personalized Comments
@@ -119,7 +119,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
             {onViewClasses && (
               <button
                 onClick={() => onViewClasses(subjectItem.id)}
-                className={`${styles['button-action']} ${styles['view-classes']}`}
+                className="text-indigo-600 hover:text-indigo-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 aria-label={`Manage classes for ${subjectItem.name}`}
               >
                 Manage Classes

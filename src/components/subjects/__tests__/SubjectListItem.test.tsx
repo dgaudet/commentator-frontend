@@ -109,7 +109,6 @@ describe('SubjectListItem', () => {
   it('should have hover styles', () => {
     render(<SubjectListItem subjectItem={mockSubject} />)
     const container = screen.getByTestId('subject-item-1')
-    // Now using CSS modules instead of Tailwind, class name is hashed
-    expect(container.className).toContain('subject-item')
+    expect(container).toHaveClass('hover:shadow-md')
   })
 })
