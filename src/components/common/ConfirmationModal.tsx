@@ -37,16 +37,23 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   loadingText,
 }) => {
   const cancelButtonRef = useRef<HTMLButtonElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
   const titleId = useId()
   const descriptionId = useId()
 
   // Compute loading text with smart default
   const computedLoadingText = loadingText || `${confirmButtonText}...`
 
-  // Focus Cancel button when modal opens (safe default)
+  // Focus management: save previous focus, focus Cancel button on open, restore on close
   useEffect(() => {
-    if (isOpen && cancelButtonRef.current) {
-      cancelButtonRef.current.focus()
+    if (isOpen) {
+      // Store currently focused element before opening modal
+      previousFocusRef.current = document.activeElement as HTMLElement
+      // Focus Cancel button (safe default)
+      cancelButtonRef.current?.focus()
+    } else if (previousFocusRef.current) {
+      // Restore focus to previously focused element when modal closes
+      previousFocusRef.current.focus()
     }
   }, [isOpen])
 

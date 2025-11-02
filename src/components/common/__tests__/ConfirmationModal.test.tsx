@@ -206,6 +206,49 @@ describe('ConfirmationModal (US-SUBJ-DELETE-002)', () => {
       expect(cancelButton).toHaveFocus()
     })
 
+    it('should restore focus to previously focused element when modal closes', () => {
+      // Create a button to represent the previously focused element
+      const triggerButton = document.createElement('button')
+      triggerButton.textContent = 'Open Modal'
+      document.body.appendChild(triggerButton)
+      triggerButton.focus()
+
+      // Verify trigger button has focus initially
+      expect(document.activeElement).toBe(triggerButton)
+
+      // Render modal in open state
+      const { rerender } = render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Delete"
+          message="Are you sure?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        />,
+      )
+
+      // Modal should now have focus on Cancel button
+      const cancelButton = screen.getByRole('button', { name: /cancel/i })
+      expect(cancelButton).toHaveFocus()
+
+      // Close modal by re-rendering with isOpen={false}
+      rerender(
+        <ConfirmationModal
+          isOpen={false}
+          title="Delete"
+          message="Are you sure?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        />,
+      )
+
+      // Focus should be restored to trigger button
+      expect(document.activeElement).toBe(triggerButton)
+
+      // Cleanup
+      document.body.removeChild(triggerButton)
+    })
+
     it('should support keyboard navigation (native button behavior)', () => {
       render(
         <ConfirmationModal
