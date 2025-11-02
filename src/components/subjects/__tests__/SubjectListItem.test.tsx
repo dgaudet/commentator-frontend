@@ -1,9 +1,11 @@
 /**
  * SubjectListItem Component Tests
- * TDD Phase: GREEN - SubjectListItem.tsx already created
- * Reference: US-REFACTOR-006
+ * TDD Phase: RED - Updating tests for tab interface
+ * Reference: US-REFACTOR-006, US-TAB-002
  *
- * Key Change: Subject has no year field, so year test removed
+ * Key Changes:
+ * - Subject has no year field, so year test removed
+ * - Action buttons replaced with tabbed interface (US-TAB-002)
  */
 import { render, screen, fireEvent } from '../../../test-utils'
 import { SubjectListItem } from '../SubjectListItem'
@@ -49,16 +51,16 @@ describe('SubjectListItem', () => {
     expect(handleView).toHaveBeenCalledWith(1)
   })
 
-  it('should render edit button when onEdit provided', () => {
+  it('should render Edit tab when onEdit provided', () => {
     const handleEdit = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onEdit={handleEdit} />)
-    expect(screen.getByRole('button', { name: /edit mathematics 101/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Edit' })).toBeInTheDocument()
   })
 
-  it('should call onEdit when edit button clicked', () => {
+  it('should call onEdit when Edit tab clicked', () => {
     const handleEdit = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onEdit={handleEdit} />)
-    fireEvent.click(screen.getByRole('button', { name: /edit/i }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Edit' }))
     expect(handleEdit).toHaveBeenCalledWith(1)
   })
 
@@ -75,35 +77,64 @@ describe('SubjectListItem', () => {
     expect(handleDelete).toHaveBeenCalledWith(1)
   })
 
-  it('should render outcome comments button when onViewOutcomeComments provided', () => {
+  it('should render Outcome Comments tab when onViewOutcomeComments provided', () => {
     const handleViewOutcomeComments = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onViewOutcomeComments={handleViewOutcomeComments} />)
-    expect(screen.getByRole('button', { name: /outcome comments for mathematics 101/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Outcome Comments' })).toBeInTheDocument()
   })
 
-  it('should call onViewOutcomeComments when outcome comments button clicked', () => {
+  it('should call onViewOutcomeComments when Outcome Comments tab clicked', () => {
     const handleViewOutcomeComments = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onViewOutcomeComments={handleViewOutcomeComments} />)
-    fireEvent.click(screen.getByRole('button', { name: /outcome comments/i }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Outcome Comments' }))
     expect(handleViewOutcomeComments).toHaveBeenCalledWith(1)
   })
 
-  it('should render personalized comments button when onViewPersonalizedComments provided', () => {
+  it('should render Personalized Comments tab when onViewPersonalizedComments provided', () => {
     const handleViewPersonalizedComments = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onViewPersonalizedComments={handleViewPersonalizedComments} />)
-    expect(screen.getByRole('button', { name: /personalized comments for mathematics 101/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Personalized Comments' })).toBeInTheDocument()
   })
 
-  it('should call onViewPersonalizedComments when personalized comments button clicked', () => {
+  it('should call onViewPersonalizedComments when Personalized Comments tab clicked', () => {
     const handleViewPersonalizedComments = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onViewPersonalizedComments={handleViewPersonalizedComments} />)
-    fireEvent.click(screen.getByRole('button', { name: /personalized comments/i }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Personalized Comments' }))
     expect(handleViewPersonalizedComments).toHaveBeenCalledWith(1)
   })
 
-  it('should not render action buttons when handlers not provided', () => {
-    render(<SubjectListItem subjectItem={mockSubject} />)
-    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  it('should render Manage Classes tab when onViewClasses provided', () => {
+    const handleViewClasses = jest.fn()
+    render(<SubjectListItem subjectItem={mockSubject} onViewClasses={handleViewClasses} />)
+    expect(screen.getByRole('tab', { name: 'Manage Classes' })).toBeInTheDocument()
+  })
+
+  it('should call onViewClasses when Manage Classes tab clicked', () => {
+    const handleViewClasses = jest.fn()
+    render(<SubjectListItem subjectItem={mockSubject} onViewClasses={handleViewClasses} />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Manage Classes' }))
+    expect(handleViewClasses).toHaveBeenCalledWith(1)
+  })
+
+  it('should not render tabs when no tab handlers provided', () => {
+    render(<SubjectListItem subjectItem={mockSubject} onDelete={jest.fn()} />)
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+  })
+
+  it('should render only tabs for provided handlers', () => {
+    const handleEdit = jest.fn()
+    const handleViewClasses = jest.fn()
+    render(
+      <SubjectListItem
+        subjectItem={mockSubject}
+        onEdit={handleEdit}
+        onViewClasses={handleViewClasses}
+      />,
+    )
+    expect(screen.getByRole('tab', { name: 'Edit' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Manage Classes' })).toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: 'Outcome Comments' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: 'Personalized Comments' })).not.toBeInTheDocument()
   })
 
   it('should have hover styles', () => {

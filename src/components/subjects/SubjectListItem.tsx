@@ -1,16 +1,18 @@
 /**
  * SubjectListItem Component
  * Displays a single subject in the list with formatted dates
- * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001
+ * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001, US-TAB-002
  *
  * Key Changes:
  * - Subject has no year field, so year display removed
  * - Delete button relocated beside subject name (US-SUBJ-DELETE-001)
+ * - Action buttons replaced with tabbed interface (US-TAB-002)
  * Performance: Memoized to prevent unnecessary re-renders
  */
-import React from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { Subject } from '../../types/Subject'
 import { formatDate } from '../../utils/dateFormatter'
+import { Tabs, Tab } from '../common/Tabs'
 
 interface SubjectListItemProps {
   subjectItem: Subject
@@ -31,6 +33,49 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onViewPersonalizedComments,
   onViewClasses,
 }) => {
+  /**
+   * Build tabs array dynamically based on provided callbacks
+   * Only includes tabs for callbacks that are provided
+   */
+  const tabs = useMemo<Tab[]>(() => {
+    const tabsList: Tab[] = []
+
+    if (onEdit) {
+      tabsList.push({ id: 'edit', label: 'Edit' })
+    }
+    if (onViewOutcomeComments) {
+      tabsList.push({ id: 'outcome', label: 'Outcome Comments' })
+    }
+    if (onViewPersonalizedComments) {
+      tabsList.push({ id: 'personalized', label: 'Personalized Comments' })
+    }
+    if (onViewClasses) {
+      tabsList.push({ id: 'classes', label: 'Manage Classes' })
+    }
+
+    return tabsList
+  }, [onEdit, onViewOutcomeComments, onViewPersonalizedComments, onViewClasses])
+
+  /**
+   * Handle tab selection and route to appropriate callback
+   */
+  const handleTabChange = useCallback((tabId: string) => {
+    switch (tabId) {
+      case 'edit':
+        onEdit?.(subjectItem.id)
+        break
+      case 'outcome':
+        onViewOutcomeComments?.(subjectItem.id)
+        break
+      case 'personalized':
+        onViewPersonalizedComments?.(subjectItem.id)
+        break
+      case 'classes':
+        onViewClasses?.(subjectItem.id)
+        break
+    }
+  }, [subjectItem.id, onEdit, onViewOutcomeComments, onViewPersonalizedComments, onViewClasses])
+
   return (
     <div
       className="border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow bg-white"
@@ -76,45 +121,10 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
           </div>
         </div>
 
-        {/* Right side: Action buttons */}
-        {(onEdit || onViewOutcomeComments || onViewPersonalizedComments || onViewClasses) && (
-          <div className="flex gap-2 ml-4">
-            {onEdit && (
-              <button
-                onClick={() => onEdit(subjectItem.id)}
-                className="text-blue-600 hover:text-blue-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label={`Edit ${subjectItem.name}`}
-              >
-                Edit
-              </button>
-            )}
-            {onViewOutcomeComments && (
-              <button
-                onClick={() => onViewOutcomeComments(subjectItem.id)}
-                className="text-green-600 hover:text-green-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                aria-label={`View outcome comments for ${subjectItem.name}`}
-              >
-                Outcome Comments
-              </button>
-            )}
-            {onViewPersonalizedComments && (
-              <button
-                onClick={() => onViewPersonalizedComments(subjectItem.id)}
-                className="text-purple-600 hover:text-purple-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-                aria-label={`View personalized comments for ${subjectItem.name}`}
-              >
-                Personalized Comments
-              </button>
-            )}
-            {onViewClasses && (
-              <button
-                onClick={() => onViewClasses(subjectItem.id)}
-                className="text-indigo-600 hover:text-indigo-700 font-medium px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-label={`Manage classes for ${subjectItem.name}`}
-              >
-                Manage Classes
-              </button>
-            )}
+        {/* Right side: Tabbed interface (US-TAB-002) */}
+        {tabs.length > 0 && (
+          <div className="ml-4">
+            <Tabs tabs={tabs} onChange={handleTabChange} />
           </div>
         )}
       </div>
