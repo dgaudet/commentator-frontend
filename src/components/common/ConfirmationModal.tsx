@@ -45,7 +45,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     }
   }, [isOpen])
 
-  // Handle Escape key
+  // Handle Escape key to close modal
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -58,21 +58,6 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       return () => document.removeEventListener('keydown', handleEscape)
     }
   }, [isOpen, onCancel])
-
-  // Handle keyboard events for buttons
-  const handleCancelKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onCancel()
-    }
-  }
-
-  const handleConfirmKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onConfirm()
-    }
-  }
 
   if (!isOpen) {
     return null
@@ -106,8 +91,6 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             type="button"
             className={styles['button-cancel']}
             onClick={onCancel}
-            onKeyDown={handleCancelKeyDown}
-            tabIndex={0}
             disabled={isLoading}
           >
             {cancelButtonText}
@@ -117,8 +100,6 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             type="button"
             className={styles['button-danger']}
             onClick={onConfirm}
-            onKeyDown={handleConfirmKeyDown}
-            tabIndex={0}
             disabled={isLoading}
           >
             {isLoading

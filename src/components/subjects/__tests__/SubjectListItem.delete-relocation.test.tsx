@@ -93,40 +93,16 @@ describe('SubjectListItem - Delete Button Relocation (US-SUBJ-DELETE-001)', () =
       expect(deleteButton).toHaveAttribute('aria-label', 'Delete Mathematics 101')
     })
 
-    it('should be keyboard accessible with tab navigation', () => {
+    it('should be keyboard accessible (native button behavior)', () => {
       const handleDelete = jest.fn()
       render(<SubjectListItem subjectItem={mockSubject} onDelete={handleDelete} />)
 
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
 
-      // Should be focusable
-      expect(deleteButton).toHaveAttribute('tabIndex', '0')
-    })
-
-    it('should handle Enter key to trigger delete', () => {
-      const handleDelete = jest.fn()
-      render(<SubjectListItem subjectItem={mockSubject} onDelete={handleDelete} />)
-
-      const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
-
-      // Simulate Enter key
+      // Native buttons are focusable and handle Enter/Space automatically
+      expect(deleteButton.tagName).toBe('BUTTON')
       deleteButton.focus()
-      deleteButton.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
-
-      expect(handleDelete).toHaveBeenCalledWith(1)
-    })
-
-    it('should handle Space key to trigger delete', () => {
-      const handleDelete = jest.fn()
-      render(<SubjectListItem subjectItem={mockSubject} onDelete={handleDelete} />)
-
-      const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
-
-      // Simulate Space key
-      deleteButton.focus()
-      deleteButton.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }))
-
-      expect(handleDelete).toHaveBeenCalledWith(1)
+      expect(deleteButton).toHaveFocus()
     })
   })
 

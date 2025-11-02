@@ -31,14 +31,6 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onViewPersonalizedComments,
   onViewClasses,
 }) => {
-  // Handler for delete button keyboard events
-  const handleDeleteKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onDelete?.(subjectItem.id)
-    }
-  }
-
   return (
     <div
       className="border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow bg-white"
@@ -68,10 +60,8 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
             {onDelete && (
               <button
                 onClick={() => onDelete(subjectItem.id)}
-                onKeyDown={handleDeleteKeyDown}
                 className="text-red-600 hover:text-red-700 border border-red-600 hover:bg-red-50 font-medium px-3 py-1 rounded text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
                 aria-label={`Delete ${subjectItem.name}`}
-                tabIndex={0}
                 data-position="beside-name"
               >
                 Delete
