@@ -144,10 +144,49 @@ describe('ConfirmationModal (US-SUBJ-DELETE-002)', () => {
         />,
       )
 
-      // Button name changes to "Deleting..." when loading
-      const deleteButton = screen.getByRole('button', { name: /deleting/i })
+      // Button text changes to "Delete..." when loading (confirmButtonText + "...")
+      const deleteButton = screen.getByRole('button', { name: /delete\.\.\./i })
       expect(deleteButton).toBeDisabled()
-      expect(screen.getByText(/deleting/i)).toBeInTheDocument()
+      expect(screen.getByText(/delete\.\.\./i)).toBeInTheDocument()
+    })
+
+    it('should use custom loadingText when provided', () => {
+      render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Confirm"
+          message="Are you sure?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+          confirmButtonText="Save"
+          isLoading={true}
+          loadingText="Saving changes..."
+        />,
+      )
+
+      // Should use custom loading text instead of "Save..."
+      const confirmButton = screen.getByRole('button', { name: /saving changes/i })
+      expect(confirmButton).toBeDisabled()
+      expect(screen.getByText(/saving changes/i)).toBeInTheDocument()
+    })
+
+    it('should derive loading text from custom confirmButtonText', () => {
+      render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Confirm"
+          message="Are you sure?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+          confirmButtonText="Archive"
+          isLoading={true}
+        />,
+      )
+
+      // Should automatically use "Archive..." as loading text
+      const confirmButton = screen.getByRole('button', { name: /archive\.\.\./i })
+      expect(confirmButton).toBeDisabled()
+      expect(screen.getByText(/archive\.\.\./i)).toBeInTheDocument()
     })
   })
 

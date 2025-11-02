@@ -22,6 +22,7 @@ interface ConfirmationModalProps {
   isLoading?: boolean
   confirmButtonText?: string
   cancelButtonText?: string
+  loadingText?: string
 }
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -33,10 +34,14 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isLoading = false,
   confirmButtonText = 'Delete',
   cancelButtonText = 'Cancel',
+  loadingText,
 }) => {
   const cancelButtonRef = useRef<HTMLButtonElement>(null)
   const titleId = useId()
   const descriptionId = useId()
+
+  // Compute loading text with smart default
+  const computedLoadingText = loadingText || `${confirmButtonText}...`
 
   // Focus Cancel button when modal opens (safe default)
   useEffect(() => {
@@ -106,7 +111,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               ? (
               <>
                 <span className={styles['button-loading']} aria-hidden="true"></span>
-                Deleting...
+                {computedLoadingText}
               </>
                 )
               : (

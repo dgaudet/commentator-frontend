@@ -13,7 +13,7 @@ If you have an subject selected, and you open the outcome comments, then switch 
 ## perhaps then I need a button to view all comments for class that you can print
 ## lower priority
 ### we should have a way to bulk add students with their grade
-### The lable for selecting a class should be `Select a Class to work with`
+### The label for selecting a class should be `Select a Class to work with`
 # all confirmation options should use the confirmation modal component
 remove the console.error methods from services
 
