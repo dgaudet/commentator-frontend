@@ -1,18 +1,20 @@
 /**
  * SubjectListItem Component
  * Displays a single subject in the list with formatted dates
- * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001, US-TAB-002
+ * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001, US-TAB-002, US-TABPANEL-002
  *
  * Key Changes:
  * - Subject has no year field, so year display removed
  * - Delete button relocated beside subject name (US-SUBJ-DELETE-001)
  * - Action buttons replaced with tabbed interface (US-TAB-002)
+ * - Tab panels display content below tabs (US-TABPANEL-002)
  * Performance: Memoized to prevent unnecessary re-renders
  */
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useState } from 'react'
 import { Subject } from '../../types/Subject'
 import { formatDate } from '../../utils/dateFormatter'
 import { Tabs, Tab } from '../common/Tabs'
+import { TabPanel } from '../common/TabPanel'
 
 interface SubjectListItemProps {
   subjectItem: Subject
@@ -57,9 +59,19 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   }, [onEdit, onViewOutcomeComments, onViewPersonalizedComments, onViewClasses])
 
   /**
-   * Handle tab selection and route to appropriate callback
+   * Track active tab state (US-TABPANEL-002)
+   * Default to first tab if tabs exist
+   */
+  const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id || '')
+
+  /**
+   * Handle tab selection - update active tab state and call legacy callbacks
+   * US-TABPANEL-002: Now switches tab panels instead of just calling callbacks
    */
   const handleTabChange = useCallback((tabId: string) => {
+    setActiveTab(tabId)
+
+    // Also call legacy callbacks for backward compatibility
     switch (tabId) {
       case 'edit':
         onEdit?.(subjectItem.id)
@@ -128,6 +140,54 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
           </div>
         )}
       </div>
+
+      {/* Tab Panels (US-TABPANEL-002) - Display content below tabs */}
+      {tabs.length > 0 && (
+        <>
+          {/* Edit Panel */}
+          {onEdit && (
+            <TabPanel id="edit" activeTabId={activeTab} tabId="edit">
+              <div data-testid="edit-panel-content">
+                <h4 className="text-lg font-semibold mb-2">Edit Subject: {subjectItem.name}</h4>
+                <p className="text-gray-600">Edit form will appear here (SubjectForm component)</p>
+              </div>
+            </TabPanel>
+          )}
+
+          {/* Outcome Comments Panel */}
+          {onViewOutcomeComments && (
+            <TabPanel id="outcome" activeTabId={activeTab} tabId="outcome">
+              <div data-testid="outcome-comments-panel-content">
+                <h4 className="text-lg font-semibold mb-2">Outcome Comments</h4>
+                <p className="text-gray-600">Subject ID: {subjectItem.id}</p>
+                <p className="text-gray-600">Outcome comments management will appear here</p>
+              </div>
+            </TabPanel>
+          )}
+
+          {/* Personalized Comments Panel */}
+          {onViewPersonalizedComments && (
+            <TabPanel id="personalized" activeTabId={activeTab} tabId="personalized">
+              <div data-testid="personalized-comments-panel-content">
+                <h4 className="text-lg font-semibold mb-2">Personalized Comments</h4>
+                <p className="text-gray-600">Subject ID: {subjectItem.id}</p>
+                <p className="text-gray-600">Personalized comments management will appear here</p>
+              </div>
+            </TabPanel>
+          )}
+
+          {/* Manage Classes Panel */}
+          {onViewClasses && (
+            <TabPanel id="classes" activeTabId={activeTab} tabId="classes">
+              <div data-testid="classes-panel-content">
+                <h4 className="text-lg font-semibold mb-2">Manage Classes</h4>
+                <p className="text-gray-600">Subject ID: {subjectItem.id}</p>
+                <p className="text-gray-600">Class management will appear here</p>
+              </div>
+            </TabPanel>
+          )}
+        </>
+      )}
     </div>
   )
 })
