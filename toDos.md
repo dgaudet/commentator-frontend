@@ -16,23 +16,3 @@ If you have an subject selected, and you open the outcome comments, then switch 
 ### The label for selecting a class should be `Select a Class to work with`
 # all confirmation options should use the confirmation modal component
 remove the console.error methods from services
-
-# Subject Delete Button Relocation
-**Status**: ✅ COMPLETE - Deployed
-**Priority**: HIGH (MVP)
-**Effort**: L1-MICRO (Completed in 1 session)
-**Location**: `pdd-workspace/subject-delete-relocation/planning/user-stories.md`
-
-Move subject delete button to appear beside Subject Name when a subject is selected.
-
-## Completed Stories:
-- ✅ US-SUBJ-DELETE-001: Show Delete Button on Selection (3 pts, HIGH) - COMPLETE
-- ✅ US-SUBJ-DELETE-002: Delete Subject with Confirmation (5 pts, HIGH) - COMPLETE
-- ⏸️ US-SUBJ-DELETE-003: Handle Edge Cases (2 pts, MEDIUM) - Deferred to Post-MVP
-
-## Implementation Summary:
-- Delete button now appears beside subject name when selected
-- Confirmation modal with proper styled buttons
-- Full accessibility compliance (native button keyboard handling)
-- All tests passing (471/471)
-- Code simplified by removing redundant keyboard handlers (native buttons handle Enter/Space automatically)
