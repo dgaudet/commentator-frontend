@@ -22,6 +22,7 @@
  * ```
  */
 import React, { useState, useId, useRef, KeyboardEvent, useCallback } from 'react'
+import styles from './Tabs.module.css'
 
 /**
  * Individual tab definition
@@ -160,7 +161,8 @@ export const Tabs: React.FC<TabsProps> = ({
       role="tablist"
       aria-orientation={orientation}
       id={`${baseId}-tablist`}
-      className={`flex ${orientation === 'vertical' ? 'flex-col' : 'flex-row'} gap-1`}
+      className={styles.tablist}
+      data-orientation={orientation}
     >
       {tabs.map((tab, index) => {
         const isSelected = selectedTab === tab.id
@@ -179,18 +181,9 @@ export const Tabs: React.FC<TabsProps> = ({
             onClick={() => handleTabClick(tab.id, isDisabled)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             disabled={isDisabled}
-            className={`
-              px-4 py-2 text-sm font-medium transition-colors
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-              ${
-                isSelected
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300'
-              }
-              ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-            `}
+            className={styles.tab}
           >
-            {tab.icon && <span className="mr-2" aria-hidden="true">{tab.icon}</span>}
+            {tab.icon && <span className={styles.tabIcon} aria-hidden="true">{tab.icon}</span>}
             {tab.label}
           </button>
         )
