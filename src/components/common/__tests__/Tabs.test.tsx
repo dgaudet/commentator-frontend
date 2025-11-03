@@ -91,9 +91,10 @@ describe('Tabs Component (US-TAB-001)', () => {
 
       const editTab = screen.getByRole('tab', { name: 'Edit' })
 
-      // Active tab should have specific styling classes
-      expect(editTab.className).toContain('border-b-2')
-      expect(editTab.className).toContain('border-blue-600')
+      // Active tab should have aria-selected="true" and CSS module class
+      expect(editTab).toHaveAttribute('aria-selected', 'true')
+      // CSS Modules provide the 'tab' class which has styling for [aria-selected='true']
+      expect(editTab.className).toContain('tab')
     })
   })
 

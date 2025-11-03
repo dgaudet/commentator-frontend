@@ -1,13 +1,14 @@
 /**
  * SubjectListItem Component
  * Displays a single subject in the list with formatted dates
- * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001, US-TAB-002, US-TABPANEL-002
+ * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001, US-TAB-002, US-TABPANEL-002, US-TABPANEL-003
  *
  * Key Changes:
  * - Subject has no year field, so year display removed
  * - Delete button relocated beside subject name (US-SUBJ-DELETE-001)
  * - Action buttons replaced with tabbed interface (US-TAB-002)
  * - Tab panels display content below tabs (US-TABPANEL-002)
+ * - Tab panels update when subject changes (US-TABPANEL-003)
  * Performance: Memoized to prevent unnecessary re-renders
  */
 import React, { useMemo, useCallback, useState } from 'react'
@@ -62,14 +63,28 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
    * Track active tab state (US-TABPANEL-002)
    * Default to first tab if tabs exist
    */
-  const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id || '')
+  const [requestedTab, setRequestedTab] = useState<string>(tabs[0]?.id || '')
+
+  /**
+   * Compute actual active tab (US-TABPANEL-003)
+   * If requested tab no longer exists, use first available tab
+   */
+  const activeTab = useMemo(() => {
+    if (tabs.length === 0) return ''
+
+    // Check if requested tab still exists in tabs array
+    const tabExists = tabs.some((tab) => tab.id === requestedTab)
+
+    // If requested tab exists, use it; otherwise use first tab
+    return tabExists ? requestedTab : tabs[0].id
+  }, [tabs, requestedTab])
 
   /**
    * Handle tab selection - update active tab state and call legacy callbacks
    * US-TABPANEL-002: Now switches tab panels instead of just calling callbacks
    */
   const handleTabChange = useCallback((tabId: string) => {
-    setActiveTab(tabId)
+    setRequestedTab(tabId)
 
     // Also call legacy callbacks for backward compatibility
     switch (tabId) {
@@ -136,7 +151,12 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
         {/* Right side: Tabbed interface (US-TAB-002) */}
         {tabs.length > 0 && (
           <div className="ml-4">
-            <Tabs tabs={tabs} onChange={handleTabChange} />
+            <Tabs
+              key={tabs.map((t) => t.id).join('-')}
+              tabs={tabs}
+              defaultTab={activeTab}
+              onChange={handleTabChange}
+            />
           </div>
         )}
       </div>
