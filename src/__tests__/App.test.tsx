@@ -348,9 +348,9 @@ describe('App', () => {
         expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
       })
 
-      // Find and click the outcome comments button
-      const outcomeCommentsButton = screen.getByRole('button', { name: /outcome comments for mathematics 101/i })
-      fireEvent.click(outcomeCommentsButton)
+      // Find and click the outcome comments tab (US-TAB-002)
+      const outcomeCommentsTab = screen.getByRole('tab', { name: 'Outcome Comments' })
+      fireEvent.click(outcomeCommentsTab)
 
       // Modal should be visible
       expect(screen.getByRole('dialog')).toBeInTheDocument()
@@ -378,9 +378,9 @@ describe('App', () => {
         expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
       })
 
-      // Open modal
-      const outcomeCommentsButton = screen.getByRole('button', { name: /outcome comments for mathematics 101/i })
-      fireEvent.click(outcomeCommentsButton)
+      // Open modal using tab (US-TAB-002)
+      const outcomeCommentsTab = screen.getByRole('tab', { name: 'Outcome Comments' })
+      fireEvent.click(outcomeCommentsTab)
 
       // Modal should be visible
       expect(screen.getByRole('dialog')).toBeInTheDocument()

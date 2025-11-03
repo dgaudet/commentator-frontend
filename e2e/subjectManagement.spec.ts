@@ -252,10 +252,10 @@ test.describe('Subject Management E2E', () => {
       const optionWithName = page.locator(`select#subject-selector option:has-text("${subjectName}")`)
       await expect(optionWithName).toHaveCount(1, { timeout: 5000 })
 
-      // 3. UPDATE: Edit subject (if edit button exists)
-      const editButton = page.locator(`[data-testid*="subject-item"]:has-text("${subjectName}") button:has-text("Edit")`).first()
-      if (await editButton.isVisible().catch(() => false)) {
-        await editButton.click()
+      // 3. UPDATE: Edit subject (if edit tab exists - US-TAB-002)
+      const editTab = page.locator(`[data-testid*="subject-item"]:has-text("${subjectName}") [role="tab"][aria-label*="Edit"], [data-testid*="subject-item"]:has-text("${subjectName}") [role="tab"]:has-text("Edit")`).first()
+      if (await editTab.isVisible().catch(() => false)) {
+        await editTab.click()
         await page.fill('input[id*="subject-name"]', `${subjectName} Updated`)
         await page.locator('button:has-text("Save")').click()
 

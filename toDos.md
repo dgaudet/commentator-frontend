@@ -17,8 +17,6 @@ If you have an subject selected, and you open the outcome comments, then switch 
 # all confirmation options should use the confirmation modal component
 remove the console.error methods from services
 
-Can you create stories to modify the SubjectListItem component to use tabs for each of the buttons for edit/outcome comments/personalized comments/manage classes.
-
 # Subject Delete Button Relocation
 **Status**: ✅ COMPLETE - Deployed
 **Priority**: HIGH (MVP)

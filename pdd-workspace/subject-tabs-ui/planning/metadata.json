@@ -1,0 +1,59 @@
+{
+  "feature": "subject-tabs-ui",
+  "title": "Convert SubjectListItem Buttons to Tab Interface",
+  "complexity": {
+    "level": "L1-MICRO",
+    "reasoning": "Simple UI refactoring (3-5 stories, 1 week), creating reusable Tab component and converting existing button group. No external integrations, maintains existing callbacks and visual hierarchy. Standard accessibility requirements.",
+    "assessedAt": "2025-11-02",
+    "estimatedStories": 3,
+    "estimatedDuration": "1 week",
+    "estimatedPoints": 10
+  },
+  "scope": {
+    "description": "Convert the SubjectListItem component's action button group (Edit, Outcome Comments, Personalized Comments, Manage Classes) into a tabbed interface while maintaining the same visual hierarchy and triggering the same callbacks.",
+    "includes": [
+      "New reusable Tab component",
+      "SubjectListItem integration with tabs",
+      "Accessibility compliance (WCAG 2.1 AA)",
+      "Keyboard navigation support"
+    ],
+    "excludes": [
+      "Changes to callback implementations",
+      "Backend API modifications",
+      "New functionality beyond UI conversion"
+    ]
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "IN_PROGRESS",
+    "validation": "PENDING"
+  },
+  "stories": {
+    "US-TAB-001": {
+      "title": "Create Reusable Tab Component",
+      "points": 3,
+      "priority": "HIGH",
+      "status": "READY"
+    },
+    "US-TAB-002": {
+      "title": "Integrate Tabs into SubjectListItem",
+      "points": 5,
+      "priority": "HIGH",
+      "status": "BLOCKED",
+      "blockedBy": ["US-TAB-001"]
+    },
+    "US-TAB-003": {
+      "title": "Accessibility Compliance",
+      "points": 2,
+      "priority": "HIGH",
+      "status": "BLOCKED",
+      "blockedBy": ["US-TAB-001", "US-TAB-002"]
+    }
+  },
+  "createdAt": "2025-11-02",
+  "updatedAt": "2025-11-02",
+  "createdBy": "Product Owner",
+  "handedOffTo": "Frontend Engineer",
+  "handoffTimestamp": "2025-11-02T21:55:41Z"
+}

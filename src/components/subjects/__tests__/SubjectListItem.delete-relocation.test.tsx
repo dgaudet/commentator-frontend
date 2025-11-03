@@ -107,19 +107,21 @@ describe('SubjectListItem - Delete Button Relocation (US-SUBJ-DELETE-001)', () =
   })
 
   describe('Integration with existing functionality', () => {
-    it('should still allow edit button to function independently', () => {
+    it('should still allow edit tab to function independently', () => {
       const handleEdit = jest.fn()
       const handleDelete = jest.fn()
 
       render(<SubjectListItem subjectItem={mockSubject} onEdit={handleEdit} onDelete={handleDelete} />)
 
-      // Both buttons should exist
-      expect(screen.getByRole('button', { name: /edit mathematics 101/i })).toBeInTheDocument()
+      // Edit tab should exist in tablist (US-TAB-002)
+      expect(screen.getByRole('tab', { name: 'Edit' })).toBeInTheDocument()
+
+      // Delete button should still exist beside name
       expect(screen.getByRole('button', { name: /delete mathematics 101/i })).toBeInTheDocument()
 
-      // Edit button should still be in action buttons area
-      const editButton = screen.getByRole('button', { name: /edit mathematics 101/i })
-      expect(editButton).not.toHaveAttribute('data-position', 'beside-name')
+      // Delete button should have beside-name positioning (US-SUBJ-DELETE-001)
+      const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
+      expect(deleteButton).toHaveAttribute('data-position', 'beside-name')
     })
   })
 })
