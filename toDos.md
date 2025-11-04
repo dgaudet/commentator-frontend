@@ -18,5 +18,7 @@ If you have an subject selected, and you open the outcome comments, then switch 
 # remove the console.error methods from services
 # we can now remove the `x` close button from modals since they are tabs
 ## we also don't need a title in each tab since the tab name is sufficient
+# need to figure out how to do the final comments, should it be under Manage Classes? I think so, the code is still in App.tsx though
+# changing a subject is still all messed up
 
 Changing a subject name doesn't update the subject drop-down
