@@ -12,6 +12,9 @@
  */
 import React, { useCallback, useState, useEffect } from 'react'
 import { useSubjects } from '../../hooks/useSubjects'
+import { useOutcomeComments } from '../../hooks/useOutcomeComments'
+import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
+import { useClasses } from '../../hooks/useClasses'
 import { SubjectListItem } from './SubjectListItem'
 import { SubjectEmptyState } from './SubjectEmptyState'
 import { LoadingSpinner } from '../common/LoadingSpinner'
@@ -20,14 +23,15 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Subject } from '../../types/Subject'
 import { getSelectedSubjectId, saveSelectedSubjectId, clearSelectedSubjectId } from '../../utils/subjectStorageUtils'
+import type { Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest } from '../../types'
 
 interface SubjectListProps {
   onSubjectClick?: (subjectId: number) => void
   onAddSubject?: () => void
   onEdit?: (subjectItem: Subject) => void
-  onViewOutcomeComments?: (subjectItem: Subject) => void
-  onViewPersonalizedComments?: (subjectItem: Subject) => void
-  onViewClasses?: (subjectItem: Subject) => void
+  onEditSuccess?: (subject: Subject) => void
+  onEditCancel?: () => void
+  onViewFinalComments?: (classData: Class) => void
 }
 
 /**
@@ -40,11 +44,42 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   onSubjectClick,
   onAddSubject,
   onEdit,
-  onViewOutcomeComments,
-  onViewPersonalizedComments,
-  onViewClasses,
+  onEditSuccess,
+  onEditCancel,
+  onViewFinalComments,
 }) => {
   const { subjects, isLoading, error, clearError, deleteSubject } = useSubjects()
+
+  // Hooks for managing tab panel data
+  const {
+    outcomeComments,
+    loading: outcomeCommentsLoading,
+    error: outcomeCommentsError,
+    loadOutcomeComments,
+    createComment: createOutcomeComment,
+    updateComment: updateOutcomeComment,
+    deleteComment: deleteOutcomeComment,
+  } = useOutcomeComments()
+
+  const {
+    personalizedComments,
+    loading: personalizedCommentsLoading,
+    error: personalizedCommentsError,
+    loadPersonalizedComments,
+    createComment: createPersonalizedComment,
+    updateComment: updatePersonalizedComment,
+    deleteComment: deletePersonalizedComment,
+  } = usePersonalizedComments()
+
+  const {
+    classes,
+    loading: classesLoading,
+    error: classesError,
+    loadClasses,
+    createClass,
+    updateClass,
+    deleteClass,
+  } = useClasses()
 
   // State for selected subject ID
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null)
@@ -102,26 +137,57 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     }
   }, [subjects, onEdit])
 
-  const handleViewOutcomeComments = useCallback((subjectId: number) => {
-    const subjectItem = subjects.find(s => s.id === subjectId)
-    if (subjectItem && onViewOutcomeComments) {
-      onViewOutcomeComments(subjectItem)
-    }
-  }, [subjects, onViewOutcomeComments])
+  // Tab panel data loading handlers
+  const handleViewOutcomeComments = useCallback(async (subjectId: number) => {
+    await loadOutcomeComments(subjectId)
+  }, [loadOutcomeComments])
 
-  const handleViewPersonalizedComments = useCallback((subjectId: number) => {
-    const subjectItem = subjects.find(s => s.id === subjectId)
-    if (subjectItem && onViewPersonalizedComments) {
-      onViewPersonalizedComments(subjectItem)
-    }
-  }, [subjects, onViewPersonalizedComments])
+  const handleViewPersonalizedComments = useCallback(async (subjectId: number) => {
+    await loadPersonalizedComments(subjectId)
+  }, [loadPersonalizedComments])
 
-  const handleViewClasses = useCallback((subjectId: number) => {
-    const subjectItem = subjects.find(s => s.id === subjectId)
-    if (subjectItem && onViewClasses) {
-      onViewClasses(subjectItem)
-    }
-  }, [subjects, onViewClasses])
+  const handleViewClasses = useCallback(async (subjectId: number) => {
+    await loadClasses(subjectId)
+  }, [loadClasses])
+
+  // CRUD handlers for outcome comments
+  const handleCreateOutcomeComment = useCallback(async (request: CreateOutcomeCommentRequest) => {
+    await createOutcomeComment(request)
+  }, [createOutcomeComment])
+
+  const handleUpdateOutcomeComment = useCallback(async (id: number, request: UpdateOutcomeCommentRequest) => {
+    await updateOutcomeComment(id, request)
+  }, [updateOutcomeComment])
+
+  const handleDeleteOutcomeComment = useCallback(async (id: number) => {
+    await deleteOutcomeComment(id)
+  }, [deleteOutcomeComment])
+
+  // CRUD handlers for personalized comments
+  const handleCreatePersonalizedComment = useCallback(async (request: CreatePersonalizedCommentRequest) => {
+    await createPersonalizedComment(request)
+  }, [createPersonalizedComment])
+
+  const handleUpdatePersonalizedComment = useCallback(async (id: number, request: UpdatePersonalizedCommentRequest) => {
+    await updatePersonalizedComment(id, request)
+  }, [updatePersonalizedComment])
+
+  const handleDeletePersonalizedComment = useCallback(async (id: number) => {
+    await deletePersonalizedComment(id)
+  }, [deletePersonalizedComment])
+
+  // CRUD handlers for classes
+  const handleCreateClass = useCallback(async (request: CreateClassRequest) => {
+    await createClass(request)
+  }, [createClass])
+
+  const handleUpdateClass = useCallback(async (id: number, request: UpdateClassRequest) => {
+    await updateClass(id, request)
+  }, [updateClass])
+
+  const handleDeleteClass = useCallback(async (id: number) => {
+    await deleteClass(id)
+  }, [deleteClass])
 
   // Handle delete button click - show confirmation modal (US-SUBJ-DELETE-002 AC1)
   const handleDelete = useCallback((subjectId: number) => {
@@ -239,9 +305,34 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             onView={handleSubjectClick}
             onEdit={onEdit ? handleEdit : undefined}
             onDelete={handleDelete}
-            onViewOutcomeComments={onViewOutcomeComments ? handleViewOutcomeComments : undefined}
-            onViewPersonalizedComments={onViewPersonalizedComments ? handleViewPersonalizedComments : undefined}
-            onViewClasses={onViewClasses ? handleViewClasses : undefined}
+            onViewOutcomeComments={handleViewOutcomeComments}
+            onViewPersonalizedComments={handleViewPersonalizedComments}
+            onViewClasses={handleViewClasses}
+            // Edit panel props
+            onEditSuccess={onEditSuccess}
+            onEditCancel={onEditCancel}
+            // Outcome Comments panel props
+            outcomeComments={outcomeComments}
+            onCreateOutcomeComment={handleCreateOutcomeComment}
+            onUpdateOutcomeComment={handleUpdateOutcomeComment}
+            onDeleteOutcomeComment={handleDeleteOutcomeComment}
+            outcomeCommentsLoading={outcomeCommentsLoading}
+            outcomeCommentsError={outcomeCommentsError}
+            // Personalized Comments panel props
+            personalizedComments={personalizedComments}
+            onCreatePersonalizedComment={handleCreatePersonalizedComment}
+            onUpdatePersonalizedComment={handleUpdatePersonalizedComment}
+            onDeletePersonalizedComment={handleDeletePersonalizedComment}
+            personalizedCommentsLoading={personalizedCommentsLoading}
+            personalizedCommentsError={personalizedCommentsError}
+            // Classes panel props
+            classes={classes}
+            onCreateClass={handleCreateClass}
+            onUpdateClass={handleUpdateClass}
+            onDeleteClass={handleDeleteClass}
+            classesLoading={classesLoading}
+            classesError={classesError}
+            onViewFinalComments={onViewFinalComments}
           />
             )
           : null

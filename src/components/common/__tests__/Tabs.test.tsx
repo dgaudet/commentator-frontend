@@ -91,9 +91,10 @@ describe('Tabs Component (US-TAB-001)', () => {
 
       const editTab = screen.getByRole('tab', { name: 'Edit' })
 
-      // Active tab should have specific styling classes
-      expect(editTab.className).toContain('border-b-2')
-      expect(editTab.className).toContain('border-blue-600')
+      // Active tab should have aria-selected="true" and CSS module class
+      expect(editTab).toHaveAttribute('aria-selected', 'true')
+      // CSS Modules provide the 'tab' class which has styling for [aria-selected='true']
+      expect(editTab.className).toContain('tab')
     })
   })
 
@@ -309,6 +310,55 @@ describe('Tabs Component (US-TAB-001)', () => {
       expect(firstTablistId).toBeDefined()
       expect(secondTablistId).toBeDefined()
       expect(firstTablistId).not.toBe(secondTablistId)
+    })
+  })
+
+  describe('AC9: defaultTab Synchronization (US-TABPANEL-003)', () => {
+    it('should sync visual selection when defaultTab prop changes', () => {
+      const { rerender } = render(
+        <Tabs tabs={defaultTabs} defaultTab="edit" onChange={mockOnChange} />,
+      )
+
+      // Initial state: Edit tab should be selected
+      let editTab = screen.getByRole('tab', { name: 'Edit' })
+      let outcomeTab = screen.getByRole('tab', { name: 'Outcome Comments' })
+      expect(editTab).toHaveAttribute('aria-selected', 'true')
+      expect(outcomeTab).toHaveAttribute('aria-selected', 'false')
+
+      // Rerender with different defaultTab
+      rerender(<Tabs tabs={defaultTabs} defaultTab="outcome" onChange={mockOnChange} />)
+
+      // Visual selection should sync to new defaultTab
+      editTab = screen.getByRole('tab', { name: 'Edit' })
+      outcomeTab = screen.getByRole('tab', { name: 'Outcome Comments' })
+      expect(editTab).toHaveAttribute('aria-selected', 'false')
+      expect(outcomeTab).toHaveAttribute('aria-selected', 'true')
+    })
+
+    it('should handle defaultTab changing to a tab that was previously user-selected', () => {
+      const { rerender } = render(
+        <Tabs tabs={defaultTabs} defaultTab="edit" onChange={mockOnChange} />,
+      )
+
+      // User clicks on Outcome Comments tab
+      let outcomeTab = screen.getByRole('tab', { name: 'Outcome Comments' })
+      fireEvent.click(outcomeTab)
+
+      // Re-query to get updated state after click
+      outcomeTab = screen.getByRole('tab', { name: 'Outcome Comments' })
+
+      // Outcome tab should be selected
+      expect(outcomeTab).toHaveAttribute('aria-selected', 'true')
+      expect(mockOnChange).toHaveBeenCalledWith('outcome')
+
+      // Parent component updates defaultTab to match (normal flow in controlled component pattern)
+      rerender(<Tabs tabs={defaultTabs} defaultTab="outcome" onChange={mockOnChange} />)
+
+      // Re-query after rerender
+      outcomeTab = screen.getByRole('tab', { name: 'Outcome Comments' })
+
+      // Should remain selected (idempotent operation)
+      expect(outcomeTab).toHaveAttribute('aria-selected', 'true')
     })
   })
 })

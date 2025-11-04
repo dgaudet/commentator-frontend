@@ -261,8 +261,10 @@ describe('SubjectList', () => {
       expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
     })
 
-    it('should pass onEdit callback to SubjectListItem when subject selected', () => {
+    it('should show inline edit form when Edit tab clicked on SubjectListItem', () => {
       const handleEdit = jest.fn()
+      const handleEditSuccess = jest.fn()
+      const handleEditCancel = jest.fn()
       mockUseSubjects.mockReturnValue({
         subjects: [mockSubjects[0]],
         isLoading: false,
@@ -274,7 +276,13 @@ describe('SubjectList', () => {
         clearError: jest.fn(),
       })
 
-      render(<SubjectList onEdit={handleEdit} />)
+      render(
+        <SubjectList
+          onEdit={handleEdit}
+          onEditSuccess={handleEditSuccess}
+          onEditCancel={handleEditCancel}
+        />,
+      )
 
       // With single subject, it auto-selects - Edit tab should be present (US-TAB-002)
       const editTab = screen.getByRole('tab', { name: 'Edit' })
@@ -283,9 +291,12 @@ describe('SubjectList', () => {
       // Click edit tab
       fireEvent.click(editTab)
 
-      // Handler should be called with the subject item
-      expect(handleEdit).toHaveBeenCalledTimes(1)
-      expect(handleEdit).toHaveBeenCalledWith(mockSubjects[0])
+      // Edit panel should be visible with inline form
+      expect(screen.getByTestId('edit-panel-content')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: /edit subject/i })).toBeInTheDocument()
+
+      // onEdit callback should NOT be called (no navigation)
+      expect(handleEdit).not.toHaveBeenCalled()
     })
 
     it('should show delete confirmation modal when delete button clicked (US-SUBJ-DELETE-002)', () => {
@@ -312,8 +323,14 @@ describe('SubjectList', () => {
       fireEvent.click(deleteButton)
 
       // Confirmation modal should appear (US-SUBJ-DELETE-002 AC1)
-      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      // Check for the specific delete confirmation text
       expect(screen.getByText(/are you sure you want to delete 'mathematics 101'/i)).toBeInTheDocument()
+      // Verify it's in a dialog with the expected structure
+      const dialogs = screen.getAllByRole('dialog')
+      const deleteDialog = dialogs.find(dialog =>
+        dialog.textContent?.includes('Are you sure you want to delete'),
+      )
+      expect(deleteDialog).toBeInTheDocument()
     })
 
     it('should not show Edit button when onEdit callback not provided', () => {

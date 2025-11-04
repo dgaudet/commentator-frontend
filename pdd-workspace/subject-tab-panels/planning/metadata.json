@@ -1,0 +1,62 @@
+{
+  "feature": "subject-tab-panels",
+  "title": "Subject Tab Panel Content Switching",
+  "complexity": {
+    "level": "L0-ATOMIC",
+    "reasoning": "Simple content switching (2-3 stories, < 1 day). Adding TabPanel component to show/hide content based on active tab. Builds on existing Tabs component (already complete). No complex state preservation, straightforward subject context passing.",
+    "assessedAt": "2025-11-03",
+    "estimatedStories": 3,
+    "estimatedDuration": "< 1 day",
+    "estimatedPoints": 6
+  },
+  "scope": {
+    "description": "Add TabPanel components to display different content below the tabs in SubjectListItem. When a tab is selected, the corresponding component should render below the tabs. Switching tabs should unmount the previous component and mount the new one. Switching subjects should reload tab panels with new subject data.",
+    "includes": [
+      "TabPanel component for show/hide content logic",
+      "Integration of 4 existing components (Edit, Outcome Comments, Personalized Comments, Manage Classes)",
+      "Subject context passing to active tab panel",
+      "Subject switching to reload panels with new data"
+    ],
+    "excludes": [
+      "Creating new tab UI components (already exists)",
+      "Content preservation between tab switches (components unmount/remount)",
+      "Backend API modifications",
+      "New component implementations"
+    ]
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "validation": "PENDING"
+  },
+  "dependencies": {
+    "features": ["subject-tabs-ui"],
+    "notes": "Requires existing Tabs component (US-TAB-001, US-TAB-002) to be complete"
+  },
+  "stories": {
+    "US-TABPANEL-001": {
+      "title": "Create TabPanel Component for Content Switching",
+      "points": 2,
+      "priority": "HIGH",
+      "status": "READY"
+    },
+    "US-TABPANEL-002": {
+      "title": "Integrate Existing Components into Tab Panels",
+      "points": 3,
+      "priority": "HIGH",
+      "status": "BLOCKED",
+      "blockedBy": ["US-TABPANEL-001"]
+    },
+    "US-TABPANEL-003": {
+      "title": "Handle Subject Context Switching",
+      "points": 1,
+      "priority": "MEDIUM",
+      "status": "BLOCKED",
+      "blockedBy": ["US-TABPANEL-001", "US-TABPANEL-002"]
+    }
+  },
+  "createdAt": "2025-11-03",
+  "updatedAt": "2025-11-03",
+  "createdBy": "Product Owner"
+}

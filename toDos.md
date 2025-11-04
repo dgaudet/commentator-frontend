@@ -15,24 +15,13 @@ If you have an subject selected, and you open the outcome comments, then switch 
 ### we should have a way to bulk add students with their grade
 ### The label for selecting a class should be `Select a Class to work with`
 # all confirmation options should use the confirmation modal component
-remove the console.error methods from services
+# remove the console.error methods from services
+# we can now remove the `x` close button from modals since they are tabs
+## we also don't need a title in each tab since the tab name is sufficient
+# need to figure out how to do the final comments, should it be under Manage Classes? I think so, the code is still in App.tsx though
+# changing a subject is still all messed up
+# Edit subject
+## Edit subject cancel button has no purpose
+## Edit subject save button should force a reload in some way so that the heading, and drop-down update
 
-# Subject Delete Button Relocation
-**Status**: ✅ COMPLETE - Deployed
-**Priority**: HIGH (MVP)
-**Effort**: L1-MICRO (Completed in 1 session)
-**Location**: `pdd-workspace/subject-delete-relocation/planning/user-stories.md`
-
-Move subject delete button to appear beside Subject Name when a subject is selected.
-
-## Completed Stories:
-- ✅ US-SUBJ-DELETE-001: Show Delete Button on Selection (3 pts, HIGH) - COMPLETE
-- ✅ US-SUBJ-DELETE-002: Delete Subject with Confirmation (5 pts, HIGH) - COMPLETE
-- ⏸️ US-SUBJ-DELETE-003: Handle Edge Cases (2 pts, MEDIUM) - Deferred to Post-MVP
-
-## Implementation Summary:
-- Delete button now appears beside subject name when selected
-- Confirmation modal with proper styled buttons
-- Full accessibility compliance (native button keyboard handling)
-- All tests passing (471/471)
-- Code simplified by removing redundant keyboard handlers (native buttons handle Enter/Space automatically)
+Changing a subject name doesn't update the subject drop-down
