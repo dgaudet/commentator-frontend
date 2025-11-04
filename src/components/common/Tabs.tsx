@@ -21,7 +21,7 @@
  * />
  * ```
  */
-import React, { useState, useId, useRef, KeyboardEvent, useCallback } from 'react'
+import React, { useState, useId, useRef, KeyboardEvent, useCallback, useEffect } from 'react'
 import styles from './Tabs.module.css'
 
 /**
@@ -66,6 +66,17 @@ export const Tabs: React.FC<TabsProps> = ({
   const baseId = useId()
   const [selectedTab, setSelectedTab] = useState<string>(defaultTab || tabs[0]?.id)
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map())
+
+  /**
+   * Sync internal state when defaultTab prop changes (US-TABPANEL-003)
+   * Ensures visual tab selection stays in sync with parent component state
+   * Note: Only depends on defaultTab, not selectedTab, to avoid resetting user selections
+   */
+  useEffect(() => {
+    if (defaultTab) {
+      setSelectedTab(defaultTab)
+    }
+  }, [defaultTab])
 
   // Get list of enabled tabs for keyboard navigation
   const enabledTabs = tabs.filter((tab) => !tab.disabled)
