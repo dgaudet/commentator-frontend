@@ -121,6 +121,12 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   }, [onEdit, onViewOutcomeComments, onViewPersonalizedComments, onViewClasses])
 
   /**
+   * Memoized key for Tabs component to avoid recalculating on every render
+   * Only recomputes when tabs array changes
+   */
+  const tabsKey = useMemo(() => tabs.map((t) => t.id).join('-'), [tabs])
+
+  /**
    * Track active tab state (US-TABPANEL-002)
    * Default to first tab if tabs exist
    */
@@ -227,7 +233,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
         {tabs.length > 0 && (
           <div className="ml-4">
             <Tabs
-              key={tabs.map((t) => t.id).join('-')}
+              key={tabsKey}
               tabs={tabs}
               defaultTab={activeTab}
               onChange={handleTabChange}
