@@ -143,10 +143,11 @@ function App() {
     })
   }
 
-  // This callback will be called by SubjectList when user clicks view outcome comments
+  // This callback will be called by SubjectList when user clicks view outcome comments tab
+  // Now loads data without opening modal (display happens in tab panel)
   const handleViewOutcomeComments = async (subjectItem: Subject) => {
     setOutcomeCommentsModal({
-      isOpen: true,
+      isOpen: false, // Don't open modal - display in tab panel instead
       subjectItem,
     })
     // Load outcome comments for this subject
@@ -174,10 +175,11 @@ function App() {
     await deleteComment(id)
   }
 
-  // This callback will be called by SubjectList when user clicks view personalized comments
+  // This callback will be called by SubjectList when user clicks view personalized comments tab
+  // Now loads data without opening modal (display happens in tab panel)
   const handleViewPersonalizedComments = async (subjectItem: Subject) => {
     setPersonalizedCommentsModal({
-      isOpen: true,
+      isOpen: false, // Don't open modal - display in tab panel instead
       subjectItem,
     })
     // Load personalized comments for this subject
@@ -205,10 +207,11 @@ function App() {
     await deletePersonalizedComment(id)
   }
 
-  // This callback will be called by SubjectList when user clicks manage classes
+  // This callback will be called by SubjectList when user clicks manage classes tab
+  // Now loads data without opening modal (display happens in tab panel)
   const handleViewClasses = async (subjectItem: Subject) => {
     setClassManagementModal({
-      isOpen: true,
+      isOpen: false, // Don't open modal - display in tab panel instead
       subjectItem,
     })
     // Load classes for this subject
@@ -306,6 +309,31 @@ function App() {
                 onViewOutcomeComments={handleViewOutcomeComments}
                 onViewPersonalizedComments={handleViewPersonalizedComments}
                 onViewClasses={handleViewClasses}
+                // Edit panel props
+                onEditSuccess={handleFormSuccess}
+                onEditCancel={handleFormCancel}
+                // Outcome Comments panel props
+                outcomeComments={outcomeComments}
+                onCreateOutcomeComment={handleCreateOutcomeComment}
+                onUpdateOutcomeComment={handleUpdateOutcomeComment}
+                onDeleteOutcomeComment={handleDeleteOutcomeComment}
+                outcomeCommentsLoading={outcomeCommentsLoading}
+                outcomeCommentsError={outcomeCommentsError}
+                // Personalized Comments panel props
+                personalizedComments={personalizedComments}
+                onCreatePersonalizedComment={handleCreatePersonalizedComment}
+                onUpdatePersonalizedComment={handleUpdatePersonalizedComment}
+                onDeletePersonalizedComment={handleDeletePersonalizedComment}
+                personalizedCommentsLoading={personalizedCommentsLoading}
+                personalizedCommentsError={personalizedCommentsError}
+                // Classes panel props
+                classes={classes}
+                onCreateClass={handleCreateClass}
+                onUpdateClass={handleUpdateClass}
+                onDeleteClass={handleDeleteClass}
+                classesLoading={classesLoading}
+                classesError={classesError}
+                onViewFinalComments={handleViewFinalComments}
               />
             )}
       </main>

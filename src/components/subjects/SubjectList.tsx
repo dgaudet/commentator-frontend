@@ -20,6 +20,7 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Subject } from '../../types/Subject'
 import { getSelectedSubjectId, saveSelectedSubjectId, clearSelectedSubjectId } from '../../utils/subjectStorageUtils'
+import type { OutcomeComment, PersonalizedComment, Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest } from '../../types'
 
 interface SubjectListProps {
   onSubjectClick?: (subjectId: number) => void
@@ -28,6 +29,31 @@ interface SubjectListProps {
   onViewOutcomeComments?: (subjectItem: Subject) => void
   onViewPersonalizedComments?: (subjectItem: Subject) => void
   onViewClasses?: (subjectItem: Subject) => void
+  // Edit panel props
+  onEditSuccess?: (subject: Subject) => void
+  onEditCancel?: () => void
+  // Outcome Comments panel props
+  outcomeComments?: OutcomeComment[]
+  onCreateOutcomeComment?: (request: CreateOutcomeCommentRequest) => Promise<void>
+  onUpdateOutcomeComment?: (id: number, request: UpdateOutcomeCommentRequest) => Promise<void>
+  onDeleteOutcomeComment?: (id: number) => Promise<void>
+  outcomeCommentsLoading?: boolean
+  outcomeCommentsError?: string | null
+  // Personalized Comments panel props
+  personalizedComments?: PersonalizedComment[]
+  onCreatePersonalizedComment?: (request: CreatePersonalizedCommentRequest) => Promise<void>
+  onUpdatePersonalizedComment?: (id: number, request: UpdatePersonalizedCommentRequest) => Promise<void>
+  onDeletePersonalizedComment?: (id: number) => Promise<void>
+  personalizedCommentsLoading?: boolean
+  personalizedCommentsError?: string | null
+  // Classes panel props
+  classes?: Class[]
+  onCreateClass?: (request: CreateClassRequest) => Promise<void>
+  onUpdateClass?: (id: number, request: UpdateClassRequest) => Promise<void>
+  onDeleteClass?: (id: number) => Promise<void>
+  classesLoading?: boolean
+  classesError?: string | null
+  onViewFinalComments?: (classData: Class) => void
 }
 
 /**
@@ -43,6 +69,31 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   onViewOutcomeComments,
   onViewPersonalizedComments,
   onViewClasses,
+  // Edit panel props
+  onEditSuccess,
+  onEditCancel,
+  // Outcome Comments panel props
+  outcomeComments,
+  onCreateOutcomeComment,
+  onUpdateOutcomeComment,
+  onDeleteOutcomeComment,
+  outcomeCommentsLoading,
+  outcomeCommentsError,
+  // Personalized Comments panel props
+  personalizedComments,
+  onCreatePersonalizedComment,
+  onUpdatePersonalizedComment,
+  onDeletePersonalizedComment,
+  personalizedCommentsLoading,
+  personalizedCommentsError,
+  // Classes panel props
+  classes,
+  onCreateClass,
+  onUpdateClass,
+  onDeleteClass,
+  classesLoading,
+  classesError,
+  onViewFinalComments,
 }) => {
   const { subjects, isLoading, error, clearError, deleteSubject } = useSubjects()
 
@@ -242,6 +293,31 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             onViewOutcomeComments={onViewOutcomeComments ? handleViewOutcomeComments : undefined}
             onViewPersonalizedComments={onViewPersonalizedComments ? handleViewPersonalizedComments : undefined}
             onViewClasses={onViewClasses ? handleViewClasses : undefined}
+            // Edit panel props
+            onEditSuccess={onEditSuccess}
+            onEditCancel={onEditCancel}
+            // Outcome Comments panel props
+            outcomeComments={outcomeComments}
+            onCreateOutcomeComment={onCreateOutcomeComment}
+            onUpdateOutcomeComment={onUpdateOutcomeComment}
+            onDeleteOutcomeComment={onDeleteOutcomeComment}
+            outcomeCommentsLoading={outcomeCommentsLoading}
+            outcomeCommentsError={outcomeCommentsError}
+            // Personalized Comments panel props
+            personalizedComments={personalizedComments}
+            onCreatePersonalizedComment={onCreatePersonalizedComment}
+            onUpdatePersonalizedComment={onUpdatePersonalizedComment}
+            onDeletePersonalizedComment={onDeletePersonalizedComment}
+            personalizedCommentsLoading={personalizedCommentsLoading}
+            personalizedCommentsError={personalizedCommentsError}
+            // Classes panel props
+            classes={classes}
+            onCreateClass={onCreateClass}
+            onUpdateClass={onUpdateClass}
+            onDeleteClass={onDeleteClass}
+            classesLoading={classesLoading}
+            classesError={classesError}
+            onViewFinalComments={onViewFinalComments}
           />
             )
           : null

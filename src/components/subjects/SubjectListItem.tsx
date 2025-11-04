@@ -16,6 +16,11 @@ import { Subject } from '../../types/Subject'
 import { formatDate } from '../../utils/dateFormatter'
 import { Tabs, Tab } from '../common/Tabs'
 import { TabPanel } from '../common/TabPanel'
+import { SubjectForm } from './SubjectForm'
+import { OutcomeCommentsModal } from '../outcomeComments/OutcomeCommentsModal'
+import { PersonalizedCommentsModal } from '../personalizedComments/PersonalizedCommentsModal'
+import { ClassManagementModal } from '../classes/ClassManagementModal'
+import type { OutcomeComment, PersonalizedComment, Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest } from '../../types'
 
 interface SubjectListItemProps {
   subjectItem: Subject
@@ -25,6 +30,31 @@ interface SubjectListItemProps {
   onViewOutcomeComments?: (id: number) => void
   onViewPersonalizedComments?: (id: number) => void
   onViewClasses?: (id: number) => void
+  // Edit panel props
+  onEditSuccess?: (subject: Subject) => void
+  onEditCancel?: () => void
+  // Outcome Comments panel props
+  outcomeComments?: OutcomeComment[]
+  onCreateOutcomeComment?: (request: CreateOutcomeCommentRequest) => Promise<void>
+  onUpdateOutcomeComment?: (id: number, request: UpdateOutcomeCommentRequest) => Promise<void>
+  onDeleteOutcomeComment?: (id: number) => Promise<void>
+  outcomeCommentsLoading?: boolean
+  outcomeCommentsError?: string | null
+  // Personalized Comments panel props
+  personalizedComments?: PersonalizedComment[]
+  onCreatePersonalizedComment?: (request: CreatePersonalizedCommentRequest) => Promise<void>
+  onUpdatePersonalizedComment?: (id: number, request: UpdatePersonalizedCommentRequest) => Promise<void>
+  onDeletePersonalizedComment?: (id: number) => Promise<void>
+  personalizedCommentsLoading?: boolean
+  personalizedCommentsError?: string | null
+  // Classes panel props
+  classes?: Class[]
+  onCreateClass?: (request: CreateClassRequest) => Promise<void>
+  onUpdateClass?: (id: number, request: UpdateClassRequest) => Promise<void>
+  onDeleteClass?: (id: number) => Promise<void>
+  classesLoading?: boolean
+  classesError?: string | null
+  onViewFinalComments?: (classData: Class) => void
 }
 
 export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
@@ -35,6 +65,31 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onViewOutcomeComments,
   onViewPersonalizedComments,
   onViewClasses,
+  // Edit panel props
+  onEditSuccess,
+  onEditCancel,
+  // Outcome Comments panel props
+  outcomeComments = [],
+  onCreateOutcomeComment,
+  onUpdateOutcomeComment,
+  onDeleteOutcomeComment,
+  outcomeCommentsLoading = false,
+  outcomeCommentsError = null,
+  // Personalized Comments panel props
+  personalizedComments = [],
+  onCreatePersonalizedComment,
+  onUpdatePersonalizedComment,
+  onDeletePersonalizedComment,
+  personalizedCommentsLoading = false,
+  personalizedCommentsError = null,
+  // Classes panel props
+  classes = [],
+  onCreateClass,
+  onUpdateClass,
+  onDeleteClass,
+  classesLoading = false,
+  classesError = null,
+  onViewFinalComments,
 }) => {
   /**
    * Build tabs array dynamically based on provided callbacks
@@ -168,8 +223,20 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
           {onEdit && (
             <TabPanel id="edit" activeTabId={activeTab} tabId="edit">
               <div data-testid="edit-panel-content">
-                <h4 className="text-lg font-semibold mb-2">Edit Subject: {subjectItem.name}</h4>
-                <p className="text-gray-600">Edit form will appear here (SubjectForm component)</p>
+                {onEditSuccess && onEditCancel
+                  ? (
+                  <SubjectForm
+                    existingSubject={subjectItem}
+                    onSuccess={onEditSuccess}
+                    onCancel={onEditCancel}
+                  />
+                    )
+                  : (
+                  <>
+                    <h4 className="text-lg font-semibold mb-2">Edit Subject: {subjectItem.name}</h4>
+                    <p className="text-gray-600">Edit form will appear here (SubjectForm component)</p>
+                  </>
+                    )}
               </div>
             </TabPanel>
           )}
@@ -178,9 +245,27 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
           {onViewOutcomeComments && (
             <TabPanel id="outcome" activeTabId={activeTab} tabId="outcome">
               <div data-testid="outcome-comments-panel-content">
-                <h4 className="text-lg font-semibold mb-2">Outcome Comments</h4>
-                <p className="text-gray-600">Subject ID: {subjectItem.id}</p>
-                <p className="text-gray-600">Outcome comments management will appear here</p>
+                {onCreateOutcomeComment && onUpdateOutcomeComment && onDeleteOutcomeComment
+                  ? (
+                  <OutcomeCommentsModal
+                    isOpen={true}
+                    onClose={() => {}} // No-op since tab panel controls visibility
+                    entityData={subjectItem}
+                    outcomeComments={outcomeComments}
+                    onCreateComment={onCreateOutcomeComment}
+                    onUpdateComment={onUpdateOutcomeComment}
+                    onDeleteComment={onDeleteOutcomeComment}
+                    loading={outcomeCommentsLoading}
+                    error={outcomeCommentsError}
+                  />
+                    )
+                  : (
+                  <>
+                    <h4 className="text-lg font-semibold mb-2">Outcome Comments</h4>
+                    <p className="text-gray-600">Subject ID: {subjectItem.id}</p>
+                    <p className="text-gray-600">Outcome comments management will appear here</p>
+                  </>
+                    )}
               </div>
             </TabPanel>
           )}
@@ -189,9 +274,27 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
           {onViewPersonalizedComments && (
             <TabPanel id="personalized" activeTabId={activeTab} tabId="personalized">
               <div data-testid="personalized-comments-panel-content">
-                <h4 className="text-lg font-semibold mb-2">Personalized Comments</h4>
-                <p className="text-gray-600">Subject ID: {subjectItem.id}</p>
-                <p className="text-gray-600">Personalized comments management will appear here</p>
+                {onCreatePersonalizedComment && onUpdatePersonalizedComment && onDeletePersonalizedComment
+                  ? (
+                  <PersonalizedCommentsModal
+                    isOpen={true}
+                    onClose={() => {}} // No-op since tab panel controls visibility
+                    entityData={subjectItem}
+                    personalizedComments={personalizedComments}
+                    onCreateComment={onCreatePersonalizedComment}
+                    onUpdateComment={onUpdatePersonalizedComment}
+                    onDeleteComment={onDeletePersonalizedComment}
+                    loading={personalizedCommentsLoading}
+                    error={personalizedCommentsError}
+                  />
+                    )
+                  : (
+                  <>
+                    <h4 className="text-lg font-semibold mb-2">Personalized Comments</h4>
+                    <p className="text-gray-600">Subject ID: {subjectItem.id}</p>
+                    <p className="text-gray-600">Personalized comments management will appear here</p>
+                  </>
+                    )}
               </div>
             </TabPanel>
           )}
@@ -200,9 +303,28 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
           {onViewClasses && (
             <TabPanel id="classes" activeTabId={activeTab} tabId="classes">
               <div data-testid="classes-panel-content">
-                <h4 className="text-lg font-semibold mb-2">Manage Classes</h4>
-                <p className="text-gray-600">Subject ID: {subjectItem.id}</p>
-                <p className="text-gray-600">Class management will appear here</p>
+                {onCreateClass && onUpdateClass && onDeleteClass
+                  ? (
+                  <ClassManagementModal
+                    isOpen={true}
+                    onClose={() => {}} // No-op since tab panel controls visibility
+                    entityData={subjectItem}
+                    classes={classes}
+                    onCreateClass={onCreateClass}
+                    onUpdateClass={onUpdateClass}
+                    onDeleteClass={onDeleteClass}
+                    onViewFinalComments={onViewFinalComments}
+                    loading={classesLoading}
+                    error={classesError}
+                  />
+                    )
+                  : (
+                  <>
+                    <h4 className="text-lg font-semibold mb-2">Manage Classes</h4>
+                    <p className="text-gray-600">Subject ID: {subjectItem.id}</p>
+                    <p className="text-gray-600">Class management will appear here</p>
+                  </>
+                    )}
               </div>
             </TabPanel>
           )}

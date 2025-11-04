@@ -15,4 +15,8 @@ If you have an subject selected, and you open the outcome comments, then switch 
 ### we should have a way to bulk add students with their grade
 ### The label for selecting a class should be `Select a Class to work with`
 # all confirmation options should use the confirmation modal component
-remove the console.error methods from services
+# remove the console.error methods from services
+# we can now remove the `x` close button from modals since they are tabs
+## we also don't need a title in each tab since the tab name is sufficient
+
+Changing a subject name doesn't update the subject drop-down
