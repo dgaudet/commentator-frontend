@@ -11,7 +11,7 @@
  * - Tab panels update when subject changes (US-TABPANEL-003)
  * Performance: Memoized to prevent unnecessary re-renders
  */
-import React, { useMemo, useCallback, useState } from 'react'
+import React, { useMemo, useCallback, useState, useEffect } from 'react'
 import { Subject } from '../../types/Subject'
 import { formatDate } from '../../utils/dateFormatter'
 import { Tabs, Tab } from '../common/Tabs'
@@ -21,6 +21,12 @@ import { OutcomeCommentsModal } from '../outcomeComments/OutcomeCommentsModal'
 import { PersonalizedCommentsModal } from '../personalizedComments/PersonalizedCommentsModal'
 import { ClassManagementModal } from '../classes/ClassManagementModal'
 import type { OutcomeComment, PersonalizedComment, Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest } from '../../types'
+
+/**
+ * No-op function for modal components embedded in tab panels
+ * Reused to prevent creating new function instances on every render
+ */
+const noop = () => {}
 
 interface SubjectListItemProps {
   subjectItem: Subject
@@ -135,17 +141,31 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   }, [tabs, requestedTab])
 
   /**
-   * Handle tab selection - update active tab state and call legacy callbacks
-   * US-TABPANEL-002: Now switches tab panels instead of just calling callbacks
+   * Reset requestedTab when tabs change and requested tab no longer exists
+   * This keeps requestedTab in sync with activeTab
+   */
+  useEffect(() => {
+    if (tabs.length === 0) {
+      setRequestedTab('')
+      return
+    }
+
+    // If requested tab doesn't exist in current tabs, reset to first tab
+    const tabExists = tabs.some((tab) => tab.id === requestedTab)
+    if (!tabExists) {
+      setRequestedTab(tabs[0].id)
+    }
+  }, [tabs, requestedTab])
+
+  /**
+   * Handle tab selection - update active tab state and trigger data loading
+   * US-TABPANEL-002: Switches tab panels and loads data for non-edit tabs
    */
   const handleTabChange = useCallback((tabId: string) => {
     setRequestedTab(tabId)
 
-    // Also call legacy callbacks for backward compatibility
+    // Trigger data loading for tabs that need it (edit tab uses inline form, no loading needed)
     switch (tabId) {
-      case 'edit':
-        onEdit?.(subjectItem.id)
-        break
       case 'outcome':
         onViewOutcomeComments?.(subjectItem.id)
         break
@@ -156,7 +176,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
         onViewClasses?.(subjectItem.id)
         break
     }
-  }, [subjectItem.id, onEdit, onViewOutcomeComments, onViewPersonalizedComments, onViewClasses])
+  }, [subjectItem.id, onViewOutcomeComments, onViewPersonalizedComments, onViewClasses])
 
   return (
     <div
@@ -249,7 +269,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                   ? (
                   <OutcomeCommentsModal
                     isOpen={true}
-                    onClose={() => {}} // No-op since tab panel controls visibility
+                    onClose={noop}
                     entityData={subjectItem}
                     outcomeComments={outcomeComments}
                     onCreateComment={onCreateOutcomeComment}
@@ -278,7 +298,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                   ? (
                   <PersonalizedCommentsModal
                     isOpen={true}
-                    onClose={() => {}} // No-op since tab panel controls visibility
+                    onClose={noop}
                     entityData={subjectItem}
                     personalizedComments={personalizedComments}
                     onCreateComment={onCreatePersonalizedComment}
@@ -307,7 +327,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                   ? (
                   <ClassManagementModal
                     isOpen={true}
-                    onClose={() => {}} // No-op since tab panel controls visibility
+                    onClose={noop}
                     entityData={subjectItem}
                     classes={classes}
                     onCreateClass={onCreateClass}

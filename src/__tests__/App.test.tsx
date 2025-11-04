@@ -369,7 +369,7 @@ describe('App', () => {
       expect(outcomeCommentsTab).toHaveAttribute('aria-selected', 'true')
     })
 
-    it('should switch to edit form when edit tab clicked', async () => {
+    it('should show inline edit form when edit tab clicked', async () => {
       // Setup: Mock classes data
       mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
@@ -399,16 +399,21 @@ describe('App', () => {
         expect(screen.getByText('Outcome Comments - Mathematics 101')).toBeInTheDocument()
       })
 
-      // Click Edit tab - this should navigate to the edit form
+      // Click Edit tab - this should show inline edit form
       const editTab = screen.getByRole('tab', { name: 'Edit' })
       fireEvent.click(editTab)
 
-      // Edit form should be shown (navigated to edit form view)
+      // Edit form should be shown inline within the tab panel
       await waitFor(() => {
         expect(screen.getByRole('heading', { name: /edit subject/i })).toBeInTheDocument()
-        // The SubjectListItem is no longer visible as we've navigated to edit form
-        expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+        // The SubjectListItem stays visible with inline edit form
+        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+        // Edit panel content should be visible
+        expect(screen.getByTestId('edit-panel-content')).toBeInTheDocument()
       })
+
+      // Verify the tab is marked as selected
+      expect(editTab).toHaveAttribute('aria-selected', 'true')
     })
   })
 })

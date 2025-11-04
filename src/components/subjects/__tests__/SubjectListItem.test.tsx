@@ -58,11 +58,26 @@ describe('SubjectListItem', () => {
     expect(screen.getByRole('tab', { name: 'Edit' })).toBeInTheDocument()
   })
 
-  it('should call onEdit when Edit tab clicked', () => {
+  it('should show inline edit form when Edit tab clicked', () => {
     const handleEdit = jest.fn()
-    render(<SubjectListItem subjectItem={mockSubject} onEdit={handleEdit} />)
+    const handleEditSuccess = jest.fn()
+    const handleEditCancel = jest.fn()
+    render(
+      <SubjectListItem
+        subjectItem={mockSubject}
+        onEdit={handleEdit}
+        onEditSuccess={handleEditSuccess}
+        onEditCancel={handleEditCancel}
+      />,
+    )
     fireEvent.click(screen.getByRole('tab', { name: 'Edit' }))
-    expect(handleEdit).toHaveBeenCalledWith(1)
+
+    // Edit panel should be visible with inline form
+    expect(screen.getByTestId('edit-panel-content')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /edit subject/i })).toBeInTheDocument()
+
+    // onEdit callback should NOT be called (no navigation)
+    expect(handleEdit).not.toHaveBeenCalled()
   })
 
   it('should render delete button when onDelete provided', () => {
