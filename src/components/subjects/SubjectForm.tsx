@@ -177,23 +177,25 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
           placeholder="e.g. Mathematics 101"
         />
 
-        <div className="flex gap-3 mt-6">
+        <div className={isEditMode ? 'mt-6' : 'flex gap-3 mt-6'}>
           <Button
             type="submit"
             variant="primary"
             disabled={isSubmitting}
-            className="flex-1"
+            className={isEditMode ? 'w-full' : 'flex-1'}
           >
             {isEditMode ? 'Save Changes' : 'Create Subject'}
           </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onCancel}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
+          {!isEditMode && (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onCancel}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+          )}
         </div>
       </form>
     </div>

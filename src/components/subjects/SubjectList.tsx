@@ -48,7 +48,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   onEditCancel,
   onViewFinalComments,
 }) => {
-  const { subjects, isLoading, error, clearError, deleteSubject } = useSubjects()
+  const { subjects, isLoading, error, clearError, deleteSubject, fetchSubjects } = useSubjects()
 
   // Hooks for managing tab panel data
   const {
@@ -136,6 +136,15 @@ export const SubjectList: React.FC<SubjectListProps> = ({
       onEdit(subjectItem)
     }
   }, [subjects, onEdit])
+
+  // US-EDIT-SUBJ-002: Wrap onEditSuccess to trigger data reload
+  const handleEditSuccess = useCallback(async (subject: Subject) => {
+    // Call parent's onEditSuccess callback if provided
+    onEditSuccess?.(subject)
+
+    // Reload subjects to reflect changes in dropdown and heading
+    await fetchSubjects()
+  }, [onEditSuccess, fetchSubjects])
 
   // Tab panel data loading handlers
   const handleViewOutcomeComments = useCallback(async (subjectId: number) => {
@@ -309,7 +318,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             onViewPersonalizedComments={handleViewPersonalizedComments}
             onViewClasses={handleViewClasses}
             // Edit panel props
-            onEditSuccess={onEditSuccess}
+            onEditSuccess={handleEditSuccess}
             onEditCancel={onEditCancel}
             // Outcome Comments panel props
             outcomeComments={outcomeComments}

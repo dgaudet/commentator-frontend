@@ -211,7 +211,8 @@ describe('SubjectForm', () => {
       expect(nameInput).toHaveValue('Mathematics 101')
     })
 
-    it('should render Save and Cancel buttons', () => {
+    // US-EDIT-SUBJ-001: Cancel button should NOT be displayed in edit mode
+    it('should render Save button but NOT Cancel button in edit mode', () => {
       render(
         <SubjectForm
           existingSubject={mockExistingSubject}
@@ -220,7 +221,22 @@ describe('SubjectForm', () => {
         />,
       )
       expect(screen.getByRole('button', { name: /save changes/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument()
+    })
+
+    // US-EDIT-SUBJ-001: Save button should use full width in edit mode
+    it('should display save button with full width styling in edit mode', () => {
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+          onCancel={mockOnCancel}
+        />,
+      )
+      const saveButton = screen.getByRole('button', { name: /save changes/i })
+      expect(saveButton).toBeInTheDocument()
+      expect(saveButton).toHaveClass('w-full')
+      expect(saveButton).not.toHaveClass('flex-1')
     })
 
     it('should call updateSubject with valid data', async () => {
