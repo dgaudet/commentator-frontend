@@ -245,17 +245,25 @@ describe('App', () => {
       // Confirmation dialog should appear
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument()
+        expect(screen.getByText(/are you sure you want to delete 'mathematics 101'/i)).toBeInTheDocument()
       })
 
-      // Cancel deletion
-      const cancelButton = screen.getByRole('button', { name: /cancel/i })
+      // Cancel deletion - use more specific query to get the button in the confirmation dialog
+      const cancelButtons = screen.getAllByRole('button', { name: /cancel/i })
+      // Find the cancel button that's inside the delete confirmation dialog
+      const cancelButton = cancelButtons.find(button => {
+        const dialog = button.closest('[role="dialog"]')
+        return dialog?.textContent?.includes('Are you sure you want to delete')
+      })
+
+      expect(cancelButton).toBeDefined()
       act(() => {
-        fireEvent.click(cancelButton)
+        fireEvent.click(cancelButton!)
       })
 
       // Dialog should close
       await waitFor(() => {
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+        expect(screen.queryByText(/are you sure you want to delete 'mathematics 101'/i)).not.toBeInTheDocument()
       })
 
       // Verify deleteSubject API was NOT called
@@ -327,8 +335,8 @@ describe('App', () => {
     })
   })
 
-  describe('outcome comments modal', () => {
-    it('should show outcome comments modal when outcome comments button clicked', async () => {
+  describe('outcome comments tab panel', () => {
+    it('should show outcome comments panel when outcome comments tab clicked', async () => {
       // Setup: Mock classes data
       mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
@@ -352,12 +360,16 @@ describe('App', () => {
       const outcomeCommentsTab = screen.getByRole('tab', { name: 'Outcome Comments' })
       fireEvent.click(outcomeCommentsTab)
 
-      // Modal should be visible
-      expect(screen.getByRole('dialog')).toBeInTheDocument()
-      expect(screen.getByText('Outcome Comments - Mathematics 101')).toBeInTheDocument()
+      // Tab panel content should be visible (embedded component with title)
+      await waitFor(() => {
+        expect(screen.getByText('Outcome Comments - Mathematics 101')).toBeInTheDocument()
+      })
+
+      // Verify the tab is marked as selected
+      expect(outcomeCommentsTab).toHaveAttribute('aria-selected', 'true')
     })
 
-    it('should close outcome comments modal when close button clicked', async () => {
+    it('should switch to edit form when edit tab clicked', async () => {
       // Setup: Mock classes data
       mockSubjectService.getAll.mockResolvedValue(mockSubjects)
 
@@ -378,19 +390,25 @@ describe('App', () => {
         expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
       })
 
-      // Open modal using tab (US-TAB-002)
+      // Click outcome comments tab first
       const outcomeCommentsTab = screen.getByRole('tab', { name: 'Outcome Comments' })
       fireEvent.click(outcomeCommentsTab)
 
-      // Modal should be visible
-      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      // Outcome comments panel should be visible
+      await waitFor(() => {
+        expect(screen.getByText('Outcome Comments - Mathematics 101')).toBeInTheDocument()
+      })
 
-      // Close modal
-      const closeButton = screen.getByRole('button', { name: /close/i })
-      fireEvent.click(closeButton)
+      // Click Edit tab - this should navigate to the edit form
+      const editTab = screen.getByRole('tab', { name: 'Edit' })
+      fireEvent.click(editTab)
 
-      // Modal should be closed
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      // Edit form should be shown (navigated to edit form view)
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: /edit subject/i })).toBeInTheDocument()
+        // The SubjectListItem is no longer visible as we've navigated to edit form
+        expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+      })
     })
   })
 })

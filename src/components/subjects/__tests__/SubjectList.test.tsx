@@ -312,8 +312,14 @@ describe('SubjectList', () => {
       fireEvent.click(deleteButton)
 
       // Confirmation modal should appear (US-SUBJ-DELETE-002 AC1)
-      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      // Check for the specific delete confirmation text
       expect(screen.getByText(/are you sure you want to delete 'mathematics 101'/i)).toBeInTheDocument()
+      // Verify it's in a dialog with the expected structure
+      const dialogs = screen.getAllByRole('dialog')
+      const deleteDialog = dialogs.find(dialog =>
+        dialog.textContent?.includes('Are you sure you want to delete'),
+      )
+      expect(deleteDialog).toBeInTheDocument()
     })
 
     it('should not show Edit button when onEdit callback not provided', () => {
