@@ -10,8 +10,6 @@
 ### The label for selecting a class should be `Select a Class to work with`
 ### show a count of which comment you are on ex: 1 out of 100
 #### how should we order them?
-# all confirmation options should use the confirmation modal component
-## outcome comment, personal comment, delete class, delete final comment
 # remove the console.error methods from services
 # we can now remove the `x` close button from modals since they are tabs
 ## we also don't need a title in each tab since the tab name is sufficient
