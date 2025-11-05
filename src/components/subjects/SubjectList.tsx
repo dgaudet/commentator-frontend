@@ -91,27 +91,59 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   const [subjectToDelete, setSubjectToDelete] = useState<Subject | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  // Track if we've already tried to fetch for a missing subject (US-SUBJECT-CREATE-002)
+  const [triedFetchForMissingSubject, setTriedFetchForMissingSubject] = useState(false)
+
+  // Track if we've initialized the selection state (US-SUBJECT-CREATE-002)
+  const [hasInitializedSelection, setHasInitializedSelection] = useState(false)
+
   // Load persisted selection on mount
   // Auto-select if only one subject exists
+  // US-SUBJECT-CREATE-002: Fetch subjects if newly created subject not yet in list
   useEffect(() => {
     const storedId = getSelectedSubjectId()
-    if (storedId !== null && subjects.find(s => s.id === storedId)) {
-      // Persisted selection takes precedence
-      setSelectedSubjectId(storedId)
+
+    // If we have a persisted selection (using != to match both null and undefined)
+    if (storedId != null) {
+      const subjectExists = subjects.find(s => s.id === storedId)
+
+      if (subjectExists) {
+        // Persisted selection exists in list - select it
+        setSelectedSubjectId(storedId)
+        // Reset the fetch flag since we found the subject
+        setTriedFetchForMissingSubject(false)
+        setHasInitializedSelection(true)
+      } else if (!isLoading && !triedFetchForMissingSubject && subjects.length > 0) {
+        // Persisted selection doesn't exist in current list
+        // Initial data load is complete and we have subjects but not the one we're looking for
+        // Fetch again - might be a newly created subject not yet in the current list
+        // NOTE: fetchSubjects is intentionally not in dependencies to avoid infinite loops
+        // since fetchSubjects is recreated on every render. We rely on triedFetchForMissingSubject
+        // to prevent multiple fetch calls.
+        fetchSubjects()
+        setTriedFetchForMissingSubject(true)
+      }
     } else if (subjects.length === 1) {
       // Auto-select if only one subject
       setSelectedSubjectId(subjects[0].id)
+      setHasInitializedSelection(true)
+    } else if (!isLoading && subjects.length > 0) {
+      // No persisted selection and more than one subject - mark as initialized
+      setHasInitializedSelection(true)
     }
-  }, [subjects]) // Re-run when subjects load/change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subjects, isLoading])
 
   // Save selection to localStorage when it changes
+  // US-SUBJECT-CREATE-002: Don't clear localStorage until we've initialized selection
   useEffect(() => {
     if (selectedSubjectId !== null) {
       saveSelectedSubjectId(selectedSubjectId)
-    } else {
+    } else if (hasInitializedSelection) {
+      // Only clear if we've already initialized (prevents clearing on initial mount)
       clearSelectedSubjectId()
     }
-  }, [selectedSubjectId])
+  }, [selectedSubjectId, hasInitializedSelection])
 
   // Memoize event handlers to prevent re-creating functions on every render
   const handleClearError = useCallback(() => {

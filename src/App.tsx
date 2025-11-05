@@ -62,6 +62,8 @@ function App() {
 
     // Auto-select newly created subject
     if (isNewSubject) {
+      // Save to localStorage so SubjectList can pick it up
+      // SubjectList will fetch subjects and then auto-select based on localStorage
       saveSelectedSubjectId(subject.id)
     }
 
