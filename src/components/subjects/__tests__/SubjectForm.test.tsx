@@ -65,11 +65,11 @@ describe('SubjectForm', () => {
       expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument()
     })
 
-    it('should display create button with full width styling', () => {
+    it('should display create button with flex-1 styling (shared with cancel button)', () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
       const createButton = screen.getByRole('button', { name: /create subject/i })
       expect(createButton).toBeInTheDocument()
-      expect(createButton).toHaveClass('w-full')
+      expect(createButton).toHaveClass('flex-1')
     })
     it('should show validation error for empty name on submit', async () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
@@ -465,6 +465,84 @@ describe('SubjectForm', () => {
       // Change name - duplicate error should clear
       fireEvent.change(nameInput, { target: { value: 'Mathematics 102' } })
       expect(screen.queryByText(/already exists/i)).not.toBeInTheDocument()
+    })
+  })
+
+  // US-SUBJECT-CREATE-001: Cancel button in create mode
+  describe('cancel button', () => {
+    it('should display Cancel button in create mode', () => {
+      const mockOnCancel = jest.fn()
+
+      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+
+      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument()
+    })
+
+    it('should display both Create and Cancel buttons side-by-side in create mode', () => {
+      const mockOnCancel = jest.fn()
+
+      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+
+      const createButton = screen.getByRole('button', { name: /create subject/i })
+      const cancelButton = screen.getByRole('button', { name: /cancel/i })
+
+      expect(createButton).toBeInTheDocument()
+      expect(cancelButton).toBeInTheDocument()
+
+      // Verify buttons are in a flex container with gap
+      const container = createButton.closest('div')
+      expect(container).toHaveClass('flex')
+      expect(container).toHaveClass('gap-3')
+    })
+
+    it('should NOT display Cancel button in edit mode', () => {
+      const mockOnCancel = jest.fn()
+      const existingSubject = {
+        id: 1,
+        name: 'Mathematics 101',
+        createdAt: '2024-01-01T10:30:00Z',
+        updatedAt: '2024-01-01T10:30:00Z',
+      }
+
+      render(
+        <SubjectForm
+          existingSubject={existingSubject}
+          onSuccess={mockOnSuccess}
+          onCancel={mockOnCancel}
+        />,
+      )
+
+      expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument()
+    })
+
+    it('should call onCancel when Cancel button is clicked', () => {
+      const mockOnCancel = jest.fn()
+
+      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+
+      const cancelButton = screen.getByRole('button', { name: /cancel/i })
+      fireEvent.click(cancelButton)
+
+      expect(mockOnCancel).toHaveBeenCalled()
+    })
+
+    it('should disable Cancel button while form is submitting', async () => {
+      const mockOnCancel = jest.fn()
+
+      mockCreateSubject.mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      )
+
+      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+
+      const nameInput = screen.getByLabelText(/subject name/i)
+      fireEvent.change(nameInput, { target: { value: 'Test Subject' } })
+
+      const createButton = screen.getByRole('button', { name: /create subject/i })
+      fireEvent.click(createButton)
+
+      const cancelButton = screen.getByRole('button', { name: /cancel/i })
+      expect(cancelButton).toBeDisabled()
     })
   })
 })

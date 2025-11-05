@@ -4,6 +4,7 @@ import { SubjectList } from './components/subjects/SubjectList'
 import { SubjectForm } from './components/subjects/SubjectForm'
 import { FinalCommentsModal } from './components/finalComments/FinalCommentsModal'
 import { useFinalComments } from './hooks/useFinalComments'
+import { saveSelectedSubjectId } from './utils/subjectStorageUtils'
 import type { Subject } from './types/Subject'
 import type {
   Class,
@@ -54,7 +55,16 @@ function App() {
     setShowForm(true)
   }
 
-  const handleFormSuccess = () => {
+  // US-SUBJECT-CREATE-002: Handle form success with auto-select for newly created subjects
+  const handleFormSuccess = (subject: Subject) => {
+    // Check if this is a new subject (create mode) - indicated by editingSubject being undefined
+    const isNewSubject = !editingSubject
+
+    // Auto-select newly created subject
+    if (isNewSubject) {
+      saveSelectedSubjectId(subject.id)
+    }
+
     setShowForm(false)
     setEditingSubject(undefined)
   }
@@ -62,6 +72,12 @@ function App() {
   const handleFormCancel = () => {
     setShowForm(false)
     setEditingSubject(undefined)
+  }
+
+  // US-SUBJECT-CREATE-002: Handle newly created subject from SubjectList
+  const handleCreateSubject = (subject: Subject) => {
+    // Auto-select the newly created subject
+    saveSelectedSubjectId(subject.id)
   }
 
   // Handler for viewing final comments (separate modal, called from ClassManagementModal)
@@ -107,6 +123,7 @@ function App() {
               <SubjectForm
                 existingSubject={editingSubject}
                 onSuccess={handleFormSuccess}
+                onCancel={handleFormCancel}
               />
             )
           : (
@@ -115,6 +132,7 @@ function App() {
                 onEdit={handleEditSubject}
                 onEditSuccess={handleFormSuccess}
                 onEditCancel={handleFormCancel}
+                onCreateSubject={handleCreateSubject}
                 onViewFinalComments={handleViewFinalComments}
               />
             )}

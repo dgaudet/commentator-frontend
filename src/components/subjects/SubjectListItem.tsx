@@ -254,6 +254,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                     <SubjectForm
                       existingSubject={subjectItem}
                       onSuccess={onEditSuccess}
+                      onCancel={_onEditCancel}
                     />
                     )
                   : (
