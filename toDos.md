@@ -1,6 +1,5 @@
 # To Do Items
 # The act function seems to be deprecated but it's used in tests and code
-## When you create a subject, it should be selected automatically even if it's not the only subject created
 # Final comments
 ## When you enter a grade for a student, it should load the matching outcome comment
 ## There should be a drop-down for personal comment, which when you pick it, should post into a text box below you can edit

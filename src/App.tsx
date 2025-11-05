@@ -76,12 +76,6 @@ function App() {
     setEditingSubject(undefined)
   }
 
-  // US-SUBJECT-CREATE-002: Handle newly created subject from SubjectList
-  const handleCreateSubject = (subject: Subject) => {
-    // Auto-select the newly created subject
-    saveSelectedSubjectId(subject.id)
-  }
-
   // Handler for viewing final comments (separate modal, called from ClassManagementModal)
   const handleViewFinalComments = async (classItem: Class) => {
     setFinalCommentsModal({
@@ -134,7 +128,6 @@ function App() {
                 onEdit={handleEditSubject}
                 onEditSuccess={handleFormSuccess}
                 onEditCancel={handleFormCancel}
-                onCreateSubject={handleCreateSubject}
                 onViewFinalComments={handleViewFinalComments}
               />
             )}

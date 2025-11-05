@@ -32,7 +32,6 @@ interface SubjectListProps {
   onEditSuccess?: (subject: Subject) => void
   onEditCancel?: () => void
   onViewFinalComments?: (classData: Class) => void
-  onCreateSubject?: (subject: Subject) => void
 }
 
 /**
@@ -48,7 +47,6 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   onEditSuccess,
   onEditCancel,
   onViewFinalComments,
-  onCreateSubject,
 }) => {
   const { subjects, isLoading, error, clearError, deleteSubject, fetchSubjects } = useSubjects()
 
@@ -179,15 +177,6 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     // Reload subjects to reflect changes in dropdown and heading
     await fetchSubjects()
   }, [onEditSuccess, fetchSubjects])
-
-  // US-SUBJECT-CREATE-002: Handle newly created subject auto-selection
-  useEffect(() => {
-    if (onCreateSubject && subjects.length > 0) {
-      // This will be called by App.tsx when a subject is created
-      // We expose a handler that can be called by external code
-      // For now, we just track that the callback is available
-    }
-  }, [onCreateSubject, subjects.length])
 
   // Tab panel data loading handlers
   const handleViewOutcomeComments = useCallback(async (subjectId: number) => {

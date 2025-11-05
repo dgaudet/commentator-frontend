@@ -926,29 +926,6 @@ describe('SubjectList', () => {
       mockGetSelectedSubjectId.mockReturnValue(null)
     })
 
-    it('should accept onCreateSubject callback in props (US-SUBJECT-CREATE-002)', () => {
-      const mockOnCreateSubject = jest.fn()
-
-      mockUseSubjects.mockReturnValue({
-        subjects: mockSubjects,
-        isLoading: false,
-        error: null,
-        fetchSubjects: jest.fn(),
-        createSubject: jest.fn(),
-        updateSubject: jest.fn(),
-        deleteSubject: jest.fn(),
-        clearError: jest.fn(),
-      })
-
-      render(
-        <SubjectList onCreateSubject={mockOnCreateSubject}
-        />,
-      )
-
-      // Component should render successfully with onCreateSubject prop
-      expect(screen.getByRole('heading', { name: /your subjects/i })).toBeInTheDocument()
-    })
-
     it('should auto-select newly created subject (US-SUBJECT-CREATE-002)', () => {
       const newSubject = {
         id: 99,
