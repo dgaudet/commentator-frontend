@@ -27,7 +27,6 @@ describe('SubjectForm', () => {
   const mockCreateSubject = jest.fn()
   const mockUpdateSubject = jest.fn()
   const mockOnSuccess = jest.fn()
-  const mockOnCancel = jest.fn()
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -45,12 +44,12 @@ describe('SubjectForm', () => {
 
   describe('create mode', () => {
     it('should render form title "Add New Subject"', () => {
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
       expect(screen.getByText('Add New Subject')).toBeInTheDocument()
     })
 
     it('should render empty name input with label and required indicator', () => {
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
       const nameInput = screen.getByLabelText(/subject name/i)
       expect(nameInput).toBeInTheDocument()
       expect(nameInput).toHaveValue('')
@@ -58,18 +57,25 @@ describe('SubjectForm', () => {
     })
 
     it('should NOT render year input (Subject has no year field)', () => {
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
       expect(screen.queryByLabelText(/year/i)).not.toBeInTheDocument()
     })
 
-    it('should render Create and Cancel buttons', () => {
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+    it('should render Create button but NOT Cancel button', () => {
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
       expect(screen.getByRole('button', { name: /create subject/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument()
+    })
+
+    it('should display create button with full width styling', () => {
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
+      const createButton = screen.getByRole('button', { name: /create subject/i })
+      expect(createButton).toBeInTheDocument()
+      expect(createButton).toHaveClass('w-full')
     })
 
     it('should show validation error for empty name on submit', async () => {
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       // Explicitly clear the input to ensure it's empty
@@ -85,7 +91,7 @@ describe('SubjectForm', () => {
     })
 
     it('should show validation error for name too long', async () => {
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'a'.repeat(101) } })
@@ -107,7 +113,7 @@ describe('SubjectForm', () => {
         updatedAt: '2024-01-15T10:30:00Z',
       })
 
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'English 201' } })
@@ -131,7 +137,7 @@ describe('SubjectForm', () => {
       }
       mockCreateSubject.mockResolvedValue(createdSubject)
 
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'English 201' } })
@@ -144,21 +150,14 @@ describe('SubjectForm', () => {
       })
     })
 
-    it('should call onCancel when Cancel button clicked', () => {
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
-
-      const cancelButton = screen.getByRole('button', { name: /cancel/i })
-      fireEvent.click(cancelButton)
-
-      expect(mockOnCancel).toHaveBeenCalled()
-    })
+    // Cancel button removed - users can cancel by navigating away or switching tabs
 
     it('should disable submit button while submitting', async () => {
       mockCreateSubject.mockImplementation(
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       )
 
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Test Subject' } })
@@ -172,7 +171,7 @@ describe('SubjectForm', () => {
     it('should show error message on creation failure', async () => {
       mockCreateSubject.mockRejectedValue(new Error('Network error'))
 
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Test Subject' } })
@@ -192,7 +191,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
       expect(screen.getByText('Edit Subject')).toBeInTheDocument()
@@ -203,7 +202,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
 
@@ -217,7 +216,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
       expect(screen.getByRole('button', { name: /save changes/i })).toBeInTheDocument()
@@ -230,7 +229,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
       const saveButton = screen.getByRole('button', { name: /save changes/i })
@@ -249,7 +248,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
 
@@ -277,7 +276,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
 
@@ -297,7 +296,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
 
@@ -320,7 +319,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
 
@@ -349,7 +348,7 @@ describe('SubjectForm', () => {
         clearError: jest.fn(),
       })
 
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Mathematics 101' } })
@@ -381,7 +380,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
 
@@ -417,7 +416,7 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-          onCancel={mockOnCancel}
+
         />,
       )
 
@@ -445,7 +444,7 @@ describe('SubjectForm', () => {
         clearError: jest.fn(),
       })
 
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'MATHEMATICS 101' } })
@@ -462,7 +461,7 @@ describe('SubjectForm', () => {
 
   describe('input clearing', () => {
     it('should clear field error when user types', async () => {
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       const submitButton = screen.getByRole('button', { name: /create subject/i })
@@ -492,7 +491,7 @@ describe('SubjectForm', () => {
         clearError: jest.fn(),
       })
 
-      render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
+      render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
       const submitButton = screen.getByRole('button', { name: /create subject/i })

@@ -107,7 +107,6 @@ function App() {
               <SubjectForm
                 existingSubject={editingSubject}
                 onSuccess={handleFormSuccess}
-                onCancel={handleFormCancel}
               />
             )
           : (
