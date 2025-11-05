@@ -47,7 +47,6 @@ describe('SubjectForm', () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
       expect(screen.getByText('Add New Subject')).toBeInTheDocument()
     })
-
     it('should render empty name input with label and required indicator', () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
       const nameInput = screen.getByLabelText(/subject name/i)
@@ -60,7 +59,6 @@ describe('SubjectForm', () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
       expect(screen.queryByLabelText(/year/i)).not.toBeInTheDocument()
     })
-
     it('should render Create button but NOT Cancel button', () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
       expect(screen.getByRole('button', { name: /create subject/i })).toBeInTheDocument()
@@ -73,7 +71,6 @@ describe('SubjectForm', () => {
       expect(createButton).toBeInTheDocument()
       expect(createButton).toHaveClass('w-full')
     })
-
     it('should show validation error for empty name on submit', async () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
 
@@ -92,19 +89,15 @@ describe('SubjectForm', () => {
 
     it('should show validation error for name too long', async () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
-
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'a'.repeat(101) } })
-
       const submitButton = screen.getByRole('button', { name: /create subject/i })
       fireEvent.click(submitButton)
-
       await waitFor(() => {
         expect(screen.getByText(/subject name must be between 1 and 100 characters/i)).toBeInTheDocument()
       })
       expect(mockCreateSubject).not.toHaveBeenCalled()
     })
-
     it('should call createSubject with valid data (name only)', async () => {
       mockCreateSubject.mockResolvedValue({
         id: 2,
@@ -112,7 +105,6 @@ describe('SubjectForm', () => {
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-15T10:30:00Z',
       })
-
       render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
@@ -138,25 +130,19 @@ describe('SubjectForm', () => {
       mockCreateSubject.mockResolvedValue(createdSubject)
 
       render(<SubjectForm onSuccess={mockOnSuccess} />)
-
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'English 201' } })
-
       const submitButton = screen.getByRole('button', { name: /create subject/i })
       fireEvent.click(submitButton)
-
       await waitFor(() => {
         expect(mockOnSuccess).toHaveBeenCalledWith(createdSubject)
       })
     })
-
     // Cancel button removed - users can cancel by navigating away or switching tabs
-
     it('should disable submit button while submitting', async () => {
       mockCreateSubject.mockImplementation(
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       )
-
       render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
@@ -172,26 +158,21 @@ describe('SubjectForm', () => {
       mockCreateSubject.mockRejectedValue(new Error('Network error'))
 
       render(<SubjectForm onSuccess={mockOnSuccess} />)
-
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Test Subject' } })
-
       const submitButton = screen.getByRole('button', { name: /create subject/i })
       fireEvent.click(submitButton)
-
       await waitFor(() => {
         expect(screen.getByText(/failed to create subject/i)).toBeInTheDocument()
       })
     })
   })
-
   describe('edit mode', () => {
     it('should render form title "Edit Subject"', () => {
       render(
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
       expect(screen.getByText('Edit Subject')).toBeInTheDocument()
@@ -202,7 +183,6 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
 
@@ -216,7 +196,6 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
       expect(screen.getByRole('button', { name: /save changes/i })).toBeInTheDocument()
@@ -229,7 +208,6 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
       const saveButton = screen.getByRole('button', { name: /save changes/i })
@@ -248,7 +226,6 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
 
@@ -276,7 +253,6 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
 
@@ -296,7 +272,6 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
 
@@ -319,7 +294,6 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
 
@@ -349,19 +323,15 @@ describe('SubjectForm', () => {
       })
 
       render(<SubjectForm onSuccess={mockOnSuccess} />)
-
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Mathematics 101' } })
-
       const submitButton = screen.getByRole('button', { name: /create subject/i })
       fireEvent.click(submitButton)
-
       await waitFor(() => {
         expect(screen.getByText(/a subject with this name already exists/i)).toBeInTheDocument()
       })
       expect(mockCreateSubject).not.toHaveBeenCalled()
     })
-
     it('should not flag duplicate when editing same subject in edit mode', async () => {
       mockUseSubjects.mockReturnValue({
         subjects: [mockExistingSubject],
@@ -373,14 +343,11 @@ describe('SubjectForm', () => {
         deleteSubject: jest.fn(),
         clearError: jest.fn(),
       })
-
       mockUpdateSubject.mockResolvedValue(mockExistingSubject)
-
       render(
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
 
@@ -416,7 +383,6 @@ describe('SubjectForm', () => {
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
-
         />,
       )
 
@@ -445,20 +411,16 @@ describe('SubjectForm', () => {
       })
 
       render(<SubjectForm onSuccess={mockOnSuccess} />)
-
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'MATHEMATICS 101' } })
-
       const submitButton = screen.getByRole('button', { name: /create subject/i })
       fireEvent.click(submitButton)
-
       await waitFor(() => {
         expect(screen.getByText(/a subject with this name already exists/i)).toBeInTheDocument()
       })
       expect(mockCreateSubject).not.toHaveBeenCalled()
     })
   })
-
   describe('input clearing', () => {
     it('should clear field error when user types', async () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
@@ -492,21 +454,16 @@ describe('SubjectForm', () => {
       })
 
       render(<SubjectForm onSuccess={mockOnSuccess} />)
-
       const nameInput = screen.getByLabelText(/subject name/i)
       const submitButton = screen.getByRole('button', { name: /create subject/i })
-
       // Enter duplicate name
       fireEvent.change(nameInput, { target: { value: 'Mathematics 101' } })
       fireEvent.click(submitButton)
-
       await waitFor(() => {
         expect(screen.getByText(/a subject with this name already exists/i)).toBeInTheDocument()
       })
-
       // Change name - duplicate error should clear
       fireEvent.change(nameInput, { target: { value: 'Mathematics 102' } })
-
       expect(screen.queryByText(/already exists/i)).not.toBeInTheDocument()
     })
   })

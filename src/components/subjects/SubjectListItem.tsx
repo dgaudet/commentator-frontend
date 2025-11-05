@@ -251,16 +251,16 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
               <div data-testid="edit-panel-content">
                 {onEditSuccess
                   ? (
-                  <SubjectForm
-                    existingSubject={subjectItem}
-                    onSuccess={onEditSuccess}
-                  />
+                    <SubjectForm
+                      existingSubject={subjectItem}
+                      onSuccess={onEditSuccess}
+                    />
                     )
                   : (
-                  <>
-                    <h4 className="text-lg font-semibold mb-2">Edit Subject: {subjectItem.name}</h4>
-                    <p className="text-gray-600">Edit form will appear here (SubjectForm component)</p>
-                  </>
+                    <>
+                      <h4 className="text-lg font-semibold mb-2">Edit Subject: {subjectItem.name}</h4>
+                      <p className="text-gray-600">Edit form will appear here (SubjectForm component)</p>
+                    </>
                     )}
               </div>
             </TabPanel>
