@@ -188,7 +188,70 @@ describe('PersonalizedCommentsModal', () => {
       fireEvent.click(deleteButton)
 
       expect(screen.getByText(/Delete Personalized Comment/i)).toBeInTheDocument()
-      expect(screen.getByText(/Are you sure you want to delete/i)).toBeInTheDocument()
+      expect(screen.getByText(/Are you sure you want to delete this personalized comment/i)).toBeInTheDocument()
+    })
+
+    // US-DELETE-CONFIRM-002: Comment preview in confirmation modal
+    it('should show comment preview in confirmation modal (AC3)', () => {
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[mockComment]}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      // Should show preview of the comment being deleted
+      expect(screen.getByText(/"Shows great improvement in problem-solving skills"/)).toBeInTheDocument()
+    })
+
+    it('should truncate comment preview to 100 characters with ellipsis (AC3)', () => {
+      const longComment = {
+        id: 2,
+        subjectId: 1,
+        comment: 'A'.repeat(150), // 150 character comment
+        createdAt: '2024-01-03T10:00:00Z',
+        updatedAt: '2024-01-03T10:00:00Z',
+      }
+
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[longComment]}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      // Should show truncated preview with ellipsis
+      const truncatedText = 'A'.repeat(100) + '...'
+      expect(screen.getByText(new RegExp(`"${truncatedText}"`))).toBeInTheDocument()
+    })
+
+    it('should not truncate comment preview if under 100 characters (AC3)', () => {
+      const shortComment = {
+        id: 3,
+        subjectId: 1,
+        comment: 'Short comment text',
+        createdAt: '2024-01-04T10:00:00Z',
+        updatedAt: '2024-01-04T10:00:00Z',
+      }
+
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[shortComment]}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /Delete/i })
+      fireEvent.click(deleteButton)
+
+      // Should show full comment without ellipsis
+      expect(screen.getByText(/"Short comment text"/)).toBeInTheDocument()
     })
   })
 

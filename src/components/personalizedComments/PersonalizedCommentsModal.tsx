@@ -13,8 +13,13 @@
  * - US-PERS-001: View all personalized comments for a subject
  * - US-PERS-002: Create new personalized comment
  * - US-PERS-003: Edit existing personalized comment
- * - US-PERS-004: Delete personalized comment with confirmation
+ * - US-PERS-004: Delete personalized comment with confirmation (US-DELETE-CONFIRM-002)
  * - US-PERS-005: Navigate back to subject list
+ *
+ * US-DELETE-CONFIRM-002 Features:
+ * - Uses standardized ConfirmationModal component
+ * - Shows preview of comment text (truncated to 100 chars)
+ * - Consistent UX with other delete operations
  */
 
 import { useState } from 'react'
@@ -22,7 +27,7 @@ import type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePerso
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
-import { ConfirmDialog } from '../common/ConfirmDialog'
+import { ConfirmationModal } from '../common/ConfirmationModal'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -50,7 +55,15 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
   const [newCommentContent, setNewCommentContent] = useState('')
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editContent, setEditContent] = useState('')
-  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean
+    commentId: number | null
+    commentText: string
+  }>({
+    isOpen: false,
+    commentId: null,
+    commentText: ''
+  })
   const [validationError, setValidationError] = useState('')
 
   if (!isOpen) return null
@@ -121,19 +134,28 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     setValidationError('')
   }
 
-  const handleDeleteStart = (id: number) => {
-    setDeleteConfirmId(id)
+  const handleDeleteStart = (comment: PersonalizedComment) => {
+    setDeleteConfirmation({
+      isOpen: true,
+      commentId: comment.id,
+      commentText: comment.comment
+    })
   }
 
   const handleDeleteConfirm = async () => {
-    if (deleteConfirmId) {
-      await onDeleteComment(deleteConfirmId)
-      setDeleteConfirmId(null)
+    if (deleteConfirmation.commentId !== null) {
+      await onDeleteComment(deleteConfirmation.commentId)
+      setDeleteConfirmation({ isOpen: false, commentId: null, commentText: '' })
     }
   }
 
   const handleDeleteCancel = () => {
-    setDeleteConfirmId(null)
+    setDeleteConfirmation({ isOpen: false, commentId: null, commentText: '' })
+  }
+
+  // Truncate comment text for preview (US-DELETE-CONFIRM-002 AC3)
+  const getCommentPreview = (text: string): string => {
+    return text.length > 100 ? `${text.substring(0, 100)}...` : text
   }
 
   // Character count for new comment
@@ -295,7 +317,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                 Edit
                               </Button>
                               <Button
-                                onClick={() => handleDeleteStart(comment.id)}
+                                onClick={() => handleDeleteStart(comment)}
                                 variant="danger"
                               >
                                 Delete
@@ -313,16 +335,20 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
         </div>
       </div>
 
-      {/* Delete Confirmation Dialog */}
-      <ConfirmDialog
-        isOpen={deleteConfirmId !== null}
+      {/* Delete Confirmation Modal (US-DELETE-CONFIRM-002) */}
+      <ConfirmationModal
+        isOpen={deleteConfirmation.isOpen}
         title="Delete Personalized Comment"
-        message="Are you sure you want to delete this personalized comment? This action cannot be undone."
+        message="Are you sure you want to delete this personalized comment?"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
-        confirmText="Delete"
-        cancelText="Cancel"
-      />
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+      >
+        <p className="text-sm text-gray-600 mt-2">
+          "{getCommentPreview(deleteConfirmation.commentText)}"
+        </p>
+      </ConfirmationModal>
     </div>
   )
 }
