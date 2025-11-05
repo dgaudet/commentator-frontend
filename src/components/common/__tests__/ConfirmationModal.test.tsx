@@ -305,4 +305,80 @@ describe('ConfirmationModal (US-SUBJ-DELETE-002)', () => {
       expect(dialog).toHaveAttribute('aria-describedby')
     })
   })
+
+  describe('Custom Children Content', () => {
+    it('should render custom children content below message', () => {
+      render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Delete Outcome Comment"
+          message="Are you sure you want to delete this outcome comment?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <p className="text-sm text-gray-600 mt-2">
+            "This is a preview of the comment text that will be deleted..."
+          </p>
+        </ConfirmationModal>,
+      )
+
+      expect(screen.getByText(/This is a preview of the comment text/)).toBeInTheDocument()
+    })
+
+    it('should render children with custom warning banner', () => {
+      render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Delete Class"
+          message="Are you sure you want to delete this class?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div className="bg-yellow-50 border border-yellow-200 rounded p-3 mt-2" data-testid="cascading-warning">
+            <p className="text-sm text-yellow-800">
+              ⚠️ This class has 3 final comment(s) that will also be deleted.
+            </p>
+          </div>
+        </ConfirmationModal>,
+      )
+
+      const warning = screen.getByTestId('cascading-warning')
+      expect(warning).toBeInTheDocument()
+      expect(screen.getByText(/3 final comment\(s\) that will also be deleted/)).toBeInTheDocument()
+    })
+
+    it('should render message and children together', () => {
+      render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Delete"
+          message="Are you sure?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div data-testid="custom-content">Custom content</div>
+        </ConfirmationModal>,
+      )
+
+      // Both message and children should be present
+      expect(screen.getByText('Are you sure?')).toBeInTheDocument()
+      expect(screen.getByTestId('custom-content')).toBeInTheDocument()
+    })
+
+    it('should not render anything when no children provided', () => {
+      const { container } = render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Delete"
+          message="Are you sure?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        />,
+      )
+
+      // Should still work without children (backward compatibility)
+      expect(screen.getByText('Are you sure?')).toBeInTheDocument()
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+    })
+  })
 })

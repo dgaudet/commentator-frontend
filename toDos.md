@@ -14,3 +14,5 @@
 # we can now remove the `x` close button from modals since they are tabs
 ## we also don't need a title in each tab since the tab name is sufficient
 # need to figure out how to do the final comments, should it be under Manage Classes? I think so, the code is still in App.tsx though
+# When deleting a class that has comments, what should happen?
+# ConfirmDialog should be removed once the swap to ConfirmationModal is done

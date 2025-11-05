@@ -284,7 +284,7 @@ describe('OutcomeCommentsModal', () => {
       })
 
       expect(screen.getByText('Delete Outcome Comment')).toBeInTheDocument()
-      expect(screen.getByText('Are you sure you want to delete this outcome comment? This action cannot be undone.')).toBeInTheDocument()
+      expect(screen.getByText('Are you sure you want to delete this outcome comment?')).toBeInTheDocument()
     })
 
     it('should call onDeleteComment when delete is confirmed', async () => {
@@ -321,6 +321,77 @@ describe('OutcomeCommentsModal', () => {
       })
 
       expect(screen.queryByText('Delete Outcome Comment')).not.toBeInTheDocument()
+    })
+
+    // US-DELETE-CONFIRM-001: Comment preview in confirmation modal
+    it('should show comment preview in confirmation modal (AC3)', async () => {
+      const user = userEvent.setup()
+      render(<OutcomeCommentsModal {...defaultProps} />)
+
+      const deleteButtons = screen.getAllByRole('button', { name: /delete/i })
+      await act(async () => {
+        await user.click(deleteButtons[0])
+      })
+
+      // Should show preview of the comment being deleted
+      expect(screen.getByText(/"Students demonstrated excellent problem-solving skills"/)).toBeInTheDocument()
+    })
+
+    it('should truncate comment preview to 100 characters with ellipsis (AC3)', async () => {
+      const longComment: OutcomeComment = {
+        id: 3,
+        subjectId: 1,
+        comment: 'A'.repeat(150), // 150 character comment
+        upperRange: 80,
+        lowerRange: 60,
+        createdAt: '2024-01-03T10:00:00Z',
+        updatedAt: '2024-01-03T10:00:00Z',
+      }
+
+      const user = userEvent.setup()
+      render(
+        <OutcomeCommentsModal
+          {...defaultProps}
+          outcomeComments={[longComment]}
+        />
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /delete/i })
+      await act(async () => {
+        await user.click(deleteButton)
+      })
+
+      // Should show truncated preview with ellipsis
+      const truncatedText = 'A'.repeat(100) + '...'
+      expect(screen.getByText(new RegExp(`"${truncatedText}"`))).toBeInTheDocument()
+    })
+
+    it('should not truncate comment preview if under 100 characters (AC3)', async () => {
+      const shortComment: OutcomeComment = {
+        id: 4,
+        subjectId: 1,
+        comment: 'Short comment',
+        upperRange: 80,
+        lowerRange: 60,
+        createdAt: '2024-01-04T10:00:00Z',
+        updatedAt: '2024-01-04T10:00:00Z',
+      }
+
+      const user = userEvent.setup()
+      render(
+        <OutcomeCommentsModal
+          {...defaultProps}
+          outcomeComments={[shortComment]}
+        />
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /delete/i })
+      await act(async () => {
+        await user.click(deleteButton)
+      })
+
+      // Should show full comment without ellipsis
+      expect(screen.getByText(/"Short comment"/)).toBeInTheDocument()
     })
   })
 
