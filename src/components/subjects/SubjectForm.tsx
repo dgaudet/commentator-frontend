@@ -19,6 +19,7 @@ import type { Subject } from '../../types/Subject'
 interface SubjectFormProps {
   existingSubject?: Subject
   onSuccess: (subjectItem: Subject) => void
+  onCancel?: () => void // US-SUBJECT-CREATE-001: Cancel button in create mode only
 }
 
 interface FormData {
@@ -39,6 +40,7 @@ interface FormErrors {
 export const SubjectForm: React.FC<SubjectFormProps> = ({
   existingSubject,
   onSuccess,
+  onCancel,
 }) => {
   const { subjects, createSubject, updateSubject } = useSubjects()
   const [formData, setFormData] = useState<FormData>({
@@ -175,15 +177,26 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
           placeholder="e.g. Mathematics 101"
         />
 
-        <div className="mt-6">
+        <div className={isEditMode ? 'mt-6' : 'flex gap-3 mt-6'}>
           <Button
             type="submit"
             variant="primary"
             disabled={isSubmitting}
-            className="w-full"
+            className={isEditMode ? 'w-full' : 'flex-1'}
           >
             {isEditMode ? 'Save Changes' : 'Create Subject'}
           </Button>
+          {!isEditMode && onCancel && (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onCancel}
+              disabled={isSubmitting}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          )}
         </div>
       </form>
     </div>

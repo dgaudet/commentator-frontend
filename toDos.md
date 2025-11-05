@@ -1,11 +1,5 @@
 # To Do Items
-# Personalized Comments
-## show a count of which comment you are on ex: 1 out of 100
-## how should we order them?
 # The act function seems to be deprecated but it's used in tests and code
-## When you create a subject, it should be selected automatically even if it's not the only subject created
-If you have an subject selected, and you open the outcome comments, then switch the subject, the outcome comments modal should update to show the comments for the newly selected subject
-* Or perhaps just have it close the outcome comments when you switch
 # Final comments
 ## When you enter a grade for a student, it should load the matching outcome comment
 ## There should be a drop-down for personal comment, which when you pick it, should post into a text box below you can edit
@@ -14,7 +8,10 @@ If you have an subject selected, and you open the outcome comments, then switch 
 ## lower priority
 ### we should have a way to bulk add students with their grade
 ### The label for selecting a class should be `Select a Class to work with`
+### show a count of which comment you are on ex: 1 out of 100
+#### how should we order them?
 # all confirmation options should use the confirmation modal component
+## outcome comment, personal comment, delete class, delete final comment
 # remove the console.error methods from services
 # we can now remove the `x` close button from modals since they are tabs
 ## we also don't need a title in each tab since the tab name is sufficient
