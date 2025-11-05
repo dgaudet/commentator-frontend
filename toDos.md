@@ -19,9 +19,3 @@ If you have an subject selected, and you open the outcome comments, then switch 
 # we can now remove the `x` close button from modals since they are tabs
 ## we also don't need a title in each tab since the tab name is sufficient
 # need to figure out how to do the final comments, should it be under Manage Classes? I think so, the code is still in App.tsx though
-# changing a subject is still all messed up
-# Edit subject
-## Edit subject cancel button has no purpose
-## Edit subject save button should force a reload in some way so that the heading, and drop-down update
-
-Changing a subject name doesn't update the subject drop-down

@@ -73,7 +73,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onViewClasses,
   // Edit panel props
   onEditSuccess,
-  onEditCancel,
+  onEditCancel: _onEditCancel, // No longer used - SubjectForm has no cancel button
   // Outcome Comments panel props
   outcomeComments = [],
   onCreateOutcomeComment,
@@ -249,19 +249,18 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
           {onEdit && (
             <TabPanel id="edit" activeTabId={activeTab} tabId="edit">
               <div data-testid="edit-panel-content">
-                {onEditSuccess && onEditCancel
+                {onEditSuccess
                   ? (
-                  <SubjectForm
-                    existingSubject={subjectItem}
-                    onSuccess={onEditSuccess}
-                    onCancel={onEditCancel}
-                  />
+                    <SubjectForm
+                      existingSubject={subjectItem}
+                      onSuccess={onEditSuccess}
+                    />
                     )
                   : (
-                  <>
-                    <h4 className="text-lg font-semibold mb-2">Edit Subject: {subjectItem.name}</h4>
-                    <p className="text-gray-600">Edit form will appear here (SubjectForm component)</p>
-                  </>
+                    <>
+                      <h4 className="text-lg font-semibold mb-2">Edit Subject: {subjectItem.name}</h4>
+                      <p className="text-gray-600">Edit form will appear here (SubjectForm component)</p>
+                    </>
                     )}
               </div>
             </TabPanel>
