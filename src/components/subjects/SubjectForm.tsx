@@ -192,6 +192,7 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
               variant="secondary"
               onClick={onCancel}
               disabled={isSubmitting}
+              className="flex-1"
             >
               Cancel
             </Button>
