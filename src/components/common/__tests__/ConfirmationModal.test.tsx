@@ -366,7 +366,7 @@ describe('ConfirmationModal (US-SUBJ-DELETE-002)', () => {
     })
 
     it('should not render anything when no children provided', () => {
-      const { container } = render(
+      render(
         <ConfirmationModal
           isOpen={true}
           title="Delete"
