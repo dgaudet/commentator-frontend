@@ -66,12 +66,14 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
     className: string
     hasFinalComments: boolean
     finalCommentsCount: number
+    checkFailed: boolean
   }>({
     isOpen: false,
     classId: null,
     className: '',
     hasFinalComments: false,
     finalCommentsCount: 0,
+    checkFailed: false,
   })
   const [validationError, setValidationError] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
@@ -156,23 +158,27 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
       const selectedClass = classes.find(c => c.id === selectedClassId)
       if (!selectedClass) return
 
-      try {
-        // Check for final comments (US-DELETE-CONFIRM-003 AC1)
-        const finalCommentsCount = checkFinalCommentsCount
-          ? await checkFinalCommentsCount(selectedClassId)
-          : 0
+      let finalCommentsCount = 0
+      let checkFailed = false
 
-        setDeleteConfirmation({
-          isOpen: true,
-          classId: selectedClass.id,
-          className: `${selectedClass.name} ${selectedClass.year}`,
-          hasFinalComments: finalCommentsCount > 0,
-          finalCommentsCount,
-        })
-      } catch (err) {
-        // Error handled - could show error message
-        console.error('Failed to check final comments count:', err)
+      if (checkFinalCommentsCount) {
+        try {
+          // Check for final comments (US-DELETE-CONFIRM-003 AC1)
+          finalCommentsCount = await checkFinalCommentsCount(selectedClassId)
+        } catch (err) {
+          // If check fails, still allow delete but warn user
+          checkFailed = true
+        }
       }
+
+      setDeleteConfirmation({
+        isOpen: true,
+        classId: selectedClass.id,
+        className: `${selectedClass.name} ${selectedClass.year}`,
+        hasFinalComments: finalCommentsCount > 0,
+        finalCommentsCount,
+        checkFailed,
+      })
     }
   }
 
@@ -186,6 +192,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
           className: '',
           hasFinalComments: false,
           finalCommentsCount: 0,
+          checkFailed: false,
         })
         setSelectedClassId(null)
         setClassName('')
@@ -203,6 +210,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
       className: '',
       hasFinalComments: false,
       finalCommentsCount: 0,
+      checkFailed: false,
     })
   }
 
@@ -390,6 +398,15 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
           <div className="bg-yellow-50 border border-yellow-200 rounded p-3 mt-3">
             <p className="text-sm text-yellow-800">
               ⚠️ This class has {deleteConfirmation.finalCommentsCount} final comment(s) that will also be deleted.
+            </p>
+          </div>
+        )}
+
+        {/* Error checking final comments - show warning */}
+        {deleteConfirmation.checkFailed && (
+          <div className="bg-orange-50 border border-orange-200 rounded p-3 mt-3">
+            <p className="text-sm text-orange-800">
+              ⚠️ Unable to verify if this class has final comments. Deleting this class may also delete associated final comments.
             </p>
           </div>
         )}

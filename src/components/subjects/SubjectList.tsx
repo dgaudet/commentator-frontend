@@ -232,14 +232,10 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   }, [deleteClass])
 
   // Check final comments count for cascading delete warning (US-DELETE-CONFIRM-003)
+  // Throws error if check fails - handled by ClassManagementModal
   const handleCheckFinalCommentsCount = useCallback(async (classId: number): Promise<number> => {
-    try {
-      const comments = await finalCommentService.getByClassId(classId)
-      return comments.length
-    } catch (error) {
-      console.error('Failed to check final comments count:', error)
-      return 0
-    }
+    const comments = await finalCommentService.getByClassId(classId)
+    return comments.length
   }, [])
 
   // Handle delete button click - show confirmation modal (US-SUBJ-DELETE-002 AC1)
