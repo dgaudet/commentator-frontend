@@ -29,6 +29,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import styles from '../common/ConfirmationModal.module.css'
 
 interface ClassManagementModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -389,14 +390,14 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
         confirmButtonText="Delete"
         cancelButtonText="Cancel"
       >
-        <p className="text-sm text-gray-700 mt-2 font-medium">
+        <p className={styles['preview-text']}>
           {deleteConfirmation.className}
         </p>
 
         {/* Cascading Delete Warning (US-DELETE-CONFIRM-003 AC5) */}
         {deleteConfirmation.hasFinalComments && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded p-3 mt-3">
-            <p className="text-sm text-yellow-800">
+          <div className={`${styles['warning-banner']} ${styles['warning-banner-yellow']}`}>
+            <p>
               ⚠️ This class has {deleteConfirmation.finalCommentsCount} final comment(s) that will also be deleted.
             </p>
           </div>
@@ -404,8 +405,8 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
 
         {/* Error checking final comments - show warning */}
         {deleteConfirmation.checkFailed && (
-          <div className="bg-orange-50 border border-orange-200 rounded p-3 mt-3">
-            <p className="text-sm text-orange-800">
+          <div className={`${styles['warning-banner']} ${styles['warning-banner-orange']}`}>
+            <p>
               ⚠️ Unable to verify if this class has final comments. Deleting this class may also delete associated final comments.
             </p>
           </div>
