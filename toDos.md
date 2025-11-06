@@ -15,4 +15,5 @@
 ## we also don't need a title in each tab since the tab name is sufficient
 # need to figure out how to do the final comments, should it be under Manage Classes? I think so, the code is still in App.tsx though
 # When deleting a class that has comments, what should happen?
+## right now it displays a little warning icon, but no information. Should it also delete the final comments associated? should the backend do the deletion?
 # ConfirmDialog should be removed once the swap to ConfirmationModal is done

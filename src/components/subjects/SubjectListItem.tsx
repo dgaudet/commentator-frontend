@@ -58,6 +58,7 @@ interface SubjectListItemProps {
   onCreateClass?: (request: CreateClassRequest) => Promise<void>
   onUpdateClass?: (id: number, request: UpdateClassRequest) => Promise<void>
   onDeleteClass?: (id: number) => Promise<void>
+  checkFinalCommentsCount?: (classId: number) => Promise<number>
   classesLoading?: boolean
   classesError?: string | null
   onViewFinalComments?: (classData: Class) => void
@@ -93,6 +94,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onCreateClass,
   onUpdateClass,
   onDeleteClass,
+  checkFinalCommentsCount,
   classesLoading = false,
   classesError = null,
   onViewFinalComments,
@@ -339,6 +341,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                     onCreateClass={onCreateClass}
                     onUpdateClass={onUpdateClass}
                     onDeleteClass={onDeleteClass}
+                    checkFinalCommentsCount={checkFinalCommentsCount}
                     onViewFinalComments={onViewFinalComments}
                     loading={classesLoading}
                     error={classesError}
