@@ -65,7 +65,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   }>({
     isOpen: false,
     commentId: null,
-    commentText: ''
+    commentText: '',
   })
   const [validationError, setValidationError] = useState('')
 
@@ -156,7 +156,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
     setDeleteConfirmation({
       isOpen: true,
       commentId: comment.id,
-      commentText: comment.comment
+      commentText: comment.comment,
     })
   }
 

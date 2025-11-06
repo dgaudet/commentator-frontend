@@ -353,7 +353,7 @@ describe('OutcomeCommentsModal', () => {
         <OutcomeCommentsModal
           {...defaultProps}
           outcomeComments={[longComment]}
-        />
+        />,
       )
 
       const deleteButton = screen.getByRole('button', { name: /delete/i })
@@ -382,7 +382,7 @@ describe('OutcomeCommentsModal', () => {
         <OutcomeCommentsModal
           {...defaultProps}
           outcomeComments={[shortComment]}
-        />
+        />,
       )
 
       const deleteButton = screen.getByRole('button', { name: /delete/i })
