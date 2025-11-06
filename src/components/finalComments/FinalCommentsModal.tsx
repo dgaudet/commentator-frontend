@@ -1,6 +1,5 @@
 /**
  * FinalCommentsModal Component
- * TDD Phase: GREEN - Implementing create form to pass tests
  *
  * Modal for viewing, creating, editing, and deleting final comments for a class.
  * Implements CRUD operations with proper form validation and accessibility.
@@ -11,10 +10,16 @@
  * User Stories:
  * - US-FINAL-001: Access Final Comments Management ✅
  * - US-FINAL-002: View list of final comments ✅
- * - US-FINAL-003: Create new final comment (In Progress)
- * - US-FINAL-004: Edit existing final comment (Post-MVP)
- * - US-FINAL-005: Delete final comment (Post-MVP)
+ * - US-FINAL-003: Create new final comment ✅
+ * - US-FINAL-004: Edit existing final comment ✅
+ * - US-FINAL-005: Delete final comment ✅
  * - US-FINAL-006: Close modal ✅
+ *
+ * US-DELETE-CONFIRM-004 Features:
+ * - Uses standardized ConfirmationModal component
+ * - Shows student name (firstName + lastName) in preview
+ * - Shows class name and year for context
+ * - Enhanced confirmation UX with detailed preview
  */
 
 import { useState } from 'react'
@@ -26,7 +31,7 @@ import type {
 import { Button } from '../common/Button'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
-import { ConfirmDialog } from '../common/ConfirmDialog'
+import { ConfirmationModal } from '../common/ConfirmationModal'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -59,9 +64,20 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const [validationError, setValidationError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  // Delete confirmation state
-  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
-  const [deleteStudentName, setDeleteStudentName] = useState('')
+  // Delete confirmation state (US-DELETE-CONFIRM-004)
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean
+    commentId: number | null
+    studentName: string
+    className: string
+    classYear: number
+  }>({
+    isOpen: false,
+    commentId: null,
+    studentName: '',
+    className: '',
+    classYear: 0,
+  })
 
   // Edit state
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -146,32 +162,48 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     }
   }
 
-  // Handle delete start - show confirmation dialog
+  // Handle delete start - show confirmation dialog (US-DELETE-CONFIRM-004)
   const handleDeleteStart = (finalComment: FinalComment) => {
-    setDeleteConfirmId(finalComment.id)
     const fullName = finalComment.lastName
       ? `${finalComment.firstName} ${finalComment.lastName}`
       : finalComment.firstName
-    setDeleteStudentName(fullName)
+
+    setDeleteConfirmation({
+      isOpen: true,
+      commentId: finalComment.id,
+      studentName: fullName,
+      className: entityData.name,
+      classYear: 'year' in entityData ? (entityData as { year: number }).year : 0,
+    })
   }
 
-  // Handle delete confirmation
+  // Handle delete confirmation (US-DELETE-CONFIRM-004)
   const handleDeleteConfirm = async () => {
-    if (deleteConfirmId) {
+    if (deleteConfirmation.commentId !== null) {
       try {
-        await onDeleteComment(deleteConfirmId)
-        setDeleteConfirmId(null)
-        setDeleteStudentName('')
+        await onDeleteComment(deleteConfirmation.commentId)
+        setDeleteConfirmation({
+          isOpen: false,
+          commentId: null,
+          studentName: '',
+          className: '',
+          classYear: 0,
+        })
       } catch (err) {
         setValidationError('Failed to delete final comment. Please try again.')
       }
     }
   }
 
-  // Handle delete cancellation
+  // Handle delete cancellation (US-DELETE-CONFIRM-004)
   const handleDeleteCancel = () => {
-    setDeleteConfirmId(null)
-    setDeleteStudentName('')
+    setDeleteConfirmation({
+      isOpen: false,
+      commentId: null,
+      studentName: '',
+      className: '',
+      classYear: 0,
+    })
   }
 
   // Handle edit start - populate form with existing values
@@ -538,16 +570,25 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
         </div>
       </div>
 
-      {/* Delete Confirmation Dialog */}
-      <ConfirmDialog
-        isOpen={deleteConfirmId !== null}
+      {/* Delete Confirmation Modal (US-DELETE-CONFIRM-004) */}
+      <ConfirmationModal
+        isOpen={deleteConfirmation.isOpen}
         title="Delete Final Comment"
-        message={`Are you sure you want to delete the final comment for "${deleteStudentName}"? This action cannot be undone.`}
-        confirmText="Delete"
+        message="Are you sure you want to delete this final comment?"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
-        variant="danger"
-      />
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+      >
+        <div className="text-sm text-gray-700 mt-3">
+          <p className="font-medium">
+            <span className="font-semibold">Student:</span> {deleteConfirmation.studentName}
+          </p>
+          <p className="text-gray-600 mt-1">
+            <span className="font-semibold">Class:</span> {deleteConfirmation.className} ({deleteConfirmation.classYear})
+          </p>
+        </div>
+      </ConfirmationModal>
     </div>
   )
 }
