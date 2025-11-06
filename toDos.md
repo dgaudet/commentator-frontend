@@ -10,9 +10,11 @@
 ### The label for selecting a class should be `Select a Class to work with`
 ### show a count of which comment you are on ex: 1 out of 100
 #### how should we order them?
-# all confirmation options should use the confirmation modal component
-## outcome comment, personal comment, delete class, delete final comment
 # remove the console.error methods from services
 # we can now remove the `x` close button from modals since they are tabs
 ## we also don't need a title in each tab since the tab name is sufficient
 # need to figure out how to do the final comments, should it be under Manage Classes? I think so, the code is still in App.tsx though
+# When deleting a class that has comments, what should happen?
+## Should it also delete the final comments associated? should the backend do the deletion?
+# Outcome Comments should be ordered by the Lower Range values
+# sort final comments by student name

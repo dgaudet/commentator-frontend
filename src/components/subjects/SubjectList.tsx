@@ -15,6 +15,7 @@ import { useSubjects } from '../../hooks/useSubjects'
 import { useOutcomeComments } from '../../hooks/useOutcomeComments'
 import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
 import { useClasses } from '../../hooks/useClasses'
+import { finalCommentService } from '../../services/api/finalCommentService'
 import { SubjectListItem } from './SubjectListItem'
 import { SubjectEmptyState } from './SubjectEmptyState'
 import { LoadingSpinner } from '../common/LoadingSpinner'
@@ -230,6 +231,13 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     await deleteClass(id)
   }, [deleteClass])
 
+  // Check final comments count for cascading delete warning (US-DELETE-CONFIRM-003)
+  // Throws error if check fails - handled by ClassManagementModal
+  const handleCheckFinalCommentsCount = useCallback(async (classId: number): Promise<number> => {
+    const comments = await finalCommentService.getByClassId(classId)
+    return comments.length
+  }, [])
+
   // Handle delete button click - show confirmation modal (US-SUBJ-DELETE-002 AC1)
   const handleDelete = useCallback((subjectId: number) => {
     const subjectItem = subjects.find(s => s.id === subjectId)
@@ -371,6 +379,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             onCreateClass={handleCreateClass}
             onUpdateClass={handleUpdateClass}
             onDeleteClass={handleDeleteClass}
+            checkFinalCommentsCount={handleCheckFinalCommentsCount}
             classesLoading={classesLoading}
             classesError={classesError}
             onViewFinalComments={onViewFinalComments}

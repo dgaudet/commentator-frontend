@@ -12,8 +12,15 @@
  * - US-CLASS-002: View classes in dropdown
  * - US-CLASS-003: Add new class
  * - US-CLASS-004: Edit existing class
- * - US-CLASS-005: Delete class with confirmation
+ * - US-CLASS-005: Delete class with confirmation (US-DELETE-CONFIRM-003)
  * - US-CLASS-007: Close modal
+ *
+ * US-DELETE-CONFIRM-003 Features:
+ * - Uses standardized ConfirmationModal component
+ * - Async check for final comments count before opening modal
+ * - Cascading delete warning banner if class has final comments
+ * - Shows class name and year in confirmation modal
+ * - Enhanced error handling for final comments check
  */
 
 import { useState, useEffect } from 'react'
@@ -21,7 +28,8 @@ import type { Class, CreateClassRequest, UpdateClassRequest } from '../../types'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
-import { ConfirmDialog } from '../common/ConfirmDialog'
+import { ConfirmationModal } from '../common/ConfirmationModal'
+import styles from '../common/ConfirmationModal.module.css'
 
 interface ClassManagementModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -32,6 +40,7 @@ interface ClassManagementModalProps<T extends { id: number; name: string }> {
   onUpdateClass: (id: number, request: UpdateClassRequest) => Promise<void>
   onDeleteClass: (id: number) => Promise<void>
   onViewFinalComments?: (classData: Class) => void
+  checkFinalCommentsCount?: (classId: number) => Promise<number>
   loading: boolean
   error: string | null
 }
@@ -45,13 +54,28 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
   onUpdateClass,
   onDeleteClass,
   onViewFinalComments,
+  checkFinalCommentsCount,
   loading,
   error,
 }: ClassManagementModalProps<T>) => {
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null)
   const [className, setClassName] = useState('')
   const [classYear, setClassYear] = useState(new Date().getFullYear())
-  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean
+    classId: number | null
+    className: string
+    hasFinalComments: boolean
+    finalCommentsCount: number
+    checkFailed: boolean
+  }>({
+    isOpen: false,
+    classId: null,
+    className: '',
+    hasFinalComments: false,
+    finalCommentsCount: 0,
+    checkFailed: false,
+  })
   const [validationError, setValidationError] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
 
@@ -130,17 +154,47 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
     }
   }
 
-  const handleDeleteStart = () => {
+  const handleDeleteStart = async () => {
     if (selectedClassId) {
-      setDeleteConfirmId(selectedClassId)
+      const selectedClass = classes.find(c => c.id === selectedClassId)
+      if (!selectedClass) return
+
+      let finalCommentsCount = 0
+      let checkFailed = false
+
+      if (checkFinalCommentsCount) {
+        try {
+          // Check for final comments (US-DELETE-CONFIRM-003 AC1)
+          finalCommentsCount = await checkFinalCommentsCount(selectedClassId)
+        } catch (err) {
+          // If check fails, still allow delete but warn user
+          checkFailed = true
+        }
+      }
+
+      setDeleteConfirmation({
+        isOpen: true,
+        classId: selectedClass.id,
+        className: `${selectedClass.name} ${selectedClass.year}`,
+        hasFinalComments: finalCommentsCount > 0,
+        finalCommentsCount,
+        checkFailed,
+      })
     }
   }
 
   const handleDeleteConfirm = async () => {
-    if (deleteConfirmId) {
+    if (deleteConfirmation.classId) {
       try {
-        await onDeleteClass(deleteConfirmId)
-        setDeleteConfirmId(null)
+        await onDeleteClass(deleteConfirmation.classId)
+        setDeleteConfirmation({
+          isOpen: false,
+          classId: null,
+          className: '',
+          hasFinalComments: false,
+          finalCommentsCount: 0,
+          checkFailed: false,
+        })
         setSelectedClassId(null)
         setClassName('')
         setClassYear(new Date().getFullYear())
@@ -151,7 +205,14 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
   }
 
   const handleDeleteCancel = () => {
-    setDeleteConfirmId(null)
+    setDeleteConfirmation({
+      isOpen: false,
+      classId: null,
+      className: '',
+      hasFinalComments: false,
+      finalCommentsCount: 0,
+      checkFailed: false,
+    })
   }
 
   const handleClassSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -319,16 +380,38 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
         </div>
       </div>
 
-      {/* Delete Confirmation Dialog */}
-      <ConfirmDialog
-        isOpen={deleteConfirmId !== null}
+      {/* Delete Confirmation Modal (US-DELETE-CONFIRM-003) */}
+      <ConfirmationModal
+        isOpen={deleteConfirmation.isOpen}
         title="Delete Class"
-        message="Are you sure you want to delete this class? This action cannot be undone."
+        message="Are you sure you want to delete this class?"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
-        confirmText="Delete"
-        cancelText="Cancel"
-      />
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+      >
+        <p className={styles['preview-text']}>
+          {deleteConfirmation.className}
+        </p>
+
+        {/* Cascading Delete Warning (US-DELETE-CONFIRM-003 AC5) */}
+        {deleteConfirmation.hasFinalComments && (
+          <div className={`${styles['warning-banner']} ${styles['warning-banner-yellow']}`}>
+            <p>
+              ⚠️ This class has {deleteConfirmation.finalCommentsCount} final comment(s) that will also be deleted.
+            </p>
+          </div>
+        )}
+
+        {/* Error checking final comments - show warning */}
+        {deleteConfirmation.checkFailed && (
+          <div className={`${styles['warning-banner']} ${styles['warning-banner-orange']}`}>
+            <p>
+              ⚠️ Unable to verify if this class has final comments. Deleting this class may also delete associated final comments.
+            </p>
+          </div>
+        )}
+      </ConfirmationModal>
     </div>
   )
 }

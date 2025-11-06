@@ -39,6 +39,7 @@ describe('ClassManagementModal', () => {
   const mockOnUpdateClass = jest.fn()
   const mockOnDeleteClass = jest.fn()
   const mockOnViewFinalComments = jest.fn()
+  const mockCheckFinalCommentsCount = jest.fn()
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -392,6 +393,138 @@ describe('ClassManagementModal', () => {
 
       await waitFor(() => {
         expect(mockOnDeleteClass).toHaveBeenCalledWith(1)
+      })
+    })
+
+    // US-DELETE-CONFIRM-003: Cascading delete warning
+    it('should check for final comments count when delete button is clicked (AC1)', async () => {
+      mockCheckFinalCommentsCount.mockResolvedValue(0)
+
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          onClose={mockOnClose}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          checkFinalCommentsCount={mockCheckFinalCommentsCount}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Select a class
+      const dropdown = screen.getByLabelText(/Select a class/i)
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      await waitFor(async () => {
+        const deleteButton = screen.getByRole('button', { name: /Delete Class/i })
+        fireEvent.click(deleteButton)
+      })
+
+      await waitFor(() => {
+        expect(mockCheckFinalCommentsCount).toHaveBeenCalledWith(1)
+      })
+    })
+
+    it('should show cascading delete warning when class has final comments (AC5)', async () => {
+      mockCheckFinalCommentsCount.mockResolvedValue(3)
+
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          onClose={mockOnClose}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          checkFinalCommentsCount={mockCheckFinalCommentsCount}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Select a class
+      const dropdown = screen.getByLabelText(/Select a class/i)
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      // Click delete button and wait for async check to complete
+      const deleteButton = await screen.findByRole('button', { name: /Delete Class/i })
+      fireEvent.click(deleteButton)
+
+      // Wait for modal to open and warning to appear (after async check)
+      await waitFor(() => {
+        expect(screen.getByText(/⚠️ This class has 3 final comment\(s\) that will also be deleted/i)).toBeInTheDocument()
+      }, { timeout: 3000 })
+    })
+
+    it('should NOT show cascading warning when class has no final comments (AC5)', async () => {
+      mockCheckFinalCommentsCount.mockResolvedValue(0)
+
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          onClose={mockOnClose}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          checkFinalCommentsCount={mockCheckFinalCommentsCount}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Select a class
+      const dropdown = screen.getByLabelText(/Select a class/i)
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      // Click delete button and wait for async check to complete
+      const deleteButton = await screen.findByRole('button', { name: /Delete Class/i })
+      fireEvent.click(deleteButton)
+
+      // Wait for modal to open (after async check)
+      await waitFor(() => {
+        expect(screen.getByText(/Delete Class/)).toBeInTheDocument()
+      }, { timeout: 3000 })
+
+      // Verify no cascading warning appears
+      expect(screen.queryByText(/will also be deleted/i)).not.toBeInTheDocument()
+    })
+
+    it('should show class name and year in confirmation modal (AC4)', async () => {
+      mockCheckFinalCommentsCount.mockResolvedValue(0)
+
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          onClose={mockOnClose}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          checkFinalCommentsCount={mockCheckFinalCommentsCount}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Select a class
+      const dropdown = screen.getByLabelText(/Select a class/i)
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      await waitFor(async () => {
+        const deleteButton = screen.getByRole('button', { name: /Delete Class/i })
+        fireEvent.click(deleteButton)
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText(/Advanced Section 2024/)).toBeInTheDocument()
       })
     })
   })

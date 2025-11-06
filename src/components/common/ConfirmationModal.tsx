@@ -1,12 +1,13 @@
 /**
  * ConfirmationModal Component
  * Displays a confirmation dialog for destructive actions
- * Reference: US-SUBJ-DELETE-002
+ * Reference: US-SUBJ-DELETE-002, US-DELETE-CONFIRM-*
  *
  * Features:
  * - Keyboard accessible (Tab, Enter, Escape)
  * - Focus management (Cancel button focused by default)
  * - Loading states for async operations
+ * - Custom children content (previews, warnings)
  * - WCAG 2.1 AA compliant
  */
 import React, { useEffect, useRef, useId } from 'react'
@@ -23,6 +24,7 @@ interface ConfirmationModalProps {
   confirmButtonText?: string
   cancelButtonText?: string
   loadingText?: string
+  children?: React.ReactNode
 }
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -35,6 +37,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   confirmButtonText = 'Delete',
   cancelButtonText = 'Cancel',
   loadingText,
+  children,
 }) => {
   const cancelButtonRef = useRef<HTMLButtonElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -95,6 +98,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <p id={descriptionId} className={styles['modal-message']}>
             {message}
           </p>
+          {children}
         </div>
 
         <div className={styles['modal-footer']}>
