@@ -205,29 +205,44 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
         <div
           style={{
             marginTop: '1.5rem',
-            display: 'flex',
-            gap: isEditMode ? '0' : '1rem',
+            ...(isEditMode
+              ? {}
+              : { display: 'flex', gap: '1rem' }),
           }}
         >
-          <div style={{ flex: isEditMode ? '1' : 'initial' }}>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isSubmitting}
-            >
-              {isEditMode ? 'Save Changes' : 'Create Subject'}
-            </Button>
-          </div>
-          {!isEditMode && onCancel && (
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={onCancel}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-          )}
+          {isEditMode
+            ? (
+                <div style={{ width: '100%' }}>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={isSubmitting}
+                  >
+                    Save Changes
+                  </Button>
+                </div>
+              )
+            : (
+                <>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={isSubmitting}
+                  >
+                    Create Subject
+                  </Button>
+                  {onCancel && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={onCancel}
+                      disabled={isSubmitting}
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </>
+              )}
         </div>
       </form>
     </div>

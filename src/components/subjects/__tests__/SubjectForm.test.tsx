@@ -487,8 +487,7 @@ describe('SubjectForm', () => {
       expect(cancelButton).toBeInTheDocument()
 
       // Verify buttons are in a flex container with gap (using inline styles)
-      // Button is wrapped in a div, so we need to get the parent of the wrapper
-      const container = createButton.closest('div')?.parentElement
+      const container = createButton.closest('div')
       expect(container).toHaveStyle({ display: 'flex' })
       expect(container).toHaveStyle({ gap: '1rem' })
     })
