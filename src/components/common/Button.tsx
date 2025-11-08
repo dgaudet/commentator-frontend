@@ -44,22 +44,24 @@ export const Button: React.FC<ButtonProps> = ({
     },
   }
 
+  const hoverColors: Record<string, string> = {
+    primary: '#0052CC',
+    secondary: '#D1D5DB',
+    danger: '#B91C1C',
+  }
+
   return (
     <button
       type={type}
       className={className}
       style={{ ...baseStyle, ...variantStyles[variant] }}
       onMouseEnter={(e) => {
-        if (variant === 'primary') {
-          e.currentTarget.style.backgroundColor = '#0052CC'
-          e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.15)'
-        }
+        e.currentTarget.style.backgroundColor = hoverColors[variant]
+        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.15)'
       }}
       onMouseLeave={(e) => {
-        if (variant === 'primary') {
-          e.currentTarget.style.backgroundColor = '#0066FF'
-          e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)'
-        }
+        e.currentTarget.style.backgroundColor = variantStyles[variant].backgroundColor as string
+        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)'
       }}
       {...props}
     >

@@ -20,4 +20,4 @@
 # Outcome Comments should be ordered by the Lower Range values
 # sort final comments by student name
 # Design a favicon for the browser tab, something that looks like a notepad
-# Design a top image for the app, something with students, maybe say something like inspiring the next generation
+# Design a top image for the app, something with students, maybe say something like inspiring the next generation, or guiding the leaders of tomorrow
