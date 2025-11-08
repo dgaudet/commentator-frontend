@@ -25,22 +25,34 @@ describe('Button', () => {
 
   it('should support primary variant', () => {
     render(<Button variant="primary">Primary</Button>)
-    expect(screen.getByText('Primary')).toHaveClass('bg-blue-600')
+    expect(screen.getByText('Primary')).toHaveStyle({
+      backgroundColor: '#0066FF',
+      color: '#FFFFFF',
+    })
   })
 
   it('should support secondary variant', () => {
     render(<Button variant="secondary">Secondary</Button>)
-    expect(screen.getByText('Secondary')).toHaveClass('bg-gray-200')
+    expect(screen.getByText('Secondary')).toHaveStyle({
+      backgroundColor: '#E5E7EB',
+      color: '#1F2937',
+    })
   })
 
   it('should support danger variant', () => {
     render(<Button variant="danger">Danger</Button>)
-    expect(screen.getByText('Danger')).toHaveClass('bg-red-600')
+    expect(screen.getByText('Danger')).toHaveStyle({
+      backgroundColor: '#DC2626',
+      color: '#FFFFFF',
+    })
   })
 
   it('should default to primary variant', () => {
     render(<Button>Default</Button>)
-    expect(screen.getByText('Default')).toHaveClass('bg-blue-600')
+    expect(screen.getByText('Default')).toHaveStyle({
+      backgroundColor: '#0066FF',
+      color: '#FFFFFF',
+    })
   })
 
   it('should support custom className', () => {

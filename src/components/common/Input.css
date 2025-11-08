@@ -1,0 +1,24 @@
+/**
+ * Input Component Styles
+ * Focus states using CSS pseudo-selectors for better accessibility
+ * Base styles are kept as inline styles in the component
+ */
+
+/* Focus ring for keyboard navigation - WCAG 2.1 AA compliant */
+.input-field:focus-visible {
+  border: 2px solid #0066FF !important;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1) !important;
+  outline: none;
+}
+
+/* Error state focus ring */
+.input-field.input-error:focus-visible {
+  border: 2px solid #DC2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+  outline: none;
+}
+
+/* Remove default browser outline since we're providing our own focus indicator */
+.input-field:focus {
+  outline: none;
+}

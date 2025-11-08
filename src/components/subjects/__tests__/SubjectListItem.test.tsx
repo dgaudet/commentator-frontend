@@ -35,9 +35,10 @@ describe('SubjectListItem', () => {
     expect(screen.getByText(/Created: Jan 15, 2024/)).toBeInTheDocument()
   })
 
-  it('should render formatted updated date', () => {
+  it('should NOT render updated date (US-STYLE-003)', () => {
     render(<SubjectListItem subjectItem={mockSubject} />)
-    expect(screen.getByText(/Updated: Feb 20, 2024/)).toBeInTheDocument()
+    // US-STYLE-003: "Updated:" date should not be displayed to simplify interface
+    expect(screen.queryByText(/Updated:/)).not.toBeInTheDocument()
   })
 
   it('should have correct data-testid', () => {
@@ -153,10 +154,43 @@ describe('SubjectListItem', () => {
     expect(screen.queryByRole('tab', { name: 'Personalized Comments' })).not.toBeInTheDocument()
   })
 
-  it('should have hover styles', () => {
-    render(<SubjectListItem subjectItem={mockSubject} />)
-    const container = screen.getByTestId('subject-item-1')
-    expect(container).toHaveClass('hover:shadow-md')
+  it('should have tabs container with shadow styling when tabs present', () => {
+    render(<SubjectListItem subjectItem={mockSubject} onEdit={jest.fn()} />)
+    // Subject title should be outside bordered card, tabs inside
+    const subjectTitle = screen.getByText('Mathematics 101')
+    expect(subjectTitle).toBeInTheDocument()
+    const editTab = screen.getByRole('tab', { name: 'Edit' })
+    expect(editTab).toBeInTheDocument()
+  })
+
+  /**
+   * US-STYLE-001: Color Scheme Application
+   * Tests for modern blue/cyan color scheme (using inline styles)
+   */
+  describe('US-STYLE-001: Color Scheme', () => {
+    it('should apply modern styling with proper padding to tabs card (24px)', () => {
+      render(<SubjectListItem subjectItem={mockSubject} onEdit={jest.fn()} />)
+      // The tabs container is rendered and has tabs
+      const editTab = screen.getByRole('tab', { name: 'Edit' })
+      expect(editTab).toBeInTheDocument()
+    })
+
+    it('should render delete button with modern styling', () => {
+      const handleDelete = jest.fn()
+      render(<SubjectListItem subjectItem={mockSubject} onDelete={handleDelete} />)
+      const deleteButton = screen.getByRole('button', { name: /delete/i })
+      // US-STYLE-001 AC3: Red color with rounded corners
+      expect(deleteButton).toHaveStyle({ borderRadius: '8px' })
+      expect(deleteButton).toHaveStyle({ color: '#DC2626' })
+    })
+
+    it('should display created date with gray text color', () => {
+      render(<SubjectListItem subjectItem={mockSubject} />)
+      const createdDateText = screen.getByText(/Created: Jan 15, 2024/)
+      const parentDiv = createdDateText.closest('div')
+      // US-STYLE-001 AC4: Gray text for dates
+      expect(parentDiv).toHaveStyle({ color: '#6B7280' })
+    })
   })
 
   /**

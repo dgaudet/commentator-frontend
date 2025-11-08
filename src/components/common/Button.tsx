@@ -16,18 +16,59 @@ export const Button: React.FC<ButtonProps> = ({
   type = 'button',
   ...props
 }) => {
-  const baseClasses = 'px-4 py-2 rounded font-medium focus:outline-none focus:ring-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+  // US-STYLE-001 AC2: Modern blue button styling from test.webp
+  // Accessibility: Using transparent borders that become visible in high-contrast mode
+  const baseStyle: React.CSSProperties = {
+    display: 'inline-block',
+    padding: '12px 24px',
+    borderRadius: '8px',
+    fontWeight: 600,
+    fontSize: '16px',
+    border: '2px solid transparent',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+  }
 
-  const variantClasses = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+  const variantStyles: Record<string, React.CSSProperties> = {
+    primary: {
+      backgroundColor: '#0066FF',
+      color: '#FFFFFF',
+      borderColor: '#0066FF',
+    },
+    secondary: {
+      backgroundColor: '#E5E7EB',
+      color: '#1F2937',
+      borderColor: '#E5E7EB',
+    },
+    danger: {
+      backgroundColor: '#DC2626',
+      color: '#FFFFFF',
+      borderColor: '#DC2626',
+    },
+  }
+
+  const hoverColors: Record<string, string> = {
+    primary: '#0052CC',
+    secondary: '#D1D5DB',
+    danger: '#B91C1C',
   }
 
   return (
     <button
       type={type}
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+      className={className}
+      style={{ ...baseStyle, ...variantStyles[variant] }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = hoverColors[variant]
+        e.currentTarget.style.borderColor = hoverColors[variant]
+        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.15)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = variantStyles[variant].backgroundColor as string
+        e.currentTarget.style.borderColor = variantStyles[variant].borderColor as string
+        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)'
+      }}
       {...props}
     >
       {children}

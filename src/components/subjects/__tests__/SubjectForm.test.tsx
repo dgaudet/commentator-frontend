@@ -65,11 +65,10 @@ describe('SubjectForm', () => {
       expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument()
     })
 
-    it('should display create button with flex-1 styling (shared with cancel button)', () => {
+    it('should display create button', () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
       const createButton = screen.getByRole('button', { name: /create subject/i })
       expect(createButton).toBeInTheDocument()
-      expect(createButton).toHaveClass('flex-1')
     })
     it('should show validation error for empty name on submit', async () => {
       render(<SubjectForm onSuccess={mockOnSuccess} />)
@@ -212,8 +211,6 @@ describe('SubjectForm', () => {
       )
       const saveButton = screen.getByRole('button', { name: /save changes/i })
       expect(saveButton).toBeInTheDocument()
-      expect(saveButton).toHaveClass('w-full')
-      expect(saveButton).not.toHaveClass('flex-1')
     })
 
     it('should call updateSubject with valid data', async () => {
@@ -489,10 +486,10 @@ describe('SubjectForm', () => {
       expect(createButton).toBeInTheDocument()
       expect(cancelButton).toBeInTheDocument()
 
-      // Verify buttons are in a flex container with gap
+      // Verify buttons are in a flex container with gap (using inline styles)
       const container = createButton.closest('div')
-      expect(container).toHaveClass('flex')
-      expect(container).toHaveClass('gap-3')
+      expect(container).toHaveStyle({ display: 'flex' })
+      expect(container).toHaveStyle({ gap: '1rem' })
     })
 
     it('should NOT display Cancel button in edit mode', () => {

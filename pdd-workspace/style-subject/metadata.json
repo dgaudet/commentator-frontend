@@ -1,0 +1,21 @@
+{
+  "feature": "style-subject",
+  "complexity": {
+    "level": "L0-ATOMIC",
+    "reasoning": "Pure CSS/styling changes to SubjectListItem component. No logic changes, API modifications, or state management updates. 2-3 simple stories, 1-3 days effort, single component scope.",
+    "assessedAt": "2025-11-08",
+    "estimatedDuration": "1-3 days",
+    "storyCount": 3
+  },
+  "phases": {
+    "planning": "IN_PROGRESS",
+    "architecture": "SKIPPED",
+    "implementation": "NOT_STARTED",
+    "validation": "NOT_STARTED"
+  },
+  "artifacts": {
+    "required": ["user-stories.md"],
+    "optional": [],
+    "created": ["metadata.json"]
+  }
+}

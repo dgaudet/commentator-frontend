@@ -1,11 +1,12 @@
+/* US-STYLE-001: Modern light blue/cyan color scheme */
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Force light color scheme */
+  color-scheme: light;
+  color: #213547;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,18 +24,14 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  /* US-STYLE-001 AC1: Light blue/cyan gradient background */
+  background: linear-gradient(180deg, #E0F7FF 0%, #FFFFFF 100%);
+  background-attachment: fixed;
 }
 
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
+  padding: 0;
+  text-align: left;
 }
