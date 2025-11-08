@@ -20,8 +20,4 @@
 # Outcome Comments should be ordered by the Lower Range values
 # sort final comments by student name
 # Design a favicon for the browser tab, something that looks like a notepad
-
-
-Can you create some stories, to restyle the subject component. The Frontend engineer should look at the image images/test.webp and use the labels, inputs, buttons, and background
-styles to style the subject component. But use the layout from images/SubjectLayout.png, you can remove the updated at label and data from the UI for now. Make sure to use the
-colors from images/test.webp for the background and text.
+# Design a top image for the app, something with students, maybe say something like inspiring the next generation
