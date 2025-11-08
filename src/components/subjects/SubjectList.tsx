@@ -303,9 +303,26 @@ export const SubjectList: React.FC<SubjectListProps> = ({
 
   // Success state - render dropdown selector + selected subject
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Your Subjects</h2>
+    <div style={{ padding: '2rem' }}>
+      {/* US-STYLE-002 AC1: Header with button beside title */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1.5rem',
+          marginBottom: '2rem',
+        }}
+      >
+        <h2
+          style={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            color: '#111827',
+            margin: 0,
+          }}
+        >
+          Your Subjects
+        </h2>
         {onAddSubject && (
           <Button onClick={handleAddSubject} variant="primary">
             Add Subject
@@ -314,14 +331,23 @@ export const SubjectList: React.FC<SubjectListProps> = ({
       </div>
 
       {error && (
-        <div className="mb-4">
+        <div style={{ marginBottom: '1rem' }}>
           <ErrorMessage message={error} onDismiss={handleClearError} />
         </div>
       )}
 
       {/* Dropdown selector (US-STYLE-001 AC5, US-STYLE-002 AC2) */}
-      <div className="mb-8">
-        <label htmlFor="subject-selector" className="block text-xl font-medium text-slate-700 mb-3">
+      <div style={{ marginBottom: '2rem', maxWidth: '500px' }}>
+        <label
+          htmlFor="subject-selector"
+          style={{
+            display: 'block',
+            fontSize: '1.25rem',
+            fontWeight: 500,
+            color: '#1E3A5F',
+            marginBottom: '0.75rem',
+          }}
+        >
           Select a Subject
         </label>
         <select
@@ -329,8 +355,18 @@ export const SubjectList: React.FC<SubjectListProps> = ({
           value={selectedSubjectId ?? ''}
           onChange={handleSelectSubject}
           disabled={isLoading}
-          className="block w-full rounded-lg border-2 border-slate-700 bg-gray-50 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600 text-base px-4 py-3"
           aria-label="Select a subject to view"
+          style={{
+            display: 'block',
+            width: '100%',
+            padding: '12px 16px',
+            fontSize: '16px',
+            border: '2px solid #1E3A5F',
+            borderRadius: '8px',
+            backgroundColor: '#F5F8FA',
+            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+            cursor: 'pointer',
+          }}
         >
           <option value="">
             {isLoading ? 'Loading subjects...' : 'Select a subject...'}

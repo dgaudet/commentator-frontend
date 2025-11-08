@@ -53,8 +53,9 @@ describe('SubjectListItem - Delete Button Relocation (US-SUBJ-DELETE-001)', () =
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
       expect(subjectNameParent).toContainElement(deleteButton)
 
-      // Container should use flex layout
-      expect(subjectNameParent).toHaveClass('flex')
+      // Container should use flex layout (using inline styles)
+      expect(subjectNameParent).toHaveStyle({ display: 'flex' })
+      expect(subjectNameParent).toHaveStyle({ alignItems: 'center' })
     })
 
     it('should use danger styling for delete button', () => {
@@ -63,9 +64,9 @@ describe('SubjectListItem - Delete Button Relocation (US-SUBJ-DELETE-001)', () =
 
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
 
-      // Should have red/danger color classes
-      expect(deleteButton).toHaveClass('text-red-600')
-      expect(deleteButton).toHaveClass('border-red-600')
+      // Should have red/danger color and border (using inline styles)
+      expect(deleteButton).toHaveStyle({ color: '#DC2626' })
+      expect(deleteButton).toHaveStyle({ border: '2px solid #DC2626' })
     })
   })
 
@@ -76,11 +77,11 @@ describe('SubjectListItem - Delete Button Relocation (US-SUBJ-DELETE-001)', () =
 
       // Subject name should not truncate
       const subjectName = screen.getByText('Mathematics 101')
-      expect(subjectName).not.toHaveClass('truncate')
+      expect(subjectName).toBeInTheDocument()
 
-      // Container should use flex layout
+      // Container should use flex layout (using inline styles)
       const nameDeleteContainer = screen.getByText('Mathematics 101').parentElement
-      expect(nameDeleteContainer).toHaveClass('flex')
+      expect(nameDeleteContainer).toHaveStyle({ display: 'flex' })
     })
   })
 

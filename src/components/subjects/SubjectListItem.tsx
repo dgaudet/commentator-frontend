@@ -188,51 +188,90 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
 
   return (
     <div
-      className="border border-gray-200 rounded-lg p-6 mb-3 hover:shadow-md transition-shadow bg-white"
+      style={{ marginBottom: '1.5rem' }}
       data-testid={`subject-item-${subjectItem.id}`}
     >
-      <div className="flex justify-between items-start">
-        {/* Left side: Subject name with inline delete button + dates */}
-        <div className="flex-1">
-          {/* Subject name + delete button on same line (US-STYLE-002 AC3) */}
-          <div className="flex items-center gap-4 mb-3">
-            <h3
-              className="text-3xl font-bold text-gray-900 cursor-pointer hover:text-blue-600"
-              onClick={() => onView?.(subjectItem.id)}
-              role={onView ? 'button' : undefined}
-              tabIndex={onView ? 0 : undefined}
-              onKeyDown={(e) => {
-                if (onView && (e.key === 'Enter' || e.key === ' ')) {
-                  e.preventDefault()
-                  onView(subjectItem.id)
-                }
+      {/* Subject info section - OUTSIDE the bordered card */}
+      <div style={{ marginBottom: '1rem' }}>
+        {/* Subject name + delete button on same line (US-STYLE-002 AC3) */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            marginBottom: '0.5rem',
+          }}
+        >
+          <h3
+            onClick={() => onView?.(subjectItem.id)}
+            role={onView ? 'button' : undefined}
+            tabIndex={onView ? 0 : undefined}
+            onKeyDown={(e) => {
+              if (onView && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault()
+                onView(subjectItem.id)
+              }
+            }}
+            style={{
+              fontSize: '1.875rem',
+              fontWeight: 'bold',
+              color: '#111827',
+              cursor: onView ? 'pointer' : 'default',
+              margin: 0,
+            }}
+          >
+            {subjectItem.name}
+          </h3>
+
+          {/* Delete button beside subject name (US-SUBJ-DELETE-001, US-STYLE-001 AC3) */}
+          {onDelete && (
+            <button
+              onClick={() => onDelete(subjectItem.id)}
+              aria-label={`Delete ${subjectItem.name}`}
+              data-position="beside-name"
+              style={{
+                padding: '8px 16px',
+                fontSize: '14px',
+                fontWeight: 600,
+                color: '#DC2626',
+                backgroundColor: 'transparent',
+                border: '2px solid #DC2626',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#FEF2F2'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent'
               }}
             >
-              {subjectItem.name}
-            </h3>
-
-            {/* Delete button beside subject name (US-SUBJ-DELETE-001, US-STYLE-001 AC3) */}
-            {onDelete && (
-              <button
-                onClick={() => onDelete(subjectItem.id)}
-                className="text-red-600 hover:text-red-700 border border-red-600 hover:bg-red-50 font-medium px-3 py-1 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
-                aria-label={`Delete ${subjectItem.name}`}
-                data-position="beside-name"
-              >
-                Delete
-              </button>
-            )}
-          </div>
-
-          {/* Created date (US-STYLE-003: Updated date removed) */}
-          <div className="text-sm text-gray-500">
-            <p>Created: {formatDate(subjectItem.createdAt)}</p>
-          </div>
+              Delete
+            </button>
+          )}
         </div>
 
-        {/* Right side: Tabbed interface (US-TAB-002) */}
-        {tabs.length > 0 && (
-          <div className="ml-4">
+        {/* Created date (US-STYLE-003: Updated date removed) */}
+        <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+          <p style={{ margin: 0 }}>Created: {formatDate(subjectItem.createdAt)}</p>
+        </div>
+      </div>
+
+      {/* Tabs and Panels section - INSIDE bordered card */}
+      {tabs.length > 0 && (
+        <div
+          style={{
+            border: '1px solid #E5E7EB',
+            borderRadius: '8px',
+            padding: '1.5rem',
+            backgroundColor: '#FFFFFF',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          {/* Tabbed interface (US-TAB-002) */}
+          <div style={{ marginBottom: '1rem' }}>
             <Tabs
               key={tabsKey}
               tabs={tabs}
@@ -240,15 +279,12 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
               onChange={handleTabChange}
             />
           </div>
-        )}
-      </div>
 
-      {/* Tab Panels (US-TABPANEL-002) - Display content below tabs */}
-      {tabs.length > 0 && (
-        <>
-          {/* Edit Panel */}
-          {onEdit && (
-            <TabPanel id="edit" activeTabId={activeTab} tabId="edit">
+          {/* Tab Panels (US-TABPANEL-002) - Display content below tabs */}
+          <>
+            {/* Edit Panel */}
+            {onEdit && (
+              <TabPanel id="edit" activeTabId={activeTab} tabId="edit">
               <div data-testid="edit-panel-content">
                 {onEditSuccess
                   ? (
@@ -266,7 +302,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                     )}
               </div>
             </TabPanel>
-          )}
+            )}
 
           {/* Outcome Comments Panel */}
           {onViewOutcomeComments && (
@@ -356,7 +392,8 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
               </div>
             </TabPanel>
           )}
-        </>
+          </>
+        </div>
       )}
     </div>
   )
