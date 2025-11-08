@@ -100,6 +100,11 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onViewFinalComments,
 }) => {
   /**
+   * Manage delete button hover state with React state for predictable behavior
+   * Avoids issues with DOM manipulation during re-renders
+   */
+  const [isDeleteHovered, setIsDeleteHovered] = useState(false)
+  /**
    * Build tabs array dynamically based on provided callbacks
    * Only includes tabs for callbacks that are provided
    */
@@ -227,6 +232,8 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
           {onDelete && (
             <button
               onClick={() => onDelete(subjectItem.id)}
+              onMouseEnter={() => setIsDeleteHovered(true)}
+              onMouseLeave={() => setIsDeleteHovered(false)}
               aria-label={`Delete ${subjectItem.name}`}
               data-position="beside-name"
               style={{
@@ -234,18 +241,12 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                 fontSize: '14px',
                 fontWeight: 600,
                 color: '#DC2626',
-                backgroundColor: 'transparent',
+                backgroundColor: isDeleteHovered ? '#FEF2F2' : 'transparent',
                 border: '2px solid #DC2626',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#FEF2F2'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent'
               }}
             >
               Delete
