@@ -53,13 +53,13 @@ describe('SubjectListItem', () => {
     expect(handleView).toHaveBeenCalledWith(1)
   })
 
-  it('should render Edit tab when onEdit provided', () => {
+  it('should render Edit Subject tab when onEdit provided', () => {
     const handleEdit = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onEdit={handleEdit} />)
-    expect(screen.getByRole('tab', { name: 'Edit' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Edit Subject' })).toBeInTheDocument()
   })
 
-  it('should show inline edit form when Edit tab clicked', () => {
+  it('should show inline edit form when Edit Subject tab clicked', () => {
     const handleEdit = jest.fn()
     const handleEditSuccess = jest.fn()
     const handleEditCancel = jest.fn()
@@ -71,7 +71,7 @@ describe('SubjectListItem', () => {
         onEditCancel={handleEditCancel}
       />,
     )
-    fireEvent.click(screen.getByRole('tab', { name: 'Edit' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Edit Subject' }))
 
     // Edit panel should be visible with inline form
     expect(screen.getByTestId('edit-panel-content')).toBeInTheDocument()
@@ -148,7 +148,7 @@ describe('SubjectListItem', () => {
         onViewClasses={handleViewClasses}
       />,
     )
-    expect(screen.getByRole('tab', { name: 'Edit' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Edit Subject' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Manage Classes' })).toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: 'Outcome Comments' })).not.toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: 'Personalized Comments' })).not.toBeInTheDocument()
@@ -159,7 +159,7 @@ describe('SubjectListItem', () => {
     // Subject title should be outside bordered card, tabs inside
     const subjectTitle = screen.getByText('Mathematics 101')
     expect(subjectTitle).toBeInTheDocument()
-    const editTab = screen.getByRole('tab', { name: 'Edit' })
+    const editTab = screen.getByRole('tab', { name: 'Edit Subject' })
     expect(editTab).toBeInTheDocument()
   })
 
@@ -171,7 +171,7 @@ describe('SubjectListItem', () => {
     it('should apply modern styling with proper padding to tabs card (24px)', () => {
       render(<SubjectListItem subjectItem={mockSubject} onEdit={jest.fn()} />)
       // The tabs container is rendered and has tabs
-      const editTab = screen.getByRole('tab', { name: 'Edit' })
+      const editTab = screen.getByRole('tab', { name: 'Edit Subject' })
       expect(editTab).toBeInTheDocument()
     })
 
@@ -203,7 +203,7 @@ describe('SubjectListItem', () => {
         render(<SubjectListItem subjectItem={mockSubject} onEdit={jest.fn()} />)
 
         // Edit tab should be selected by default (first tab)
-        const editTab = screen.getByRole('tab', { name: 'Edit' })
+        const editTab = screen.getByRole('tab', { name: 'Edit Subject' })
         expect(editTab).toHaveAttribute('aria-selected', 'true')
 
         // Edit panel should be visible
@@ -580,7 +580,7 @@ describe('SubjectListItem', () => {
 
         // Should default to Edit tab (first available tab)
         await waitFor(() => {
-          expect(screen.getByRole('tab', { name: 'Edit' })).toHaveAttribute('aria-selected', 'true')
+          expect(screen.getByRole('tab', { name: 'Edit Subject' })).toHaveAttribute('aria-selected', 'true')
         })
         expect(screen.getByTestId('edit-panel-content')).toBeInTheDocument()
         expect(screen.queryByRole('tab', { name: 'Outcome Comments' })).not.toBeInTheDocument()

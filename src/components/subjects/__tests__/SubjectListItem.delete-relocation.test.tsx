@@ -115,7 +115,7 @@ describe('SubjectListItem - Delete Button Relocation (US-SUBJ-DELETE-001)', () =
       render(<SubjectListItem subjectItem={mockSubject} onEdit={handleEdit} onDelete={handleDelete} />)
 
       // Edit tab should exist in tablist (US-TAB-002)
-      expect(screen.getByRole('tab', { name: 'Edit' })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: 'Edit Subject' })).toBeInTheDocument()
 
       // Delete button should still exist beside name
       expect(screen.getByRole('button', { name: /delete mathematics 101/i })).toBeInTheDocument()

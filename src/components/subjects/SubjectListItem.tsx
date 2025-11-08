@@ -112,7 +112,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
     const tabsList: Tab[] = []
 
     if (onEdit) {
-      tabsList.push({ id: 'edit', label: 'Edit' })
+      tabsList.push({ id: 'edit', label: 'Edit Subject' })
     }
     if (onViewOutcomeComments) {
       tabsList.push({ id: 'outcome', label: 'Outcome Comments' })
