@@ -5,6 +5,7 @@
 ## There should be a drop-down for personal comment, which when you pick it, should post into a text box below you can edit
 ### then when you choose it, we could have another box below that puts the 2 sections together with a copy button
 ## perhaps then I need a button to view all comments for class that you can print
+## picking the personal comment should be a type ahead search box
 ## lower priority
 ### we should have a way to bulk add students with their grade
 ### The label for selecting a class should be `Select a Class to work with`
@@ -18,3 +19,9 @@
 ## Should it also delete the final comments associated? should the backend do the deletion?
 # Outcome Comments should be ordered by the Lower Range values
 # sort final comments by student name
+# Design a favicon for the browser tab, something that looks like a notepad
+
+
+Can you create some stories, to restyle the subject component. The Frontend engineer should look at the image images/test.webp and use the labels, inputs, buttons, and background
+styles to style the subject component. But use the layout from images/SubjectLayout.png, you can remove the updated at label and data from the UI for now. Make sure to use the
+colors from images/test.webp for the background and text.
