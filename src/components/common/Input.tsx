@@ -1,8 +1,10 @@
 /**
  * Input Component
  * Form input with label, error handling, and accessibility features
+ * Uses CSS :focus-visible for proper keyboard navigation and assistive technology support
  */
 import React from 'react'
+import './Input.css'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string
@@ -37,7 +39,7 @@ export const Input: React.FC<InputProps> = ({
       </label>
       <input
         id={id}
-        className={className}
+        className={`input-field ${error ? 'input-error' : ''} ${className}`.trim()}
         style={{
           display: 'block',
           width: '100%',
@@ -52,14 +54,6 @@ export const Input: React.FC<InputProps> = ({
         aria-invalid={error ? 'true' : 'false'}
         aria-describedby={error ? `${id}-error` : undefined}
         required={required}
-        onFocus={(e) => {
-          e.currentTarget.style.border = '2px solid #0066FF'
-          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0, 102, 255, 0.1)'
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.border = error ? '2px solid #DC2626' : '2px solid #1E3A5F'
-          e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.05)'
-        }}
         {...props}
       />
       {error && (
