@@ -188,7 +188,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
 
   return (
     <div
-      className="border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow bg-white"
+      className="border border-gray-200 rounded-lg p-6 mb-3 hover:shadow-md transition-shadow bg-white"
       data-testid={`subject-item-${subjectItem.id}`}
     >
       <div className="flex justify-between items-start">
@@ -211,11 +211,11 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
               {subjectItem.name}
             </h3>
 
-            {/* Delete button beside subject name (US-SUBJ-DELETE-001) */}
+            {/* Delete button beside subject name (US-SUBJ-DELETE-001, US-STYLE-001 AC3) */}
             {onDelete && (
               <button
                 onClick={() => onDelete(subjectItem.id)}
-                className="text-red-600 hover:text-red-700 border border-red-600 hover:bg-red-50 font-medium px-3 py-1 rounded text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+                className="text-red-600 hover:text-red-700 border border-red-600 hover:bg-red-50 font-medium px-3 py-1 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
                 aria-label={`Delete ${subjectItem.name}`}
                 data-position="beside-name"
               >
@@ -224,10 +224,9 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
             )}
           </div>
 
-          {/* Created/Updated dates */}
+          {/* Created date (US-STYLE-003: Updated date removed) */}
           <div className="text-sm text-gray-500">
             <p>Created: {formatDate(subjectItem.createdAt)}</p>
-            <p>Updated: {formatDate(subjectItem.updatedAt)}</p>
           </div>
         </div>
 

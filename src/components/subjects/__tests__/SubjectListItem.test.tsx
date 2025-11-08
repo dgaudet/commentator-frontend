@@ -35,9 +35,10 @@ describe('SubjectListItem', () => {
     expect(screen.getByText(/Created: Jan 15, 2024/)).toBeInTheDocument()
   })
 
-  it('should render formatted updated date', () => {
+  it('should NOT render updated date (US-STYLE-003)', () => {
     render(<SubjectListItem subjectItem={mockSubject} />)
-    expect(screen.getByText(/Updated: Feb 20, 2024/)).toBeInTheDocument()
+    // US-STYLE-003: "Updated:" date should not be displayed to simplify interface
+    expect(screen.queryByText(/Updated:/)).not.toBeInTheDocument()
   })
 
   it('should have correct data-testid', () => {
@@ -157,6 +158,35 @@ describe('SubjectListItem', () => {
     render(<SubjectListItem subjectItem={mockSubject} />)
     const container = screen.getByTestId('subject-item-1')
     expect(container).toHaveClass('hover:shadow-md')
+  })
+
+  /**
+   * US-STYLE-001: Color Scheme Application
+   * Tests for modern blue/cyan color scheme
+   */
+  describe('US-STYLE-001: Color Scheme', () => {
+    it('should apply modern styling with proper padding (24px)', () => {
+      render(<SubjectListItem subjectItem={mockSubject} />)
+      const container = screen.getByTestId('subject-item-1')
+      // US-STYLE-001 AC5: 24px padding for subject card
+      expect(container).toHaveClass('p-6') // Tailwind p-6 = 24px
+    })
+
+    it('should render delete button with modern styling', () => {
+      const handleDelete = jest.fn()
+      render(<SubjectListItem subjectItem={mockSubject} onDelete={handleDelete} />)
+      const deleteButton = screen.getByRole('button', { name: /delete/i })
+      // US-STYLE-001 AC3: Red color with rounded corners
+      expect(deleteButton).toHaveClass('rounded-lg') // 8px border-radius
+    })
+
+    it('should display created date with gray text color', () => {
+      render(<SubjectListItem subjectItem={mockSubject} />)
+      const createdDateText = screen.getByText(/Created: Jan 15, 2024/)
+      const parentDiv = createdDateText.closest('div')
+      // US-STYLE-001 AC4: Gray text for dates
+      expect(parentDiv).toHaveClass('text-gray-500')
+    })
   })
 
   /**

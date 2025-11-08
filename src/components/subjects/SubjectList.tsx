@@ -303,7 +303,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
 
   // Success state - render dropdown selector + selected subject
   return (
-    <div>
+    <div className="bg-gradient-to-b from-cyan-50 to-white min-h-screen p-6 rounded-lg">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Your Subjects</h2>
         {onAddSubject && (
@@ -319,9 +319,9 @@ export const SubjectList: React.FC<SubjectListProps> = ({
         </div>
       )}
 
-      {/* Dropdown selector */}
+      {/* Dropdown selector (US-STYLE-001 AC5) */}
       <div className="mb-6">
-        <label htmlFor="subject-selector" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="subject-selector" className="block text-sm font-medium text-slate-700 mb-2">
           Select a Subject
         </label>
         <select
@@ -329,7 +329,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
           value={selectedSubjectId ?? ''}
           onChange={handleSelectSubject}
           disabled={isLoading}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          className="block w-full rounded-lg border border-slate-700 bg-gray-50 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600 sm:text-sm px-4 py-2"
           aria-label="Select a subject to view"
         >
           <option value="">
