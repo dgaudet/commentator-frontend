@@ -194,10 +194,10 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
       <div className="flex justify-between items-start">
         {/* Left side: Subject name with inline delete button + dates */}
         <div className="flex-1">
-          {/* Subject name + delete button on same line */}
-          <div className="flex items-center gap-3 mb-2">
+          {/* Subject name + delete button on same line (US-STYLE-002 AC3) */}
+          <div className="flex items-center gap-4 mb-3">
             <h3
-              className="text-lg font-semibold text-gray-900 cursor-pointer hover:text-blue-600"
+              className="text-3xl font-bold text-gray-900 cursor-pointer hover:text-blue-600"
               onClick={() => onView?.(subjectItem.id)}
               role={onView ? 'button' : undefined}
               tabIndex={onView ? 0 : undefined}
