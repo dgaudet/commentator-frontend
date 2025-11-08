@@ -147,19 +147,44 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
   }, [])
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+    <div
+      style={
+        isEditMode
+          ? {
+              // Edit mode: Left-aligned, no card styling
+              padding: '0',
+              maxWidth: '500px',
+            }
+          : {
+              // Create mode: Centered card with styling
+              backgroundColor: '#FFFFFF',
+              borderRadius: '8px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              padding: '2rem',
+              maxWidth: '600px',
+              margin: '0 auto',
+            }
+      }
+    >
+      <h2
+        style={{
+          fontSize: '1.5rem',
+          fontWeight: 'bold',
+          color: '#111827',
+          marginBottom: '2rem',
+        }}
+      >
         {isEditMode ? 'Edit Subject' : 'Add New Subject'}
       </h2>
 
       {errors.submit && (
-        <div className="mb-4">
+        <div style={{ marginBottom: '1rem' }}>
           <ErrorMessage message={errors.submit} />
         </div>
       )}
 
       {errors.duplicate && (
-        <div className="mb-4">
+        <div style={{ marginBottom: '1rem' }}>
           <ErrorMessage message={errors.duplicate} />
         </div>
       )}
@@ -177,22 +202,28 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
           placeholder="e.g. Mathematics 101"
         />
 
-        <div className={isEditMode ? 'mt-6' : 'flex gap-3 mt-6'}>
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={isSubmitting}
-            className={isEditMode ? 'w-full' : 'flex-1'}
-          >
-            {isEditMode ? 'Save Changes' : 'Create Subject'}
-          </Button>
+        <div
+          style={{
+            marginTop: '1.5rem',
+            display: 'flex',
+            gap: isEditMode ? '0' : '1rem',
+          }}
+        >
+          <div style={{ flex: isEditMode ? '1' : 'initial' }}>
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isSubmitting}
+            >
+              {isEditMode ? 'Save Changes' : 'Create Subject'}
+            </Button>
+          </div>
           {!isEditMode && onCancel && (
             <Button
               type="button"
               variant="secondary"
               onClick={onCancel}
               disabled={isSubmitting}
-              className="flex-1"
             >
               Cancel
             </Button>
