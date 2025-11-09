@@ -25,13 +25,14 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import type { Class, CreateClassRequest, UpdateClassRequest } from '../../types'
+import type { Class, CreateClassRequest, UpdateClassRequest, FinalComment, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Tabs, Tab } from '../common/Tabs'
 import { TabPanel } from '../common/TabPanel'
+import { FinalCommentsModal } from '../finalComments/FinalCommentsModal'
 import { modalStyles } from '../../styles/modalStyles'
 import styles from '../common/ConfirmationModal.module.css'
 
@@ -47,6 +48,13 @@ interface ClassManagementModalProps<T extends { id: number; name: string }> {
   checkFinalCommentsCount?: (classId: number) => Promise<number>
   loading: boolean
   error: string | null
+  // US-CLASS-TABS-003: Final Comments tab props
+  finalComments?: FinalComment[]
+  onCreateFinalComment?: (request: CreateFinalCommentRequest) => Promise<void>
+  onUpdateFinalComment?: (id: number, request: UpdateFinalCommentRequest) => Promise<void>
+  onDeleteFinalComment?: (id: number) => Promise<void>
+  finalCommentsLoading?: boolean
+  finalCommentsError?: string | null
 }
 
 export const ClassManagementModal = <T extends { id: number; name: string }>({
@@ -61,6 +69,13 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
   checkFinalCommentsCount,
   loading,
   error,
+  // US-CLASS-TABS-003: Final Comments tab props
+  finalComments = [],
+  onCreateFinalComment,
+  onUpdateFinalComment,
+  onDeleteFinalComment,
+  finalCommentsLoading = false,
+  finalCommentsError = null,
 }: ClassManagementModalProps<T>) => {
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null)
   const [className, setClassName] = useState('')
@@ -81,7 +96,6 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
     checkFailed: false,
   })
   const [validationError, setValidationError] = useState('')
-  const [isEditMode, setIsEditMode] = useState(false)
 
   // US-CLASS-TABS-001: Tab group state management (TDD GREEN phase)
   // Track active tab state - default to 'edit-class'
@@ -123,12 +137,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
       if (selectedClass) {
         setClassName(selectedClass.name)
         setClassYear(selectedClass.year)
-        setIsEditMode(true)
       }
     } else {
       setClassName('')
       setClassYear(new Date().getFullYear())
-      setIsEditMode(false)
     }
     setValidationError('')
   }, [selectedClassId, classes])
@@ -397,11 +409,28 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                         </div>
                       </TabPanel>
 
-                      {/* Final Comments Tab Panel */}
+                      {/* Final Comments Tab Panel - US-CLASS-TABS-003 */}
                       <TabPanel isActive={activeClassTab === 'final-comments'}>
-                        <div style={modalStyles.section}>
-                          <p>Final Comments content will be integrated in US-CLASS-TABS-003</p>
-                        </div>
+                        {selectedClassId && onCreateFinalComment && onUpdateFinalComment && onDeleteFinalComment
+                          ? (
+                              <FinalCommentsModal
+                                isOpen={true}
+                                onClose={() => {}}
+                                entityData={classes.find(c => c.id === selectedClassId)!}
+                                finalComments={finalComments}
+                                onCreateComment={onCreateFinalComment}
+                                onUpdateComment={onUpdateFinalComment}
+                                onDeleteComment={onDeleteFinalComment}
+                                loading={finalCommentsLoading}
+                                error={finalCommentsError}
+                                embedded={true}
+                              />
+                            )
+                          : (
+                              <div style={modalStyles.section}>
+                                <p>Final Comments functionality not available</p>
+                              </div>
+                            )}
                       </TabPanel>
                     </>
                   )

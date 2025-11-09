@@ -20,7 +20,7 @@ import { SubjectForm } from './SubjectForm'
 import { OutcomeCommentsModal } from '../outcomeComments/OutcomeCommentsModal'
 import { PersonalizedCommentsModal } from '../personalizedComments/PersonalizedCommentsModal'
 import { ClassManagementModal } from '../classes/ClassManagementModal'
-import type { OutcomeComment, PersonalizedComment, Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest } from '../../types'
+import type { OutcomeComment, PersonalizedComment, Class, FinalComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
 /**
  * No-op function for modal components embedded in tab panels
@@ -62,6 +62,13 @@ interface SubjectListItemProps {
   classesLoading?: boolean
   classesError?: string | null
   onViewFinalComments?: (classData: Class) => void
+  // US-CLASS-TABS-003: Final Comments tab props for embedded mode
+  finalComments?: FinalComment[]
+  onCreateFinalComment?: (request: CreateFinalCommentRequest) => Promise<void>
+  onUpdateFinalComment?: (id: number, request: UpdateFinalCommentRequest) => Promise<void>
+  onDeleteFinalComment?: (id: number) => Promise<void>
+  finalCommentsLoading?: boolean
+  finalCommentsError?: string | null
 }
 
 export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
@@ -98,6 +105,13 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   classesLoading = false,
   classesError = null,
   onViewFinalComments,
+  // US-CLASS-TABS-003: Final Comments tab props for embedded mode
+  finalComments = [],
+  onCreateFinalComment,
+  onUpdateFinalComment,
+  onDeleteFinalComment,
+  finalCommentsLoading = false,
+  finalCommentsError = null,
 }) => {
   /**
    * Manage delete button hover state with React state for predictable behavior
@@ -381,6 +395,12 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                     onViewFinalComments={onViewFinalComments}
                     loading={classesLoading}
                     error={classesError}
+                    finalComments={finalComments}
+                    onCreateFinalComment={onCreateFinalComment}
+                    onUpdateFinalComment={onUpdateFinalComment}
+                    onDeleteFinalComment={onDeleteFinalComment}
+                    finalCommentsLoading={finalCommentsLoading}
+                    finalCommentsError={finalCommentsError}
                   />
                     )
                   : (
