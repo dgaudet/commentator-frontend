@@ -412,7 +412,6 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                           ? (
                               <FinalCommentsModal
                                 isOpen={true}
-                                onClose={() => {}}
                                 entityData={classes.find(c => c.id === selectedClassId)!}
                                 finalComments={finalComments}
                                 onCreateComment={onCreateFinalComment}

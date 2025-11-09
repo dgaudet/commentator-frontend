@@ -25,5 +25,8 @@
 Style the delete subject button to match the other delete buttons in the app
 When adding a new class, it should be selected by default
 Ensure the close button is removed from the code for the final comments
+Ensure the close button is removed from the other classes and tests as well
+
+clean up the fina comments component, the add final comment should be at the top, The component label isn't needed, it needs to be styled.
 
 Remove the Edit Subject label from the subject component 

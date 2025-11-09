@@ -53,7 +53,6 @@ const mockFinalComments: FinalComment[] = [
 
 describe('FinalCommentsModal - US-FINAL-001', () => {
   const mockHandlers = {
-    onClose: jest.fn(),
     onCreateComment: jest.fn(),
     onUpdateComment: jest.fn(),
     onDeleteComment: jest.fn(),
@@ -68,7 +67,6 @@ describe('FinalCommentsModal - US-FINAL-001', () => {
       render(
         <FinalCommentsModal
           isOpen={false}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -85,7 +83,6 @@ describe('FinalCommentsModal - US-FINAL-001', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -104,7 +101,6 @@ describe('FinalCommentsModal - US-FINAL-001', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -116,24 +112,6 @@ describe('FinalCommentsModal - US-FINAL-001', () => {
       )
       expect(screen.getByText(/Final Comments - Grade 10 Math/i)).toBeInTheDocument()
     })
-
-    it('should have close button', () => {
-      render(
-        <FinalCommentsModal
-          isOpen={true}
-          onClose={mockHandlers.onClose}
-          entityData={mockClass}
-          finalComments={[]}
-          onCreateComment={mockHandlers.onCreateComment}
-          onUpdateComment={mockHandlers.onUpdateComment}
-          onDeleteComment={mockHandlers.onDeleteComment}
-          loading={false}
-          error={null}
-        />,
-      )
-      const closeButton = screen.getByRole('button', { name: /close modal/i })
-      expect(closeButton).toBeInTheDocument()
-    })
   })
 
   describe('Accessibility (AC 1-4)', () => {
@@ -141,7 +119,6 @@ describe('FinalCommentsModal - US-FINAL-001', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -160,7 +137,6 @@ describe('FinalCommentsModal - US-FINAL-001', () => {
 
 describe('FinalCommentsModal - US-FINAL-002: View List', () => {
   const mockHandlers = {
-    onClose: jest.fn(),
     onCreateComment: jest.fn(),
     onUpdateComment: jest.fn(),
     onDeleteComment: jest.fn(),
@@ -175,7 +151,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -192,7 +167,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={mockFinalComments}
           onCreateComment={mockHandlers.onCreateComment}
@@ -211,7 +185,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -230,7 +203,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -250,7 +222,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={mockFinalComments}
           onCreateComment={mockHandlers.onCreateComment}
@@ -270,7 +241,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -287,7 +257,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[2]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -304,7 +273,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={mockFinalComments}
           onCreateComment={mockHandlers.onCreateComment}
@@ -323,7 +291,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -340,7 +307,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[2]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -358,7 +324,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -376,7 +341,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={mockFinalComments}
           onCreateComment={mockHandlers.onCreateComment}
@@ -398,7 +362,6 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
 
 describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
   const mockHandlers = {
-    onClose: jest.fn(),
     onCreateComment: jest.fn(),
     onUpdateComment: jest.fn(),
     onDeleteComment: jest.fn(),
@@ -414,7 +377,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -435,7 +397,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -453,7 +414,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -472,7 +432,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -493,7 +452,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -511,7 +469,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -534,7 +491,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -557,7 +513,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -583,7 +538,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -612,7 +566,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -641,7 +594,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -672,7 +624,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -699,7 +650,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -738,7 +688,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -771,7 +720,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -805,7 +753,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -839,7 +786,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -869,7 +815,6 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
 
 describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
   const mockHandlers = {
-    onClose: jest.fn(),
     onCreateComment: jest.fn(),
     onUpdateComment: jest.fn(),
     onDeleteComment: jest.fn(),
@@ -885,7 +830,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={mockFinalComments}
           onCreateComment={mockHandlers.onCreateComment}
@@ -907,7 +851,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -931,7 +874,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -957,7 +899,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -981,7 +922,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[2]]} // Bob (no last name)
           onCreateComment={mockHandlers.onCreateComment}
@@ -1007,7 +947,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -1032,7 +971,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -1056,7 +994,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -1088,7 +1025,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -1116,7 +1052,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -1148,7 +1083,6 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
-          onClose={mockHandlers.onClose}
           entityData={mockClass}
           finalComments={[mockFinalComments[0]]}
           onCreateComment={mockHandlers.onCreateComment}
@@ -1179,8 +1113,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={mockFinalComments}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1198,8 +1131,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1223,8 +1155,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1254,8 +1185,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1280,8 +1210,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1311,8 +1240,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1342,8 +1270,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1375,8 +1302,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1412,8 +1338,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1442,8 +1367,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}
@@ -1478,8 +1402,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         render(
           <FinalCommentsModal
             isOpen={true}
-            onClose={mockHandlers.onClose}
-            entityData={mockClass}
+              entityData={mockClass}
             finalComments={[mockFinalComments[0]]}
             onCreateComment={mockHandlers.onCreateComment}
             onUpdateComment={mockHandlers.onUpdateComment}

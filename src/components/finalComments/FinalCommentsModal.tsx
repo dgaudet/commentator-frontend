@@ -35,7 +35,6 @@ import { ConfirmationModal } from '../common/ConfirmationModal'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
-  onClose: () => void
   entityData: T
   finalComments: FinalComment[]
   onCreateComment: (request: CreateFinalCommentRequest) => Promise<void>
@@ -48,7 +47,6 @@ interface FinalCommentsModalProps<T extends { id: number; name: string }> {
 
 export const FinalCommentsModal = <T extends { id: number; name: string }>({
   isOpen,
-  onClose,
   entityData,
   finalComments,
   onCreateComment,
@@ -597,13 +595,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
           <h2 id="modal-title">
             Final Comments - {entityData.name}
           </h2>
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            ×
-          </Button>
         </div>
 
         {contentJSX}
