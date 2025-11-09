@@ -28,6 +28,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { modalStyles } from '../../styles/modalStyles'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -43,7 +44,7 @@ interface PersonalizedCommentsModalProps<T extends { id: number; name: string }>
 
 export const PersonalizedCommentsModal = <T extends { id: number; name: string }>({
   isOpen,
-  onClose,
+  onClose: _onClose,
   entityData,
   personalizedComments,
   onCreateComment,
@@ -171,10 +172,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
       <div
         role="dialog"
         aria-modal="true"
-        style={{
-          padding: '1.5rem',
-          backgroundColor: '#FFFFFF',
-        }}
+        style={modalStyles.container}
       >
           {loading && (
             <div className="loading-container">
@@ -189,11 +187,11 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
           {!loading && !error && (
             <>
               {/* Create Comment Form */}
-              <div style={{ marginBottom: '2rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
                   Add New Personalized Comment
                 </h3>
-                <div style={{ marginBottom: '1rem' }}>
+                <div style={modalStyles.formGroup}>
                   <textarea
                     value={newCommentContent}
                     onChange={(e) => setNewCommentContent(e.target.value)}
@@ -201,26 +199,19 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                     aria-label="Add new personalized comment"
                     rows={4}
                     maxLength={500}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      fontSize: '1rem',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '8px',
-                      resize: 'vertical',
-                    }}
+                    style={modalStyles.textarea}
                   />
-                  <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', textAlign: 'right' }}>
-                    <span style={{ color: newCommentIsValid ? '#10B981' : '#DC2626' }}>
+                  <div style={modalStyles.characterCounter}>
+                    <span style={newCommentIsValid ? modalStyles.characterCountValid : modalStyles.characterCountInvalid}>
                       {newCommentCharCount} / 500 characters
                     </span>
                     {newCommentCharCount > 0 && newCommentCharCount < 10 && (
-                      <span style={{ color: '#6B7280' }}> (minimum 10)</span>
+                      <span style={modalStyles.characterCountHint}> (minimum 10)</span>
                     )}
                   </div>
                 </div>
                 {validationError && (
-                  <div role="alert" style={{ padding: '0.75rem', marginBottom: '1rem', backgroundColor: '#FEE2E2', border: '1px solid #DC2626', borderRadius: '8px', color: '#DC2626', fontSize: '0.875rem' }}>
+                  <div role="alert" style={modalStyles.validationError}>
                     {validationError}
                   </div>
                 )}
@@ -234,23 +225,23 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
               </div>
 
               {/* Comments List */}
-              <div style={{ marginTop: '2rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
                   Existing Comments
                 </h3>
                 {personalizedComments.length === 0
                   ? (
-                      <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#F9FAFB', borderRadius: '8px', border: '1px dashed #E5E7EB' }}>
-                        <p style={{ margin: 0, fontSize: '1rem', color: '#6B7280' }}>No personalized comments yet</p>
-                        <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: '#9CA3AF' }}>
+                      <div style={modalStyles.emptyState}>
+                        <p style={modalStyles.emptyStateText}>No personalized comments yet</p>
+                        <p style={modalStyles.emptyStateSubtext}>
                           Add your first personalized comment above.
                         </p>
                       </div>
                     )
                   : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={modalStyles.itemsList}>
                     {personalizedComments.map((comment) => (
-                      <div key={comment.id} style={{ padding: '1.5rem', border: '1px solid #E5E7EB', borderRadius: '8px', backgroundColor: '#FFFFFF' }}>
+                      <div key={comment.id} style={modalStyles.itemCard}>
                         {editingId === comment.id
                           ? (
                             /* Edit Mode */
@@ -260,30 +251,22 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                   onChange={(e) => setEditContent(e.target.value)}
                                   rows={4}
                                   maxLength={500}
-                                  style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    fontSize: '1rem',
-                                    border: '1px solid #E5E7EB',
-                                    borderRadius: '8px',
-                                    resize: 'vertical',
-                                    marginBottom: '0.5rem',
-                                  }}
+                                  style={{ ...modalStyles.textarea, marginBottom: '0.5rem' }}
                                 />
-                                <div style={{ marginBottom: '1rem', fontSize: '0.875rem', textAlign: 'right' }}>
-                                  <span style={{ color: editCommentIsValid ? '#10B981' : '#DC2626' }}>
+                                <div style={{ ...modalStyles.characterCounter, marginBottom: '1rem' }}>
+                                  <span style={editCommentIsValid ? modalStyles.characterCountValid : modalStyles.characterCountInvalid}>
                                     {editCommentCharCount} / 500 characters
                                   </span>
                                   {editCommentCharCount > 0 && editCommentCharCount < 10 && (
-                                    <span style={{ color: '#6B7280' }}> (minimum 10)</span>
+                                    <span style={modalStyles.characterCountHint}> (minimum 10)</span>
                                   )}
                                 </div>
                                 {validationError && (
-                                  <div role="alert" style={{ padding: '0.75rem', marginBottom: '1rem', backgroundColor: '#FEE2E2', border: '1px solid #DC2626', borderRadius: '8px', color: '#DC2626', fontSize: '0.875rem' }}>
+                                  <div role="alert" style={modalStyles.validationError}>
                                     {validationError}
                                   </div>
                                 )}
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div style={modalStyles.buttonGroup}>
                                   <Button
                                     onClick={handleEditSave}
                                     variant="primary"
@@ -303,10 +286,10 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                           : (
                             /* View Mode */
                               <div>
-                            <div style={{ fontSize: '1rem', color: '#111827', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                            <div style={modalStyles.itemContent}>
                               {comment.comment}
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginBottom: '1rem' }}>
+                            <div style={modalStyles.itemMeta}>
                               Created: {formatDate(comment.createdAt)}
                               {comment.updatedAt !== comment.createdAt && (
                                 <span>
@@ -314,7 +297,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                 </span>
                               )}
                             </div>
-                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <div style={modalStyles.buttonGroup}>
                               <Button
                                 onClick={() => handleEditStart(comment)}
                                 variant="secondary"

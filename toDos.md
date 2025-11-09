@@ -21,5 +21,6 @@
 # sort final comments by student name
 # Design a favicon for the browser tab, something that looks like a notepad
 # Design a top banner for the app, something with students, maybe say something like inspiring the next generation, or guiding the leaders of tomorrow
-
-Can you create some stories to style the outcome comments, personal comments and class components to match the overall style of the app? You can also remove the title from the component and the x close button as they are not necessary anymore
+# add in a dark theme and a light theme, with a toggle button in the top right
+Style the delete subject button to match the other delete buttons in the app
+Perhaps the class functionality should have a tab group as well, with Edit and Final Comments as the two tabs

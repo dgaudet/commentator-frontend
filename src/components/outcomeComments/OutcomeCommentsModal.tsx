@@ -27,6 +27,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { modalStyles } from '../../styles/modalStyles'
 
 interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -42,7 +43,7 @@ interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
 
 export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   isOpen,
-  onClose,
+  onClose: _onClose,
   entityData,
   outcomeComments,
   onCreateComment,
@@ -181,10 +182,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
       <div
         role="dialog"
         aria-modal="true"
-        style={{
-          padding: '1.5rem',
-          backgroundColor: '#FFFFFF',
-        }}
+        style={modalStyles.container}
       >
           {loading && (
             <div className="loading-container">
@@ -199,30 +197,23 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
           {!loading && !error && (
             <>
               {/* Create Comment Form */}
-              <div style={{ marginBottom: '2rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
                   Add New Outcome Comment
                 </h3>
-                <div style={{ marginBottom: '1rem' }}>
+                <div style={modalStyles.formGroup}>
                   <textarea
                     value={newCommentContent}
                     onChange={(e) => setNewCommentContent(e.target.value)}
                     placeholder="Enter outcome comment..."
                     aria-label="Add new outcome comment"
                     rows={3}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      fontSize: '1rem',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '8px',
-                      resize: 'vertical',
-                    }}
+                    style={modalStyles.textarea}
                   />
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                  <div style={{ flex: 1 }}>
-                    <label htmlFor="lower-range" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                <div style={modalStyles.flexRow}>
+                  <div style={modalStyles.flexItem}>
+                    <label htmlFor="lower-range" style={modalStyles.label}>
                       Lower Range:
                     </label>
                     <input
@@ -231,17 +222,11 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                       value={newLowerRange}
                       onChange={(e) => setNewLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="Min score"
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem',
-                        fontSize: '1rem',
-                        border: '1px solid #E5E7EB',
-                        borderRadius: '8px',
-                      }}
+                      style={modalStyles.input}
                     />
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <label htmlFor="upper-range" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                  <div style={modalStyles.flexItem}>
+                    <label htmlFor="upper-range" style={modalStyles.label}>
                       Upper Range:
                     </label>
                     <input
@@ -250,18 +235,12 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                       value={newUpperRange}
                       onChange={(e) => setNewUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="Max score"
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem',
-                        fontSize: '1rem',
-                        border: '1px solid #E5E7EB',
-                        borderRadius: '8px',
-                      }}
+                      style={modalStyles.input}
                     />
                   </div>
                 </div>
                 {validationError && (
-                  <div role="alert" style={{ padding: '0.75rem', marginBottom: '1rem', backgroundColor: '#FEE2E2', border: '1px solid #DC2626', borderRadius: '8px', color: '#DC2626', fontSize: '0.875rem' }}>
+                  <div role="alert" style={modalStyles.validationError}>
                     {validationError}
                   </div>
                 )}
@@ -274,23 +253,23 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
               </div>
 
               {/* Comments List */}
-              <div style={{ marginTop: '2rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
                   Existing Comments
                 </h3>
                 {outcomeComments.length === 0
                   ? (
-                      <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#F9FAFB', borderRadius: '8px', border: '1px dashed #E5E7EB' }}>
-                        <p style={{ margin: 0, fontSize: '1rem', color: '#6B7280' }}>No outcome comments found</p>
-                        <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: '#9CA3AF' }}>
+                      <div style={modalStyles.emptyState}>
+                        <p style={modalStyles.emptyStateText}>No outcome comments found</p>
+                        <p style={modalStyles.emptyStateSubtext}>
                           Be the first to add an outcome comment.
                         </p>
                       </div>
                     )
                   : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={modalStyles.itemsList}>
                     {outcomeComments.map((comment) => (
-                      <div key={comment.id} style={{ padding: '1.5rem', border: '1px solid #E5E7EB', borderRadius: '8px', backgroundColor: '#FFFFFF' }}>
+                      <div key={comment.id} style={modalStyles.itemCard}>
                         {editingId === comment.id
                           ? (
                             /* Edit Mode */
@@ -299,19 +278,11 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                   value={editContent}
                                   onChange={(e) => setEditContent(e.target.value)}
                                   rows={3}
-                                  style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    fontSize: '1rem',
-                                    border: '1px solid #E5E7EB',
-                                    borderRadius: '8px',
-                                    resize: 'vertical',
-                                    marginBottom: '1rem',
-                                  }}
+                                  style={{ ...modalStyles.textarea, marginBottom: '1rem' }}
                                 />
-                                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                                  <div style={{ flex: 1 }}>
-                                    <label htmlFor={`edit-lower-${comment.id}`} style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                                <div style={modalStyles.flexRow}>
+                                  <div style={modalStyles.flexItem}>
+                                    <label htmlFor={`edit-lower-${comment.id}`} style={modalStyles.label}>
                                       Lower Range:
                                     </label>
                                     <input
@@ -319,17 +290,11 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                       type="number"
                                       value={editLowerRange}
                                       onChange={(e) => setEditLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
-                                      style={{
-                                        width: '100%',
-                                        padding: '0.75rem',
-                                        fontSize: '1rem',
-                                        border: '1px solid #E5E7EB',
-                                        borderRadius: '8px',
-                                      }}
+                                      style={modalStyles.input}
                                     />
                                   </div>
-                                  <div style={{ flex: 1 }}>
-                                    <label htmlFor={`edit-upper-${comment.id}`} style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                                  <div style={modalStyles.flexItem}>
+                                    <label htmlFor={`edit-upper-${comment.id}`} style={modalStyles.label}>
                                       Upper Range:
                                     </label>
                                     <input
@@ -337,17 +302,11 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                       type="number"
                                       value={editUpperRange}
                                       onChange={(e) => setEditUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
-                                      style={{
-                                        width: '100%',
-                                        padding: '0.75rem',
-                                        fontSize: '1rem',
-                                        border: '1px solid #E5E7EB',
-                                        borderRadius: '8px',
-                                      }}
+                                      style={modalStyles.input}
                                     />
                                   </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div style={modalStyles.buttonGroup}>
                                   <Button
                                     onClick={handleEditSave}
                                     variant="primary"
@@ -366,16 +325,16 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                           : (
                             /* View Mode */
                               <div>
-                            <div style={{ fontSize: '1rem', color: '#111827', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                            <div style={modalStyles.itemContent}>
                               {comment.comment}
                             </div>
-                            <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.75rem' }}>
+                            <div style={modalStyles.itemMetaMedium}>
                               Score Range: {comment.lowerRange} - {comment.upperRange}
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginBottom: '1rem' }}>
+                            <div style={modalStyles.itemMeta}>
                               {formatDate(comment.createdAt)}
                             </div>
-                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <div style={modalStyles.buttonGroup}>
                               <Button
                                 onClick={() => handleEditStart(comment)}
                                 variant="secondary"
