@@ -14,6 +14,7 @@
  * - US-CLASS-004: Edit existing class
  * - US-CLASS-005: Delete class with confirmation (US-DELETE-CONFIRM-003)
  * - US-CLASS-007: Close modal
+ * - US-CLASS-TABS-001: Display tab group when class selected (TDD)
  *
  * US-DELETE-CONFIRM-003 Features:
  * - Uses standardized ConfirmationModal component
@@ -23,12 +24,14 @@
  * - Enhanced error handling for final comments check
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { Class, CreateClassRequest, UpdateClassRequest } from '../../types'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { Tabs, Tab } from '../common/Tabs'
+import { TabPanel } from '../common/TabPanel'
 import { modalStyles } from '../../styles/modalStyles'
 import styles from '../common/ConfirmationModal.module.css'
 
@@ -80,6 +83,39 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
   const [validationError, setValidationError] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
 
+  // US-CLASS-TABS-001: Tab group state management (TDD GREEN phase)
+  // Track active tab state - default to 'edit-class'
+  const [activeClassTab, setActiveClassTab] = useState<string>('edit-class')
+
+  // Build tabs array for class management (only when class is selected)
+  const classTabs = useMemo<Tab[]>(() => {
+    if (!selectedClassId) return []
+
+    const tabs: Tab[] = [
+      { id: 'edit-class', label: 'Edit Class' },
+    ]
+
+    // Only show Final Comments tab if callback is provided
+    if (onViewFinalComments) {
+      tabs.push({ id: 'final-comments', label: 'Final Comments' })
+    }
+
+    return tabs
+  }, [selectedClassId, onViewFinalComments])
+
+  // Handle tab change
+  const handleClassTabChange = useCallback((tabId: string) => {
+    setActiveClassTab(tabId)
+
+    // Trigger data loading for Final Comments tab
+    if (tabId === 'final-comments' && selectedClassId && onViewFinalComments) {
+      const selectedClass = classes.find(c => c.id === selectedClassId)
+      if (selectedClass) {
+        onViewFinalComments(selectedClass)
+      }
+    }
+  }, [selectedClassId, onViewFinalComments, classes])
+
   // Update form when selected class changes
   useEffect(() => {
     if (selectedClassId) {
@@ -96,6 +132,13 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
     }
     setValidationError('')
   }, [selectedClassId, classes])
+
+  // US-CLASS-TABS-001: Reset active tab to 'edit-class' when different class selected
+  useEffect(() => {
+    if (selectedClassId) {
+      setActiveClassTab('edit-class')
+    }
+  }, [selectedClassId])
 
   if (!isOpen) return null
 
@@ -282,90 +325,138 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                     )}
               </div>
 
-              {/* Create/Edit Class Form */}
-              <div style={modalStyles.section}>
-                <h3 style={modalStyles.heading}>
-                  {isEditMode ? 'Edit Class' : 'Add New Class'}
-                </h3>
-                <div style={modalStyles.formGroup}>
-                  <label htmlFor="class-name-input" style={modalStyles.label}>
-                    Class Name <span style={modalStyles.requiredIndicator}>*</span>
-                  </label>
-                  <input
-                    id="class-name-input"
-                    type="text"
-                    value={className}
-                    onChange={(e) => setClassName(e.target.value)}
-                    placeholder="Enter class name (e.g., Advanced Section)"
-                    aria-label="Class Name"
-                    maxLength={100}
-                    style={modalStyles.input}
-                  />
-                </div>
+              {/* US-CLASS-TABS-001: Tab Group (when class selected) or Add New Class Form */}
+              {selectedClassId && classTabs.length > 0
+                ? (
+                    /* Tab Group for Edit Class and Final Comments */
+                    <>
+                      <Tabs
+                        tabs={classTabs}
+                        defaultTab={activeClassTab}
+                        onChange={handleClassTabChange}
+                      />
 
-                <div style={modalStyles.formGroup}>
-                  <label htmlFor="class-year-input" style={modalStyles.label}>
-                    Year <span style={modalStyles.requiredIndicator}>*</span>
-                  </label>
-                  <input
-                    id="class-year-input"
-                    type="number"
-                    value={classYear}
-                    onChange={(e) => setClassYear(Number(e.target.value))}
-                    min={2000}
-                    max={2099}
-                    aria-label="Year"
-                    style={modalStyles.input}
-                  />
-                </div>
+                      {/* Edit Class Tab Panel */}
+                      <TabPanel isActive={activeClassTab === 'edit-class'}>
+                        <div style={modalStyles.section}>
+                          <h3 style={modalStyles.heading}>
+                            Edit Class
+                          </h3>
+                          <div style={modalStyles.formGroup}>
+                            <label htmlFor="class-name-input" style={modalStyles.label}>
+                              Class Name <span style={modalStyles.requiredIndicator}>*</span>
+                            </label>
+                            <input
+                              id="class-name-input"
+                              type="text"
+                              value={className}
+                              onChange={(e) => setClassName(e.target.value)}
+                              placeholder="Enter class name (e.g., Advanced Section)"
+                              aria-label="Class Name"
+                              maxLength={100}
+                              style={modalStyles.input}
+                            />
+                          </div>
 
-                {validationError && (
-                  <div role="alert" style={modalStyles.validationError}>
-                    {validationError}
-                  </div>
-                )}
+                          <div style={modalStyles.formGroup}>
+                            <label htmlFor="class-year-input" style={modalStyles.label}>
+                              Year <span style={modalStyles.requiredIndicator}>*</span>
+                            </label>
+                            <input
+                              id="class-year-input"
+                              type="number"
+                              value={classYear}
+                              onChange={(e) => setClassYear(Number(e.target.value))}
+                              min={2000}
+                              max={2099}
+                              aria-label="Year"
+                              style={modalStyles.input}
+                            />
+                          </div>
 
-                <div style={modalStyles.buttonGroupWrap}>
-                  {isEditMode
-                    ? (
-                        <>
-                          <Button
-                            onClick={handleUpdateClass}
-                            variant="primary"
-                          >
-                            Update Class
-                          </Button>
-                          <Button
-                            onClick={handleDeleteStart}
-                            variant="danger"
-                          >
-                            Delete Class
-                          </Button>
-                          {onViewFinalComments && selectedClassId && (
-                            <Button
-                              onClick={() => {
-                                const selectedClass = classes.find(c => c.id === selectedClassId)
-                                if (selectedClass) {
-                                  onViewFinalComments(selectedClass)
-                                }
-                              }}
-                              variant="secondary"
-                            >
-                              Final Comments
-                            </Button>
+                          {validationError && (
+                            <div role="alert" style={modalStyles.validationError}>
+                              {validationError}
+                            </div>
                           )}
-                        </>
-                      )
-                    : (
-                        <Button
-                          onClick={handleCreateClass}
-                          variant="primary"
-                        >
-                          Add Class
-                        </Button>
+
+                          <div style={modalStyles.buttonGroupWrap}>
+                            <Button
+                              onClick={handleUpdateClass}
+                              variant="primary"
+                            >
+                              Update Class
+                            </Button>
+                            <Button
+                              onClick={handleDeleteStart}
+                              variant="danger"
+                            >
+                              Delete Class
+                            </Button>
+                          </div>
+                        </div>
+                      </TabPanel>
+
+                      {/* Final Comments Tab Panel */}
+                      <TabPanel isActive={activeClassTab === 'final-comments'}>
+                        <div style={modalStyles.section}>
+                          <p>Final Comments content will be integrated in US-CLASS-TABS-003</p>
+                        </div>
+                      </TabPanel>
+                    </>
+                  )
+                : (
+                    /* Add New Class Form (when no class selected) */
+                    <div style={modalStyles.section}>
+                      <h3 style={modalStyles.heading}>
+                        Add New Class
+                      </h3>
+                      <div style={modalStyles.formGroup}>
+                        <label htmlFor="class-name-input" style={modalStyles.label}>
+                          Class Name <span style={modalStyles.requiredIndicator}>*</span>
+                        </label>
+                        <input
+                          id="class-name-input"
+                          type="text"
+                          value={className}
+                          onChange={(e) => setClassName(e.target.value)}
+                          placeholder="Enter class name (e.g., Advanced Section)"
+                          aria-label="Class Name"
+                          maxLength={100}
+                          style={modalStyles.input}
+                        />
+                      </div>
+
+                      <div style={modalStyles.formGroup}>
+                        <label htmlFor="class-year-input" style={modalStyles.label}>
+                          Year <span style={modalStyles.requiredIndicator}>*</span>
+                        </label>
+                        <input
+                          id="class-year-input"
+                          type="number"
+                          value={classYear}
+                          onChange={(e) => setClassYear(Number(e.target.value))}
+                          min={2000}
+                          max={2099}
+                          aria-label="Year"
+                          style={modalStyles.input}
+                        />
+                      </div>
+
+                      {validationError && (
+                        <div role="alert" style={modalStyles.validationError}>
+                          {validationError}
+                        </div>
                       )}
-                </div>
-              </div>
+
+                      <Button
+                        onClick={handleCreateClass}
+                        variant="primary"
+                      >
+                        Add Class
+                      </Button>
+                    </div>
+                  )}
             </>
           )}
       </div>
