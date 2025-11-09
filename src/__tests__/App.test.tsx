@@ -400,7 +400,7 @@ describe('App', () => {
       })
 
       // Click Edit tab - this should show inline edit form
-      const editTab = screen.getByRole('tab', { name: 'Edit' })
+      const editTab = screen.getByRole('tab', { name: 'Edit Subject' })
       fireEvent.click(editTab)
 
       // Edit form should be shown inline within the tab panel

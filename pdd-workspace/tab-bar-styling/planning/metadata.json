@@ -1,0 +1,21 @@
+{
+  "feature": "tab-bar-styling",
+  "complexity": {
+    "level": "L0-ATOMIC",
+    "reasoning": "Pure styling changes to match existing Subject component design. No new functionality, no data changes, no API integration. Single component update with label text change. Estimated < 1 day effort.",
+    "assessedAt": "2025-11-08",
+    "estimatedEffort": "< 1 day",
+    "storyPoints": 2,
+    "riskLevel": "LOW"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING"
+  },
+  "context": {
+    "relatedFeature": "style-subject",
+    "technicalContext": "Extends styling consistency from Subject components to tab navigation",
+    "dependencies": ["Subject component styling (completed)"]
+  }
+}

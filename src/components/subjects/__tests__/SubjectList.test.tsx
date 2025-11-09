@@ -285,7 +285,7 @@ describe('SubjectList', () => {
       )
 
       // With single subject, it auto-selects - Edit tab should be present (US-TAB-002)
-      const editTab = screen.getByRole('tab', { name: 'Edit' })
+      const editTab = screen.getByRole('tab', { name: 'Edit Subject' })
       expect(editTab).toBeInTheDocument()
 
       // Click edit tab

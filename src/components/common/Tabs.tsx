@@ -193,6 +193,7 @@ export const Tabs: React.FC<TabsProps> = ({
             onKeyDown={(e) => handleKeyDown(e, index)}
             disabled={isDisabled}
             className={styles.tab}
+            data-label={tab.label}
           >
             {tab.icon && <span className={styles.tabIcon} aria-hidden="true">{tab.icon}</span>}
             {tab.label}
