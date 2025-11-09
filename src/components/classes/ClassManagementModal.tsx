@@ -351,9 +351,6 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                       {/* Edit Class Tab Panel */}
                       <TabPanel id="edit-class" activeTabId={activeClassTab} tabId="edit-class">
                         <div style={modalStyles.section}>
-                          <h3 style={modalStyles.heading}>
-                            Edit Class
-                          </h3>
                           <div style={modalStyles.formGroup}>
                             <label htmlFor="class-name-input" style={modalStyles.label}>
                               Class Name <span style={modalStyles.requiredIndicator}>*</span>
