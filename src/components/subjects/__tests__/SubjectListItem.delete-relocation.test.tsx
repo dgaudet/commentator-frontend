@@ -64,9 +64,10 @@ describe('SubjectListItem - Delete Button Relocation (US-SUBJ-DELETE-001)', () =
 
       const deleteButton = screen.getByRole('button', { name: /delete mathematics 101/i })
 
-      // Should have red/danger color and border (using inline styles)
-      expect(deleteButton).toHaveStyle({ color: '#DC2626' })
-      expect(deleteButton).toHaveStyle({ border: '2px solid #DC2626' })
+      // Should have danger button styling (white text on red background)
+      expect(deleteButton).toHaveStyle({ color: '#FFFFFF' })
+      expect(deleteButton).toHaveStyle({ backgroundColor: '#DC2626' })
+      expect(deleteButton).toHaveStyle({ borderColor: '#DC2626' })
     })
   })
 

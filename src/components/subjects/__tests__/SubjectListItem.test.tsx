@@ -179,9 +179,10 @@ describe('SubjectListItem', () => {
       const handleDelete = jest.fn()
       render(<SubjectListItem subjectItem={mockSubject} onDelete={handleDelete} />)
       const deleteButton = screen.getByRole('button', { name: /delete/i })
-      // US-STYLE-001 AC3: Red color with rounded corners
+      // US-STYLE-001 AC3: Danger button styling with rounded corners
       expect(deleteButton).toHaveStyle({ borderRadius: '8px' })
-      expect(deleteButton).toHaveStyle({ color: '#DC2626' })
+      expect(deleteButton).toHaveStyle({ color: '#FFFFFF' })
+      expect(deleteButton).toHaveStyle({ backgroundColor: '#DC2626' })
     })
 
     it('should display created date with gray text color', () => {

@@ -16,6 +16,7 @@ import { Subject } from '../../types/Subject'
 import { formatDate } from '../../utils/dateFormatter'
 import { Tabs, Tab } from '../common/Tabs'
 import { TabPanel } from '../common/TabPanel'
+import { Button } from '../common/Button'
 import { SubjectForm } from './SubjectForm'
 import { OutcomeCommentsModal } from '../outcomeComments/OutcomeCommentsModal'
 import { PersonalizedCommentsModal } from '../personalizedComments/PersonalizedCommentsModal'
@@ -107,11 +108,6 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   finalCommentsLoading = false,
   finalCommentsError = null,
 }) => {
-  /**
-   * Manage delete button hover state with React state for predictable behavior
-   * Avoids issues with DOM manipulation during re-renders
-   */
-  const [isDeleteHovered, setIsDeleteHovered] = useState(false)
   /**
    * Build tabs array dynamically based on provided callbacks
    * Only includes tabs for callbacks that are provided
@@ -238,27 +234,14 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
 
           {/* Delete button beside subject name (US-SUBJ-DELETE-001, US-STYLE-001 AC3) */}
           {onDelete && (
-            <button
+            <Button
               onClick={() => onDelete(subjectItem.id)}
-              onMouseEnter={() => setIsDeleteHovered(true)}
-              onMouseLeave={() => setIsDeleteHovered(false)}
+              variant="danger"
               aria-label={`Delete ${subjectItem.name}`}
               data-position="beside-name"
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: 600,
-                color: '#DC2626',
-                backgroundColor: isDeleteHovered ? '#FEF2F2' : 'transparent',
-                border: '2px solid #DC2626',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s ease',
-              }}
             >
               Delete
-            </button>
+            </Button>
           )}
         </div>
 

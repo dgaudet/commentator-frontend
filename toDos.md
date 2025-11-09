@@ -12,11 +12,7 @@
 ### show a count of which comment you are on ex: 1 out of 100
 #### how should we order them?
 # remove the console.error methods from services
-# we can now remove the `x` close button from modals since they are tabs
-## we also don't need a title in each tab since the tab name is sufficient
-# need to figure out how to do the final comments, should it be under Manage Classes? I think so, the code is still in App.tsx though
-# When deleting a class that has comments, what should happen?
-## Should it also delete the final comments associated? should the backend do the deletion?
+# we also don't need a title in each tab since the tab name is sufficient
 # Outcome Comments should be ordered by the Lower Range values
 # sort final comments by student name
 # Design a favicon for the browser tab, something that looks like a notepad
@@ -24,7 +20,6 @@
 # add in a dark theme and a light theme, with a toggle button in the top right
 # Outcome comments
 ## Need to add some templating for the last name
-Style the delete subject button to match the other delete buttons in the app
 When adding a new class, it should be selected by default
 
 clean up the final comments component, the add final comment should be at the top, The component label isn't needed, it needs to be styled.
