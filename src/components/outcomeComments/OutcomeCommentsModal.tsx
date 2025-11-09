@@ -177,27 +177,15 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   }
 
   return (
-    <div
-      className="modal-overlay"
-      role="dialog"
-      aria-labelledby="modal-title"
-      aria-modal="true"
-    >
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2 id="modal-title">
-            Outcome Comments - {entityData.name}
-          </h2>
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            ×
-          </Button>
-        </div>
-
-        <div className="modal-body">
+    <>
+      <div
+        role="dialog"
+        aria-modal="true"
+        style={{
+          padding: '1.5rem',
+          backgroundColor: '#FFFFFF',
+        }}
+      >
           {loading && (
             <div className="loading-container">
               <LoadingSpinner data-testid="loading-spinner" />
@@ -211,16 +199,25 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
           {!loading && !error && (
             <>
               {/* Create Comment Form */}
-              <div className="create-comment-section">
-                <h3>Add New Outcome Comment</h3>
-                <div className="form-group">
+              <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>
+                  Add New Outcome Comment
+                </h3>
+                <div style={{ marginBottom: '1rem' }}>
                   <textarea
                     value={newCommentContent}
                     onChange={(e) => setNewCommentContent(e.target.value)}
                     placeholder="Enter outcome comment..."
                     aria-label="Add new outcome comment"
-                    className="comment-textarea"
                     rows={3}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      fontSize: '1rem',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '8px',
+                      resize: 'vertical',
+                    }}
                   />
                 </div>
                 <div className="score-range-inputs">
@@ -361,7 +358,6 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
               </div>
             </>
           )}
-        </div>
       </div>
 
       {/* Delete Confirmation Modal (US-DELETE-CONFIRM-001) */}
@@ -378,6 +374,6 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
           "{getCommentPreview(deleteConfirmation.commentText)}"
         </p>
       </ConfirmationModal>
-    </div>
+    </>
   )
 }

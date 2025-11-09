@@ -228,23 +228,9 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
     <div
       className="modal-overlay"
       role="dialog"
-      aria-labelledby="modal-title"
       aria-modal="true"
     >
       <div className="modal-content">
-        <div className="modal-header">
-          <h2 id="modal-title">
-            Class Management - {entityData.name}
-          </h2>
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            ×
-          </Button>
-        </div>
-
         <div className="modal-body">
           {loading && (
             <div className="loading-container">

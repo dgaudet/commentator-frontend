@@ -64,10 +64,11 @@ describe('OutcomeCommentsModal', () => {
   })
 
   describe('User Story 1: View outcome comments', () => {
-    it('should display modal title with class name', () => {
+    // US-MODAL-STYLE-001 AC1: Modal title removed, check for panel content instead
+    it('should display outcome comments content', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
 
-      expect(screen.getByText('Outcome Comments - Mathematics 101')).toBeInTheDocument()
+      expect(screen.getByText('Add New Outcome Comment')).toBeInTheDocument()
     })
 
     it('should display all outcome comments for the class', () => {
@@ -92,14 +93,12 @@ describe('OutcomeCommentsModal', () => {
       expect(screen.getByText(/Jan 2, 2024/)).toBeInTheDocument()
     })
 
-    it('should have close button that calls onClose', async () => {
-      const user = userEvent.setup()
+    // US-MODAL-STYLE-001 AC2: Close button removed when embedded in tab panels
+    it('should NOT have close button when embedded', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
 
-      const closeButton = screen.getByRole('button', { name: /close/i })
-      await user.click(closeButton)
-
-      expect(defaultProps.onClose).toHaveBeenCalledTimes(1)
+      const closeButton = screen.queryByRole('button', { name: /close/i })
+      expect(closeButton).not.toBeInTheDocument()
     })
   })
 
@@ -413,19 +412,21 @@ describe('OutcomeCommentsModal', () => {
     it('should have proper ARIA labels', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
 
-      expect(screen.getByRole('dialog')).toHaveAttribute('aria-labelledby')
+      // US-MODAL-STYLE-001: aria-labelledby removed with modal title
+      expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true')
       expect(screen.getByRole('textbox')).toHaveAttribute('aria-label')
     })
 
-    it('should support keyboard navigation', async () => {
+    // US-MODAL-STYLE-001: Keyboard navigation test updated - no close button to focus
+    it('should support keyboard navigation for form elements', async () => {
       const user = userEvent.setup()
       render(<OutcomeCommentsModal {...defaultProps} />)
 
-      // Should be able to tab through interactive elements
+      // Should be able to tab to textarea input
       await act(async () => {
         await user.tab()
       })
-      expect(screen.getByRole('button', { name: /close/i })).toHaveFocus()
+      expect(screen.getByRole('textbox')).toHaveFocus()
     })
   })
 })
