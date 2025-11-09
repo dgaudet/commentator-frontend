@@ -24,3 +24,4 @@
 # add in a dark theme and a light theme, with a toggle button in the top right
 Style the delete subject button to match the other delete buttons in the app
 Perhaps the class functionality should have a tab group as well, with Edit and Final Comments as the two tabs
+When adding a new class, it should be selected by default
