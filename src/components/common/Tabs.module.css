@@ -1,6 +1,7 @@
 /**
  * Tabs Component Styles
- * Clean, minimal tab design matching reference image
+ * Updated to match Subject component design (US-TAB-STYLE-001)
+ * Color palette: #0066FF (primary), #1E3A5F (navy), #6B7280 (gray)
  */
 
 .tablist {
@@ -29,36 +30,47 @@
   padding: 12px 16px;
   margin-bottom: -1px; /* Pull border over container border */
 
-  /* Typography */
-  font-size: 0.875rem; /* 14px */
-  font-weight: 500;
+  /* Typography - Updated to match Subject component (US-TAB-STYLE-001) */
+  font-size: 1rem; /* 16px - matches Subject component text */
+  font-weight: 500; /* Medium weight for inactive tabs */
 
   /* Transitions */
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, border-color 0.2s ease, font-weight 0.2s ease;
 
   /* Interaction */
   cursor: pointer;
 }
 
+/* Focus styles - only show outline on inactive tabs */
 .tab:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #3b82f6, 0 0 0 4px rgba(59, 130, 246, 0.2);
 }
 
-/* Active tab */
+.tab[aria-selected='false']:focus {
+  box-shadow: 0 0 0 2px #0066FF, 0 0 0 4px rgba(0, 102, 255, 0.1);
+}
+
+/* Active tab - Updated colors (US-TAB-STYLE-001) */
+/* No focus outline needed - blue underline provides clear visual indicator */
 .tab[aria-selected='true'] {
-  color: #2563eb; /* blue-600 */
-  border-bottom-color: #2563eb;
+  color: #0066FF; /* Primary blue - matches Subject component */
+  border-bottom-color: #0066FF;
+  font-weight: 600; /* Semi-bold for active tab */
 }
 
-/* Inactive tab */
+.tab[aria-selected='true']:focus {
+  box-shadow: none; /* Remove focus outline - underline is sufficient */
+}
+
+/* Inactive tab - Updated colors (US-TAB-STYLE-001) */
 .tab[aria-selected='false'] {
-  color: #6b7280; /* gray-500 */
+  color: #6B7280; /* Gray - matches Subject component */
   border-bottom-color: transparent;
+  font-weight: 500; /* Medium weight */
 }
 
 .tab[aria-selected='false']:hover:not(:disabled) {
-  color: #374151; /* gray-700 */
+  color: #1E3A5F; /* Navy on hover - matches Subject component palette */
 }
 
 /* Disabled tab */
