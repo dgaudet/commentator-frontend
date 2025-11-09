@@ -225,13 +225,15 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
   }
 
   return (
-    <div
-      className="modal-overlay"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className="modal-content">
-        <div className="modal-body">
+    <>
+      <div
+        role="dialog"
+        aria-modal="true"
+        style={{
+          padding: '1.5rem',
+          backgroundColor: '#FFFFFF',
+        }}
+      >
           {loading && (
             <div className="loading-container">
               <LoadingSpinner data-testid="loading-spinner" />
@@ -245,28 +247,38 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
           {!loading && !error && (
             <>
               {/* Class Dropdown Selector */}
-              <div className="class-selector-section">
-                <h3>Select a Class</h3>
+              <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>
+                  Select a Class
+                </h3>
                 {classes.length === 0
                   ? (
-                      <div className="empty-state">
-                        <p>No classes yet</p>
-                        <p className="empty-subtext">
+                      <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#F9FAFB', borderRadius: '8px', border: '1px dashed #E5E7EB' }}>
+                        <p style={{ margin: 0, fontSize: '1rem', color: '#6B7280' }}>No classes yet</p>
+                        <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: '#9CA3AF' }}>
                           Add your first class below.
                         </p>
                       </div>
                     )
                   : (
-                      <div className="form-group">
-                        <label htmlFor="class-dropdown">
+                      <div style={{ marginBottom: '1rem' }}>
+                        <label htmlFor="class-dropdown" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
                           Select a class to edit or delete:
                         </label>
                         <select
                           id="class-dropdown"
                           value={selectedClassId || ''}
                           onChange={handleClassSelect}
-                          className="class-dropdown"
                           aria-label="Select a class"
+                          style={{
+                            width: '100%',
+                            padding: '0.75rem',
+                            fontSize: '1rem',
+                            border: '1px solid #E5E7EB',
+                            borderRadius: '8px',
+                            backgroundColor: '#FFFFFF',
+                            cursor: 'pointer',
+                          }}
                         >
                           <option value="">-- Select a class --</option>
                           {classes.map((cls) => (
@@ -280,11 +292,13 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
               </div>
 
               {/* Create/Edit Class Form */}
-              <div className="class-form-section">
-                <h3>{isEditMode ? 'Edit Class' : 'Add New Class'}</h3>
-                <div className="form-group">
-                  <label htmlFor="class-name-input">
-                    Class Name <span className="required">*</span>
+              <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>
+                  {isEditMode ? 'Edit Class' : 'Add New Class'}
+                </h3>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label htmlFor="class-name-input" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                    Class Name <span style={{ color: '#DC2626' }}>*</span>
                   </label>
                   <input
                     id="class-name-input"
@@ -293,14 +307,20 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                     onChange={(e) => setClassName(e.target.value)}
                     placeholder="Enter class name (e.g., Advanced Section)"
                     aria-label="Class Name"
-                    className="class-name-input"
                     maxLength={100}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      fontSize: '1rem',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '8px',
+                    }}
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="class-year-input">
-                    Year <span className="required">*</span>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label htmlFor="class-year-input" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                    Year <span style={{ color: '#DC2626' }}>*</span>
                   </label>
                   <input
                     id="class-year-input"
@@ -310,17 +330,23 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                     min={2000}
                     max={2099}
                     aria-label="Year"
-                    className="class-year-input"
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      fontSize: '1rem',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '8px',
+                    }}
                   />
                 </div>
 
                 {validationError && (
-                  <div className="validation-error" role="alert">
+                  <div role="alert" style={{ padding: '0.75rem', marginBottom: '1rem', backgroundColor: '#FEE2E2', border: '1px solid #DC2626', borderRadius: '8px', color: '#DC2626', fontSize: '0.875rem' }}>
                     {validationError}
                   </div>
                 )}
 
-                <div className="form-actions">
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {isEditMode
                     ? (
                         <>
@@ -363,7 +389,6 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
               </div>
             </>
           )}
-        </div>
       </div>
 
       {/* Delete Confirmation Modal (US-DELETE-CONFIRM-003) */}
@@ -398,6 +423,6 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
           </div>
         )}
       </ConfirmationModal>
-    </div>
+    </>
   )
 }

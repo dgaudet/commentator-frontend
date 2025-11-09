@@ -220,32 +220,48 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                     }}
                   />
                 </div>
-                <div className="score-range-inputs">
-                  <div className="form-group">
-                    <label htmlFor="lower-range">Lower Range:</label>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ flex: 1 }}>
+                    <label htmlFor="lower-range" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                      Lower Range:
+                    </label>
                     <input
                       id="lower-range"
                       type="number"
                       value={newLowerRange}
                       onChange={(e) => setNewLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="Min score"
-                      className="range-input"
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        fontSize: '1rem',
+                        border: '1px solid #E5E7EB',
+                        borderRadius: '8px',
+                      }}
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="upper-range">Upper Range:</label>
+                  <div style={{ flex: 1 }}>
+                    <label htmlFor="upper-range" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                      Upper Range:
+                    </label>
                     <input
                       id="upper-range"
                       type="number"
                       value={newUpperRange}
                       onChange={(e) => setNewUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="Max score"
-                      className="range-input"
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        fontSize: '1rem',
+                        border: '1px solid #E5E7EB',
+                        borderRadius: '8px',
+                      }}
                     />
                   </div>
                 </div>
                 {validationError && (
-                  <div className="validation-error" role="alert">
+                  <div role="alert" style={{ padding: '0.75rem', marginBottom: '1rem', backgroundColor: '#FEE2E2', border: '1px solid #DC2626', borderRadius: '8px', color: '#DC2626', fontSize: '0.875rem' }}>
                     {validationError}
                   </div>
                 )}
@@ -258,54 +274,80 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
               </div>
 
               {/* Comments List */}
-              <div className="comments-list">
-                <h3>Existing Comments</h3>
+              <div style={{ marginTop: '2rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>
+                  Existing Comments
+                </h3>
                 {outcomeComments.length === 0
                   ? (
-                      <div className="empty-state">
-                        <p>No outcome comments found</p>
-                        <p className="empty-subtext">
+                      <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#F9FAFB', borderRadius: '8px', border: '1px dashed #E5E7EB' }}>
+                        <p style={{ margin: 0, fontSize: '1rem', color: '#6B7280' }}>No outcome comments found</p>
+                        <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: '#9CA3AF' }}>
                           Be the first to add an outcome comment.
                         </p>
                       </div>
                     )
                   : (
-                  <div className="comments">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {outcomeComments.map((comment) => (
-                      <div key={comment.id} className="comment-item">
+                      <div key={comment.id} style={{ padding: '1.5rem', border: '1px solid #E5E7EB', borderRadius: '8px', backgroundColor: '#FFFFFF' }}>
                         {editingId === comment.id
                           ? (
                             /* Edit Mode */
-                              <div className="edit-mode">
+                              <div>
                                 <textarea
                                   value={editContent}
                                   onChange={(e) => setEditContent(e.target.value)}
-                                  className="comment-textarea"
                                   rows={3}
+                                  style={{
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    fontSize: '1rem',
+                                    border: '1px solid #E5E7EB',
+                                    borderRadius: '8px',
+                                    resize: 'vertical',
+                                    marginBottom: '1rem',
+                                  }}
                                 />
-                                <div className="score-range-inputs">
-                                  <div className="form-group">
-                                    <label htmlFor={`edit-lower-${comment.id}`}>Lower Range:</label>
+                                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                                  <div style={{ flex: 1 }}>
+                                    <label htmlFor={`edit-lower-${comment.id}`} style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                                      Lower Range:
+                                    </label>
                                     <input
                                       id={`edit-lower-${comment.id}`}
                                       type="number"
                                       value={editLowerRange}
                                       onChange={(e) => setEditLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
-                                      className="range-input"
+                                      style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        fontSize: '1rem',
+                                        border: '1px solid #E5E7EB',
+                                        borderRadius: '8px',
+                                      }}
                                     />
                                   </div>
-                                  <div className="form-group">
-                                    <label htmlFor={`edit-upper-${comment.id}`}>Upper Range:</label>
+                                  <div style={{ flex: 1 }}>
+                                    <label htmlFor={`edit-upper-${comment.id}`} style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' }}>
+                                      Upper Range:
+                                    </label>
                                     <input
                                       id={`edit-upper-${comment.id}`}
                                       type="number"
                                       value={editUpperRange}
                                       onChange={(e) => setEditUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
-                                      className="range-input"
+                                      style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        fontSize: '1rem',
+                                        border: '1px solid #E5E7EB',
+                                        borderRadius: '8px',
+                                      }}
                                     />
                                   </div>
                                 </div>
-                                <div className="edit-actions">
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
                                   <Button
                                     onClick={handleEditSave}
                                     variant="primary"
@@ -323,19 +365,17 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                             )
                           : (
                             /* View Mode */
-                              <div className="view-mode">
-                            <div className="comment-content">
+                              <div>
+                            <div style={{ fontSize: '1rem', color: '#111827', marginBottom: '0.75rem', lineHeight: 1.5 }}>
                               {comment.comment}
                             </div>
-                            <div className="score-range">
+                            <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.75rem' }}>
                               Score Range: {comment.lowerRange} - {comment.upperRange}
                             </div>
-                            <div className="comment-meta">
-                              <span className="comment-date">
-                                {formatDate(comment.createdAt)}
-                              </span>
+                            <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginBottom: '1rem' }}>
+                              {formatDate(comment.createdAt)}
                             </div>
-                            <div className="comment-actions">
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
                               <Button
                                 onClick={() => handleEditStart(comment)}
                                 variant="secondary"
