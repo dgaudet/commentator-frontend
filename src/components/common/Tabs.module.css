@@ -29,6 +29,7 @@
   /* Layout */
   padding: 12px 16px;
   margin-bottom: -1px; /* Pull border over container border */
+  position: relative; /* For pseudo-element positioning */
 
   /* Typography - Updated to match Subject component (US-TAB-STYLE-001) */
   font-size: 1rem; /* 16px - matches Subject component text */
@@ -39,6 +40,19 @@
 
   /* Interaction */
   cursor: pointer;
+}
+
+/* Reserve space for bold text to prevent layout shift */
+.tab::after {
+  content: attr(data-label);
+  display: block;
+  font-weight: 600; /* Bold weight to reserve space */
+  height: 0;
+  visibility: hidden;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+  font-size: 1rem; /* Match parent font size */
 }
 
 /* Focus styles - only show outline on inactive tabs */
