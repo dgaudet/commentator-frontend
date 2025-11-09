@@ -22,12 +22,6 @@ import { PersonalizedCommentsModal } from '../personalizedComments/PersonalizedC
 import { ClassManagementModal } from '../classes/ClassManagementModal'
 import type { OutcomeComment, PersonalizedComment, Class, FinalComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
-/**
- * No-op function for modal components embedded in tab panels
- * Reused to prevent creating new function instances on every render
- */
-const noop = () => {}
-
 interface SubjectListItemProps {
   subjectItem: Subject
   onEdit?: (id: number) => void
@@ -327,7 +321,6 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                   ? (
                   <OutcomeCommentsModal
                     isOpen={true}
-                    onClose={noop}
                     entityData={subjectItem}
                     outcomeComments={outcomeComments}
                     onCreateComment={onCreateOutcomeComment}
@@ -356,7 +349,6 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                   ? (
                   <PersonalizedCommentsModal
                     isOpen={true}
-                    onClose={noop}
                     entityData={subjectItem}
                     personalizedComments={personalizedComments}
                     onCreateComment={onCreatePersonalizedComment}
@@ -385,7 +377,6 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                   ? (
                   <ClassManagementModal
                     isOpen={true}
-                    onClose={noop}
                     entityData={subjectItem}
                     classes={classes}
                     onCreateClass={onCreateClass}

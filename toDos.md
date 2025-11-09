@@ -22,11 +22,11 @@
 # Design a favicon for the browser tab, something that looks like a notepad
 # Design a top banner for the app, something with students, maybe say something like inspiring the next generation, or guiding the leaders of tomorrow
 # add in a dark theme and a light theme, with a toggle button in the top right
+# Outcome comments
+## Need to add some templating for the last name
 Style the delete subject button to match the other delete buttons in the app
 When adding a new class, it should be selected by default
-Ensure the close button is removed from the code for the final comments
-Ensure the close button is removed from the other classes and tests as well
 
-clean up the fina comments component, the add final comment should be at the top, The component label isn't needed, it needs to be styled.
+clean up the final comments component, the add final comment should be at the top, The component label isn't needed, it needs to be styled.
 
-Remove the Edit Subject label from the subject component 
+Remove the Edit Subject label from the subject component

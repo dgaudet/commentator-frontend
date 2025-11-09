@@ -34,7 +34,6 @@ const mockClasses: Class[] = [
 ]
 
 describe('ClassManagementModal', () => {
-  const mockOnClose = jest.fn()
   const mockOnCreateClass = jest.fn()
   const mockOnUpdateClass = jest.fn()
   const mockOnDeleteClass = jest.fn()
@@ -50,7 +49,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={false}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -68,7 +66,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -88,7 +85,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -106,7 +102,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -126,7 +121,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -145,7 +139,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -165,7 +158,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -187,7 +179,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -219,7 +210,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -242,7 +232,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -272,7 +261,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -298,7 +286,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -338,7 +325,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -367,7 +353,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -404,7 +389,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -436,7 +420,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -468,7 +451,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -503,7 +485,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -535,7 +516,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -561,7 +541,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -581,7 +560,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -610,7 +588,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -639,7 +616,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -663,7 +639,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -686,7 +661,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -716,7 +690,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}

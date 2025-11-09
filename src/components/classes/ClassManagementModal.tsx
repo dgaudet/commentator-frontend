@@ -38,7 +38,6 @@ import styles from '../common/ConfirmationModal.module.css'
 
 interface ClassManagementModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
-  onClose: () => void
   entityData: T
   classes: Class[]
   onCreateClass: (request: CreateClassRequest) => Promise<void>
@@ -59,7 +58,6 @@ interface ClassManagementModalProps<T extends { id: number; name: string }> {
 
 export const ClassManagementModal = <T extends { id: number; name: string }>({
   isOpen,
-  onClose: _onClose,
   entityData,
   classes,
   onCreateClass,
