@@ -44,7 +44,8 @@ describe('PersonalizedCommentsModal', () => {
     it('should render modal when isOpen is true', () => {
       render(<PersonalizedCommentsModal {...defaultProps} />)
       expect(screen.getByRole('dialog')).toBeInTheDocument()
-      expect(screen.getByText(/Personalized Comments - Mathematics/i)).toBeInTheDocument()
+      // US-MODAL-STYLE-001 AC1: Modal title removed, check for panel content instead
+      expect(screen.getByText('Add New Personalized Comment')).toBeInTheDocument()
     })
 
     it('should show loading spinner when loading', () => {
@@ -288,15 +289,15 @@ describe('PersonalizedCommentsModal', () => {
       render(<PersonalizedCommentsModal {...defaultProps} />)
 
       const dialog = screen.getByRole('dialog')
-      expect(dialog).toHaveAttribute('aria-labelledby', 'modal-title')
       expect(dialog).toHaveAttribute('aria-modal', 'true')
     })
 
-    it('should have accessible close button', () => {
+    // US-MODAL-STYLE-001 AC2: Close button removed when embedded in tab panels
+    it('should NOT have close button when embedded', () => {
       render(<PersonalizedCommentsModal {...defaultProps} />)
 
-      const closeButton = screen.getByLabelText(/Close modal/i)
-      expect(closeButton).toBeInTheDocument()
+      const closeButton = screen.queryByLabelText(/Close modal/i)
+      expect(closeButton).not.toBeInTheDocument()
     })
   })
 })

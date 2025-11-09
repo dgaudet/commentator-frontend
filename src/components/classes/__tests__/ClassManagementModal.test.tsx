@@ -80,7 +80,8 @@ describe('ClassManagementModal', () => {
       )
 
       expect(screen.getByRole('dialog')).toBeInTheDocument()
-      expect(screen.getByText(/Class Management - Mathematics 101/i)).toBeInTheDocument()
+      // US-MODAL-STYLE-001 AC1: Modal title removed, check for panel content instead
+      expect(screen.getByRole('heading', { name: /Select a Class/i })).toBeInTheDocument()
     })
 
     it('should display loading spinner when loading', () => {
@@ -645,13 +646,16 @@ describe('ClassManagementModal', () => {
         />,
       )
 
-      expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true')
+      const dialog = screen.getByRole('dialog')
+      expect(dialog).toHaveAttribute('aria-modal', 'true')
+      expect(dialog).toHaveAttribute('aria-label', 'Class Management')
       expect(screen.getByLabelText(/Select a class/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/Class Name/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/Year/i)).toBeInTheDocument()
     })
 
-    it('should handle close button click', () => {
+    // US-MODAL-STYLE-001 AC2: Close button removed when embedded in tab panels
+    it('should NOT have close button when embedded', () => {
       render(
         <ClassManagementModal
           isOpen={true}
@@ -666,10 +670,8 @@ describe('ClassManagementModal', () => {
         />,
       )
 
-      const closeButton = screen.getByLabelText(/Close modal/i)
-      fireEvent.click(closeButton)
-
-      expect(mockOnClose).toHaveBeenCalledTimes(1)
+      const closeButton = screen.queryByLabelText(/Close modal/i)
+      expect(closeButton).not.toBeInTheDocument()
     })
   })
 })

@@ -28,6 +28,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { modalStyles } from '../../styles/modalStyles'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -43,7 +44,7 @@ interface PersonalizedCommentsModalProps<T extends { id: number; name: string }>
 
 export const PersonalizedCommentsModal = <T extends { id: number; name: string }>({
   isOpen,
-  onClose,
+  onClose: _onClose,
   entityData,
   personalizedComments,
   onCreateComment,
@@ -167,27 +168,13 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
   const editCommentIsValid = editCommentCharCount >= 10 && editCommentCharCount <= 500
 
   return (
-    <div
-      className="modal-overlay"
-      role="dialog"
-      aria-labelledby="modal-title"
-      aria-modal="true"
-    >
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2 id="modal-title">
-            Personalized Comments - {entityData.name}
-          </h2>
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            ×
-          </Button>
-        </div>
-
-        <div className="modal-body">
+    <>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Personalized Comments"
+        style={modalStyles.container}
+      >
           {loading && (
             <div className="loading-container">
               <LoadingSpinner data-testid="loading-spinner" />
@@ -201,29 +188,31 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
           {!loading && !error && (
             <>
               {/* Create Comment Form */}
-              <div className="create-comment-section">
-                <h3>Add New Personalized Comment</h3>
-                <div className="form-group">
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
+                  Add New Personalized Comment
+                </h3>
+                <div style={modalStyles.formGroup}>
                   <textarea
                     value={newCommentContent}
                     onChange={(e) => setNewCommentContent(e.target.value)}
                     placeholder="Enter personalized comment (10-500 characters)..."
                     aria-label="Add new personalized comment"
-                    className="comment-textarea"
                     rows={4}
                     maxLength={500}
+                    style={modalStyles.textarea}
                   />
-                  <div className="character-counter">
-                    <span className={newCommentIsValid ? 'valid' : 'invalid'}>
+                  <div style={modalStyles.characterCounter}>
+                    <span style={newCommentIsValid ? modalStyles.characterCountValid : modalStyles.characterCountInvalid}>
                       {newCommentCharCount} / 500 characters
                     </span>
                     {newCommentCharCount > 0 && newCommentCharCount < 10 && (
-                      <span className="hint"> (minimum 10)</span>
+                      <span style={modalStyles.characterCountHint}> (minimum 10)</span>
                     )}
                   </div>
                 </div>
                 {validationError && (
-                  <div className="validation-error" role="alert">
+                  <div role="alert" style={modalStyles.validationError}>
                     {validationError}
                   </div>
                 )}
@@ -237,46 +226,48 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
               </div>
 
               {/* Comments List */}
-              <div className="comments-list">
-                <h3>Existing Comments</h3>
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
+                  Existing Comments
+                </h3>
                 {personalizedComments.length === 0
                   ? (
-                      <div className="empty-state">
-                        <p>No personalized comments yet</p>
-                        <p className="empty-subtext">
+                      <div style={modalStyles.emptyState}>
+                        <p style={modalStyles.emptyStateText}>No personalized comments yet</p>
+                        <p style={modalStyles.emptyStateSubtext}>
                           Add your first personalized comment above.
                         </p>
                       </div>
                     )
                   : (
-                  <div className="comments">
+                  <div style={modalStyles.itemsList}>
                     {personalizedComments.map((comment) => (
-                      <div key={comment.id} className="comment-item">
+                      <div key={comment.id} style={modalStyles.itemCard}>
                         {editingId === comment.id
                           ? (
                             /* Edit Mode */
-                              <div className="edit-mode">
+                              <div>
                                 <textarea
                                   value={editContent}
                                   onChange={(e) => setEditContent(e.target.value)}
-                                  className="comment-textarea"
                                   rows={4}
                                   maxLength={500}
+                                  style={{ ...modalStyles.textarea, marginBottom: '0.5rem' }}
                                 />
-                                <div className="character-counter">
-                                  <span className={editCommentIsValid ? 'valid' : 'invalid'}>
+                                <div style={{ ...modalStyles.characterCounter, marginBottom: '1rem' }}>
+                                  <span style={editCommentIsValid ? modalStyles.characterCountValid : modalStyles.characterCountInvalid}>
                                     {editCommentCharCount} / 500 characters
                                   </span>
                                   {editCommentCharCount > 0 && editCommentCharCount < 10 && (
-                                    <span className="hint"> (minimum 10)</span>
+                                    <span style={modalStyles.characterCountHint}> (minimum 10)</span>
                                   )}
                                 </div>
                                 {validationError && (
-                                  <div className="validation-error" role="alert">
+                                  <div role="alert" style={modalStyles.validationError}>
                                     {validationError}
                                   </div>
                                 )}
-                                <div className="edit-actions">
+                                <div style={modalStyles.buttonGroup}>
                                   <Button
                                     onClick={handleEditSave}
                                     variant="primary"
@@ -295,21 +286,19 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                             )
                           : (
                             /* View Mode */
-                              <div className="view-mode">
-                            <div className="comment-content">
+                              <div>
+                            <div style={modalStyles.itemContent}>
                               {comment.comment}
                             </div>
-                            <div className="comment-meta">
-                              <span className="comment-date">
-                                Created: {formatDate(comment.createdAt)}
-                              </span>
+                            <div style={modalStyles.itemMeta}>
+                              Created: {formatDate(comment.createdAt)}
                               {comment.updatedAt !== comment.createdAt && (
-                                <span className="comment-date updated">
+                                <span>
                                   {' '} • Updated: {formatDate(comment.updatedAt)}
                                 </span>
                               )}
                             </div>
-                            <div className="comment-actions">
+                            <div style={modalStyles.buttonGroup}>
                               <Button
                                 onClick={() => handleEditStart(comment)}
                                 variant="secondary"
@@ -332,7 +321,6 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
               </div>
             </>
           )}
-        </div>
       </div>
 
       {/* Delete Confirmation Modal (US-DELETE-CONFIRM-002) */}
@@ -349,6 +337,6 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
           "{getCommentPreview(deleteConfirmation.commentText)}"
         </p>
       </ConfirmationModal>
-    </div>
+    </>
   )
 }

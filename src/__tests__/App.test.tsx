@@ -360,9 +360,9 @@ describe('App', () => {
       const outcomeCommentsTab = screen.getByRole('tab', { name: 'Outcome Comments' })
       fireEvent.click(outcomeCommentsTab)
 
-      // Tab panel content should be visible (embedded component with title)
+      // Tab panel content should be visible (US-MODAL-STYLE-001: no title, check for panel content instead)
       await waitFor(() => {
-        expect(screen.getByText('Outcome Comments - Mathematics 101')).toBeInTheDocument()
+        expect(screen.getByText('Add New Outcome Comment')).toBeInTheDocument()
       })
 
       // Verify the tab is marked as selected
@@ -394,9 +394,9 @@ describe('App', () => {
       const outcomeCommentsTab = screen.getByRole('tab', { name: 'Outcome Comments' })
       fireEvent.click(outcomeCommentsTab)
 
-      // Outcome comments panel should be visible
+      // Outcome comments panel should be visible (US-MODAL-STYLE-001: no title, check for panel content instead)
       await waitFor(() => {
-        expect(screen.getByText('Outcome Comments - Mathematics 101')).toBeInTheDocument()
+        expect(screen.getByText('Add New Outcome Comment')).toBeInTheDocument()
       })
 
       // Click Edit tab - this should show inline edit form

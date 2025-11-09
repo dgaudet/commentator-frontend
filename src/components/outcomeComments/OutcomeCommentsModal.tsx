@@ -27,6 +27,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { modalStyles } from '../../styles/modalStyles'
 
 interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -42,7 +43,7 @@ interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
 
 export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   isOpen,
-  onClose,
+  onClose: _onClose,
   entityData,
   outcomeComments,
   onCreateComment,
@@ -177,27 +178,13 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   }
 
   return (
-    <div
-      className="modal-overlay"
-      role="dialog"
-      aria-labelledby="modal-title"
-      aria-modal="true"
-    >
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2 id="modal-title">
-            Outcome Comments - {entityData.name}
-          </h2>
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            ×
-          </Button>
-        </div>
-
-        <div className="modal-body">
+    <>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Outcome Comments"
+        style={modalStyles.container}
+      >
           {loading && (
             <div className="loading-container">
               <LoadingSpinner data-testid="loading-spinner" />
@@ -211,44 +198,50 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
           {!loading && !error && (
             <>
               {/* Create Comment Form */}
-              <div className="create-comment-section">
-                <h3>Add New Outcome Comment</h3>
-                <div className="form-group">
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
+                  Add New Outcome Comment
+                </h3>
+                <div style={modalStyles.formGroup}>
                   <textarea
                     value={newCommentContent}
                     onChange={(e) => setNewCommentContent(e.target.value)}
                     placeholder="Enter outcome comment..."
                     aria-label="Add new outcome comment"
-                    className="comment-textarea"
                     rows={3}
+                    style={modalStyles.textarea}
                   />
                 </div>
-                <div className="score-range-inputs">
-                  <div className="form-group">
-                    <label htmlFor="lower-range">Lower Range:</label>
+                <div style={modalStyles.flexRow}>
+                  <div style={modalStyles.flexItem}>
+                    <label htmlFor="lower-range" style={modalStyles.label}>
+                      Lower Range:
+                    </label>
                     <input
                       id="lower-range"
                       type="number"
                       value={newLowerRange}
                       onChange={(e) => setNewLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="Min score"
-                      className="range-input"
+                      style={modalStyles.input}
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="upper-range">Upper Range:</label>
+                  <div style={modalStyles.flexItem}>
+                    <label htmlFor="upper-range" style={modalStyles.label}>
+                      Upper Range:
+                    </label>
                     <input
                       id="upper-range"
                       type="number"
                       value={newUpperRange}
                       onChange={(e) => setNewUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="Max score"
-                      className="range-input"
+                      style={modalStyles.input}
                     />
                   </div>
                 </div>
                 {validationError && (
-                  <div className="validation-error" role="alert">
+                  <div role="alert" style={modalStyles.validationError}>
                     {validationError}
                   </div>
                 )}
@@ -261,54 +254,60 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
               </div>
 
               {/* Comments List */}
-              <div className="comments-list">
-                <h3>Existing Comments</h3>
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
+                  Existing Comments
+                </h3>
                 {outcomeComments.length === 0
                   ? (
-                      <div className="empty-state">
-                        <p>No outcome comments found</p>
-                        <p className="empty-subtext">
+                      <div style={modalStyles.emptyState}>
+                        <p style={modalStyles.emptyStateText}>No outcome comments found</p>
+                        <p style={modalStyles.emptyStateSubtext}>
                           Be the first to add an outcome comment.
                         </p>
                       </div>
                     )
                   : (
-                  <div className="comments">
+                  <div style={modalStyles.itemsList}>
                     {outcomeComments.map((comment) => (
-                      <div key={comment.id} className="comment-item">
+                      <div key={comment.id} style={modalStyles.itemCard}>
                         {editingId === comment.id
                           ? (
                             /* Edit Mode */
-                              <div className="edit-mode">
+                              <div>
                                 <textarea
                                   value={editContent}
                                   onChange={(e) => setEditContent(e.target.value)}
-                                  className="comment-textarea"
                                   rows={3}
+                                  style={{ ...modalStyles.textarea, marginBottom: '1rem' }}
                                 />
-                                <div className="score-range-inputs">
-                                  <div className="form-group">
-                                    <label htmlFor={`edit-lower-${comment.id}`}>Lower Range:</label>
+                                <div style={modalStyles.flexRow}>
+                                  <div style={modalStyles.flexItem}>
+                                    <label htmlFor={`edit-lower-${comment.id}`} style={modalStyles.label}>
+                                      Lower Range:
+                                    </label>
                                     <input
                                       id={`edit-lower-${comment.id}`}
                                       type="number"
                                       value={editLowerRange}
                                       onChange={(e) => setEditLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
-                                      className="range-input"
+                                      style={modalStyles.input}
                                     />
                                   </div>
-                                  <div className="form-group">
-                                    <label htmlFor={`edit-upper-${comment.id}`}>Upper Range:</label>
+                                  <div style={modalStyles.flexItem}>
+                                    <label htmlFor={`edit-upper-${comment.id}`} style={modalStyles.label}>
+                                      Upper Range:
+                                    </label>
                                     <input
                                       id={`edit-upper-${comment.id}`}
                                       type="number"
                                       value={editUpperRange}
                                       onChange={(e) => setEditUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
-                                      className="range-input"
+                                      style={modalStyles.input}
                                     />
                                   </div>
                                 </div>
-                                <div className="edit-actions">
+                                <div style={modalStyles.buttonGroup}>
                                   <Button
                                     onClick={handleEditSave}
                                     variant="primary"
@@ -326,19 +325,17 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                             )
                           : (
                             /* View Mode */
-                              <div className="view-mode">
-                            <div className="comment-content">
+                              <div>
+                            <div style={modalStyles.itemContent}>
                               {comment.comment}
                             </div>
-                            <div className="score-range">
+                            <div style={modalStyles.itemMetaMedium}>
                               Score Range: {comment.lowerRange} - {comment.upperRange}
                             </div>
-                            <div className="comment-meta">
-                              <span className="comment-date">
-                                {formatDate(comment.createdAt)}
-                              </span>
+                            <div style={modalStyles.itemMeta}>
+                              {formatDate(comment.createdAt)}
                             </div>
-                            <div className="comment-actions">
+                            <div style={modalStyles.buttonGroup}>
                               <Button
                                 onClick={() => handleEditStart(comment)}
                                 variant="secondary"
@@ -361,7 +358,6 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
               </div>
             </>
           )}
-        </div>
       </div>
 
       {/* Delete Confirmation Modal (US-DELETE-CONFIRM-001) */}
@@ -378,6 +374,6 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
           "{getCommentPreview(deleteConfirmation.commentText)}"
         </p>
       </ConfirmationModal>
-    </div>
+    </>
   )
 }

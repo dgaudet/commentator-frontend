@@ -19,6 +19,8 @@
 ## Should it also delete the final comments associated? should the backend do the deletion?
 # Outcome Comments should be ordered by the Lower Range values
 # sort final comments by student name
-# Need to style the tab bar to match the other styling
 # Design a favicon for the browser tab, something that looks like a notepad
-# Design a top image for the app, something with students, maybe say something like inspiring the next generation, or guiding the leaders of tomorrow
+# Design a top banner for the app, something with students, maybe say something like inspiring the next generation, or guiding the leaders of tomorrow
+# add in a dark theme and a light theme, with a toggle button in the top right
+Style the delete subject button to match the other delete buttons in the app
+Perhaps the class functionality should have a tab group as well, with Edit and Final Comments as the two tabs

@@ -29,6 +29,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { modalStyles } from '../../styles/modalStyles'
 import styles from '../common/ConfirmationModal.module.css'
 
 interface ClassManagementModalProps<T extends { id: number; name: string }> {
@@ -47,7 +48,7 @@ interface ClassManagementModalProps<T extends { id: number; name: string }> {
 
 export const ClassManagementModal = <T extends { id: number; name: string }>({
   isOpen,
-  onClose,
+  onClose: _onClose,
   entityData,
   classes,
   onCreateClass,
@@ -225,27 +226,13 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
   }
 
   return (
-    <div
-      className="modal-overlay"
-      role="dialog"
-      aria-labelledby="modal-title"
-      aria-modal="true"
-    >
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2 id="modal-title">
-            Class Management - {entityData.name}
-          </h2>
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            ×
-          </Button>
-        </div>
-
-        <div className="modal-body">
+    <>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Class Management"
+        style={modalStyles.container}
+      >
           {loading && (
             <div className="loading-container">
               <LoadingSpinner data-testid="loading-spinner" />
@@ -259,28 +246,30 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
           {!loading && !error && (
             <>
               {/* Class Dropdown Selector */}
-              <div className="class-selector-section">
-                <h3>Select a Class</h3>
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
+                  Select a Class
+                </h3>
                 {classes.length === 0
                   ? (
-                      <div className="empty-state">
-                        <p>No classes yet</p>
-                        <p className="empty-subtext">
+                      <div style={modalStyles.emptyState}>
+                        <p style={modalStyles.emptyStateText}>No classes yet</p>
+                        <p style={modalStyles.emptyStateSubtext}>
                           Add your first class below.
                         </p>
                       </div>
                     )
                   : (
-                      <div className="form-group">
-                        <label htmlFor="class-dropdown">
+                      <div style={modalStyles.formGroup}>
+                        <label htmlFor="class-dropdown" style={modalStyles.label}>
                           Select a class to edit or delete:
                         </label>
                         <select
                           id="class-dropdown"
                           value={selectedClassId || ''}
                           onChange={handleClassSelect}
-                          className="class-dropdown"
                           aria-label="Select a class"
+                          style={modalStyles.select}
                         >
                           <option value="">-- Select a class --</option>
                           {classes.map((cls) => (
@@ -294,11 +283,13 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
               </div>
 
               {/* Create/Edit Class Form */}
-              <div className="class-form-section">
-                <h3>{isEditMode ? 'Edit Class' : 'Add New Class'}</h3>
-                <div className="form-group">
-                  <label htmlFor="class-name-input">
-                    Class Name <span className="required">*</span>
+              <div style={modalStyles.section}>
+                <h3 style={modalStyles.heading}>
+                  {isEditMode ? 'Edit Class' : 'Add New Class'}
+                </h3>
+                <div style={modalStyles.formGroup}>
+                  <label htmlFor="class-name-input" style={modalStyles.label}>
+                    Class Name <span style={modalStyles.requiredIndicator}>*</span>
                   </label>
                   <input
                     id="class-name-input"
@@ -307,14 +298,14 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                     onChange={(e) => setClassName(e.target.value)}
                     placeholder="Enter class name (e.g., Advanced Section)"
                     aria-label="Class Name"
-                    className="class-name-input"
                     maxLength={100}
+                    style={modalStyles.input}
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="class-year-input">
-                    Year <span className="required">*</span>
+                <div style={modalStyles.formGroup}>
+                  <label htmlFor="class-year-input" style={modalStyles.label}>
+                    Year <span style={modalStyles.requiredIndicator}>*</span>
                   </label>
                   <input
                     id="class-year-input"
@@ -324,17 +315,17 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                     min={2000}
                     max={2099}
                     aria-label="Year"
-                    className="class-year-input"
+                    style={modalStyles.input}
                   />
                 </div>
 
                 {validationError && (
-                  <div className="validation-error" role="alert">
+                  <div role="alert" style={modalStyles.validationError}>
                     {validationError}
                   </div>
                 )}
 
-                <div className="form-actions">
+                <div style={modalStyles.buttonGroupWrap}>
                   {isEditMode
                     ? (
                         <>
@@ -377,7 +368,6 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
               </div>
             </>
           )}
-        </div>
       </div>
 
       {/* Delete Confirmation Modal (US-DELETE-CONFIRM-003) */}
@@ -412,6 +402,6 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
           </div>
         )}
       </ConfirmationModal>
-    </div>
+    </>
   )
 }
