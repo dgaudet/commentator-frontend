@@ -349,7 +349,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                       />
 
                       {/* Edit Class Tab Panel */}
-                      <TabPanel isActive={activeClassTab === 'edit-class'}>
+                      <TabPanel id="edit-class" activeTabId={activeClassTab} tabId="edit-class">
                         <div style={modalStyles.section}>
                           <h3 style={modalStyles.heading}>
                             Edit Class
@@ -410,7 +410,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                       </TabPanel>
 
                       {/* Final Comments Tab Panel - US-CLASS-TABS-003 */}
-                      <TabPanel isActive={activeClassTab === 'final-comments'}>
+                      <TabPanel id="final-comments" activeTabId={activeClassTab} tabId="final-comments">
                         {selectedClassId && onCreateFinalComment && onUpdateFinalComment && onDeleteFinalComment
                           ? (
                               <FinalCommentsModal

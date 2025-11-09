@@ -2,15 +2,8 @@ import { useState } from 'react'
 import './App.css'
 import { SubjectList } from './components/subjects/SubjectList'
 import { SubjectForm } from './components/subjects/SubjectForm'
-import { FinalCommentsModal } from './components/finalComments/FinalCommentsModal'
-import { useFinalComments } from './hooks/useFinalComments'
 import { saveSelectedSubjectId } from './utils/subjectStorageUtils'
 import type { Subject } from './types/Subject'
-import type {
-  Class,
-  CreateFinalCommentRequest,
-  UpdateFinalCommentRequest,
-} from './types'
 
 /**
  * Main application component
@@ -28,22 +21,6 @@ import type {
 function App() {
   const [showForm, setShowForm] = useState(false)
   const [editingSubject, setEditingSubject] = useState<Subject | undefined>(undefined)
-  const [finalCommentsModal, setFinalCommentsModal] = useState<{
-    isOpen: boolean
-    classItem?: Class
-  }>({ isOpen: false })
-
-  // Hook for managing final comments state and API operations
-  const {
-    finalComments,
-    loading: finalCommentsLoading,
-    error: finalCommentsError,
-    loadFinalComments,
-    createComment: createFinalComment,
-    updateComment: updateFinalComment,
-    deleteComment: deleteFinalComment,
-    clearError: clearFinalCommentsError,
-  } = useFinalComments()
 
   const handleAddSubject = () => {
     setEditingSubject(undefined)
@@ -76,37 +53,6 @@ function App() {
     setEditingSubject(undefined)
   }
 
-  // Handler for viewing final comments (separate modal, called from ClassManagementModal)
-  const handleViewFinalComments = async (classItem: Class) => {
-    setFinalCommentsModal({
-      isOpen: true,
-      classItem,
-    })
-    // Load final comments for this class
-    await loadFinalComments(classItem.id)
-  }
-
-  const handleFinalCommentsClose = () => {
-    setFinalCommentsModal({ isOpen: false })
-    // Clear any error state when closing modal
-    clearFinalCommentsError()
-  }
-
-  // Real API handler for creating final comments
-  const handleCreateFinalComment = async (request: CreateFinalCommentRequest) => {
-    await createFinalComment(request)
-  }
-
-  // Real API handler for updating final comments
-  const handleUpdateFinalComment = async (id: number, request: UpdateFinalCommentRequest) => {
-    await updateFinalComment(id, request)
-  }
-
-  // Real API handler for deleting final comments
-  const handleDeleteFinalComment = async (id: number) => {
-    await deleteFinalComment(id)
-  }
-
   return (
     <div className="app">
       <header className="app-header">
@@ -128,23 +74,9 @@ function App() {
                 onEdit={handleEditSubject}
                 onEditSuccess={handleFormSuccess}
                 onEditCancel={handleFormCancel}
-                onViewFinalComments={handleViewFinalComments}
               />
             )}
       </main>
-
-      {/* Final Comments Modal (separate from subject tabs) */}
-      <FinalCommentsModal
-        isOpen={finalCommentsModal.isOpen}
-        entityData={finalCommentsModal.classItem || { id: 0, name: '', year: 2024, subjectId: 0, createdAt: '', updatedAt: '' }}
-        finalComments={finalComments}
-        onCreateComment={handleCreateFinalComment}
-        onUpdateComment={handleUpdateFinalComment}
-        onDeleteComment={handleDeleteFinalComment}
-        loading={finalCommentsLoading}
-        error={finalCommentsError}
-        onClose={handleFinalCommentsClose}
-      />
     </div>
   )
 }
