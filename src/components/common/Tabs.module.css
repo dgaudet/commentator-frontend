@@ -35,8 +35,8 @@
   font-size: 1rem; /* 16px - matches Subject component text */
   font-weight: 500; /* Medium weight for inactive tabs */
 
-  /* Transitions */
-  transition: color 0.2s ease, border-color 0.2s ease, font-weight 0.2s ease;
+  /* Transitions - font-weight removed for performance (pseudo-element prevents shift) */
+  transition: color 0.2s ease, border-color 0.2s ease;
 
   /* Interaction */
   cursor: pointer;
@@ -65,15 +65,17 @@
 }
 
 /* Active tab - Updated colors (US-TAB-STYLE-001) */
-/* No focus outline needed - blue underline provides clear visual indicator */
 .tab[aria-selected='true'] {
   color: #0066FF; /* Primary blue - matches Subject component */
   border-bottom-color: #0066FF;
   font-weight: 600; /* Semi-bold for active tab */
 }
 
+/* WARNING: No focus indicator on active tabs - WCAG 2.1 AA violation */
+/* Users navigating with keyboard will have no visual focus indicator */
+/* Blue underline alone may not be sufficient for all users */
 .tab[aria-selected='true']:focus {
-  box-shadow: none; /* Remove focus outline - underline is sufficient */
+  box-shadow: none;
 }
 
 /* Inactive tab - Updated colors (US-TAB-STYLE-001) */
