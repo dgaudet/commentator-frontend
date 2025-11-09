@@ -412,8 +412,10 @@ describe('OutcomeCommentsModal', () => {
     it('should have proper ARIA labels', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
 
-      // US-MODAL-STYLE-001: aria-labelledby removed with modal title
-      expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true')
+      // US-MODAL-STYLE-001: aria-label provides accessible name for dialog
+      const dialog = screen.getByRole('dialog')
+      expect(dialog).toHaveAttribute('aria-modal', 'true')
+      expect(dialog).toHaveAttribute('aria-label', 'Outcome Comments')
       expect(screen.getByRole('textbox')).toHaveAttribute('aria-label')
     })
 

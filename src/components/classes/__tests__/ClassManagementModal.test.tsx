@@ -646,7 +646,9 @@ describe('ClassManagementModal', () => {
         />,
       )
 
-      expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true')
+      const dialog = screen.getByRole('dialog')
+      expect(dialog).toHaveAttribute('aria-modal', 'true')
+      expect(dialog).toHaveAttribute('aria-label', 'Class Management')
       expect(screen.getByLabelText(/Select a class/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/Class Name/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/Year/i)).toBeInTheDocument()

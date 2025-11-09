@@ -172,6 +172,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
       <div
         role="dialog"
         aria-modal="true"
+        aria-label="Personalized Comments"
         style={modalStyles.container}
       >
           {loading && (

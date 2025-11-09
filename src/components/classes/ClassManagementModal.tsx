@@ -230,6 +230,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
       <div
         role="dialog"
         aria-modal="true"
+        aria-label="Class Management"
         style={modalStyles.container}
       >
           {loading && (
