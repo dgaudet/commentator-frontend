@@ -34,7 +34,6 @@ const mockClasses: Class[] = [
 ]
 
 describe('ClassManagementModal', () => {
-  const mockOnClose = jest.fn()
   const mockOnCreateClass = jest.fn()
   const mockOnUpdateClass = jest.fn()
   const mockOnDeleteClass = jest.fn()
@@ -50,7 +49,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={false}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -68,7 +66,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -88,7 +85,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -106,7 +102,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -126,7 +121,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -145,7 +139,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -165,7 +158,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -187,7 +179,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -219,7 +210,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -242,7 +232,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={[]}
           onCreateClass={mockOnCreateClass}
@@ -272,7 +261,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -298,7 +286,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -338,7 +325,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -367,7 +353,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -404,7 +389,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -436,7 +420,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -468,7 +451,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -503,7 +485,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -535,7 +516,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -551,16 +531,16 @@ describe('ClassManagementModal', () => {
       const dropdown = screen.getByLabelText(/Select a class/i)
       fireEvent.change(dropdown, { target: { value: '1' } })
 
+      // US-CLASS-TABS-001: Now a tab instead of button
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /Final Comments/i })).toBeInTheDocument()
+        expect(screen.getByRole('tab', { name: /Final Comments/i })).toBeInTheDocument()
       })
     })
 
-    it('should NOT display Final Comments button when no class is selected', () => {
+    it('should NOT display Final Comments tab when no class is selected', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -572,14 +552,14 @@ describe('ClassManagementModal', () => {
         />,
       )
 
-      expect(screen.queryByRole('button', { name: /Final Comments/i })).not.toBeInTheDocument()
+      // US-CLASS-TABS-001: Now a tab instead of button
+      expect(screen.queryByRole('tab', { name: /Final Comments/i })).not.toBeInTheDocument()
     })
 
-    it('should call onViewFinalComments with class data when Final Comments button clicked', async () => {
+    it('should call onViewFinalComments with class data when Final Comments tab clicked', async () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -595,19 +575,19 @@ describe('ClassManagementModal', () => {
       const dropdown = screen.getByLabelText(/Select a class/i)
       fireEvent.change(dropdown, { target: { value: '1' } })
 
+      // US-CLASS-TABS-001: Click the Final Comments tab
       await waitFor(() => {
-        const finalCommentsButton = screen.getByRole('button', { name: /Final Comments/i })
-        fireEvent.click(finalCommentsButton)
+        const finalCommentsTab = screen.getByRole('tab', { name: /Final Comments/i })
+        fireEvent.click(finalCommentsTab)
       })
 
       expect(mockOnViewFinalComments).toHaveBeenCalledWith(mockClasses[0])
     })
 
-    it('should NOT display Final Comments button when onViewFinalComments is not provided', async () => {
+    it('should NOT display Final Comments tab when onViewFinalComments is not provided', async () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -626,7 +606,8 @@ describe('ClassManagementModal', () => {
         expect(screen.getByRole('button', { name: /Update Class/i })).toBeInTheDocument()
       })
 
-      expect(screen.queryByRole('button', { name: /Final Comments/i })).not.toBeInTheDocument()
+      // US-CLASS-TABS-001: Final Comments tab should not appear without callback
+      expect(screen.queryByRole('tab', { name: /Final Comments/i })).not.toBeInTheDocument()
     })
   })
 
@@ -635,7 +616,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -659,7 +639,6 @@ describe('ClassManagementModal', () => {
       render(
         <ClassManagementModal
           isOpen={true}
-          onClose={mockOnClose}
           entityData={mockSubject}
           classes={mockClasses}
           onCreateClass={mockOnCreateClass}
@@ -672,6 +651,61 @@ describe('ClassManagementModal', () => {
 
       const closeButton = screen.queryByLabelText(/Close modal/i)
       expect(closeButton).not.toBeInTheDocument()
+    })
+  })
+
+  describe('US-CLASS-TABS-001: Tab Group Display', () => {
+    // TDD RED PHASE: These tests should FAIL before implementation
+
+    it('should display tab group when a class is selected (AC1)', () => {
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          onViewFinalComments={mockOnViewFinalComments}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Select a class from dropdown
+      const dropdown = screen.getByLabelText(/Select a class/i)
+      fireEvent.change(dropdown, { target: { value: '1' } })
+
+      // Tab group should appear with both tabs
+      expect(screen.getByRole('tablist')).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: /Edit Class/i })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: /Final Comments/i })).toBeInTheDocument()
+
+      // "Edit Class" tab should be selected by default
+      expect(screen.getByRole('tab', { name: /Edit Class/i })).toHaveAttribute('aria-selected', 'true')
+      expect(screen.getByRole('tab', { name: /Final Comments/i })).toHaveAttribute('aria-selected', 'false')
+    })
+
+    it('should NOT display tab group when no class is selected (AC2)', () => {
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // No class selected (default state)
+      // Tab group should NOT be present
+      expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+
+      // "Add New Class" form should be shown instead
+      expect(screen.getByText(/Add New Class/i)).toBeInTheDocument()
     })
   })
 })

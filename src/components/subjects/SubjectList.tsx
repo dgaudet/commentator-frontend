@@ -15,6 +15,7 @@ import { useSubjects } from '../../hooks/useSubjects'
 import { useOutcomeComments } from '../../hooks/useOutcomeComments'
 import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
 import { useClasses } from '../../hooks/useClasses'
+import { useFinalComments } from '../../hooks/useFinalComments'
 import { finalCommentService } from '../../services/api/finalCommentService'
 import { SubjectListItem } from './SubjectListItem'
 import { SubjectEmptyState } from './SubjectEmptyState'
@@ -24,7 +25,7 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Subject } from '../../types/Subject'
 import { getSelectedSubjectId, saveSelectedSubjectId, clearSelectedSubjectId } from '../../utils/subjectStorageUtils'
-import type { Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest } from '../../types'
+import type { Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
 interface SubjectListProps {
   onSubjectClick?: (subjectId: number) => void
@@ -81,6 +82,17 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     updateClass,
     deleteClass,
   } = useClasses()
+
+  // US-CLASS-TABS-003: Hook for managing final comments (embedded in class tab)
+  const {
+    finalComments,
+    loading: finalCommentsLoading,
+    error: finalCommentsError,
+    loadFinalComments,
+    createComment: createFinalComment,
+    updateComment: updateFinalComment,
+    deleteComment: deleteFinalComment,
+  } = useFinalComments()
 
   // State for selected subject ID
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null)
@@ -237,6 +249,26 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     const comments = await finalCommentService.getByClassId(classId)
     return comments.length
   }, [])
+
+  // US-CLASS-TABS-003: Handler to load final comments when tab clicked
+  const handleViewFinalCommentsTab = useCallback(async (classData: Class) => {
+    await loadFinalComments(classData.id)
+    // Also call the parent's onViewFinalComments if provided (for backward compatibility)
+    onViewFinalComments?.(classData)
+  }, [loadFinalComments, onViewFinalComments])
+
+  // US-CLASS-TABS-003: CRUD handlers for final comments
+  const handleCreateFinalComment = useCallback(async (request: CreateFinalCommentRequest) => {
+    await createFinalComment(request)
+  }, [createFinalComment])
+
+  const handleUpdateFinalComment = useCallback(async (id: number, request: UpdateFinalCommentRequest) => {
+    await updateFinalComment(id, request)
+  }, [updateFinalComment])
+
+  const handleDeleteFinalComment = useCallback(async (id: number) => {
+    await deleteFinalComment(id)
+  }, [deleteFinalComment])
 
   // Handle delete button click - show confirmation modal (US-SUBJ-DELETE-002 AC1)
   const handleDelete = useCallback((subjectId: number) => {
@@ -418,7 +450,14 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             checkFinalCommentsCount={handleCheckFinalCommentsCount}
             classesLoading={classesLoading}
             classesError={classesError}
-            onViewFinalComments={onViewFinalComments}
+            onViewFinalComments={handleViewFinalCommentsTab}
+            // US-CLASS-TABS-003: Final Comments tab props (embedded)
+            finalComments={finalComments}
+            onCreateFinalComment={handleCreateFinalComment}
+            onUpdateFinalComment={handleUpdateFinalComment}
+            onDeleteFinalComment={handleDeleteFinalComment}
+            finalCommentsLoading={finalCommentsLoading}
+            finalCommentsError={finalCommentsError}
           />
             )
           : null

@@ -16,17 +16,12 @@ import { Subject } from '../../types/Subject'
 import { formatDate } from '../../utils/dateFormatter'
 import { Tabs, Tab } from '../common/Tabs'
 import { TabPanel } from '../common/TabPanel'
+import { Button } from '../common/Button'
 import { SubjectForm } from './SubjectForm'
 import { OutcomeCommentsModal } from '../outcomeComments/OutcomeCommentsModal'
 import { PersonalizedCommentsModal } from '../personalizedComments/PersonalizedCommentsModal'
 import { ClassManagementModal } from '../classes/ClassManagementModal'
-import type { OutcomeComment, PersonalizedComment, Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest } from '../../types'
-
-/**
- * No-op function for modal components embedded in tab panels
- * Reused to prevent creating new function instances on every render
- */
-const noop = () => {}
+import type { OutcomeComment, PersonalizedComment, Class, FinalComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
 interface SubjectListItemProps {
   subjectItem: Subject
@@ -62,6 +57,13 @@ interface SubjectListItemProps {
   classesLoading?: boolean
   classesError?: string | null
   onViewFinalComments?: (classData: Class) => void
+  // US-CLASS-TABS-003: Final Comments tab props for embedded mode
+  finalComments?: FinalComment[]
+  onCreateFinalComment?: (request: CreateFinalCommentRequest) => Promise<void>
+  onUpdateFinalComment?: (id: number, request: UpdateFinalCommentRequest) => Promise<void>
+  onDeleteFinalComment?: (id: number) => Promise<void>
+  finalCommentsLoading?: boolean
+  finalCommentsError?: string | null
 }
 
 export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
@@ -98,12 +100,14 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   classesLoading = false,
   classesError = null,
   onViewFinalComments,
+  // US-CLASS-TABS-003: Final Comments tab props for embedded mode
+  finalComments = [],
+  onCreateFinalComment,
+  onUpdateFinalComment,
+  onDeleteFinalComment,
+  finalCommentsLoading = false,
+  finalCommentsError = null,
 }) => {
-  /**
-   * Manage delete button hover state with React state for predictable behavior
-   * Avoids issues with DOM manipulation during re-renders
-   */
-  const [isDeleteHovered, setIsDeleteHovered] = useState(false)
   /**
    * Build tabs array dynamically based on provided callbacks
    * Only includes tabs for callbacks that are provided
@@ -230,27 +234,14 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
 
           {/* Delete button beside subject name (US-SUBJ-DELETE-001, US-STYLE-001 AC3) */}
           {onDelete && (
-            <button
+            <Button
               onClick={() => onDelete(subjectItem.id)}
-              onMouseEnter={() => setIsDeleteHovered(true)}
-              onMouseLeave={() => setIsDeleteHovered(false)}
+              variant="danger"
               aria-label={`Delete ${subjectItem.name}`}
               data-position="beside-name"
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: 600,
-                color: '#DC2626',
-                backgroundColor: isDeleteHovered ? '#FEF2F2' : 'transparent',
-                border: '2px solid #DC2626',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s ease',
-              }}
             >
               Delete
-            </button>
+            </Button>
           )}
         </div>
 
@@ -313,7 +304,6 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                   ? (
                   <OutcomeCommentsModal
                     isOpen={true}
-                    onClose={noop}
                     entityData={subjectItem}
                     outcomeComments={outcomeComments}
                     onCreateComment={onCreateOutcomeComment}
@@ -342,7 +332,6 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                   ? (
                   <PersonalizedCommentsModal
                     isOpen={true}
-                    onClose={noop}
                     entityData={subjectItem}
                     personalizedComments={personalizedComments}
                     onCreateComment={onCreatePersonalizedComment}
@@ -371,7 +360,6 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                   ? (
                   <ClassManagementModal
                     isOpen={true}
-                    onClose={noop}
                     entityData={subjectItem}
                     classes={classes}
                     onCreateClass={onCreateClass}
@@ -381,6 +369,12 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                     onViewFinalComments={onViewFinalComments}
                     loading={classesLoading}
                     error={classesError}
+                    finalComments={finalComments}
+                    onCreateFinalComment={onCreateFinalComment}
+                    onUpdateFinalComment={onUpdateFinalComment}
+                    onDeleteFinalComment={onDeleteFinalComment}
+                    finalCommentsLoading={finalCommentsLoading}
+                    finalCommentsError={finalCommentsError}
                   />
                     )
                   : (

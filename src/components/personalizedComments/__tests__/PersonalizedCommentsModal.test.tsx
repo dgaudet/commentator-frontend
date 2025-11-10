@@ -19,7 +19,6 @@ describe('PersonalizedCommentsModal', () => {
 
   const defaultProps = {
     isOpen: true,
-    onClose: jest.fn(),
     entityData: mockSubject,
     personalizedComments: [],
     onCreateComment: jest.fn(),

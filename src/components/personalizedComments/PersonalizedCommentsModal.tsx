@@ -32,7 +32,6 @@ import { modalStyles } from '../../styles/modalStyles'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
-  onClose: () => void
   entityData: T
   personalizedComments: PersonalizedComment[]
   onCreateComment: (request: CreatePersonalizedCommentRequest) => Promise<void>
@@ -44,7 +43,6 @@ interface PersonalizedCommentsModalProps<T extends { id: number; name: string }>
 
 export const PersonalizedCommentsModal = <T extends { id: number; name: string }>({
   isOpen,
-  onClose: _onClose,
   entityData,
   personalizedComments,
   onCreateComment,

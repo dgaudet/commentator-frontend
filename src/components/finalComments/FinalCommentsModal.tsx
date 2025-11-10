@@ -35,7 +35,6 @@ import { ConfirmationModal } from '../common/ConfirmationModal'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
-  onClose: () => void
   entityData: T
   finalComments: FinalComment[]
   onCreateComment: (request: CreateFinalCommentRequest) => Promise<void>
@@ -43,11 +42,11 @@ interface FinalCommentsModalProps<T extends { id: number; name: string }> {
   onDeleteComment: (id: number) => Promise<void>
   loading: boolean
   error: string | null
+  embedded?: boolean // US-CLASS-TABS-003: Support embedded mode (no modal chrome)
 }
 
 export const FinalCommentsModal = <T extends { id: number; name: string }>({
   isOpen,
-  onClose,
   entityData,
   finalComments,
   onCreateComment,
@@ -55,6 +54,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   onDeleteComment,
   loading,
   error,
+  embedded = false, // US-CLASS-TABS-003: Default to false for backward compatibility
 }: FinalCommentsModalProps<T>) => {
   // Form state
   const [firstName, setFirstName] = useState('')
@@ -87,7 +87,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const [editComment, setEditComment] = useState('')
   const [editValidationError, setEditValidationError] = useState('')
 
-  if (!isOpen) return null
+  // US-CLASS-TABS-003: Skip isOpen check when embedded (always render in TabPanel)
+  if (!embedded && !isOpen) return null
 
   // Format date helper
   const formatDate = (dateString: string): string => {
@@ -298,28 +299,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     a.firstName.localeCompare(b.firstName),
   )
 
-  return (
-    <div
-      className="modal-overlay"
-      role="dialog"
-      aria-labelledby="modal-title"
-      aria-modal="true"
-    >
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2 id="modal-title">
-            Final Comments - {entityData.name}
-          </h2>
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            ×
-          </Button>
-        </div>
-
-        <div className="modal-body">
+  // US-CLASS-TABS-003: Render content JSX for both embedded and modal modes
+  const contentJSX = (
+    <div className="modal-body">
           {/* Loading State (AC 5) */}
           {loading && (
             <div className="loading-container">
@@ -568,6 +550,54 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
             </>
           )}
         </div>
+  )
+
+  // US-CLASS-TABS-003: Conditional rendering based on embedded mode
+  if (embedded) {
+    // Embedded mode: Just render content without modal chrome
+    return (
+      <>
+        {contentJSX}
+
+        {/* Delete Confirmation Modal (US-DELETE-CONFIRM-004) */}
+        <ConfirmationModal
+          isOpen={deleteConfirmation.isOpen}
+          title="Delete Final Comment"
+          message="Are you sure you want to delete this final comment?"
+          onConfirm={handleDeleteConfirm}
+          onCancel={handleDeleteCancel}
+          confirmButtonText="Delete"
+          cancelButtonText="Cancel"
+        >
+          <div className="text-sm text-gray-700 mt-3">
+            <p className="font-medium">
+              <span className="font-semibold">Student:</span> {deleteConfirmation.studentName}
+            </p>
+            <p className="text-gray-600 mt-1">
+              <span className="font-semibold">Class:</span> {deleteConfirmation.className} ({deleteConfirmation.classYear})
+            </p>
+          </div>
+        </ConfirmationModal>
+      </>
+    )
+  }
+
+  // Modal mode: Render with full modal chrome
+  return (
+    <div
+      className="modal-overlay"
+      role="dialog"
+      aria-labelledby="modal-title"
+      aria-modal="true"
+    >
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2 id="modal-title">
+            Final Comments - {entityData.name}
+          </h2>
+        </div>
+
+        {contentJSX}
       </div>
 
       {/* Delete Confirmation Modal (US-DELETE-CONFIRM-004) */}

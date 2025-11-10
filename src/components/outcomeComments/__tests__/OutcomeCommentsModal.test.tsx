@@ -49,7 +49,6 @@ const mockOutcomeComments: OutcomeComment[] = [
 describe('OutcomeCommentsModal', () => {
   const defaultProps = {
     isOpen: true,
-    onClose: jest.fn(),
     entityData: mockSubject,
     outcomeComments: mockOutcomeComments,
     onCreateComment: jest.fn(),
