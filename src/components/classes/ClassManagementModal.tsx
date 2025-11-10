@@ -406,7 +406,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
 
                       {/* Final Comments Tab Panel - US-CLASS-TABS-003 */}
                       <TabPanel id="final-comments" activeTabId={activeClassTab} tabId="final-comments">
-                        {selectedClassId && onCreateFinalComment && onUpdateFinalComment && onDeleteFinalComment
+                        {onCreateFinalComment && onUpdateFinalComment && onDeleteFinalComment
                           ? (
                               <FinalCommentsModal
                                 isOpen={true}
