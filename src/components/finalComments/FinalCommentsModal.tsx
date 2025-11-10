@@ -314,9 +314,169 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
             <ErrorMessage message={error} />
           )}
 
-          {/* List Content - Only show when not loading and no error */}
+          {/* Content - Only show when not loading and no error */}
           {!loading && !error && (
             <>
+              {/* US-FINAL-003: Create Form (AC 1, 2) - MOVED TO TOP per US-FINAL-STYLE-001 */}
+              {/* Updated to match Edit Class modalStyles pattern */}
+              <div className="create-comment-section">
+                <h3>Add New Final Comment</h3>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label
+                      htmlFor="first-name-input"
+                      style={{
+                        display: 'block',
+                        marginBottom: '0.5rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        color: '#374151',
+                      }}
+                    >
+                      First Name <span className="required" style={{ color: '#DC2626' }}>*</span>
+                    </label>
+                    <input
+                      id="first-name-input"
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Enter student first name"
+                      className="final-comment-input"
+                      disabled={submitting}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        fontSize: '1rem',
+                        border: validationError && !firstName ? '1px solid #DC2626' : '1px solid #E5E7EB',
+                        borderRadius: '8px',
+                      }}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label
+                      htmlFor="last-name-input"
+                      style={{
+                        display: 'block',
+                        marginBottom: '0.5rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        color: '#374151',
+                      }}
+                    >
+                      Last Name
+                    </label>
+                    <input
+                      id="last-name-input"
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Enter student last name (optional)"
+                      className="final-comment-input"
+                      disabled={submitting}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        fontSize: '1rem',
+                        border: '1px solid #E5E7EB',
+                        borderRadius: '8px',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label
+                    htmlFor="grade-input"
+                    style={{
+                      display: 'block',
+                      marginBottom: '0.5rem',
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                      color: '#374151',
+                    }}
+                  >
+                    Grade <span className="required" style={{ color: '#DC2626' }}>*</span>
+                  </label>
+                  <input
+                    id="grade-input"
+                    type="number"
+                    value={grade}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setGrade(value === '' ? '' : Number(value))
+                    }}
+                    placeholder="0-100"
+                    min="0"
+                    max="100"
+                    className="final-comment-input"
+                    disabled={submitting}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      fontSize: '1rem',
+                      border: validationError && grade === '' ? '1px solid #DC2626' : '1px solid #E5E7EB',
+                      borderRadius: '8px',
+                    }}
+                  />
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
+                  <label
+                    htmlFor="comment-input"
+                    style={{
+                      display: 'block',
+                      marginBottom: '0.5rem',
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                      color: '#374151',
+                    }}
+                  >
+                    Comment
+                  </label>
+                  <textarea
+                    id="comment-input"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Enter optional comment (max 1000 characters)"
+                    className="final-comment-textarea"
+                    rows={4}
+                    maxLength={1000}
+                    disabled={submitting}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      fontSize: '1rem',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '8px',
+                      resize: 'vertical',
+                    }}
+                  />
+                  <div
+                    className="character-counter"
+                    style={{
+                      marginTop: '0.5rem',
+                      fontSize: '0.875rem',
+                      color: '#6B7280',
+                    }}
+                  >
+                    {comment.length}/1000 characters
+                  </div>
+                </div>
+
+                {validationError && (
+                  <ErrorMessage message={validationError} />
+                )}
+
+                <Button
+                  onClick={handleCreateComment}
+                  variant="primary"
+                  disabled={submitting}
+                >
+                  {submitting ? 'Adding...' : 'Add Final Comment'}
+                </Button>
+              </div>
+
               {/* Empty State (AC 3) */}
               {sortedComments.length === 0
                 ? (
@@ -330,7 +490,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                 : (
                   /* List Display (AC 1, 2, 7) */
                     <div className="final-comments-list">
-                      <h3>Student Final Comments</h3>
                       <div className="comments">
                         {sortedComments.map((comment) => (
                           <div key={comment.id} className="comment-item">
@@ -338,60 +497,141 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                               ? (
                                 /* Edit Form - US-FINAL-004 */
                                   <div className="edit-form">
-                                    <div className="form-group">
-                                      <label htmlFor={`edit-first-name-${comment.id}`}>
-                                        First Name <span className="required">*</span>
-                                      </label>
-                                      <input
-                                        id={`edit-first-name-${comment.id}`}
-                                        type="text"
-                                        value={editFirstName}
-                                        onChange={(e) => setEditFirstName(e.target.value)}
-                                        className="final-comment-input"
-                                      />
+                                    <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                                      <div className="form-group" style={{ flex: 1 }}>
+                                        <label
+                                          htmlFor={`edit-first-name-${comment.id}`}
+                                          style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            fontSize: '0.875rem',
+                                            fontWeight: 500,
+                                            color: '#374151',
+                                          }}
+                                        >
+                                          First Name <span className="required" style={{ color: '#DC2626' }}>*</span>
+                                        </label>
+                                        <input
+                                          id={`edit-first-name-${comment.id}`}
+                                          type="text"
+                                          value={editFirstName}
+                                          onChange={(e) => setEditFirstName(e.target.value)}
+                                          placeholder="Enter student first name"
+                                          className="final-comment-input"
+                                          style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            fontSize: '1rem',
+                                            border: editValidationError && !editFirstName ? '1px solid #DC2626' : '1px solid #E5E7EB',
+                                            borderRadius: '8px',
+                                          }}
+                                        />
+                                      </div>
+
+                                      <div className="form-group" style={{ flex: 1 }}>
+                                        <label
+                                          htmlFor={`edit-last-name-${comment.id}`}
+                                          style={{
+                                            display: 'block',
+                                            marginBottom: '0.5rem',
+                                            fontSize: '0.875rem',
+                                            fontWeight: 500,
+                                            color: '#374151',
+                                          }}
+                                        >
+                                          Last Name
+                                        </label>
+                                        <input
+                                          id={`edit-last-name-${comment.id}`}
+                                          type="text"
+                                          value={editLastName}
+                                          onChange={(e) => setEditLastName(e.target.value)}
+                                          placeholder="Enter student last name (optional)"
+                                          className="final-comment-input"
+                                          style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            fontSize: '1rem',
+                                            border: '1px solid #E5E7EB',
+                                            borderRadius: '8px',
+                                          }}
+                                        />
+                                      </div>
                                     </div>
 
-                                    <div className="form-group">
-                                      <label htmlFor={`edit-last-name-${comment.id}`}>
-                                        Last Name
-                                      </label>
-                                      <input
-                                        id={`edit-last-name-${comment.id}`}
-                                        type="text"
-                                        value={editLastName}
-                                        onChange={(e) => setEditLastName(e.target.value)}
-                                        className="final-comment-input"
-                                      />
-                                    </div>
-
-                                    <div className="form-group">
-                                      <label htmlFor={`edit-grade-${comment.id}`}>
-                                        Grade <span className="required">*</span>
+                                    <div className="form-group" style={{ marginBottom: '1rem' }}>
+                                      <label
+                                        htmlFor={`edit-grade-${comment.id}`}
+                                        style={{
+                                          display: 'block',
+                                          marginBottom: '0.5rem',
+                                          fontSize: '0.875rem',
+                                          fontWeight: 500,
+                                          color: '#374151',
+                                        }}
+                                      >
+                                        Grade <span className="required" style={{ color: '#DC2626' }}>*</span>
                                       </label>
                                       <input
                                         id={`edit-grade-${comment.id}`}
                                         type="number"
                                         value={editGrade}
-                                        onChange={(e) => setEditGrade(e.target.value === '' ? '' : Number(e.target.value))}
+                                        onChange={(e) => {
+                                          const value = e.target.value
+                                          setEditGrade(value === '' ? '' : Number(value))
+                                        }}
+                                        placeholder="0-100"
                                         min={0}
                                         max={100}
                                         className="grade-input"
+                                        style={{
+                                          width: '100%',
+                                          padding: '0.75rem',
+                                          fontSize: '1rem',
+                                          border: editValidationError && editGrade === '' ? '1px solid #DC2626' : '1px solid #E5E7EB',
+                                          borderRadius: '8px',
+                                        }}
                                       />
                                     </div>
 
-                                    <div className="form-group">
-                                      <label htmlFor={`edit-comment-${comment.id}`}>
+                                    <div className="form-group" style={{ marginBottom: '1rem' }}>
+                                      <label
+                                        htmlFor={`edit-comment-${comment.id}`}
+                                        style={{
+                                          display: 'block',
+                                          marginBottom: '0.5rem',
+                                          fontSize: '0.875rem',
+                                          fontWeight: 500,
+                                          color: '#374151',
+                                        }}
+                                      >
                                         Comment
                                       </label>
                                       <textarea
                                         id={`edit-comment-${comment.id}`}
                                         value={editComment}
                                         onChange={(e) => setEditComment(e.target.value)}
+                                        placeholder="Enter optional comment (max 1000 characters)"
                                         className="comment-textarea"
-                                        rows={3}
+                                        rows={4}
                                         maxLength={1000}
+                                        style={{
+                                          width: '100%',
+                                          padding: '0.75rem',
+                                          fontSize: '1rem',
+                                          border: '1px solid #E5E7EB',
+                                          borderRadius: '8px',
+                                          resize: 'vertical',
+                                        }}
                                       />
-                                      <div className="character-counter">
+                                      <div
+                                        className="character-counter"
+                                        style={{
+                                          marginTop: '0.5rem',
+                                          fontSize: '0.875rem',
+                                          color: '#6B7280',
+                                        }}
+                                      >
                                         {editComment.length}/1000 characters
                                       </div>
                                     </div>
@@ -463,90 +703,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       </div>
                     </div>
                   )}
-
-              {/* US-FINAL-003: Create Form (AC 1, 2) */}
-              <div className="create-comment-section">
-                <h3>Add New Final Comment</h3>
-                <div className="form-group">
-                  <label htmlFor="first-name-input">
-                    First Name <span className="required">*</span>
-                  </label>
-                  <input
-                    id="first-name-input"
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Enter student first name"
-                    className="final-comment-input"
-                    disabled={submitting}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="last-name-input">
-                    Last Name
-                  </label>
-                  <input
-                    id="last-name-input"
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Enter student last name (optional)"
-                    className="final-comment-input"
-                    disabled={submitting}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="grade-input">
-                    Grade <span className="required">*</span>
-                  </label>
-                  <input
-                    id="grade-input"
-                    type="number"
-                    value={grade}
-                    onChange={(e) => setGrade(e.target.value === '' ? '' : Number(e.target.value))}
-                    placeholder="Enter grade (0-100)"
-                    min={0}
-                    max={100}
-                    className="grade-input"
-                    disabled={submitting}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="comment-textarea">
-                    Comment
-                  </label>
-                  <textarea
-                    id="comment-textarea"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Enter optional feedback comment..."
-                    className="comment-textarea"
-                    rows={3}
-                    maxLength={1000}
-                    disabled={submitting}
-                  />
-                  <div className="character-counter">
-                    {comment.length}/1000 characters
-                  </div>
-                </div>
-
-                {validationError && (
-                  <div className="validation-error" role="alert">
-                    {validationError}
-                  </div>
-                )}
-
-                <Button
-                  onClick={handleCreateComment}
-                  variant="primary"
-                  disabled={submitting}
-                >
-                  {submitting ? 'Adding...' : 'Add Final Comment'}
-                </Button>
-              </div>
             </>
           )}
         </div>

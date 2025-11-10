@@ -22,6 +22,6 @@
 ## Need to add some templating for the last name
 When adding a new class, it should be selected by default
 
-clean up the final comments component, the add final comment should be at the top, The component label isn't needed, it needs to be styled.
-
 Remove the Edit Subject label from the subject component
+
+Looks like the create/edit/select subject text boxes don't match the comment text box styles
