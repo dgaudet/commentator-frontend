@@ -314,9 +314,94 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
             <ErrorMessage message={error} />
           )}
 
-          {/* List Content - Only show when not loading and no error */}
+          {/* Content - Only show when not loading and no error */}
           {!loading && !error && (
             <>
+              {/* US-FINAL-003: Create Form (AC 1, 2) - MOVED TO TOP per US-FINAL-STYLE-001 */}
+              <div className="create-comment-section">
+                <h3>Add New Final Comment</h3>
+                <div className="form-group">
+                  <label htmlFor="first-name-input">
+                    First Name <span className="required">*</span>
+                  </label>
+                  <input
+                    id="first-name-input"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Enter student first name"
+                    className="final-comment-input"
+                    disabled={submitting}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="last-name-input">
+                    Last Name
+                  </label>
+                  <input
+                    id="last-name-input"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Enter student last name (optional)"
+                    className="final-comment-input"
+                    disabled={submitting}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="grade-input">
+                    Grade <span className="required">*</span>
+                  </label>
+                  <input
+                    id="grade-input"
+                    type="number"
+                    value={grade}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setGrade(value === '' ? '' : Number(value))
+                    }}
+                    placeholder="0-100"
+                    min="0"
+                    max="100"
+                    className="final-comment-input"
+                    disabled={submitting}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="comment-input">
+                    Comment
+                  </label>
+                  <textarea
+                    id="comment-input"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Enter optional comment (max 1000 characters)"
+                    className="final-comment-textarea"
+                    rows={4}
+                    maxLength={1000}
+                    disabled={submitting}
+                  />
+                  <div className="character-counter">
+                    {comment.length}/1000 characters
+                  </div>
+                </div>
+
+                {validationError && (
+                  <ErrorMessage message={validationError} />
+                )}
+
+                <Button
+                  onClick={handleCreateComment}
+                  variant="primary"
+                  disabled={submitting}
+                >
+                  {submitting ? 'Adding...' : 'Add Final Comment'}
+                </Button>
+              </div>
+
               {/* Empty State (AC 3) */}
               {sortedComments.length === 0
                 ? (
@@ -330,7 +415,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                 : (
                   /* List Display (AC 1, 2, 7) */
                     <div className="final-comments-list">
-                      <h3>Student Final Comments</h3>
                       <div className="comments">
                         {sortedComments.map((comment) => (
                           <div key={comment.id} className="comment-item">
@@ -463,90 +547,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       </div>
                     </div>
                   )}
-
-              {/* US-FINAL-003: Create Form (AC 1, 2) */}
-              <div className="create-comment-section">
-                <h3>Add New Final Comment</h3>
-                <div className="form-group">
-                  <label htmlFor="first-name-input">
-                    First Name <span className="required">*</span>
-                  </label>
-                  <input
-                    id="first-name-input"
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Enter student first name"
-                    className="final-comment-input"
-                    disabled={submitting}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="last-name-input">
-                    Last Name
-                  </label>
-                  <input
-                    id="last-name-input"
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Enter student last name (optional)"
-                    className="final-comment-input"
-                    disabled={submitting}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="grade-input">
-                    Grade <span className="required">*</span>
-                  </label>
-                  <input
-                    id="grade-input"
-                    type="number"
-                    value={grade}
-                    onChange={(e) => setGrade(e.target.value === '' ? '' : Number(e.target.value))}
-                    placeholder="Enter grade (0-100)"
-                    min={0}
-                    max={100}
-                    className="grade-input"
-                    disabled={submitting}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="comment-textarea">
-                    Comment
-                  </label>
-                  <textarea
-                    id="comment-textarea"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Enter optional feedback comment..."
-                    className="comment-textarea"
-                    rows={3}
-                    maxLength={1000}
-                    disabled={submitting}
-                  />
-                  <div className="character-counter">
-                    {comment.length}/1000 characters
-                  </div>
-                </div>
-
-                {validationError && (
-                  <div className="validation-error" role="alert">
-                    {validationError}
-                  </div>
-                )}
-
-                <Button
-                  onClick={handleCreateComment}
-                  variant="primary"
-                  disabled={submitting}
-                >
-                  {submitting ? 'Adding...' : 'Add Final Comment'}
-                </Button>
-              </div>
             </>
           )}
         </div>
