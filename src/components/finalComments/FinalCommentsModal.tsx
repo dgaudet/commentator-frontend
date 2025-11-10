@@ -321,74 +321,76 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
               {/* US-FINAL-STYLE-003: Styled to match Input component pattern */}
               <div className="create-comment-section">
                 <h3>Add New Final Comment</h3>
-                <div className="form-group" style={{ marginBottom: '1.5rem', maxWidth: '500px' }}>
-                  <label
-                    htmlFor="first-name-input"
-                    style={{
-                      display: 'block',
-                      fontSize: '1.25rem',
-                      fontWeight: 500,
-                      color: '#1E3A5F',
-                      marginBottom: '0.75rem',
-                    }}
-                  >
-                    First Name <span className="required" style={{ color: '#DC2626', marginLeft: '0.25rem' }}>*</span>
-                  </label>
-                  <input
-                    id="first-name-input"
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Enter student first name"
-                    className="final-comment-input"
-                    disabled={submitting}
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      padding: '12px 16px',
-                      fontSize: '16px',
-                      border: validationError && !firstName ? '2px solid #DC2626' : '2px solid #1E3A5F',
-                      borderRadius: '8px',
-                      backgroundColor: '#F5F8FA',
-                      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-                      outline: 'none',
-                    }}
-                  />
-                </div>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label
+                      htmlFor="first-name-input"
+                      style={{
+                        display: 'block',
+                        fontSize: '1.25rem',
+                        fontWeight: 500,
+                        color: '#1E3A5F',
+                        marginBottom: '0.75rem',
+                      }}
+                    >
+                      First Name <span className="required" style={{ color: '#DC2626', marginLeft: '0.25rem' }}>*</span>
+                    </label>
+                    <input
+                      id="first-name-input"
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Enter student first name"
+                      className="final-comment-input"
+                      disabled={submitting}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '12px 16px',
+                        fontSize: '16px',
+                        border: validationError && !firstName ? '2px solid #DC2626' : '2px solid #1E3A5F',
+                        borderRadius: '8px',
+                        backgroundColor: '#F5F8FA',
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
 
-                <div className="form-group" style={{ marginBottom: '1.5rem', maxWidth: '500px' }}>
-                  <label
-                    htmlFor="last-name-input"
-                    style={{
-                      display: 'block',
-                      fontSize: '1.25rem',
-                      fontWeight: 500,
-                      color: '#1E3A5F',
-                      marginBottom: '0.75rem',
-                    }}
-                  >
-                    Last Name
-                  </label>
-                  <input
-                    id="last-name-input"
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Enter student last name (optional)"
-                    className="final-comment-input"
-                    disabled={submitting}
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      padding: '12px 16px',
-                      fontSize: '16px',
-                      border: '2px solid #1E3A5F',
-                      borderRadius: '8px',
-                      backgroundColor: '#F5F8FA',
-                      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-                      outline: 'none',
-                    }}
-                  />
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label
+                      htmlFor="last-name-input"
+                      style={{
+                        display: 'block',
+                        fontSize: '1.25rem',
+                        fontWeight: 500,
+                        color: '#1E3A5F',
+                        marginBottom: '0.75rem',
+                      }}
+                    >
+                      Last Name
+                    </label>
+                    <input
+                      id="last-name-input"
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Enter student last name (optional)"
+                      className="final-comment-input"
+                      disabled={submitting}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '12px 16px',
+                        fontSize: '16px',
+                        border: '2px solid #1E3A5F',
+                        borderRadius: '8px',
+                        backgroundColor: '#F5F8FA',
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div className="form-group" style={{ marginBottom: '1.5rem', maxWidth: '500px' }}>

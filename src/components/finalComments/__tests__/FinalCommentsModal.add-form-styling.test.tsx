@@ -252,10 +252,10 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
         />,
       )
 
-      const firstNameLabel = screen.getByText(/First Name/i)
-      const formGroup = firstNameLabel.closest('div')
+      const gradeLabel = screen.getByText(/^Grade/i)
+      const gradeFormGroup = gradeLabel.closest('.form-group')
 
-      expect(formGroup).toHaveStyle({
+      expect(gradeFormGroup).toHaveStyle({
         marginBottom: '1.5rem',
       })
     })
@@ -410,6 +410,86 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       fireEvent.change(commentTextarea, { target: { value: 'Great work!' } })
 
       expect(screen.getByText(/11\/1000 characters/i)).toBeInTheDocument()
+    })
+  })
+
+  describe('Side-by-side name fields layout', () => {
+    it('should display First Name and Last Name fields side by side', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameInput = screen.getByLabelText(/First Name/i)
+      const lastNameInput = screen.getByLabelText(/Last Name/i)
+
+      // Both fields should have a common parent container with flex display
+      const firstNameContainer = firstNameInput.closest('.form-group')
+      const lastNameContainer = lastNameInput.closest('.form-group')
+      const nameFieldsRow = firstNameContainer?.parentElement
+
+      expect(nameFieldsRow).toBe(lastNameContainer?.parentElement)
+      expect(nameFieldsRow).toHaveStyle({
+        display: 'flex',
+      })
+    })
+
+    it('should have equal spacing between first and last name fields', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameInput = screen.getByLabelText(/First Name/i)
+      const nameFieldsRow = firstNameInput.closest('.form-group')?.parentElement
+
+      expect(nameFieldsRow).toHaveStyle({
+        gap: '1rem',
+      })
+    })
+
+    it('should give equal width to both name fields', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameInput = screen.getByLabelText(/First Name/i)
+      const lastNameInput = screen.getByLabelText(/Last Name/i)
+
+      const firstNameContainer = firstNameInput.closest('.form-group')
+      const lastNameContainer = lastNameInput.closest('.form-group')
+
+      expect(firstNameContainer).toHaveStyle({
+        flex: '1',
+      })
+      expect(lastNameContainer).toHaveStyle({
+        flex: '1',
+      })
     })
   })
 })
