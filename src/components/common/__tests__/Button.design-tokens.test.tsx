@@ -191,7 +191,6 @@ describe('US-CSS-005: Button Component Design Tokens', () => {
 
     it('should use 1.5rem (24px) horizontal padding from spacing.xl', () => {
       render(<Button>Test</Button>)
-      const button = screen.getByText('Test')
 
       // Verify spacing.xl = 1.5rem = 24px
       expect(spacing.xl).toBe('1.5rem')

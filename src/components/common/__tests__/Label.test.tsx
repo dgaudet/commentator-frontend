@@ -83,7 +83,7 @@ describe('US-CSS-004: Standardized Label Component', () => {
       render(
         <Label htmlFor="test-input" required>
           Test Label
-        </Label>
+        </Label>,
       )
 
       expect(screen.getByText('*')).toBeInTheDocument()
@@ -93,7 +93,7 @@ describe('US-CSS-004: Standardized Label Component', () => {
       render(
         <Label htmlFor="test-input" required>
           Test Label
-        </Label>
+        </Label>,
       )
       const asterisk = screen.getByText('*')
 
@@ -106,7 +106,7 @@ describe('US-CSS-004: Standardized Label Component', () => {
       render(
         <Label htmlFor="test-input" required>
           Test Label
-        </Label>
+        </Label>,
       )
       const asterisk = screen.getByText('*')
 
@@ -119,7 +119,7 @@ describe('US-CSS-004: Standardized Label Component', () => {
       render(
         <Label htmlFor="test-input" required={false}>
           Test Label
-        </Label>
+        </Label>,
       )
 
       expect(screen.queryByText('*')).not.toBeInTheDocument()
@@ -139,7 +139,7 @@ describe('US-CSS-004: Standardized Label Component', () => {
         <>
           <Label htmlFor="my-input">My Label</Label>
           <input id="my-input" />
-        </>
+        </>,
       )
 
       const input = container.querySelector('#my-input')
@@ -155,7 +155,7 @@ describe('US-CSS-004: Standardized Label Component', () => {
       render(
         <Label htmlFor="test-input">
           <span>Complex Label Content</span>
-        </Label>
+        </Label>,
       )
 
       expect(screen.getByText('Complex Label Content')).toBeInTheDocument()

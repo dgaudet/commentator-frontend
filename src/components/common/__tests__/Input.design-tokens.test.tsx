@@ -156,7 +156,7 @@ describe('US-CSS-003: Input Component Design Tokens', () => {
           required={false}
           min={0}
           max={100}
-        />
+        />,
       )
 
       const input = screen.getByLabelText('Test') as HTMLInputElement
