@@ -311,14 +311,14 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
 
       const addButton = screen.getByRole('button', { name: /Add Final Comment/i })
 
-      // Button component uses these styles
+      // Button component uses design tokens (US-CSS-005)
       expect(addButton).toHaveStyle({
         backgroundColor: '#0066FF',
         color: '#FFFFFF',
         borderColor: '#0066FF',
-        padding: '12px 24px',
+        padding: '0.75rem 1.5rem', // Updated to design tokens: spacing.md spacing.xl
         borderRadius: '8px',
-        fontSize: '16px',
+        fontSize: '1rem', // Updated to design tokens: typography.fontSize.base
         fontWeight: '600',
       })
     })

@@ -74,17 +74,45 @@
         "Can be used independently or within Input component",
         "Full accessibility support (htmlFor, label association)"
       ]
+    },
+    {
+      "id": "US-CSS-005",
+      "title": "Enhanced Button Component with Design Tokens",
+      "points": 2,
+      "completedAt": "2025-11-10",
+      "artifacts": [
+        "src/components/common/Button.tsx",
+        "src/components/common/__tests__/Button.design-tokens.test.tsx",
+        "src/components/finalComments/__tests__/FinalCommentsModal.add-form-styling.test.tsx"
+      ],
+      "testResults": "29 tests passed (10 existing + 19 new)",
+      "changes": [
+        "Replaced all 12 hardcoded colors with design tokens",
+        "Updated padding: 12px 24px → spacing.md spacing.xl (0.75rem 1.5rem)",
+        "Updated border radius: 8px → borders.radius.md",
+        "Updated font size: 16px → typography.fontSize.base (1rem)",
+        "Updated font weight: 600 → typography.fontWeight.semibold",
+        "Updated box shadows: hardcoded → shadows.md, shadows.lg",
+        "Updated border width: 2px → borders.width.thick",
+        "Maintained exact visual appearance (no breaking changes)",
+        "Updated FinalCommentsModal test to reflect new token values"
+      ]
     }
   ],
   "progress": {
-    "completedPoints": 9,
+    "completedPoints": 11,
     "totalPoints": 18,
-    "percentComplete": 50
+    "percentComplete": 61
   },
   "sprint1": {
     "status": "COMPLETE",
     "completedStories": ["US-CSS-001", "US-CSS-002", "US-CSS-003", "US-CSS-004"],
     "points": 9
+  },
+  "sprint2": {
+    "status": "IN_PROGRESS",
+    "completedStories": ["US-CSS-005"],
+    "points": 2
   },
   "stakeholders": [
     "Development Team",

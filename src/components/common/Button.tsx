@@ -1,8 +1,10 @@
 /**
  * Button Component
  * Reusable button with variants and accessibility features
+ * Reference: US-CSS-005 - Enhanced Button Component with Design Tokens
  */
 import React from 'react'
+import { colors, spacing, typography, borders, shadows } from '../../theme/tokens'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger'
@@ -17,41 +19,42 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   // US-STYLE-001 AC2: Modern blue button styling from test.webp
+  // US-CSS-005: Updated to use design tokens for maintainability
   // Accessibility: Using transparent borders that become visible in high-contrast mode
   const baseStyle: React.CSSProperties = {
     display: 'inline-block',
-    padding: '12px 24px',
-    borderRadius: '8px',
-    fontWeight: 600,
-    fontSize: '16px',
-    border: '2px solid transparent',
+    padding: `${spacing.md} ${spacing.xl}`,
+    borderRadius: borders.radius.md,
+    fontWeight: typography.fontWeight.semibold,
+    fontSize: typography.fontSize.base,
+    border: `${borders.width.thick} solid transparent`,
     cursor: 'pointer',
     transition: 'all 0.2s ease',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    boxShadow: shadows.md,
   }
 
   const variantStyles: Record<string, React.CSSProperties> = {
     primary: {
-      backgroundColor: '#0066FF',
-      color: '#FFFFFF',
-      borderColor: '#0066FF',
+      backgroundColor: colors.primary.main,
+      color: colors.text.inverse,
+      borderColor: colors.primary.main,
     },
     secondary: {
-      backgroundColor: '#E5E7EB',
-      color: '#1F2937',
-      borderColor: '#E5E7EB',
+      backgroundColor: colors.neutral[200],
+      color: colors.neutral[800],
+      borderColor: colors.neutral[200],
     },
     danger: {
-      backgroundColor: '#DC2626',
-      color: '#FFFFFF',
-      borderColor: '#DC2626',
+      backgroundColor: colors.semantic.error,
+      color: colors.text.inverse,
+      borderColor: colors.semantic.error,
     },
   }
 
   const hoverColors: Record<string, string> = {
-    primary: '#0052CC',
-    secondary: '#D1D5DB',
-    danger: '#B91C1C',
+    primary: colors.primary.dark,
+    secondary: colors.neutral[300],
+    danger: colors.semantic.errorDark,
   }
 
   return (
@@ -62,12 +65,12 @@ export const Button: React.FC<ButtonProps> = ({
       onMouseEnter={(e) => {
         e.currentTarget.style.backgroundColor = hoverColors[variant]
         e.currentTarget.style.borderColor = hoverColors[variant]
-        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.15)'
+        e.currentTarget.style.boxShadow = shadows.lg
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.backgroundColor = variantStyles[variant].backgroundColor as string
         e.currentTarget.style.borderColor = variantStyles[variant].borderColor as string
-        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)'
+        e.currentTarget.style.boxShadow = shadows.md
       }}
       {...props}
     >
