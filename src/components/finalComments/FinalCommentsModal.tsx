@@ -576,7 +576,10 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         id={`edit-grade-${comment.id}`}
                                         type="number"
                                         value={editGrade}
-                                        onChange={(e) => setEditGrade(e.target.value === '' ? '' : Number(e.target.value))}
+                                        onChange={(e) => {
+                                          const value = e.target.value
+                                          setEditGrade(value === '' ? '' : Number(value))
+                                        }}
                                         placeholder="0-100"
                                         min={0}
                                         max={100}
