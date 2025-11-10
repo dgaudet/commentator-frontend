@@ -97,12 +97,40 @@
         "Maintained exact visual appearance (no breaking changes)",
         "Updated FinalCommentsModal test to reflect new token values"
       ]
+    },
+    {
+      "id": "US-CSS-006",
+      "title": "Migrate FinalCommentsModal to Design Tokens",
+      "points": 3,
+      "completedAt": "2025-11-10",
+      "artifacts": [
+        "src/components/finalComments/FinalCommentsModal.tsx",
+        "src/components/finalComments/__tests__/FinalCommentsModal.add-form-styling.test.tsx",
+        "src/components/finalComments/__tests__/FinalCommentsModal.edit-form-styling.test.tsx"
+      ],
+      "testResults": "96 tests passed (all existing tests maintained)",
+      "changes": [
+        "Replaced all inline styles with design tokens",
+        "Migrated First Name input to standardized Input component",
+        "Migrated Last Name input to standardized Input component",
+        "Migrated Grade input to standardized Input component",
+        "Updated Comment textarea label styles to use design tokens",
+        "Updated Comment textarea input styles to use design tokens",
+        "Updated character counter styling to use design tokens",
+        "Applied same changes to both add and edit forms",
+        "Eliminated 32 inline style objects identified in audit",
+        "Updated tests to work with new Input component structure",
+        "Maintained side-by-side layout for name fields",
+        "Maintained all validation and error handling behavior",
+        "Zero breaking changes - all functionality preserved"
+      ],
+      "impact": "Highest-impact migration - eliminated largest concentration of inline styles"
     }
   ],
   "progress": {
-    "completedPoints": 11,
+    "completedPoints": 14,
     "totalPoints": 18,
-    "percentComplete": 61
+    "percentComplete": 78
   },
   "sprint1": {
     "status": "COMPLETE",
@@ -111,8 +139,8 @@
   },
   "sprint2": {
     "status": "IN_PROGRESS",
-    "completedStories": ["US-CSS-005"],
-    "points": 2
+    "completedStories": ["US-CSS-005", "US-CSS-006"],
+    "points": 5
   },
   "stakeholders": [
     "Development Team",
