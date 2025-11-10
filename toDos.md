@@ -1,30 +1,143 @@
 # To Do Items
-# The act function seems to be deprecated but it's used in tests and code
-# Final comments
-## When you enter a grade for a student, it should load the matching outcome comment
-## There should be a drop-down for personal comment, which when you pick it, should post into a text box below you can edit
-### then when you choose it, we could have another box below that puts the 2 sections together with a copy button
-## perhaps then I need a button to view all comments for class that you can print
-## picking the personal comment should be a type ahead search box
-## lower priority
-### we should have a way to bulk add students with their grade
-### The label for selecting a class should be `Select a Class to work with`
-### show a count of which comment you are on ex: 1 out of 100
-#### how should we order them?
-# remove the console.error methods from services
-# we also don't need a title in each tab since the tab name is sufficient
-# Outcome Comments should be ordered by the Lower Range values
-# sort final comments by student name
-# Design a favicon for the browser tab, something that looks like a notepad
-# Design a top banner for the app, something with students, maybe say something like inspiring the next generation, or guiding the leaders of tomorrow
-# add in a dark theme and a light theme, with a toggle button in the top right
-# Outcome comments
-## Need to add some templating for the last name
-When adding a new class, it should be selected by default
 
-Remove the Edit Subject label from the subject component
+## ✅ Recently Completed
 
-Looks like the create/edit/select subject text boxes don't match the comment text box styles
-The edit final comment should look more like the Outcome and Personal comment sections, it should also have an Existing Comments label
+### CSS Standardization (2025-11-10)
+See details at bottom of this file.
 
-Ask the frontend engineer what design tokens are, and how to apply them to other components
+---
+
+## 🚀 Ready to Implement (Enabled by Design System)
+
+### UI/UX Consistency
+- [ ] **Migrate SubjectForm to design tokens and Input component**
+  - Currently: Subject text boxes don't match comment text box styles
+  - Solution: Use standardized Input component and design tokens
+  - Reference: `docs/design-system.md` migration guide
+  - Estimated: 2-3 story points
+
+- [ ] **Migrate OutcomeCommentsModal to design tokens**
+  - Apply same patterns as FinalCommentsModal and ClassManagementModal
+  - Reference: `docs/design-system.md` migration guide
+  - Listed in design-system.md as migration candidate
+  - Estimated: 3 story points
+
+- [ ] **Migrate PersonalizedCommentsModal to design tokens**
+  - Apply same patterns as FinalCommentsModal and ClassManagementModal
+  - Reference: `docs/design-system.md` migration guide
+  - Listed in design-system.md as migration candidate
+  - Estimated: 3 story points
+
+---
+
+## 🎯 High Priority Features
+
+### Final Comments Enhancements
+- [ ] **Auto-load matching outcome comment when grade entered**
+  - When you enter a grade for a student, it should load the matching outcome comment
+  - Business value: Speeds up comment generation workflow
+
+- [ ] **Personal comment dropdown with edit capability**
+  - Drop-down for personal comment, which when you pick it, posts into a text box below you can edit
+  - Then when you choose it, have another box that puts the 2 sections together with a copy button
+  - Business value: Streamlines personalized comment workflow
+
+- [ ] **Type-ahead search for personal comments**
+  - Picking the personal comment should be a type-ahead search box
+  - Business value: Faster comment selection for large lists
+
+- [ ] **Print view for all comments in a class**
+  - Button to view all comments for class that you can print
+  - Business value: Enables batch printing/review
+
+### Data Management
+- [ ] **Sort final comments by student name**
+  - Current: Unsorted or sorted by creation date
+  - Business value: Easier to find specific students
+
+- [ ] **Order outcome comments by Lower Range values**
+  - Business value: Logical ordering for grade-based comments
+
+- [ ] **When adding a new class, select it by default**
+  - Business value: Better UX, fewer clicks
+
+---
+
+## 📋 Medium Priority
+
+### UI Improvements
+- [ ] **Remove "Edit Subject" label from subject component**
+  - Minor cleanup for cleaner UI
+
+- [ ] **Update class selection label to "Select a Class to work with"**
+  - More descriptive label text
+
+- [ ] **Show comment count (e.g., "1 out of 100")**
+  - Helps users track progress through student comments
+  - Decision needed: How should comments be ordered?
+
+- [ ] **Remove unnecessary tab titles**
+  - "We don't need a title in each tab since the tab name is sufficient"
+
+### Bulk Operations
+- [ ] **Bulk add students with their grades**
+  - Business value: Faster data entry for large classes
+  - Complexity: Needs CSV import or multi-row form design
+
+---
+
+## 🎨 Design & Branding
+
+### Visual Design
+- [ ] **Design favicon for browser tab**
+  - Theme: Something that looks like a notepad
+  - Format: .ico or .svg
+
+- [ ] **Design top banner for the app**
+  - Theme: Students, inspiring message
+  - Ideas: "Inspiring the next generation" or "Guiding the leaders of tomorrow"
+
+- [ ] **Dark theme and light theme toggle**
+  - Toggle button in top right
+  - Note: Design token system is already in place, making this easier to implement
+  - Would need to extend tokens to support theme switching
+
+---
+
+## 🔧 Technical Debt
+
+### Code Quality
+- [ ] **Remove console.error methods from services**
+  - Replace with proper error handling/logging
+  - Files: `src/services/api/*Service.ts`
+
+- [ ] **Fix deprecated `act` function in tests**
+  - "The act function seems to be deprecated but it's used in tests and code"
+  - Investigate React Testing Library updates
+  - May need to refactor test patterns
+
+### Outcome Comments
+- [ ] **Add templating for last name in outcome comments**
+  - Details needed on what templating is required
+
+---
+
+## 📚 Documentation & Resources
+
+### Available Documentation
+- ✅ **Design System Documentation**: `docs/design-system.md`
+  - Design token usage guide
+  - Component API reference (Input, Label, Button)
+  - Step-by-step migration guide
+  - Best practices and conventions
+  - Real-world examples from FinalCommentsModal
+
+### Completed Features
+- ✅ Design token system (colors, spacing, typography, borders, shadows)
+- ✅ Standardized Input component (with validation, errors, required indicator)
+- ✅ Standardized Label component
+- ✅ Enhanced Button component (primary, secondary, danger variants)
+- ✅ FinalCommentsModal migrated to design tokens (32 inline styles eliminated)
+- ✅ ClassManagementModal migrated to design tokens (23 modalStyles replaced)
+
+---
