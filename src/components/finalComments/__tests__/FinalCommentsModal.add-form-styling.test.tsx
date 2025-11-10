@@ -32,7 +32,7 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
   })
 
   describe('AC1: Consistent form field styling', () => {
-    it('should style First Name label with Input component pattern', () => {
+    it('should style First Name label with modalStyles pattern', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -50,14 +50,14 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
 
       expect(label).toHaveStyle({
         display: 'block',
-        fontSize: '1.25rem',
+        fontSize: '0.875rem',
         fontWeight: '500',
-        color: '#1E3A5F',
-        marginBottom: '0.75rem',
+        color: '#374151',
+        marginBottom: '0.5rem',
       })
     })
 
-    it('should style First Name input with Input component pattern', () => {
+    it('should style First Name input with modalStyles pattern', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -74,11 +74,10 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       const input = screen.getByLabelText(/First Name/i)
 
       expect(input).toHaveStyle({
-        padding: '12px 16px',
-        fontSize: '16px',
-        border: '2px solid #1E3A5F',
+        padding: '0.75rem',
+        fontSize: '1rem',
+        border: '1px solid #E5E7EB',
         borderRadius: '8px',
-        backgroundColor: '#F5F8FA',
       })
     })
 
@@ -100,21 +99,20 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       const input = screen.getByLabelText(/Last Name/i)
 
       expect(label).toHaveStyle({
-        fontSize: '1.25rem',
+        fontSize: '0.875rem',
         fontWeight: '500',
-        color: '#1E3A5F',
+        color: '#374151',
       })
 
       expect(input).toHaveStyle({
-        padding: '12px 16px',
-        fontSize: '16px',
-        border: '2px solid #1E3A5F',
+        padding: '0.75rem',
+        fontSize: '1rem',
+        border: '1px solid #E5E7EB',
         borderRadius: '8px',
-        backgroundColor: '#F5F8FA',
       })
     })
 
-    it('should style Grade field as numeric input with Input pattern', () => {
+    it('should style Grade field as numeric input with modalStyles pattern', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -132,18 +130,17 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       const input = screen.getByLabelText(/Grade/i) as HTMLInputElement
 
       expect(label).toHaveStyle({
-        fontSize: '1.25rem',
+        fontSize: '0.875rem',
         fontWeight: '500',
-        color: '#1E3A5F',
+        color: '#374151',
       })
 
       expect(input.type).toBe('number')
       expect(input).toHaveStyle({
-        padding: '12px 16px',
-        fontSize: '16px',
-        border: '2px solid #1E3A5F',
+        padding: '0.75rem',
+        fontSize: '1rem',
+        border: '1px solid #E5E7EB',
         borderRadius: '8px',
-        backgroundColor: '#F5F8FA',
       })
     })
 
@@ -165,17 +162,16 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       const textarea = screen.getByPlaceholderText(/Enter optional comment/i)
 
       expect(label).toHaveStyle({
-        fontSize: '1.25rem',
+        fontSize: '0.875rem',
         fontWeight: '500',
-        color: '#1E3A5F',
+        color: '#374151',
       })
 
       expect(textarea).toHaveStyle({
-        padding: '12px 16px',
-        fontSize: '16px',
-        border: '2px solid #1E3A5F',
+        padding: '0.75rem',
+        fontSize: '1rem',
+        border: '1px solid #E5E7EB',
         borderRadius: '8px',
-        backgroundColor: '#F5F8FA',
       })
     })
   })
@@ -203,7 +199,7 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
 
       await waitFor(() => {
         expect(input).toHaveStyle({
-          border: '2px solid #DC2626',
+          border: '1px solid #DC2626',
         })
       })
     })
@@ -231,7 +227,7 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
 
       await waitFor(() => {
         expect(gradeInput).toHaveStyle({
-          border: '2px solid #DC2626',
+          border: '1px solid #DC2626',
         })
       })
     })
@@ -256,7 +252,7 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       const gradeFormGroup = gradeLabel.closest('.form-group')
 
       expect(gradeFormGroup).toHaveStyle({
-        marginBottom: '1.5rem',
+        marginBottom: '1rem',
       })
     })
 

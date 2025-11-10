@@ -318,22 +318,22 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
           {!loading && !error && (
             <>
               {/* US-FINAL-003: Create Form (AC 1, 2) - MOVED TO TOP per US-FINAL-STYLE-001 */}
-              {/* US-FINAL-STYLE-003: Styled to match Input component pattern */}
+              {/* Updated to match Edit Class modalStyles pattern */}
               <div className="create-comment-section">
                 <h3>Add New Final Comment</h3>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
                   <div className="form-group" style={{ flex: 1 }}>
                     <label
                       htmlFor="first-name-input"
                       style={{
                         display: 'block',
-                        fontSize: '1.25rem',
+                        marginBottom: '0.5rem',
+                        fontSize: '0.875rem',
                         fontWeight: 500,
-                        color: '#1E3A5F',
-                        marginBottom: '0.75rem',
+                        color: '#374151',
                       }}
                     >
-                      First Name <span className="required" style={{ color: '#DC2626', marginLeft: '0.25rem' }}>*</span>
+                      First Name <span className="required" style={{ color: '#DC2626' }}>*</span>
                     </label>
                     <input
                       id="first-name-input"
@@ -344,15 +344,11 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       className="final-comment-input"
                       disabled={submitting}
                       style={{
-                        display: 'block',
                         width: '100%',
-                        padding: '12px 16px',
-                        fontSize: '16px',
-                        border: validationError && !firstName ? '2px solid #DC2626' : '2px solid #1E3A5F',
+                        padding: '0.75rem',
+                        fontSize: '1rem',
+                        border: validationError && !firstName ? '1px solid #DC2626' : '1px solid #E5E7EB',
                         borderRadius: '8px',
-                        backgroundColor: '#F5F8FA',
-                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-                        outline: 'none',
                       }}
                     />
                   </div>
@@ -362,10 +358,10 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       htmlFor="last-name-input"
                       style={{
                         display: 'block',
-                        fontSize: '1.25rem',
+                        marginBottom: '0.5rem',
+                        fontSize: '0.875rem',
                         fontWeight: 500,
-                        color: '#1E3A5F',
-                        marginBottom: '0.75rem',
+                        color: '#374151',
                       }}
                     >
                       Last Name
@@ -379,32 +375,28 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       className="final-comment-input"
                       disabled={submitting}
                       style={{
-                        display: 'block',
                         width: '100%',
-                        padding: '12px 16px',
-                        fontSize: '16px',
-                        border: '2px solid #1E3A5F',
+                        padding: '0.75rem',
+                        fontSize: '1rem',
+                        border: '1px solid #E5E7EB',
                         borderRadius: '8px',
-                        backgroundColor: '#F5F8FA',
-                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-                        outline: 'none',
                       }}
                     />
                   </div>
                 </div>
 
-                <div className="form-group" style={{ marginBottom: '1.5rem', maxWidth: '500px' }}>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
                   <label
                     htmlFor="grade-input"
                     style={{
                       display: 'block',
-                      fontSize: '1.25rem',
+                      marginBottom: '0.5rem',
+                      fontSize: '0.875rem',
                       fontWeight: 500,
-                      color: '#1E3A5F',
-                      marginBottom: '0.75rem',
+                      color: '#374151',
                     }}
                   >
-                    Grade <span className="required" style={{ color: '#DC2626', marginLeft: '0.25rem' }}>*</span>
+                    Grade <span className="required" style={{ color: '#DC2626' }}>*</span>
                   </label>
                   <input
                     id="grade-input"
@@ -420,28 +412,24 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                     className="final-comment-input"
                     disabled={submitting}
                     style={{
-                      display: 'block',
                       width: '100%',
-                      padding: '12px 16px',
-                      fontSize: '16px',
-                      border: validationError && grade === '' ? '2px solid #DC2626' : '2px solid #1E3A5F',
+                      padding: '0.75rem',
+                      fontSize: '1rem',
+                      border: validationError && grade === '' ? '1px solid #DC2626' : '1px solid #E5E7EB',
                       borderRadius: '8px',
-                      backgroundColor: '#F5F8FA',
-                      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-                      outline: 'none',
                     }}
                   />
                 </div>
 
-                <div className="form-group" style={{ marginBottom: '1.5rem', maxWidth: '500px' }}>
+                <div className="form-group" style={{ marginBottom: '1rem' }}>
                   <label
                     htmlFor="comment-input"
                     style={{
                       display: 'block',
-                      fontSize: '1.25rem',
+                      marginBottom: '0.5rem',
+                      fontSize: '0.875rem',
                       fontWeight: 500,
-                      color: '#1E3A5F',
-                      marginBottom: '0.75rem',
+                      color: '#374151',
                     }}
                   >
                     Comment
@@ -456,21 +444,18 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                     maxLength={1000}
                     disabled={submitting}
                     style={{
-                      display: 'block',
                       width: '100%',
-                      padding: '12px 16px',
-                      fontSize: '16px',
-                      border: '2px solid #1E3A5F',
+                      padding: '0.75rem',
+                      fontSize: '1rem',
+                      border: '1px solid #E5E7EB',
                       borderRadius: '8px',
-                      backgroundColor: '#F5F8FA',
-                      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-                      outline: 'none',
+                      resize: 'vertical',
                     }}
                   />
                   <div
                     className="character-counter"
                     style={{
-                      marginTop: '0.25rem',
+                      marginTop: '0.5rem',
                       fontSize: '0.875rem',
                       color: '#6B7280',
                     }}

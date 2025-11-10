@@ -23,3 +23,5 @@
 When adding a new class, it should be selected by default
 
 Remove the Edit Subject label from the subject component
+
+Looks like the create/edit/select subject text boxes don't match the comment text box styles
