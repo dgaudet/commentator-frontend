@@ -125,12 +125,38 @@
         "Zero breaking changes - all functionality preserved"
       ],
       "impact": "Highest-impact migration - eliminated largest concentration of inline styles"
+    },
+    {
+      "id": "US-CSS-007",
+      "title": "Migrate ClassManagementModal to Design Tokens",
+      "points": 2,
+      "completedAt": "2025-11-10",
+      "artifacts": [
+        "src/components/classes/ClassManagementModal.tsx"
+      ],
+      "testResults": "26 tests passed (all existing tests maintained), 668 total tests passing",
+      "changes": [
+        "Replaced Class Name input with standardized Input component (add & edit forms)",
+        "Replaced Year input with standardized Input component (add & edit forms)",
+        "Removed all 23 modalStyles references",
+        "Converted container styles to design tokens (padding, backgroundColor)",
+        "Converted section headings to design tokens (fontSize, fontWeight, color, margin)",
+        "Converted empty state styles to design tokens (textAlign, padding, backgroundColor, border)",
+        "Converted dropdown label styles to design tokens (display, fontSize, fontWeight, color, margin)",
+        "Converted select element styles to design tokens (padding, fontSize, border, borderRadius, backgroundColor)",
+        "Converted validation error display to design tokens (padding, margin, backgroundColor, border, color, fontSize)",
+        "Converted button group wrapper to design tokens (display, gap, flexWrap)",
+        "Removed modalStyles import entirely",
+        "Maintained exact visual appearance and behavior",
+        "Zero breaking changes - all functionality preserved"
+      ],
+      "impact": "Completed migration of priority modals to design tokens"
     }
   ],
   "progress": {
-    "completedPoints": 14,
+    "completedPoints": 16,
     "totalPoints": 18,
-    "percentComplete": 78
+    "percentComplete": 89
   },
   "sprint1": {
     "status": "COMPLETE",
@@ -139,8 +165,8 @@
   },
   "sprint2": {
     "status": "IN_PROGRESS",
-    "completedStories": ["US-CSS-005", "US-CSS-006"],
-    "points": 5
+    "completedStories": ["US-CSS-005", "US-CSS-006", "US-CSS-007"],
+    "points": 7
   },
   "stakeholders": [
     "Development Team",
