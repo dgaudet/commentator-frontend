@@ -1,0 +1,415 @@
+/**
+ * FinalCommentsModal Add Form Styling Tests
+ * TDD Phase: RED - Writing failing tests first
+ * Reference: US-FINAL-STYLE-003
+ *
+ * Testing add form styling consistency with Input component pattern
+ * Reference: SubjectForm.tsx, Input.tsx, Button.tsx
+ */
+
+import { render, screen, fireEvent, waitFor } from '../../../test-utils'
+import { FinalCommentsModal } from '../FinalCommentsModal'
+import type { Class } from '../../../types'
+
+const mockClass: Class = {
+  id: 1,
+  name: 'Mathematics 101',
+  year: 2024,
+  subjectId: 1,
+  createdAt: '2024-01-01T00:00:00Z',
+  updatedAt: '2024-01-01T00:00:00Z',
+}
+
+const mockHandlers = {
+  onCreateComment: jest.fn(),
+  onUpdateComment: jest.fn(),
+  onDeleteComment: jest.fn(),
+}
+
+describe('US-FINAL-STYLE-003: Add Form Styling', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  describe('AC1: Consistent form field styling', () => {
+    it('should style First Name label with Input component pattern', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const label = screen.getByText(/First Name/i)
+
+      expect(label).toHaveStyle({
+        display: 'block',
+        fontSize: '1.25rem',
+        fontWeight: '500',
+        color: '#1E3A5F',
+        marginBottom: '0.75rem',
+      })
+    })
+
+    it('should style First Name input with Input component pattern', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const input = screen.getByLabelText(/First Name/i)
+
+      expect(input).toHaveStyle({
+        padding: '12px 16px',
+        fontSize: '16px',
+        border: '2px solid #1E3A5F',
+        borderRadius: '8px',
+        backgroundColor: '#F5F8FA',
+      })
+    })
+
+    it('should style Last Name field consistently', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const label = screen.getByText(/Last Name/i)
+      const input = screen.getByLabelText(/Last Name/i)
+
+      expect(label).toHaveStyle({
+        fontSize: '1.25rem',
+        fontWeight: '500',
+        color: '#1E3A5F',
+      })
+
+      expect(input).toHaveStyle({
+        padding: '12px 16px',
+        fontSize: '16px',
+        border: '2px solid #1E3A5F',
+        borderRadius: '8px',
+        backgroundColor: '#F5F8FA',
+      })
+    })
+
+    it('should style Grade field as numeric input with Input pattern', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const label = screen.getByText(/^Grade/i)
+      const input = screen.getByLabelText(/Grade/i) as HTMLInputElement
+
+      expect(label).toHaveStyle({
+        fontSize: '1.25rem',
+        fontWeight: '500',
+        color: '#1E3A5F',
+      })
+
+      expect(input.type).toBe('number')
+      expect(input).toHaveStyle({
+        padding: '12px 16px',
+        fontSize: '16px',
+        border: '2px solid #1E3A5F',
+        borderRadius: '8px',
+        backgroundColor: '#F5F8FA',
+      })
+    })
+
+    it('should style Comment textarea consistently', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const label = screen.getByText(/^Comment$/i)
+      const textarea = screen.getByPlaceholderText(/Enter optional comment/i)
+
+      expect(label).toHaveStyle({
+        fontSize: '1.25rem',
+        fontWeight: '500',
+        color: '#1E3A5F',
+      })
+
+      expect(textarea).toHaveStyle({
+        padding: '12px 16px',
+        fontSize: '16px',
+        border: '2px solid #1E3A5F',
+        borderRadius: '8px',
+        backgroundColor: '#F5F8FA',
+      })
+    })
+  })
+
+  describe('AC2: Validation error styling', () => {
+    it('should show red border on invalid First Name field', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const input = screen.getByLabelText(/First Name/i)
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+
+      // Try to submit empty form
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(input).toHaveStyle({
+          border: '2px solid #DC2626',
+        })
+      })
+    })
+
+    it('should show red border on invalid Grade field', async () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const gradeInput = screen.getByLabelText(/Grade/i)
+      const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
+
+      // Fill first name but leave grade empty
+      fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: 'John' } })
+      fireEvent.click(submitButton)
+
+      await waitFor(() => {
+        expect(gradeInput).toHaveStyle({
+          border: '2px solid #DC2626',
+        })
+      })
+    })
+  })
+
+  describe('AC3: Consistent layout spacing and typography', () => {
+    it('should use consistent margin between form fields', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const firstNameLabel = screen.getByText(/First Name/i)
+      const formGroup = firstNameLabel.closest('div')
+
+      expect(formGroup).toHaveStyle({
+        marginBottom: '1.5rem',
+      })
+    })
+
+    it('should display required asterisk with correct styling', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // First Name is required
+      const firstNameLabel = screen.getByText(/First Name/i)
+      const asterisk = firstNameLabel.querySelector('span.required')
+
+      expect(asterisk).toBeInTheDocument()
+      expect(asterisk).toHaveStyle({
+        color: '#DC2626',
+      })
+
+      // Grade is required
+      const gradeLabel = screen.getByText(/^Grade/i)
+      const gradeAsterisk = gradeLabel.querySelector('span.required')
+
+      expect(gradeAsterisk).toBeInTheDocument()
+      expect(gradeAsterisk).toHaveStyle({
+        color: '#DC2626',
+      })
+
+      // Last Name is optional (no asterisk)
+      const lastNameLabel = screen.getByText(/Last Name/i)
+      expect(lastNameLabel.querySelector('span.required')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('AC4: Button styling with variants', () => {
+    it('should style Add button with primary variant', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const addButton = screen.getByRole('button', { name: /Add Final Comment/i })
+
+      // Button component uses these styles
+      expect(addButton).toHaveStyle({
+        backgroundColor: '#0066FF',
+        color: '#FFFFFF',
+        borderColor: '#0066FF',
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontSize: '16px',
+        fontWeight: '600',
+      })
+    })
+
+    it('should enable Add button but show validation on click when form is invalid', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const addButton = screen.getByRole('button', { name: /Add Final Comment/i })
+
+      // Button should be enabled (allows clicking to trigger validation)
+      expect(addButton).not.toBeDisabled()
+    })
+
+    it('should enable Add button when form is valid', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: 'John' } })
+      fireEvent.change(screen.getByLabelText(/Grade/i), { target: { value: '85' } })
+
+      const addButton = screen.getByRole('button', { name: /Add Final Comment/i })
+      expect(addButton).not.toBeDisabled()
+    })
+  })
+
+  describe('Character counter styling', () => {
+    it('should display character counter with consistent styling', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const counter = screen.getByText(/0\/1000 characters/i)
+
+      expect(counter).toHaveStyle({
+        fontSize: '0.875rem',
+        color: '#6B7280',
+      })
+    })
+
+    it('should update character counter as user types', () => {
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      const commentTextarea = screen.getByPlaceholderText(/Enter optional comment/i)
+      fireEvent.change(commentTextarea, { target: { value: 'Great work!' } })
+
+      expect(screen.getByText(/11\/1000 characters/i)).toBeInTheDocument()
+    })
+  })
+})
