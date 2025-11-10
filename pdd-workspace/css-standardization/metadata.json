@@ -35,12 +35,33 @@
         "src/theme/__tests__/tokens.test.ts"
       ],
       "testResults": "21 tests passed"
+    },
+    {
+      "id": "US-CSS-003",
+      "title": "Standardized Input Component",
+      "points": 3,
+      "completedAt": "2025-11-10",
+      "artifacts": [
+        "src/components/common/Input.tsx",
+        "src/components/common/Input.css",
+        "src/components/common/__tests__/Input.design-tokens.test.tsx"
+      ],
+      "testResults": "22 tests passed",
+      "changes": [
+        "Made label prop optional",
+        "Updated all styling to use design tokens",
+        "Support boolean error prop",
+        "Eliminated hardcoded colors #1E3A5F, #F5F8FA",
+        "Reduced border width from 2px to 1px (token standard)",
+        "Changed background from #F5F8FA to white",
+        "Updated label styling: 1.25rem → 0.875rem, navy → gray-700"
+      ]
     }
   ],
   "progress": {
-    "completedPoints": 5,
+    "completedPoints": 8,
     "totalPoints": 18,
-    "percentComplete": 28
+    "percentComplete": 44
   },
   "stakeholders": [
     "Development Team",
