@@ -1,8 +1,8 @@
 # Design System Documentation
 
-**Version**: 1.0
-**Last Updated**: 2025-11-10
-**Feature**: CSS Standardization (US-CSS-008)
+**Version**: 1.1
+**Last Updated**: 2025-11-11
+**Feature**: CSS Standardization (US-CSS-008) + UI Consistency Phase 2 (US-UI-001/002/003)
 
 ## Table of Contents
 
@@ -924,14 +924,33 @@ A: Currently, tokens are TypeScript constants. For CSS files, continue using exi
 
 ## Migration Status
 
-### Completed Migrations
+### Completed Migrations (Phase 1 + Phase 2)
+
+**Phase 1: CSS Standardization** (November 2025)
 - ✅ FinalCommentsModal (US-CSS-006) - 32 inline styles eliminated
 - ✅ ClassManagementModal (US-CSS-007) - 23 modalStyles references replaced
 
+**Phase 2: UI Consistency** (November 2025)
+- ✅ SubjectForm (US-UI-001) - Complete design token migration
+  - Container, heading, error containers, button containers migrated
+  - 25 comprehensive design token tests added
+  - All 693 tests passing (100% retention)
+- ✅ OutcomeCommentsModal (US-UI-002) - Complete modalStyles elimination
+  - All 30+ modalStyles references replaced with design tokens
+  - Create form, edit form, view mode, empty state fully migrated
+  - Input components standardized (Lower Range, Upper Range)
+  - 36 comprehensive design token tests added
+  - All 729 tests passing (100% retention)
+- ✅ PersonalizedCommentsModal (US-UI-003) - Complete modalStyles elimination
+  - All modalStyles references replaced with design tokens
+  - Character counter styling migrated (valid/invalid/hint states)
+  - Create form, edit form, view mode, empty state fully migrated
+  - 41 comprehensive design token tests added
+  - All 770 tests passing (100% retention)
+
+**Total Progress**: 5 of 5 priority modals migrated (100%)
+
 ### Future Candidates
-- OutcomeCommentsModal
-- PersonalizedCommentsModal
-- SubjectForm
 - SubjectListItem
 - Other components with inline styles (see audit report)
 
@@ -947,6 +966,8 @@ A: Currently, tokens are TypeScript constants. For CSS files, continue using exi
 
 ---
 
-**Last Updated**: 2025-11-10
+**Last Updated**: 2025-11-11
 **Authors**: Frontend Engineering Team
-**Feature**: CSS Standardization (L2-SMALL)
+**Feature**: CSS Standardization (L2-SMALL) + UI Consistency Phase 2 (L2-SMALL)
+**Version**: 1.1
+**Test Count**: 770 tests passing (102 new design token tests from Phase 2)

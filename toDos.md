@@ -141,3 +141,4 @@ See details at bottom of this file.
 - ✅ ClassManagementModal migrated to design tokens (23 modalStyles replaced)
 
 ---
+Looks like the add personalized comments button should show a message when clicked with no comment

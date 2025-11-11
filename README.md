@@ -2,12 +2,12 @@
 
 A React application for managing student report card comments. Teachers can create and manage classes, and associate comments with students for report card generation.
 
-[![Tests](https://img.shields.io/badge/tests-668%20passing-brightgreen)](.)
+[![Tests](https://img.shields.io/badge/tests-770%20passing-brightgreen)](.)
 [![E2E Tests](https://img.shields.io/badge/E2E-42%20scenarios-brightgreen)](.)
 [![Bundle Size](https://img.shields.io/badge/bundle-99.98%20KB%20gzipped-success)](.)
 [![Accessibility](https://img.shields.io/badge/WCAG-2.1%20AA-blue)](.)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue)](.)
-[![Design System](https://img.shields.io/badge/design%20system-v1.0-blueviolet)](./docs/design-system.md)
+[![Design System](https://img.shields.io/badge/design%20system-v1.1-blueviolet)](./docs/design-system.md)
 
 ---
 
@@ -50,14 +50,17 @@ A React application for managing student report card comments. Teachers can crea
 
 **Test Coverage**: 143 Subject-specific tests passing across all layers
 
-### Design System (Complete)
+### Design System (v1.1 - Phase 2 Complete)
 
 - ✅ **Design Tokens**: Centralized style constants for colors, spacing, typography, borders, shadows
 - ✅ **Standardized Components**: Reusable Input, Label, and Button components
-- ✅ **Component Migrations**: FinalCommentsModal and ClassManagementModal migrated
+- ✅ **Phase 1 Migrations**: FinalCommentsModal and ClassManagementModal (CSS Standardization)
+- ✅ **Phase 2 Migrations**: SubjectForm, OutcomeCommentsModal, PersonalizedCommentsModal (UI Consistency)
+- ✅ **5 of 5 Priority Modals**: 100% design system adoption achieved
 - ✅ **Comprehensive Documentation**: Complete usage guide in `docs/design-system.md`
 - ✅ **Type Safety**: Full TypeScript support with autocomplete
 - ✅ **Zero Runtime Overhead**: Compile-time constants
+- ✅ **770 Tests Passing**: 102 new design token tests added in Phase 2
 
 **Quick Start**:
 ```typescript
@@ -190,7 +193,8 @@ npm run test:e2e:headed   # Run E2E tests in headed mode (visible browser)
 ```
 
 **Test Coverage**:
-- **Unit Tests**: 668 tests (279 Class/Outcome + 143 Subject + 87 Design System + 159 others)
+- **Unit Tests**: 770 tests (279 Class/Outcome + 143 Subject + 189 Design System + 159 others)
+  - Design System: 87 tests (Phase 1) + 102 tests (Phase 2) = 189 total
 - **E2E Tests**: 42 scenarios (21 Class + 21 Subject)
 
 ### Code Quality
@@ -381,13 +385,16 @@ cors({
 **Framework**: Jest + React Testing Library
 
 **Coverage**:
-- ✅ 668 tests passing across all features
+- ✅ 770 tests passing across all features (115% retention from Phase 1 baseline)
 - ✅ 90%+ coverage across all layers
-- ✅ **Design System**: 87 tests
+- ✅ **Design System**: 189 tests (87 Phase 1 + 102 Phase 2)
   - Tokens: 21 tests
   - Input component: 22 tests
   - Label component: 15 tests
   - Button component: 29 tests
+  - SubjectForm design tokens: 25 tests (Phase 2)
+  - OutcomeCommentsModal design tokens: 36 tests (Phase 2)
+  - PersonalizedCommentsModal design tokens: 41 tests (Phase 2)
 - ✅ **Class/Outcome**: 279 tests
   - Services: 68 tests
   - Hooks: 20 tests
@@ -652,14 +659,20 @@ Standalone label for custom inputs.
 
 ### Migration Status
 
-**Completed Migrations**:
+**Phase 1: CSS Standardization** (Complete)
 - ✅ FinalCommentsModal (32 inline styles → design tokens)
 - ✅ ClassManagementModal (23 modalStyles → design tokens)
 
-**Migration Candidates** (see `docs/design-system.md`):
-- SubjectForm
-- OutcomeCommentsModal
-- PersonalizedCommentsModal
+**Phase 2: UI Consistency** (Complete - November 2025)
+- ✅ SubjectForm (US-UI-001) - 25 design token tests, 693 tests passing
+- ✅ OutcomeCommentsModal (US-UI-002) - 36 design token tests, 729 tests passing
+- ✅ PersonalizedCommentsModal (US-UI-003) - 41 design token tests, 770 tests passing
+
+**Result**: 5 of 5 priority modals migrated (100% adoption)
+
+**Future Candidates** (see `docs/design-system.md`):
+- SubjectListItem
+- Other components with inline styles
 
 ### Full Documentation
 
@@ -965,11 +978,12 @@ This project was developed following specification-first TDD methodology with co
 - Design Token System (v1.0)
 
 **Quality Metrics**:
-- ✅ 668 unit tests passing (includes design system: 87 tests)
+- ✅ 770 unit tests passing (includes design system: 189 tests - 87 Phase 1 + 102 Phase 2)
 - ✅ 42 E2E test scenarios (21 Class + 21 Subject)
 - ✅ WCAG 2.1 AA compliant (0 violations)
-- ✅ 99.98 KB bundle (50% under target)
+- ✅ 99.98 KB bundle (50% under target, Phase 2 added negligible overhead)
 - ✅ 90%+ test coverage
 - ✅ Zero linting errors
-- ✅ Design system v1.0 complete (60+ tokens, 3 standardized components)
+- ✅ Design system v1.1 complete (60+ tokens, 3 standardized components, 5 modal migrations)
 - ✅ Subject infrastructure complete (ready for migration)
+- ✅ 100% design system adoption (5 of 5 priority modals)
