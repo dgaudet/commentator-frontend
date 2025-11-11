@@ -142,3 +142,4 @@ See details at bottom of this file.
 
 ---
 Looks like the add personalized comments button should show a message when clicked with no comment
+the error labels aren't standardized, the add subject is different from the rest I believe
