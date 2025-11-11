@@ -248,11 +248,12 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
         />,
       )
 
+      // US-CSS-006: Input component manages its own marginBottom (spacing.lg = 1rem)
       const gradeLabel = screen.getByText(/^Grade/i)
-      const gradeFormGroup = gradeLabel.closest('.form-group')
+      const gradeWrapper = gradeLabel.parentElement
 
-      expect(gradeFormGroup).toHaveStyle({
-        marginBottom: '1rem',
+      expect(gradeWrapper).toHaveStyle({
+        marginBottom: '1rem', // spacing.lg
       })
     })
 
@@ -270,27 +271,30 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
         />,
       )
 
+      // US-CSS-006: Input component renders asterisks for required fields
       // First Name is required
       const firstNameLabel = screen.getByText(/First Name/i)
-      const asterisk = firstNameLabel.querySelector('span.required')
+      const asterisk = firstNameLabel.parentElement?.querySelector('span')
 
       expect(asterisk).toBeInTheDocument()
+      expect(asterisk).toHaveTextContent('*')
       expect(asterisk).toHaveStyle({
-        color: '#DC2626',
+        color: '#DC2626', // colors.semantic.error
       })
 
       // Grade is required
       const gradeLabel = screen.getByText(/^Grade/i)
-      const gradeAsterisk = gradeLabel.querySelector('span.required')
+      const gradeAsterisk = gradeLabel.parentElement?.querySelector('span')
 
       expect(gradeAsterisk).toBeInTheDocument()
+      expect(gradeAsterisk).toHaveTextContent('*')
       expect(gradeAsterisk).toHaveStyle({
-        color: '#DC2626',
+        color: '#DC2626', // colors.semantic.error
       })
 
       // Last Name is optional (no asterisk)
       const lastNameLabel = screen.getByText(/Last Name/i)
-      expect(lastNameLabel.querySelector('span.required')).not.toBeInTheDocument()
+      expect(lastNameLabel.parentElement?.querySelector('span')).not.toBeInTheDocument()
     })
   })
 
@@ -311,14 +315,14 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
 
       const addButton = screen.getByRole('button', { name: /Add Final Comment/i })
 
-      // Button component uses these styles
+      // Button component uses design tokens (US-CSS-005)
       expect(addButton).toHaveStyle({
         backgroundColor: '#0066FF',
         color: '#FFFFFF',
         borderColor: '#0066FF',
-        padding: '12px 24px',
+        padding: '0.75rem 1.5rem', // Updated to design tokens: spacing.md spacing.xl
         borderRadius: '8px',
-        fontSize: '16px',
+        fontSize: '1rem', // Updated to design tokens: typography.fontSize.base
         fontWeight: '600',
       })
     })
@@ -427,12 +431,15 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       const firstNameInput = screen.getByLabelText(/First Name/i)
       const lastNameInput = screen.getByLabelText(/Last Name/i)
 
+      // US-CSS-006: Input wrapper -> flex container div -> flex row
       // Both fields should have a common parent container with flex display
-      const firstNameContainer = firstNameInput.closest('.form-group')
-      const lastNameContainer = lastNameInput.closest('.form-group')
-      const nameFieldsRow = firstNameContainer?.parentElement
+      const firstNameWrapper = firstNameInput.parentElement // Input wrapper
+      const lastNameWrapper = lastNameInput.parentElement // Input wrapper
+      const firstNameFlexContainer = firstNameWrapper?.parentElement // flex: 1 div
+      const lastNameFlexContainer = lastNameWrapper?.parentElement // flex: 1 div
+      const nameFieldsRow = firstNameFlexContainer?.parentElement // flex row
 
-      expect(nameFieldsRow).toBe(lastNameContainer?.parentElement)
+      expect(nameFieldsRow).toBe(lastNameFlexContainer?.parentElement)
       expect(nameFieldsRow).toHaveStyle({
         display: 'flex',
       })
@@ -453,10 +460,11 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       )
 
       const firstNameInput = screen.getByLabelText(/First Name/i)
-      const nameFieldsRow = firstNameInput.closest('.form-group')?.parentElement
+      // US-CSS-006: Input wrapper -> flex container -> flex row
+      const nameFieldsRow = firstNameInput.parentElement?.parentElement?.parentElement
 
       expect(nameFieldsRow).toHaveStyle({
-        gap: '1rem',
+        gap: '1rem', // spacing.lg
       })
     })
 
@@ -477,8 +485,9 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       const firstNameInput = screen.getByLabelText(/First Name/i)
       const lastNameInput = screen.getByLabelText(/Last Name/i)
 
-      const firstNameContainer = firstNameInput.closest('.form-group')
-      const lastNameContainer = lastNameInput.closest('.form-group')
+      // US-CSS-006: Input wrapper -> flex container (this has flex: 1)
+      const firstNameContainer = firstNameInput.parentElement?.parentElement
+      const lastNameContainer = lastNameInput.parentElement?.parentElement
 
       expect(firstNameContainer).toHaveStyle({
         flex: '1',

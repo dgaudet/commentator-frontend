@@ -219,12 +219,13 @@ describe('US-FINAL-STYLE-004: Edit Form Styling', () => {
 
       fireEvent.click(screen.getByRole('button', { name: /Edit/i }))
 
+      // US-CSS-006: Input component manages its own marginBottom
       const gradeLabels = screen.getAllByText(/^Grade/i)
       const editGradeLabel = gradeLabels[gradeLabels.length - 1]
-      const gradeFormGroup = editGradeLabel.closest('.form-group')
+      const gradeWrapper = editGradeLabel.parentElement
 
-      expect(gradeFormGroup).toHaveStyle({
-        marginBottom: '1rem',
+      expect(gradeWrapper).toHaveStyle({
+        marginBottom: '1rem', // spacing.lg
       })
     })
   })
@@ -415,11 +416,15 @@ describe('US-FINAL-STYLE-004: Edit Form Styling', () => {
       const lastNameInput = screen.getByDisplayValue('Doe')
 
       const editFirstNameInput = firstNameInputs[firstNameInputs.length - 1]
-      const firstNameContainer = editFirstNameInput.closest('.form-group')
-      const lastNameContainer = lastNameInput.closest('.form-group')
-      const nameFieldsRow = firstNameContainer?.parentElement
 
-      expect(nameFieldsRow).toBe(lastNameContainer?.parentElement)
+      // US-CSS-006: Input wrapper -> flex container div -> flex row
+      const firstNameWrapper = editFirstNameInput.parentElement
+      const lastNameWrapper = lastNameInput.parentElement
+      const firstNameFlexContainer = firstNameWrapper?.parentElement
+      const lastNameFlexContainer = lastNameWrapper?.parentElement
+      const nameFieldsRow = firstNameFlexContainer?.parentElement
+
+      expect(nameFieldsRow).toBe(lastNameFlexContainer?.parentElement)
       expect(nameFieldsRow).toHaveStyle({
         display: 'flex',
       })

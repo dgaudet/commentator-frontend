@@ -1,19 +1,24 @@
 /**
  * Input Component Styles
  * Focus states using CSS pseudo-selectors for better accessibility
- * Base styles are kept as inline styles in the component
+ * Reference: US-CSS-003 - Uses design token values
+ *
+ * Token mappings:
+ * - colors.primary.main: #0066FF
+ * - colors.semantic.error: #DC2626
+ * - borders.width.thin: 1px
  */
 
 /* Focus ring for keyboard navigation - WCAG 2.1 AA compliant */
 .input-field:focus-visible {
-  border: 2px solid #0066FF !important;
+  border: 1px solid #0066FF !important; /* colors.primary.main */
   box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1) !important;
   outline: none;
 }
 
 /* Error state focus ring */
 .input-field.input-error:focus-visible {
-  border: 2px solid #DC2626 !important;
+  border: 1px solid #DC2626 !important; /* colors.semantic.error */
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
   outline: none;
 }

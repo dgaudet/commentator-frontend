@@ -29,11 +29,12 @@ import type { Class, CreateClassRequest, UpdateClassRequest, FinalComment, Creat
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
+import { Input } from '../common/Input'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Tabs, Tab } from '../common/Tabs'
 import { TabPanel } from '../common/TabPanel'
 import { FinalCommentsModal } from '../finalComments/FinalCommentsModal'
-import { modalStyles } from '../../styles/modalStyles'
+import { colors, spacing, typography, borders } from '../../theme/tokens'
 import styles from '../common/ConfirmationModal.module.css'
 
 interface ClassManagementModalProps<T extends { id: number; name: string }> {
@@ -284,7 +285,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
         role="dialog"
         aria-modal="true"
         aria-label="Class Management"
-        style={modalStyles.container}
+        style={{
+          padding: spacing.xl,
+          backgroundColor: colors.background.primary,
+        }}
       >
           {loading && (
             <div className="loading-container">
@@ -299,22 +303,60 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
           {!loading && !error && (
             <>
               {/* Class Dropdown Selector */}
-              <div style={modalStyles.section}>
-                <h3 style={modalStyles.heading}>
+              <div style={{ marginBottom: spacing['2xl'] }}>
+                <h3
+                  style={{
+                    fontSize: typography.fontSize.lg,
+                    fontWeight: typography.fontWeight.semibold,
+                    color: colors.text.primary,
+                    marginBottom: spacing.lg,
+                  }}
+                >
                   Select a Class
                 </h3>
                 {classes.length === 0
                   ? (
-                      <div style={modalStyles.emptyState}>
-                        <p style={modalStyles.emptyStateText}>No classes yet</p>
-                        <p style={modalStyles.emptyStateSubtext}>
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          padding: spacing['2xl'],
+                          backgroundColor: colors.background.secondary,
+                          borderRadius: borders.radius.md,
+                          border: `${borders.width.thin} dashed ${colors.border.default}`,
+                        }}
+                      >
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: typography.fontSize.base,
+                            color: colors.text.tertiary,
+                          }}
+                        >
+                          No classes yet
+                        </p>
+                        <p
+                          style={{
+                            margin: `${spacing.sm} 0 0`,
+                            fontSize: typography.fontSize.sm,
+                            color: colors.text.disabled,
+                          }}
+                        >
                           Add your first class below.
                         </p>
                       </div>
                     )
                   : (
-                      <div style={modalStyles.formGroup}>
-                        <label htmlFor="class-dropdown" style={modalStyles.label}>
+                      <div style={{ marginBottom: spacing.lg }}>
+                        <label
+                          htmlFor="class-dropdown"
+                          style={{
+                            display: 'block',
+                            marginBottom: spacing.sm,
+                            fontSize: typography.fontSize.sm,
+                            fontWeight: typography.fontWeight.medium,
+                            color: colors.text.secondary,
+                          }}
+                        >
                           Select a class to edit or delete:
                         </label>
                         <select
@@ -322,7 +364,15 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                           value={selectedClassId || ''}
                           onChange={handleClassSelect}
                           aria-label="Select a class"
-                          style={modalStyles.select}
+                          style={{
+                            width: '100%',
+                            padding: spacing.md,
+                            fontSize: typography.fontSize.base,
+                            border: `${borders.width.thin} solid ${colors.border.default}`,
+                            borderRadius: borders.radius.md,
+                            backgroundColor: colors.background.primary,
+                            cursor: 'pointer',
+                          }}
                         >
                           <option value="">-- Select a class --</option>
                           {classes.map((cls) => (
@@ -348,46 +398,55 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
 
                       {/* Edit Class Tab Panel */}
                       <TabPanel id="edit-class" activeTabId={activeClassTab} tabId="edit-class">
-                        <div style={modalStyles.section}>
-                          <div style={modalStyles.formGroup}>
-                            <label htmlFor="class-name-input" style={modalStyles.label}>
-                              Class Name <span style={modalStyles.requiredIndicator}>*</span>
-                            </label>
-                            <input
-                              id="class-name-input"
-                              type="text"
-                              value={className}
-                              onChange={(e) => setClassName(e.target.value)}
-                              placeholder="Enter class name (e.g., Advanced Section)"
-                              aria-label="Class Name"
-                              maxLength={100}
-                              style={modalStyles.input}
-                            />
-                          </div>
+                        <div style={{ marginBottom: spacing['2xl'] }}>
+                          <Input
+                            id="class-name-input"
+                            label="Class Name"
+                            required
+                            type="text"
+                            value={className}
+                            onChange={(e) => setClassName(e.target.value)}
+                            placeholder="Enter class name (e.g., Advanced Section)"
+                            maxLength={100}
+                            error={validationError && !className.trim()}
+                          />
 
-                          <div style={modalStyles.formGroup}>
-                            <label htmlFor="class-year-input" style={modalStyles.label}>
-                              Year <span style={modalStyles.requiredIndicator}>*</span>
-                            </label>
-                            <input
-                              id="class-year-input"
-                              type="number"
-                              value={classYear}
-                              onChange={(e) => setClassYear(Number(e.target.value))}
-                              min={2000}
-                              max={2099}
-                              aria-label="Year"
-                              style={modalStyles.input}
-                            />
-                          </div>
+                          <Input
+                            id="class-year-input"
+                            label="Year"
+                            required
+                            type="number"
+                            value={classYear}
+                            onChange={(e) => setClassYear(Number(e.target.value))}
+                            min={2000}
+                            max={2099}
+                            error={validationError && (classYear < 2000 || classYear > 2099)}
+                          />
 
                           {validationError && (
-                            <div role="alert" style={modalStyles.validationError}>
+                            <div
+                              role="alert"
+                              style={{
+                                padding: spacing.md,
+                                marginBottom: spacing.lg,
+                                backgroundColor: colors.semantic.errorLight,
+                                border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                                borderRadius: borders.radius.md,
+                                color: colors.semantic.error,
+                                fontSize: typography.fontSize.sm,
+                              }}
+                            >
                               {validationError}
                             </div>
                           )}
 
-                          <div style={modalStyles.buttonGroupWrap}>
+                          <div
+                            style={{
+                              display: 'flex',
+                              gap: spacing.sm,
+                              flexWrap: 'wrap',
+                            }}
+                          >
                             <Button
                               onClick={handleUpdateClass}
                               variant="primary"
@@ -421,7 +480,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                               />
                             )
                           : (
-                              <div style={modalStyles.section}>
+                              <div style={{ marginBottom: spacing['2xl'] }}>
                                 <p>Final Comments functionality not available</p>
                               </div>
                             )}
@@ -430,44 +489,54 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                   )
                 : (
                     /* Add New Class Form (when no class selected) */
-                    <div style={modalStyles.section}>
-                      <h3 style={modalStyles.heading}>
+                    <div style={{ marginBottom: spacing['2xl'] }}>
+                      <h3
+                        style={{
+                          fontSize: typography.fontSize.lg,
+                          fontWeight: typography.fontWeight.semibold,
+                          color: colors.text.primary,
+                          marginBottom: spacing.lg,
+                        }}
+                      >
                         Add New Class
                       </h3>
-                      <div style={modalStyles.formGroup}>
-                        <label htmlFor="class-name-input" style={modalStyles.label}>
-                          Class Name <span style={modalStyles.requiredIndicator}>*</span>
-                        </label>
-                        <input
-                          id="class-name-input"
-                          type="text"
-                          value={className}
-                          onChange={(e) => setClassName(e.target.value)}
-                          placeholder="Enter class name (e.g., Advanced Section)"
-                          aria-label="Class Name"
-                          maxLength={100}
-                          style={modalStyles.input}
-                        />
-                      </div>
+                      <Input
+                        id="class-name-input"
+                        label="Class Name"
+                        required
+                        type="text"
+                        value={className}
+                        onChange={(e) => setClassName(e.target.value)}
+                        placeholder="Enter class name (e.g., Advanced Section)"
+                        maxLength={100}
+                        error={validationError && !className.trim()}
+                      />
 
-                      <div style={modalStyles.formGroup}>
-                        <label htmlFor="class-year-input" style={modalStyles.label}>
-                          Year <span style={modalStyles.requiredIndicator}>*</span>
-                        </label>
-                        <input
-                          id="class-year-input"
-                          type="number"
-                          value={classYear}
-                          onChange={(e) => setClassYear(Number(e.target.value))}
-                          min={2000}
-                          max={2099}
-                          aria-label="Year"
-                          style={modalStyles.input}
-                        />
-                      </div>
+                      <Input
+                        id="class-year-input"
+                        label="Year"
+                        required
+                        type="number"
+                        value={classYear}
+                        onChange={(e) => setClassYear(Number(e.target.value))}
+                        min={2000}
+                        max={2099}
+                        error={validationError && (classYear < 2000 || classYear > 2099)}
+                      />
 
                       {validationError && (
-                        <div role="alert" style={modalStyles.validationError}>
+                        <div
+                          role="alert"
+                          style={{
+                            padding: spacing.md,
+                            marginBottom: spacing.lg,
+                            backgroundColor: colors.semantic.errorLight,
+                            border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                            borderRadius: borders.radius.md,
+                            color: colors.semantic.error,
+                            fontSize: typography.fontSize.sm,
+                          }}
+                        >
                           {validationError}
                         </div>
                       )}
