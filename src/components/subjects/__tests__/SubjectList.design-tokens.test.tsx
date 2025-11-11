@@ -133,7 +133,7 @@ describe('SubjectList Component Design Tokens', () => {
 
       expect(heading).toHaveStyle({
         fontSize: typography.fontSize.xl,
-        fontWeight: typography.fontWeight.bold.toString(),
+        fontWeight: typography.fontWeight.bold,
         color: colors.text.primary,
         margin: '0',
       })
@@ -163,7 +163,7 @@ describe('SubjectList Component Design Tokens', () => {
       expect(label).toHaveStyle({
         display: 'block',
         fontSize: typography.fontSize.lg,
-        fontWeight: typography.fontWeight.medium.toString(),
+        fontWeight: typography.fontWeight.medium,
         color: colors.text.secondary,
         marginBottom: spacing.md,
       })

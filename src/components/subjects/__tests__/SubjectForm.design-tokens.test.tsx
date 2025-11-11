@@ -93,7 +93,7 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
       const heading = screen.getByText('Add New Subject')
 
       expect(heading).toHaveStyle({
-        fontWeight: typography.fontWeight.bold.toString(),
+        fontWeight: typography.fontWeight.bold,
       })
     })
 

@@ -97,7 +97,7 @@ describe('US-UI-003: PersonalizedCommentsModal Component Design Tokens', () => {
 
       expect(heading).toHaveStyle({
         fontSize: typography.fontSize.lg,
-        fontWeight: typography.fontWeight.semibold.toString(),
+        fontWeight: typography.fontWeight.semibold,
         color: colors.text.primary,
         marginBottom: spacing.lg,
       })
