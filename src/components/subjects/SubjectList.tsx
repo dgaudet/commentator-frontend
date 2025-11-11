@@ -9,6 +9,7 @@
  * - Delete confirmation modal integrated (US-SUBJ-DELETE-002)
  *
  * Performance: Uses useCallback for event handlers
+ * UI Consistency: Migrated to design tokens (additional enhancement)
  */
 import React, { useCallback, useState, useEffect } from 'react'
 import { useSubjects } from '../../hooks/useSubjects'
@@ -25,6 +26,7 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Subject } from '../../types/Subject'
 import { getSelectedSubjectId, saveSelectedSubjectId, clearSelectedSubjectId } from '../../utils/subjectStorageUtils'
+import { colors, spacing, typography, borders, shadows } from '../../theme/tokens'
 import type { Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
 interface SubjectListProps {
@@ -335,21 +337,21 @@ export const SubjectList: React.FC<SubjectListProps> = ({
 
   // Success state - render dropdown selector + selected subject
   return (
-    <div style={{ padding: '2rem' }}>
+    <div style={{ padding: spacing['2xl'] }}>
       {/* US-STYLE-002 AC1: Header with button beside title */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '1.5rem',
-          marginBottom: '2rem',
+          gap: spacing.xl,
+          marginBottom: spacing['2xl'],
         }}
       >
         <h2
           style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            color: '#111827',
+            fontSize: typography.fontSize.xl,
+            fontWeight: typography.fontWeight.bold,
+            color: colors.text.primary,
             margin: 0,
           }}
         >
@@ -363,21 +365,21 @@ export const SubjectList: React.FC<SubjectListProps> = ({
       </div>
 
       {error && (
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: spacing.lg }}>
           <ErrorMessage message={error} onDismiss={handleClearError} />
         </div>
       )}
 
       {/* Dropdown selector (US-STYLE-001 AC5, US-STYLE-002 AC2) */}
-      <div style={{ marginBottom: '2rem', maxWidth: '500px' }}>
+      <div style={{ marginBottom: spacing['2xl'], maxWidth: '500px' }}>
         <label
           htmlFor="subject-selector"
           style={{
             display: 'block',
-            fontSize: '1.25rem',
-            fontWeight: 500,
-            color: '#1E3A5F',
-            marginBottom: '0.75rem',
+            fontSize: typography.fontSize.lg,
+            fontWeight: typography.fontWeight.medium,
+            color: colors.text.secondary,
+            marginBottom: spacing.md,
           }}
         >
           Select a Subject
@@ -391,12 +393,12 @@ export const SubjectList: React.FC<SubjectListProps> = ({
           style={{
             display: 'block',
             width: '100%',
-            padding: '12px 16px',
-            fontSize: '16px',
-            border: '2px solid #1E3A5F',
-            borderRadius: '8px',
-            backgroundColor: '#F5F8FA',
-            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+            padding: spacing.md,
+            fontSize: typography.fontSize.base,
+            border: `${borders.width.thick} solid ${colors.border.default}`,
+            borderRadius: borders.radius.md,
+            backgroundColor: colors.background.secondary,
+            boxShadow: shadows.sm,
             cursor: 'pointer',
           }}
         >

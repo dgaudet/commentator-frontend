@@ -20,6 +20,8 @@
  * - Uses standardized ConfirmationModal component
  * - Shows preview of comment text (truncated to 100 chars)
  * - Consistent UX with other delete operations
+ *
+ * UI Consistency: Migrated to design tokens (US-UI-003)
  */
 
 import { useState } from 'react'
@@ -28,7 +30,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
-import { modalStyles } from '../../styles/modalStyles'
+import { colors, spacing, typography, borders } from '../../theme/tokens'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -171,7 +173,10 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
         role="dialog"
         aria-modal="true"
         aria-label="Personalized Comments"
-        style={modalStyles.container}
+        style={{
+          padding: spacing.xl,
+          backgroundColor: colors.background.primary,
+        }}
       >
           {loading && (
             <div className="loading-container">
@@ -186,11 +191,18 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
           {!loading && !error && (
             <>
               {/* Create Comment Form */}
-              <div style={modalStyles.section}>
-                <h3 style={modalStyles.heading}>
+              <div style={{ marginBottom: spacing['2xl'] }}>
+                <h3
+                  style={{
+                    fontSize: typography.fontSize.lg,
+                    fontWeight: typography.fontWeight.semibold,
+                    color: colors.text.primary,
+                    marginBottom: spacing.lg,
+                  }}
+                >
                   Add New Personalized Comment
                 </h3>
-                <div style={modalStyles.formGroup}>
+                <div style={{ marginBottom: spacing.lg }}>
                   <textarea
                     value={newCommentContent}
                     onChange={(e) => setNewCommentContent(e.target.value)}
@@ -198,19 +210,47 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                     aria-label="Add new personalized comment"
                     rows={4}
                     maxLength={500}
-                    style={modalStyles.textarea}
+                    style={{
+                      width: '100%',
+                      padding: spacing.md,
+                      fontSize: typography.fontSize.base,
+                      border: `${borders.width.thin} solid ${colors.border.default}`,
+                      borderRadius: borders.radius.md,
+                      resize: 'vertical' as const,
+                    }}
                   />
-                  <div style={modalStyles.characterCounter}>
-                    <span style={newCommentIsValid ? modalStyles.characterCountValid : modalStyles.characterCountInvalid}>
+                  <div
+                    style={{
+                      marginTop: spacing.sm,
+                      fontSize: typography.fontSize.sm,
+                      textAlign: 'right' as const,
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: newCommentIsValid ? colors.semantic.success : colors.semantic.error,
+                      }}
+                    >
                       {newCommentCharCount} / 500 characters
                     </span>
                     {newCommentCharCount > 0 && newCommentCharCount < 10 && (
-                      <span style={modalStyles.characterCountHint}> (minimum 10)</span>
+                      <span style={{ color: colors.text.tertiary }}> (minimum 10)</span>
                     )}
                   </div>
                 </div>
                 {validationError && (
-                  <div role="alert" style={modalStyles.validationError}>
+                  <div
+                    role="alert"
+                    style={{
+                      padding: spacing.md,
+                      marginBottom: spacing.lg,
+                      backgroundColor: colors.semantic.errorLight,
+                      border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                      borderRadius: borders.radius.md,
+                      color: colors.semantic.error,
+                      fontSize: typography.fontSize.sm,
+                    }}
+                  >
                     {validationError}
                   </div>
                 )}
@@ -224,23 +264,66 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
               </div>
 
               {/* Comments List */}
-              <div style={modalStyles.section}>
-                <h3 style={modalStyles.heading}>
+              <div style={{ marginBottom: spacing['2xl'] }}>
+                <h3
+                  style={{
+                    fontSize: typography.fontSize.lg,
+                    fontWeight: typography.fontWeight.semibold,
+                    color: colors.text.primary,
+                    marginBottom: spacing.lg,
+                  }}
+                >
                   Existing Comments
                 </h3>
                 {personalizedComments.length === 0
                   ? (
-                      <div style={modalStyles.emptyState}>
-                        <p style={modalStyles.emptyStateText}>No personalized comments yet</p>
-                        <p style={modalStyles.emptyStateSubtext}>
+                      <div
+                        style={{
+                          textAlign: 'center' as const,
+                          padding: spacing['2xl'],
+                          backgroundColor: colors.neutral[50],
+                          borderRadius: borders.radius.md,
+                          border: `${borders.width.thin} dashed ${colors.border.default}`,
+                        }}
+                      >
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: typography.fontSize.base,
+                            color: colors.text.tertiary,
+                          }}
+                        >
+                          No personalized comments yet
+                        </p>
+                        <p
+                          style={{
+                            margin: `${spacing.sm} 0 0`,
+                            fontSize: typography.fontSize.sm,
+                            color: colors.text.disabled,
+                          }}
+                        >
                           Add your first personalized comment above.
                         </p>
                       </div>
                     )
                   : (
-                  <div style={modalStyles.itemsList}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column' as const,
+                      gap: spacing.lg,
+                    }}
+                  >
                     {personalizedComments.map((comment) => (
-                      <div key={comment.id} style={modalStyles.itemCard}>
+                      <div
+                        key={comment.id}
+                        style={{
+                          padding: spacing.xl,
+                          border: `${borders.width.thin} solid ${colors.border.default}`,
+                          borderRadius: borders.radius.md,
+                          backgroundColor: colors.background.primary,
+                        }}
+                      >
                         {editingId === comment.id
                           ? (
                             /* Edit Mode */
@@ -250,22 +333,52 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                   onChange={(e) => setEditContent(e.target.value)}
                                   rows={4}
                                   maxLength={500}
-                                  style={{ ...modalStyles.textarea, marginBottom: '0.5rem' }}
+                                  style={{
+                                    width: '100%',
+                                    padding: spacing.md,
+                                    fontSize: typography.fontSize.base,
+                                    border: `${borders.width.thin} solid ${colors.border.default}`,
+                                    borderRadius: borders.radius.md,
+                                    resize: 'vertical' as const,
+                                    marginBottom: spacing.sm,
+                                  }}
                                 />
-                                <div style={{ ...modalStyles.characterCounter, marginBottom: '1rem' }}>
-                                  <span style={editCommentIsValid ? modalStyles.characterCountValid : modalStyles.characterCountInvalid}>
+                                <div
+                                  style={{
+                                    marginTop: spacing.sm,
+                                    fontSize: typography.fontSize.sm,
+                                    textAlign: 'right' as const,
+                                    marginBottom: spacing.lg,
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: editCommentIsValid ? colors.semantic.success : colors.semantic.error,
+                                    }}
+                                  >
                                     {editCommentCharCount} / 500 characters
                                   </span>
                                   {editCommentCharCount > 0 && editCommentCharCount < 10 && (
-                                    <span style={modalStyles.characterCountHint}> (minimum 10)</span>
+                                    <span style={{ color: colors.text.tertiary }}> (minimum 10)</span>
                                   )}
                                 </div>
                                 {validationError && (
-                                  <div role="alert" style={modalStyles.validationError}>
+                                  <div
+                                    role="alert"
+                                    style={{
+                                      padding: spacing.md,
+                                      marginBottom: spacing.lg,
+                                      backgroundColor: colors.semantic.errorLight,
+                                      border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                                      borderRadius: borders.radius.md,
+                                      color: colors.semantic.error,
+                                      fontSize: typography.fontSize.sm,
+                                    }}
+                                  >
                                     {validationError}
                                   </div>
                                 )}
-                                <div style={modalStyles.buttonGroup}>
+                                <div style={{ display: 'flex', gap: spacing.sm }}>
                                   <Button
                                     onClick={handleEditSave}
                                     variant="primary"
@@ -285,10 +398,23 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                           : (
                             /* View Mode */
                               <div>
-                            <div style={modalStyles.itemContent}>
+                            <div
+                              style={{
+                                fontSize: typography.fontSize.base,
+                                color: colors.text.primary,
+                                marginBottom: spacing.md,
+                                lineHeight: typography.lineHeight.normal,
+                              }}
+                            >
                               {comment.comment}
                             </div>
-                            <div style={modalStyles.itemMeta}>
+                            <div
+                              style={{
+                                fontSize: typography.fontSize.xs,
+                                color: colors.text.disabled,
+                                marginBottom: spacing.lg,
+                              }}
+                            >
                               Created: {formatDate(comment.createdAt)}
                               {comment.updatedAt !== comment.createdAt && (
                                 <span>
@@ -296,7 +422,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                 </span>
                               )}
                             </div>
-                            <div style={modalStyles.buttonGroup}>
+                            <div style={{ display: 'flex', gap: spacing.sm }}>
                               <Button
                                 onClick={() => handleEditStart(comment)}
                                 variant="secondary"
