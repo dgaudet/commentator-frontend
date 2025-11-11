@@ -1,12 +1,13 @@
 /**
  * SubjectForm Component
  * Form for creating and editing subjects with client-side validation
- * Reference: US-REFACTOR-007
+ * Reference: US-REFACTOR-007, US-UI-001
  *
  * Key Change: Subject has no year field, so year input removed
  * Duplicate detection only checks name (not name+year combination)
  *
  * Performance: Uses useCallback for event handlers
+ * UI Consistency: Uses design tokens for all styling (US-UI-001)
  */
 import React, { useState, useEffect, useCallback } from 'react'
 import { useSubjects } from '../../hooks/useSubjects'
@@ -14,6 +15,7 @@ import { validateSubjectForm } from '../../services/validation/subjectValidation
 import { Input } from '../common/Input'
 import { Button } from '../common/Button'
 import { ErrorMessage } from '../common/ErrorMessage'
+import { colors, spacing, typography, borders, shadows } from '../../theme/tokens'
 import type { Subject } from '../../types/Subject'
 
 interface SubjectFormProps {
@@ -157,10 +159,10 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
             }
           : {
               // Create mode: Centered card with styling
-              backgroundColor: '#FFFFFF',
-              borderRadius: '8px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-              padding: '2rem',
+              backgroundColor: colors.background.primary,
+              borderRadius: borders.radius.md,
+              boxShadow: shadows.md,
+              padding: spacing['2xl'],
               maxWidth: '600px',
               margin: '0 auto',
             }
@@ -168,23 +170,23 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
     >
       <h2
         style={{
-          fontSize: '1.5rem',
-          fontWeight: 'bold',
-          color: '#111827',
-          marginBottom: '2rem',
+          fontSize: typography.fontSize.xl,
+          fontWeight: typography.fontWeight.bold,
+          color: colors.text.primary,
+          marginBottom: spacing['2xl'],
         }}
       >
         {isEditMode ? 'Edit Subject' : 'Add New Subject'}
       </h2>
 
       {errors.submit && (
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: spacing.lg }}>
           <ErrorMessage message={errors.submit} />
         </div>
       )}
 
       {errors.duplicate && (
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: spacing.lg }}>
           <ErrorMessage message={errors.duplicate} />
         </div>
       )}
@@ -204,10 +206,10 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
 
         <div
           style={{
-            marginTop: '1.5rem',
+            marginTop: spacing.xl,
             ...(isEditMode
               ? {}
-              : { display: 'flex', gap: '1rem' }),
+              : { display: 'flex', gap: spacing.lg }),
           }}
         >
           {isEditMode
