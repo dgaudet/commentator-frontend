@@ -17,8 +17,8 @@
   "phases": {
     "planning": "COMPLETE",
     "architecture": "SKIPPED",
-    "implementation": "PENDING",
-    "testing": "PENDING",
+    "implementation": "COMPLETE",
+    "testing": "COMPLETE",
     "deployed": "PENDING"
   },
   "team": {

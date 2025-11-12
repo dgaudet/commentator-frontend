@@ -643,22 +643,70 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                 </Button>
               </div>
 
-              {/* Empty State (AC 3) */}
-              {sortedComments.length === 0
-                ? (
-                    <div className="empty-state">
-                      <p>No final comments yet for this class.</p>
-                      <p className="empty-subtext">
-                        Add your first student grade!
-                      </p>
-                    </div>
-                  )
-                : (
-                  /* List Display (AC 1, 2, 7) */
-                    <div className="final-comments-list">
-                      <div className="comments">
+              {/* US-FC-STYLE-001: Existing Comments Section with Header */}
+              <div style={{ marginBottom: spacing['2xl'] }}>
+                <h3
+                  style={{
+                    fontSize: typography.fontSize.lg,
+                    fontWeight: typography.fontWeight.semibold,
+                    color: colors.text.primary,
+                    marginBottom: spacing.lg,
+                  }}
+                >
+                  Existing Comments
+                </h3>
+
+                {/* Empty State (AC 3) - US-FC-STYLE-004 */}
+                {sortedComments.length === 0
+                  ? (
+                      <div
+                        style={{
+                          textAlign: 'center' as const,
+                          padding: spacing['2xl'],
+                          backgroundColor: colors.neutral[50],
+                          borderRadius: borders.radius.md,
+                          border: `${borders.width.thin} dashed ${colors.border.default}`,
+                        }}
+                      >
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: typography.fontSize.base,
+                            color: colors.text.tertiary,
+                          }}
+                        >
+                          No final comments yet for this class.
+                        </p>
+                        <p
+                          style={{
+                            margin: `${spacing.sm} 0 0`,
+                            fontSize: typography.fontSize.sm,
+                            color: colors.text.disabled,
+                          }}
+                        >
+                          Add your first student grade!
+                        </p>
+                      </div>
+                    )
+                  : (
+                    /* List Display (AC 1, 2, 7) - US-FC-STYLE-002 & US-FC-STYLE-003 */
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column' as const,
+                          gap: spacing.lg,
+                        }}
+                      >
                         {sortedComments.map((comment) => (
-                          <div key={comment.id} className="comment-item">
+                          <div
+                            key={comment.id}
+                            style={{
+                              padding: spacing.xl,
+                              border: `${borders.width.thin} solid ${colors.border.default}`,
+                              borderRadius: borders.radius.md,
+                              backgroundColor: colors.background.primary,
+                            }}
+                          >
                             {editingId === comment.id
                               ? (
                                 /* Edit Form - US-FINAL-004 */
@@ -869,8 +917,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                           </div>
                         ))}
                       </div>
-                    </div>
-                  )}
+                    )}
+              </div>
             </>
           )}
         </div>
