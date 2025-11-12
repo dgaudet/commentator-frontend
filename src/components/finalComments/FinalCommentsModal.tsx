@@ -102,9 +102,13 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const [editComment, setEditComment] = useState('')
   const [editValidationError, setEditValidationError] = useState('')
 
-  // FCOI-001: Outcome comment integration state
+  // FCOI-001: Outcome comment integration state (create mode)
   const [matchedOutcomeComment, setMatchedOutcomeComment] = useState<string>('')
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // FCOI-001: Outcome comment integration state (edit mode)
+  const [editMatchedOutcomeComment, setEditMatchedOutcomeComment] = useState<string>('')
+  const editDebounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // FCOI-001: Use outcome comments hook
   const {
@@ -186,6 +190,67 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       }
     }
   }, [grade, outcomeComments, matchedComment])
+
+  /**
+   * FCOI-001: Memoized outcome comment matcher for EDIT mode
+   * Finds the outcome comment that matches the edit grade range
+   * Returns the matching comment text or null if no match found
+   *
+   * @performance Memoized to avoid recalculation on every render
+   */
+  const editMatchedComment = useMemo(() => {
+    if (editGrade === '' || outcomeComments.length === 0) {
+      return null
+    }
+
+    const gradeNum = Number(editGrade)
+    return outcomeComments.find(
+      (comment: OutcomeComment) =>
+        comment.lowerRange <= gradeNum && gradeNum <= comment.upperRange,
+    )
+  }, [editGrade, outcomeComments])
+
+  /**
+   * FCOI-001: Debounced grade matching effect for EDIT mode
+   * Updates the displayed outcome comment when edit grade changes
+   * Uses 300ms debounce to avoid excessive updates during typing
+   *
+   * @performance Debounced with useRef to prevent memory leaks
+   * @accessibility Announces changes to screen readers via state update
+   */
+  useEffect(() => {
+    // Clear any existing timer
+    if (editDebounceTimerRef.current) {
+      clearTimeout(editDebounceTimerRef.current)
+    }
+
+    // Clear outcome comment if edit grade is empty
+    if (editGrade === '') {
+      setEditMatchedOutcomeComment('')
+      return
+    }
+
+    // Debounce edit grade input to avoid excessive updates (300ms delay)
+    editDebounceTimerRef.current = setTimeout(() => {
+      if (outcomeComments.length === 0) {
+        setEditMatchedOutcomeComment('No outcome comment for this subject with this grade level.')
+        return
+      }
+
+      if (editMatchedComment) {
+        setEditMatchedOutcomeComment(editMatchedComment.comment)
+      } else {
+        setEditMatchedOutcomeComment('No outcome comment for this subject with this grade level.')
+      }
+    }, 300)
+
+    // Cleanup: Clear timeout on unmount or when dependencies change
+    return () => {
+      if (editDebounceTimerRef.current) {
+        clearTimeout(editDebounceTimerRef.current)
+      }
+    }
+  }, [editGrade, outcomeComments, editMatchedComment])
 
   // US-CLASS-TABS-003: Skip isOpen check when embedded (always render in TabPanel)
   if (!embedded && !isOpen) return null
@@ -638,6 +703,64 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       max={100}
                                       error={editValidationError && editGrade === ''}
                                     />
+
+                                    {/* FCOI-001: Outcome Comment Display (READ-ONLY) - EDIT MODE */}
+                                    <div style={{ marginBottom: spacing.lg }}>
+                                      <label
+                                        htmlFor={`edit-outcome-comment-display-${comment.id}`}
+                                        style={{
+                                          display: 'block',
+                                          marginBottom: spacing.sm,
+                                          fontSize: typography.fontSize.sm,
+                                          fontWeight: typography.fontWeight.medium,
+                                          color: colors.text.secondary,
+                                        }}
+                                      >
+                                        Outcome Comment by Grade (Edit)
+                                      </label>
+
+                                      {outcomeCommentsLoading && (
+                                        <div style={{ padding: spacing.md }}>
+                                          <LoadingSpinner data-testid="loading-spinner" />
+                                        </div>
+                                      )}
+
+                                      {!outcomeCommentsLoading && (
+                                        <textarea
+                                          id={`edit-outcome-comment-display-${comment.id}`}
+                                          aria-label="Outcome Comment by Grade (Edit)"
+                                          value={editMatchedOutcomeComment}
+                                          readOnly
+                                          rows={3}
+                                          style={{
+                                            width: '100%',
+                                            padding: spacing.md,
+                                            fontSize: typography.fontSize.base,
+                                            border: `${borders.width.thin} solid ${colors.border.default}`,
+                                            borderRadius: borders.radius.md,
+                                            backgroundColor: colors.background.secondary,
+                                            color:
+                                              editMatchedOutcomeComment === 'No outcome comment for this subject with this grade level.'
+                                                ? colors.text.disabled
+                                                : colors.text.secondary,
+                                            resize: 'none',
+                                            cursor: 'default',
+                                          }}
+                                        />
+                                      )}
+
+                                      {outcomeCommentsError && (
+                                        <div
+                                          style={{
+                                            marginTop: spacing.sm,
+                                            fontSize: typography.fontSize.sm,
+                                            color: colors.semantic.error,
+                                          }}
+                                        >
+                                          Failed to load outcome comment. {outcomeCommentsError}
+                                        </div>
+                                      )}
+                                    </div>
 
                                     <div style={{ marginBottom: spacing.lg }}>
                                       <label

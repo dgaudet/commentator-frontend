@@ -618,4 +618,211 @@ describe('FinalCommentsModal - Outcome Comment Integration', () => {
       expect(screen.getByText(/failed to load outcome comment/i)).toBeInTheDocument()
     })
   })
+
+  describe('EDIT MODE: Outcome comment integration in edit form', () => {
+    const mockExistingFinalComment = {
+      id: 1,
+      classId: 1,
+      firstName: 'John',
+      lastName: 'Doe',
+      grade: 85,
+      comment: 'Good work',
+      createdAt: '2024-01-15T10:00:00Z',
+      updatedAt: '2024-01-15T10:00:00Z',
+    }
+
+    it('should display outcome comment in edit mode when grade is present', async () => {
+      mockUseOutcomeComments.mockReturnValue({
+        outcomeComments: mockOutcomeComments,
+        loading: false,
+        error: null,
+        loadOutcomeComments: jest.fn(),
+        createComment: jest.fn(),
+        updateComment: jest.fn(),
+        deleteComment: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[mockExistingFinalComment]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Click edit button
+      const editButton = screen.getByRole('button', { name: /edit final comment for john doe/i })
+      editButton.click()
+
+      // Wait for edit form to appear
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('John')).toBeInTheDocument()
+      })
+
+      // Wait for debounce and outcome comment to appear
+      await waitFor(() => {
+        const editOutcomeCommentField = screen.getByLabelText(/outcome comment by grade \(edit\)/i)
+        expect(editOutcomeCommentField).toHaveValue('Demonstrates strong understanding of algebraic concepts')
+      }, { timeout: 500 })
+    })
+
+    it('should update edit mode outcome comment when grade changes', async () => {
+      mockUseOutcomeComments.mockReturnValue({
+        outcomeComments: mockOutcomeComments,
+        loading: false,
+        error: null,
+        loadOutcomeComments: jest.fn(),
+        createComment: jest.fn(),
+        updateComment: jest.fn(),
+        deleteComment: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[mockExistingFinalComment]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Click edit button
+      const editButton = screen.getByRole('button', { name: /edit final comment for john doe/i })
+      editButton.click()
+
+      // Wait for edit form
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('John')).toBeInTheDocument()
+      })
+
+      // Change grade to different range
+      const editGradeInput = document.getElementById('edit-grade-1') as HTMLInputElement
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value',
+      )?.set
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(editGradeInput, '65')
+      }
+      editGradeInput.dispatchEvent(new Event('input', { bubbles: true }))
+
+      // Wait for outcome comment to update
+      await waitFor(() => {
+        const editOutcomeCommentField = screen.getByLabelText(/outcome comment by grade \(edit\)/i)
+        expect(editOutcomeCommentField).toHaveValue('Shows adequate comprehension of mathematical principles')
+      }, { timeout: 500 })
+    })
+
+    it('should clear edit mode outcome comment when grade is cleared', async () => {
+      mockUseOutcomeComments.mockReturnValue({
+        outcomeComments: mockOutcomeComments,
+        loading: false,
+        error: null,
+        loadOutcomeComments: jest.fn(),
+        createComment: jest.fn(),
+        updateComment: jest.fn(),
+        deleteComment: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[mockExistingFinalComment]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Click edit button
+      const editButton = screen.getByRole('button', { name: /edit final comment for john doe/i })
+      editButton.click()
+
+      // Wait for edit form
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('John')).toBeInTheDocument()
+      })
+
+      // Clear the grade
+      const editGradeInput = document.getElementById('edit-grade-1') as HTMLInputElement
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value',
+      )?.set
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(editGradeInput, '')
+      }
+      editGradeInput.dispatchEvent(new Event('input', { bubbles: true }))
+
+      // Wait for outcome comment to clear
+      await waitFor(() => {
+        const editOutcomeCommentField = screen.getByLabelText(/outcome comment by grade \(edit\)/i)
+        expect(editOutcomeCommentField).toHaveValue('')
+      }, { timeout: 500 })
+    })
+
+    it('should render edit mode outcome comment field with read-only styling', async () => {
+      mockUseOutcomeComments.mockReturnValue({
+        outcomeComments: mockOutcomeComments,
+        loading: false,
+        error: null,
+        loadOutcomeComments: jest.fn(),
+        createComment: jest.fn(),
+        updateComment: jest.fn(),
+        deleteComment: jest.fn(),
+        clearError: jest.fn(),
+      })
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[mockExistingFinalComment]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Click edit button
+      const editButton = screen.getByRole('button', { name: /edit final comment for john doe/i })
+      editButton.click()
+
+      // Wait for edit form
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('John')).toBeInTheDocument()
+      })
+
+      const editOutcomeCommentField = screen.getByLabelText(/outcome comment by grade \(edit\)/i)
+
+      // Verify read-only attribute
+      expect(editOutcomeCommentField).toHaveAttribute('readOnly')
+
+      // Verify design token styling
+      expect(editOutcomeCommentField).toHaveStyle({
+        backgroundColor: colors.background.secondary,
+        border: `${borders.width.thin} solid ${colors.border.default}`,
+        borderRadius: borders.radius.md,
+        padding: spacing.md,
+        fontSize: typography.fontSize.base,
+      })
+    })
+  })
 })
