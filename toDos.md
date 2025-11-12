@@ -1,35 +1,5 @@
 # To Do Items
 
-## ✅ Recently Completed
-
-### CSS Standardization (2025-11-10)
-See details at bottom of this file.
-
----
-
-## 🚀 Ready to Implement (Enabled by Design System)
-
-### UI/UX Consistency
-- [ ] **Migrate SubjectForm to design tokens and Input component**
-  - Currently: Subject text boxes don't match comment text box styles
-  - Solution: Use standardized Input component and design tokens
-  - Reference: `docs/design-system.md` migration guide
-  - Estimated: 2-3 story points
-
-- [ ] **Migrate OutcomeCommentsModal to design tokens**
-  - Apply same patterns as FinalCommentsModal and ClassManagementModal
-  - Reference: `docs/design-system.md` migration guide
-  - Listed in design-system.md as migration candidate
-  - Estimated: 3 story points
-
-- [ ] **Migrate PersonalizedCommentsModal to design tokens**
-  - Apply same patterns as FinalCommentsModal and ClassManagementModal
-  - Reference: `docs/design-system.md` migration guide
-  - Listed in design-system.md as migration candidate
-  - Estimated: 3 story points
-
----
-
 ## 🎯 High Priority Features
 
 ### Final Comments Enhancements
@@ -67,6 +37,7 @@ See details at bottom of this file.
 
 ### UI Improvements
 - [ ] **Remove "Edit Subject" label from subject component**
+  - The Edit Subject button should probably be `Update Subject` instead of `Save Changes`
   - Minor cleanup for cleaner UI
 
 - [ ] **Update class selection label to "Select a Class to work with"**
@@ -143,3 +114,5 @@ See details at bottom of this file.
 ---
 Looks like the add personalized comments button should show a message when clicked with no comment
 the error labels aren't standardized, the add subject is different from the rest I believe
+
+Add a button to the Final Comment component to copy replace the final comment with the outcome comment, maybe `Populate with Above Comments`
