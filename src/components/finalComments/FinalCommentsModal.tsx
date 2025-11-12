@@ -877,18 +877,34 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                               : (
                                 /* Display View - Matches OutcomeComments visual hierarchy */
                                   <div>
-                                    {/* Student Name - Primary heading */}
+                                    {/* Student Name and Date - Primary heading with date on right */}
                                     <div
                                       style={{
-                                        fontSize: typography.fontSize.base,
-                                        fontWeight: typography.fontWeight.semibold,
-                                        color: colors.text.primary,
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
                                         marginBottom: spacing.md,
-                                        lineHeight: typography.lineHeight.normal,
                                       }}
                                     >
-                                      {comment.firstName}
-                                      {comment.lastName ? ` ${comment.lastName}` : ''}
+                                      <div
+                                        style={{
+                                          fontSize: typography.fontSize.base,
+                                          fontWeight: typography.fontWeight.semibold,
+                                          color: colors.text.primary,
+                                          lineHeight: typography.lineHeight.normal,
+                                        }}
+                                      >
+                                        {comment.firstName}
+                                        {comment.lastName ? ` ${comment.lastName}` : ''}
+                                      </div>
+                                      <div
+                                        style={{
+                                          fontSize: typography.fontSize.xs,
+                                          color: colors.text.disabled,
+                                        }}
+                                      >
+                                        Created: {formatDate(comment.createdAt)}
+                                      </div>
                                     </div>
 
                                     {/* Grade - Secondary info */}
@@ -908,24 +924,13 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         style={{
                                           fontSize: typography.fontSize.sm,
                                           color: colors.text.secondary,
-                                          marginBottom: spacing.md,
+                                          marginBottom: spacing.lg,
                                           lineHeight: typography.lineHeight.relaxed,
                                         }}
                                       >
                                         {comment.comment}
                                       </div>
                                     )}
-
-                                    {/* Date - Tertiary info */}
-                                    <div
-                                      style={{
-                                        fontSize: typography.fontSize.xs,
-                                        color: colors.text.disabled,
-                                        marginBottom: spacing.lg,
-                                      }}
-                                    >
-                                      {formatDate(comment.createdAt)}
-                                    </div>
 
                                     {/* Action Buttons */}
                                     <div style={{ display: 'flex', gap: spacing.sm }}>
