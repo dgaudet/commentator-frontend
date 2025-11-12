@@ -116,3 +116,6 @@ Looks like the add personalized comments button should show a message when click
 the error labels aren't standardized, the add subject is different from the rest I believe
 
 Add a button to the Final Comment component to copy replace the final comment with the outcome comment, maybe `Populate with Above Comments`
+
+It should have the existing comments label, the data should then be inside a panel, and the data should be formatted similarly.
+They should use the the design system.
