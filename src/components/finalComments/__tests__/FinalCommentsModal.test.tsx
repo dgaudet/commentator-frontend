@@ -333,6 +333,7 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
           error={null}
         />,
       )
+      // Date is displayed with "Created:" prefix on same line as student name
       expect(screen.getByText(/Created:/i)).toBeInTheDocument()
       expect(screen.getByText(/Jan 15, 2024/i)).toBeInTheDocument()
     })

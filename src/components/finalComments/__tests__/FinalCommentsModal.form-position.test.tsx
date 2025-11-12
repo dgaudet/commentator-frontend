@@ -171,7 +171,8 @@ describe('US-FINAL-STYLE-001: Add Form Above List', () => {
       )
 
       const addFormSection = screen.getByText('Add New Final Comment').closest('div')
-      const listSection = screen.getByText(/Excellent work this semester/i).closest('.final-comments-list')
+      // US-FC-STYLE-001: Updated to use 'Existing Comments' heading instead of removed CSS class
+      const listSection = screen.getByText('Existing Comments').closest('div')
 
       // Add form and list should be in separate containers
       expect(addFormSection).not.toBe(listSection)
