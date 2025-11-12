@@ -118,3 +118,5 @@ the error labels aren't standardized, the add subject is different from the rest
 When adding a new class, it should be selected by default after creation.
 
 Add a button to the Final Comment component to copy replace the final comment with the outcome comment, maybe `Populate with Above Comments`
+
+Can you create stories to add a typeahead search box for personal comments to the Final Comments add and edit components? This would load the personal comments for the currently selected subject and allow searching by typing. The new input box should show up directly below the outcome comment box. 
