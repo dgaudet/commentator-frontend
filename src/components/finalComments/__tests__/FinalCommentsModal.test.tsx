@@ -333,7 +333,7 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
           error={null}
         />,
       )
-      expect(screen.getByText(/Created:/i)).toBeInTheDocument()
+      // Date is now displayed without "Created:" prefix (matches OutcomeComments pattern)
       expect(screen.getByText(/Jan 15, 2024/i)).toBeInTheDocument()
     })
 

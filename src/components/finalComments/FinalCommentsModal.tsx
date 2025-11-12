@@ -875,28 +875,60 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                   </div>
                                 )
                               : (
-                                /* Display View */
-                                  <>
-                                    <div className="student-header">
-                                      <h4 className="student-name">
-                                        {comment.firstName}
-                                        {comment.lastName ? ` ${comment.lastName}` : ''}
-                                      </h4>
-                                      <div className="grade-display">
-                                        Grade: {comment.grade}
-                                      </div>
+                                /* Display View - Matches OutcomeComments visual hierarchy */
+                                  <div>
+                                    {/* Student Name - Primary heading */}
+                                    <div
+                                      style={{
+                                        fontSize: typography.fontSize.base,
+                                        fontWeight: typography.fontWeight.semibold,
+                                        color: colors.text.primary,
+                                        marginBottom: spacing.md,
+                                        lineHeight: typography.lineHeight.normal,
+                                      }}
+                                    >
+                                      {comment.firstName}
+                                      {comment.lastName ? ` ${comment.lastName}` : ''}
                                     </div>
 
+                                    {/* Grade - Secondary info */}
+                                    <div
+                                      style={{
+                                        fontSize: typography.fontSize.sm,
+                                        color: colors.text.tertiary,
+                                        marginBottom: spacing.md,
+                                      }}
+                                    >
+                                      Grade: {comment.grade}
+                                    </div>
+
+                                    {/* Optional Comment Text */}
                                     {comment.comment && (
-                                      <div className="comment-text">
+                                      <div
+                                        style={{
+                                          fontSize: typography.fontSize.sm,
+                                          color: colors.text.secondary,
+                                          marginBottom: spacing.md,
+                                          lineHeight: typography.lineHeight.relaxed,
+                                        }}
+                                      >
                                         {comment.comment}
                                       </div>
                                     )}
 
-                                    <div className="comment-meta">
-                                      <span className="comment-date">
-                                        Created: {formatDate(comment.createdAt)}
-                                      </span>
+                                    {/* Date - Tertiary info */}
+                                    <div
+                                      style={{
+                                        fontSize: typography.fontSize.xs,
+                                        color: colors.text.disabled,
+                                        marginBottom: spacing.lg,
+                                      }}
+                                    >
+                                      {formatDate(comment.createdAt)}
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div style={{ display: 'flex', gap: spacing.sm }}>
                                       <Button
                                         variant="secondary"
                                         onClick={() => handleEditStart(comment)}
@@ -912,7 +944,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         Delete
                                       </Button>
                                     </div>
-                                  </>
+                                  </div>
                                 )}
                           </div>
                         ))}
