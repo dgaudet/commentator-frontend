@@ -858,7 +858,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       </div>
                                     )}
 
-                                    <div className="edit-actions">
+                                    {/* Edit Action Buttons - Matches OutcomeComments pattern */}
+                                    <div style={{ display: 'flex', gap: spacing.sm }}>
                                       <Button
                                         onClick={handleEditSave}
                                         variant="primary"

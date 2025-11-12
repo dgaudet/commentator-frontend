@@ -119,8 +119,4 @@ When adding a new class, it should be selected by default after creation.
 
 Add a button to the Final Comment component to copy replace the final comment with the outcome comment, maybe `Populate with Above Comments`
 
-It should have the existing comments label, the data should then be inside a panel, and the data should be formatted similarly.
-They should use the the design system.
 Need some more padding around Existing Comments label
-
-the save/cancel buttons when editting a final comment don't have the same styling as the rest of the app.
