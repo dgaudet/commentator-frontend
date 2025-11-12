@@ -41,6 +41,7 @@ import type {
   Class,
 } from '../../types'
 import { useOutcomeComments } from '../../hooks/useOutcomeComments'
+import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
 import { Button } from '../common/Button'
 import { Input } from '../common/Input'
 import { LoadingSpinner } from '../common/LoadingSpinner'
@@ -118,6 +119,16 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     loadOutcomeComments,
   } = useOutcomeComments()
 
+  // US-PC-TYPEAHEAD-002: Use personalized comments hook
+  // NOTE: personalizedComments, personalizedCommentsLoading, and personalizedCommentsError
+  // will be used in US-PC-TYPEAHEAD-003 and US-PC-TYPEAHEAD-004 when TypeaheadSearch component is integrated
+  const {
+    personalizedComments, // eslint-disable-line @typescript-eslint/no-unused-vars
+    loading: personalizedCommentsLoading, // eslint-disable-line @typescript-eslint/no-unused-vars
+    error: personalizedCommentsError, // eslint-disable-line @typescript-eslint/no-unused-vars
+    loadPersonalizedComments,
+  } = usePersonalizedComments()
+
   /**
    * FCOI-001: Load outcome comments when component mounts
    * Fetches outcome comments for the selected class's subject
@@ -129,6 +140,18 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       loadOutcomeComments(classEntity.subjectId)
     }
   }, [entityData, loadOutcomeComments])
+
+  /**
+   * US-PC-TYPEAHEAD-002: Load personalized comments when component mounts
+   * Fetches personalized comments for the selected class's subject
+   * Only loads if entityData has a subjectId property (type guard)
+   */
+  useEffect(() => {
+    if (entityData && 'subjectId' in entityData) {
+      const classEntity = entityData as unknown as Class
+      loadPersonalizedComments(classEntity.subjectId)
+    }
+  }, [entityData, loadPersonalizedComments])
 
   /**
    * FCOI-001: Memoized outcome comment matcher
