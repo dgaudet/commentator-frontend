@@ -484,8 +484,17 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
             <>
               {/* US-FINAL-003: Create Form (AC 1, 2) - MOVED TO TOP per US-FINAL-STYLE-001 */}
               {/* US-CSS-006: Refactored to use standardized Input component and design tokens */}
-              <div className="create-comment-section">
-                <h3>Add New Final Comment</h3>
+              <div style={{ marginBottom: spacing['2xl'] }}>
+                <h3
+                  style={{
+                    fontSize: typography.fontSize.lg,
+                    fontWeight: typography.fontWeight.semibold,
+                    color: colors.text.primary,
+                    marginBottom: spacing.lg,
+                  }}
+                >
+                  Add New Final Comment
+                </h3>
                 <div style={{ display: 'flex', gap: spacing.lg, marginBottom: spacing.lg }}>
                   <div style={{ flex: 1 }}>
                     <Input

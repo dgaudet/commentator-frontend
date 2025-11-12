@@ -118,5 +118,3 @@ the error labels aren't standardized, the add subject is different from the rest
 When adding a new class, it should be selected by default after creation.
 
 Add a button to the Final Comment component to copy replace the final comment with the outcome comment, maybe `Populate with Above Comments`
-
-Need some more padding around Existing Comments label
