@@ -412,4 +412,58 @@ describe('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       expect(screen.getByText(/No personalized comments available for this subject/i)).toBeInTheDocument()
     })
   })
+
+  describe('AC6: Clear search when modal closes', () => {
+    it('should clear typeahead search query when modal is closed', () => {
+      const { rerender } = render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Type in search field
+      const searchInput = screen.getByLabelText(/Personalized Comment/i) as HTMLInputElement
+      fireEvent.change(searchInput, { target: { value: 'excellent work' } })
+      expect(searchInput.value).toBe('excellent work')
+
+      // Close the modal
+      rerender(
+        <FinalCommentsModal
+          isOpen={false}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Reopen the modal
+      rerender(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Search query should be cleared
+      const searchInputAfterReopen = screen.getByLabelText(/Personalized Comment/i) as HTMLInputElement
+      expect(searchInputAfterReopen.value).toBe('')
+    })
+  })
 })

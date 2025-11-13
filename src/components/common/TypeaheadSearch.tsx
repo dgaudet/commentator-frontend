@@ -18,31 +18,168 @@ import { colors, spacing, typography, borders, shadows } from '../../theme/token
 // Generate unique ID for each TypeaheadSearch instance
 let typeaheadIdCounter = 0
 
+/**
+ * Props for the TypeaheadSearch component
+ * @template T - The type of items in the dropdown list
+ */
 interface TypeaheadSearchProps<T> {
-  // Data
+  // ==================== Data ====================
+
+  /**
+   * Array of items to display in the dropdown
+   * @example items={personalizedComments}
+   */
   items: T[]
+
+  /**
+   * Function to extract the display label from each item
+   * @param item - The item to extract the label from
+   * @returns The string to display for this item
+   * @example getItemLabel={(comment) => comment.text}
+   */
   getItemLabel: (item: T) => string
 
-  // Search state
+  /**
+   * Optional function to extract a unique key from each item for React reconciliation.
+   * If not provided, falls back to array index (not recommended for dynamic lists).
+   * Using unique keys prevents issues with React's reconciliation when filtering changes.
+   * @param item - The item to extract the key from
+   * @returns A unique string or number identifier for this item
+   * @example getItemKey={(comment) => comment.id}
+   */
+  getItemKey?: (item: T) => string | number
+
+  // ==================== Search State ====================
+
+  /**
+   * Current search query value (controlled component)
+   * @example searchQuery={searchState}
+   */
   searchQuery: string
+
+  /**
+   * Callback fired when the search query changes
+   * @param query - The new search query string
+   * @example onSearchChange={setSearchState}
+   */
   onSearchChange: (query: string) => void
+
+  /**
+   * Callback fired when an item is selected
+   * @param item - The selected item
+   * @example onSelect={(item) => setSelectedValue(item.id)}
+   */
   onSelect: (item: T) => void
 
-  // UI customization
-  label?: string
-  placeholder?: string
-  emptyMessage?: string
-  id?: string // Optional unique ID for the input element
+  // ==================== UI Customization ====================
 
-  // States
+  /**
+   * Label text displayed above the input field
+   * @default 'Search'
+   * @example label="Personalized Comment (Optional)"
+   */
+  label?: string
+
+  /**
+   * Placeholder text shown in the input when empty
+   * @default 'Type to search...'
+   * @example placeholder="Search comments..."
+   */
+  placeholder?: string
+
+  /**
+   * Message displayed when no results match the search query
+   * @default 'No results found'
+   * @example emptyMessage="No comments available"
+   */
+  emptyMessage?: string
+
+  /**
+   * Optional unique ID for the input element. If not provided, an auto-generated
+   * ID will be used. Useful when multiple TypeaheadSearch instances exist on the
+   * same page to prevent HTML ID collisions.
+   * @default Auto-generated: 'typeahead-search-{N}'
+   * @example id="add-form-typeahead"
+   */
+  id?: string
+
+  // ==================== States ====================
+
+  /**
+   * Whether the component is in a loading state. When true, the input is disabled
+   * and a loading indicator is shown.
+   * @default false
+   * @example loading={isLoadingComments}
+   */
   loading?: boolean
+
+  /**
+   * Whether the input field is disabled. When true, the input cannot be focused
+   * or edited.
+   * @default false
+   * @example disabled={isSubmitting}
+   */
   disabled?: boolean
+
+  /**
+   * Error message to display below the input. When set, the dropdown is hidden.
+   * @default null
+   * @example error={loadError}
+   */
   error?: string | null
 }
 
+/**
+ * TypeaheadSearch Component
+ *
+ * A generic, accessible typeahead/autocomplete search component with keyboard navigation.
+ * Implements WAI-ARIA 1.2 Combobox pattern for accessibility.
+ *
+ * **Features:**
+ * - Real-time case-insensitive filtering
+ * - Full keyboard navigation (Arrow keys, Enter, Escape)
+ * - Mouse interaction (click, hover)
+ * - ARIA attributes for screen readers
+ * - Loading, error, and empty states
+ * - Click-outside-to-close behavior
+ * - Design token styling (100% compliance)
+ * - Unique ID generation to prevent collisions
+ *
+ * **Keyboard Navigation:**
+ * - `Arrow Down`: Open dropdown and navigate to next item
+ * - `Arrow Up`: Navigate to previous item
+ * - `Enter`: Select highlighted item
+ * - `Escape`: Close dropdown without selecting
+ * - `Tab`: Move to next form field (browser default)
+ *
+ * @template T - The type of items in the dropdown list
+ *
+ * @example
+ * ```tsx
+ * const [search, setSearch] = useState('')
+ *
+ * <TypeaheadSearch
+ *   items={comments}
+ *   getItemLabel={(comment) => comment.text}
+ *   getItemKey={(comment) => comment.id}
+ *   searchQuery={search}
+ *   onSearchChange={setSearch}
+ *   onSelect={(comment) => setSelectedComment(comment.text)}
+ *   label="Search Comments"
+ *   placeholder="Type to search..."
+ *   emptyMessage="No comments found"
+ *   loading={isLoading}
+ *   error={error}
+ * />
+ * ```
+ *
+ * @see US-PC-TYPEAHEAD-001 for implementation details
+ * @see TypeaheadSearchProps for prop documentation
+ */
 export const TypeaheadSearch = <T, >({
   items,
   getItemLabel,
+  getItemKey,
   searchQuery,
   onSearchChange,
   onSelect,
@@ -238,7 +375,7 @@ export const TypeaheadSearch = <T, >({
             : (
                 filteredItems.map((item, index) => (
               <div
-                key={index}
+                key={getItemKey ? getItemKey(item) : index}
                 id={`${instanceId}-option-${index}`}
                 role="option"
                 aria-selected={highlightedIndex === index}

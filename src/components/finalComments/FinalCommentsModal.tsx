@@ -160,6 +160,20 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   }, [entityData, loadPersonalizedComments])
 
   /**
+   * US-PC-TYPEAHEAD-003/004: Clear search states and editing mode when modal closes
+   * Prevents search queries and editing state from persisting across modal open/close cycles
+   * Improves UX by ensuring a clean state each time the modal opens
+   */
+  useEffect(() => {
+    if (!isOpen) {
+      setPersonalizedCommentSearch('')
+      setEditPersonalizedCommentSearch('')
+      // Also clear editing state to return to list view
+      setEditingId(null)
+    }
+  }, [isOpen])
+
+  /**
    * FCOI-001: Memoized outcome comment matcher
    * Finds the outcome comment that matches the current grade range
    * Returns the matching comment text or null if no match found
@@ -635,6 +649,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                 <TypeaheadSearch
                   items={personalizedComments}
                   getItemLabel={(comment) => comment.comment}
+                  getItemKey={(comment) => comment.id}
                   searchQuery={personalizedCommentSearch}
                   onSearchChange={setPersonalizedCommentSearch}
                   onSelect={(selectedComment) => {
@@ -876,6 +891,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                     <TypeaheadSearch
                                       items={personalizedComments}
                                       getItemLabel={(personalizedComment) => personalizedComment.comment}
+                                      getItemKey={(personalizedComment) => personalizedComment.id}
                                       searchQuery={editPersonalizedCommentSearch}
                                       onSearchChange={setEditPersonalizedCommentSearch}
                                       onSelect={(selectedComment) => {

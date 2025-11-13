@@ -495,4 +495,68 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
       expect(errorMessages.length).toBeGreaterThanOrEqual(2)
     })
   })
+
+  describe('AC7: Clear search when modal closes', () => {
+    it('should clear Edit typeahead search query when modal is closed', async () => {
+      const { rerender } = render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Click edit button
+      const editButton = screen.getByRole('button', { name: /Edit/i })
+      fireEvent.click(editButton)
+
+      // Type in edit form search field
+      const searchInputs = screen.getAllByLabelText(/Personalized Comment/i)
+      const editSearchInput = searchInputs[1] as HTMLInputElement
+      fireEvent.change(editSearchInput, { target: { value: 'needs improvement' } })
+      expect(editSearchInput.value).toBe('needs improvement')
+
+      // Close the modal
+      rerender(
+        <FinalCommentsModal
+          isOpen={false}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Reopen the modal and enter edit mode again
+      rerender(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Wait for the Edit button to be available after reopen
+      const editButtonAgain = await screen.findByRole('button', { name: /Edit/i })
+      fireEvent.click(editButtonAgain)
+
+      // Search query should be cleared
+      const searchInputsAfterReopen = screen.getAllByLabelText(/Personalized Comment/i)
+      const editSearchInputAfterReopen = searchInputsAfterReopen[1] as HTMLInputElement
+      expect(editSearchInputAfterReopen.value).toBe('')
+    })
+  })
 })
