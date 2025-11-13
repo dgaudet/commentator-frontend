@@ -105,3 +105,5 @@ the error labels aren't standardized, the add subject is different from the rest
 When adding a new class, it should be selected by default after creation.
 
 The list of existing comments should have a copy comments button to copy all comments to clipboard for easier sharing.
+
+The final comments error text doesn't use the standardized error label component.

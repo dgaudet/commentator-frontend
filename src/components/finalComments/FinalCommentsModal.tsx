@@ -32,16 +32,16 @@
  * - Loading and error states for outcome comment fetching
  */
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import type {
   FinalComment,
   CreateFinalCommentRequest,
   UpdateFinalCommentRequest,
-  OutcomeComment,
   Class,
 } from '../../types'
 import { useOutcomeComments } from '../../hooks/useOutcomeComments'
 import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
+import { useFinalCommentForm } from '../../hooks/useFinalCommentForm'
 import { Button } from '../common/Button'
 import { Input } from '../common/Input'
 import { LoadingSpinner } from '../common/LoadingSpinner'
@@ -73,16 +73,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   error,
   embedded = false, // US-CLASS-TABS-003: Default to false for backward compatibility
 }: FinalCommentsModalProps<T>) => {
-  // Form state
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [grade, setGrade] = useState<number | ''>('')
-  const [comment, setComment] = useState('')
-  const [validationError, setValidationError] = useState('')
+  // US-FC-REFACTOR-001: Shared hook state management
   const [submitting, setSubmitting] = useState(false)
-
-  // US-PC-TYPEAHEAD-003: Personalized comment search state (Add form)
-  const [personalizedCommentSearch, setPersonalizedCommentSearch] = useState('')
 
   // Delete confirmation state (US-DELETE-CONFIRM-004)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
@@ -101,22 +93,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
 
   // Edit state
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [editFirstName, setEditFirstName] = useState('')
-  const [editLastName, setEditLastName] = useState('')
-  const [editGrade, setEditGrade] = useState<number | ''>('')
-  const [editComment, setEditComment] = useState('')
-  const [editValidationError, setEditValidationError] = useState('')
-
-  // US-PC-TYPEAHEAD-004: Personalized comment search state (Edit form)
-  const [editPersonalizedCommentSearch, setEditPersonalizedCommentSearch] = useState('')
-
-  // FCOI-001: Outcome comment integration state (create mode)
-  const [matchedOutcomeComment, setMatchedOutcomeComment] = useState<string>('')
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
-
-  // FCOI-001: Outcome comment integration state (edit mode)
-  const [editMatchedOutcomeComment, setEditMatchedOutcomeComment] = useState<string>('')
-  const editDebounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // FCOI-001: Use outcome comments hook
   const {
@@ -134,6 +110,12 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     error: personalizedCommentsError,
     loadPersonalizedComments,
   } = usePersonalizedComments()
+
+  // US-FC-REFACTOR-001: Add form hook (shared logic extraction)
+  const addForm = useFinalCommentForm(outcomeComments)
+
+  // US-FC-REFACTOR-001: Edit form hook (shared logic extraction)
+  const editForm = useFinalCommentForm(outcomeComments)
 
   /**
    * FCOI-001: Load outcome comments when component mounts
@@ -160,140 +142,17 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   }, [entityData, loadPersonalizedComments])
 
   /**
-   * US-PC-TYPEAHEAD-003/004: Clear search states and editing mode when modal closes
-   * Prevents search queries and editing state from persisting across modal open/close cycles
+   * US-FC-REFACTOR-001: Clear form states and editing mode when modal closes
+   * Prevents state from persisting across modal open/close cycles
    * Improves UX by ensuring a clean state each time the modal opens
    */
   useEffect(() => {
     if (!isOpen) {
-      setPersonalizedCommentSearch('')
-      setEditPersonalizedCommentSearch('')
-      // Also clear editing state to return to list view
+      addForm.reset()
+      editForm.reset()
       setEditingId(null)
     }
-  }, [isOpen])
-
-  /**
-   * FCOI-001: Memoized outcome comment matcher
-   * Finds the outcome comment that matches the current grade range
-   * Returns the matching comment text or null if no match found
-   *
-   * @performance Memoized to avoid recalculation on every render
-   */
-  const matchedComment = useMemo(() => {
-    if (grade === '' || outcomeComments.length === 0) {
-      return null
-    }
-
-    const gradeNum = Number(grade)
-    return outcomeComments.find(
-      (comment: OutcomeComment) =>
-        comment.lowerRange <= gradeNum && gradeNum <= comment.upperRange,
-    )
-  }, [grade, outcomeComments])
-
-  /**
-   * FCOI-001: Debounced grade matching effect
-   * Updates the displayed outcome comment when grade changes
-   * Uses 300ms debounce to avoid excessive updates during typing
-   *
-   * @performance Debounced with useRef to prevent memory leaks
-   * @accessibility Announces changes to screen readers via state update
-   */
-  useEffect(() => {
-    // Clear any existing timer
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current)
-    }
-
-    // Clear outcome comment if grade is empty
-    if (grade === '') {
-      setMatchedOutcomeComment('')
-      return
-    }
-
-    // Debounce grade input to avoid excessive updates (300ms delay)
-    debounceTimerRef.current = setTimeout(() => {
-      if (outcomeComments.length === 0) {
-        setMatchedOutcomeComment('No outcome comment for this subject with this grade level.')
-        return
-      }
-
-      if (matchedComment) {
-        setMatchedOutcomeComment(matchedComment.comment)
-      } else {
-        setMatchedOutcomeComment('No outcome comment for this subject with this grade level.')
-      }
-    }, 300)
-
-    // Cleanup: Clear timeout on unmount or when dependencies change
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current)
-      }
-    }
-  }, [grade, outcomeComments, matchedComment])
-
-  /**
-   * FCOI-001: Memoized outcome comment matcher for EDIT mode
-   * Finds the outcome comment that matches the edit grade range
-   * Returns the matching comment text or null if no match found
-   *
-   * @performance Memoized to avoid recalculation on every render
-   */
-  const editMatchedComment = useMemo(() => {
-    if (editGrade === '' || outcomeComments.length === 0) {
-      return null
-    }
-
-    const gradeNum = Number(editGrade)
-    return outcomeComments.find(
-      (comment: OutcomeComment) =>
-        comment.lowerRange <= gradeNum && gradeNum <= comment.upperRange,
-    )
-  }, [editGrade, outcomeComments])
-
-  /**
-   * FCOI-001: Debounced grade matching effect for EDIT mode
-   * Updates the displayed outcome comment when edit grade changes
-   * Uses 300ms debounce to avoid excessive updates during typing
-   *
-   * @performance Debounced with useRef to prevent memory leaks
-   * @accessibility Announces changes to screen readers via state update
-   */
-  useEffect(() => {
-    // Clear any existing timer
-    if (editDebounceTimerRef.current) {
-      clearTimeout(editDebounceTimerRef.current)
-    }
-
-    // Clear outcome comment if edit grade is empty
-    if (editGrade === '') {
-      setEditMatchedOutcomeComment('')
-      return
-    }
-
-    // Debounce edit grade input to avoid excessive updates (300ms delay)
-    editDebounceTimerRef.current = setTimeout(() => {
-      if (outcomeComments.length === 0) {
-        setEditMatchedOutcomeComment('No outcome comment for this subject with this grade level.')
-        return
-      }
-
-      if (editMatchedComment) {
-        setEditMatchedOutcomeComment(editMatchedComment.comment)
-      } else {
-        setEditMatchedOutcomeComment('No outcome comment for this subject with this grade level.')
-      }
-    }, 300)
-
-    // Cleanup: Clear timeout on unmount or when dependencies change
-    return () => {
-      if (editDebounceTimerRef.current) {
-        clearTimeout(editDebounceTimerRef.current)
-      }
-    }
-  }, [editGrade, outcomeComments, editMatchedComment])
+  }, [isOpen, addForm, editForm])
 
   // US-CLASS-TABS-003: Skip isOpen check when embedded (always render in TabPanel)
   if (!embedded && !isOpen) return null
@@ -307,67 +166,38 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     })
   }
 
-  // Validation helper
-  const validateForm = (): string | null => {
-    const trimmedFirstName = firstName.trim()
-
-    if (!trimmedFirstName) {
-      return 'First name is required'
-    }
-
-    if (grade === '') {
-      return 'Grade is required'
-    }
-
-    const gradeNum = Number(grade)
-    if (gradeNum < 0 || gradeNum > 100) {
-      return 'Grade must be between 0 and 100'
-    }
-
-    if (comment.length > 1000) {
-      return 'Comment cannot exceed 1000 characters'
-    }
-
-    return null
-  }
-
-  // Handle create final comment
+  // US-FC-REFACTOR-001: Handle create final comment using hook
   const handleCreateComment = async () => {
-    const error = validateForm()
+    const error = addForm.validate()
     if (error) {
-      setValidationError(error)
+      addForm.setValidationError(error)
       return
     }
 
-    setValidationError('')
+    addForm.clearValidationError()
     setSubmitting(true)
 
     try {
       const request: CreateFinalCommentRequest = {
         classId: entityData.id,
-        firstName: firstName.trim(),
-        grade: Number(grade),
+        firstName: addForm.firstName.trim(),
+        grade: Number(addForm.grade),
       }
 
       // Add optional fields only if provided
-      if (lastName.trim()) {
-        request.lastName = lastName.trim()
+      if (addForm.lastName.trim()) {
+        request.lastName = addForm.lastName.trim()
       }
-      if (comment.trim()) {
-        request.comment = comment.trim()
+      if (addForm.comment.trim()) {
+        request.comment = addForm.comment.trim()
       }
 
       await onCreateComment(request)
 
-      // Clear form on success (AC 7)
-      setFirstName('')
-      setLastName('')
-      setGrade('')
-      setComment('')
-      // US-PC-TYPEAHEAD-003: Clear personalized comment search
-      setPersonalizedCommentSearch('')
+      // Clear form on success
+      addForm.reset()
     } catch (err) {
-      setValidationError('Failed to add final comment. Please try again.')
+      addForm.setValidationError('Failed to add final comment. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -401,7 +231,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
           classYear: 0,
         })
       } catch (err) {
-        setValidationError('Failed to delete final comment. Please try again.')
+        addForm.setValidationError('Failed to delete final comment. Please try again.')
       }
     }
   }
@@ -417,95 +247,57 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     })
   }
 
-  // Handle edit start - populate form with existing values
+  // US-FC-REFACTOR-001: Handle edit start - populate form with existing values
   const handleEditStart = (finalComment: FinalComment) => {
     setEditingId(finalComment.id)
-    setEditFirstName(finalComment.firstName)
-    setEditLastName(finalComment.lastName || '')
-    setEditGrade(finalComment.grade)
-    setEditComment(finalComment.comment || '')
-    setEditValidationError('')
+    editForm.setFirstName(finalComment.firstName)
+    editForm.setLastName(finalComment.lastName || '')
+    editForm.setGrade(finalComment.grade)
+    editForm.setComment(finalComment.comment || '')
+    editForm.clearValidationError()
   }
 
-  // Validation helper for edit form (same rules as create)
-  const validateEditForm = (): string | null => {
-    const trimmedFirstName = editFirstName.trim()
-
-    if (!trimmedFirstName) {
-      return 'First name is required'
-    }
-
-    if (editGrade === '') {
-      return 'Grade is required'
-    }
-
-    const gradeNum = Number(editGrade)
-    if (gradeNum < 0 || gradeNum > 100) {
-      return 'Grade must be between 0 and 100'
-    }
-
-    if (editComment.length > 1000) {
-      return 'Comment cannot exceed 1000 characters'
-    }
-
-    // LastName validation: If provided and trimmed, any length > 0 is valid
-    // No additional validation needed - the trim already ensures this
-
-    return null
-  }
-
-  // Handle edit save
+  // US-FC-REFACTOR-001: Handle edit save using hook
   const handleEditSave = async () => {
     if (editingId === null) return
 
-    const error = validateEditForm()
+    const error = editForm.validate()
     if (error) {
-      setEditValidationError(error)
+      editForm.setValidationError(error)
       return
     }
 
-    setEditValidationError('')
+    editForm.clearValidationError()
 
     try {
       const request: UpdateFinalCommentRequest = {
         classId: entityData.id,
-        firstName: editFirstName.trim(),
-        grade: Number(editGrade),
+        firstName: editForm.firstName.trim(),
+        grade: Number(editForm.grade),
       }
 
       // Add optional fields only if provided
-      if (editLastName.trim()) {
-        request.lastName = editLastName.trim()
+      if (editForm.lastName.trim()) {
+        request.lastName = editForm.lastName.trim()
       }
-      if (editComment.trim()) {
-        request.comment = editComment.trim()
+      if (editForm.comment.trim()) {
+        request.comment = editForm.comment.trim()
       }
 
       await onUpdateComment(editingId, request)
 
       // Exit edit mode on success
       setEditingId(null)
-      setEditFirstName('')
-      setEditLastName('')
-      setEditGrade('')
-      setEditComment('')
-      // US-PC-TYPEAHEAD-004: Clear personalized comment search (Edit form)
-      setEditPersonalizedCommentSearch('')
+      editForm.reset()
     } catch (err) {
-      setEditValidationError('Failed to update final comment. Please try again.')
+      editForm.setValidationError('Failed to update final comment. Please try again.')
     }
   }
 
-  // Handle edit cancel
+  // US-FC-REFACTOR-001: Handle edit cancel using hook
   const handleEditCancel = () => {
     setEditingId(null)
-    setEditFirstName('')
-    setEditLastName('')
-    setEditGrade('')
-    setEditComment('')
-    setEditValidationError('')
-    // US-PC-TYPEAHEAD-004: Clear personalized comment search (Edit form)
-    setEditPersonalizedCommentSearch('')
+    editForm.reset()
   }
 
   // Sort final comments by firstName alphabetically (A-Z)
@@ -550,11 +342,11 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       id="first-name-input"
                       label="First Name"
                       required
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      value={addForm.firstName}
+                      onChange={(e) => addForm.setFirstName(e.target.value)}
                       placeholder="Enter student first name"
                       disabled={submitting}
-                      error={validationError && !firstName}
+                      error={addForm.validationError && !addForm.firstName}
                     />
                   </div>
 
@@ -562,8 +354,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                     <Input
                       id="last-name-input"
                       label="Last Name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
+                      value={addForm.lastName}
+                      onChange={(e) => addForm.setLastName(e.target.value)}
                       placeholder="Enter student last name (optional)"
                       disabled={submitting}
                     />
@@ -575,16 +367,16 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   label="Grade"
                   type="number"
                   required
-                  value={grade}
+                  value={addForm.grade}
                   onChange={(e) => {
                     const value = e.target.value
-                    setGrade(value === '' ? '' : Number(value))
+                    addForm.setGrade(value === '' ? '' : Number(value))
                   }}
                   placeholder="0-100"
                   min="0"
                   max="100"
                   disabled={submitting}
-                  error={validationError && grade === ''}
+                  error={addForm.validationError && addForm.grade === ''}
                 />
 
                 {/* FCOI-001: Outcome Comment Display (READ-ONLY) */}
@@ -612,7 +404,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                     <textarea
                       id="outcome-comment-display"
                       aria-label="Outcome Comment by Grade"
-                      value={matchedOutcomeComment}
+                      value={addForm.matchedOutcomeComment || (addForm.grade !== '' ? 'No outcome comment for this subject with this grade level.' : '')}
                       readOnly
                       rows={3}
                       style={{
@@ -623,7 +415,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                         borderRadius: borders.radius.md,
                         backgroundColor: colors.background.secondary,
                         color:
-                          matchedOutcomeComment === 'No outcome comment for this subject with this grade level.'
+                          !addForm.matchedOutcomeComment
                             ? colors.text.disabled
                             : colors.text.secondary,
                         resize: 'none',
@@ -650,11 +442,11 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   items={personalizedComments}
                   getItemLabel={(comment) => comment.comment}
                   getItemKey={(comment) => comment.id}
-                  searchQuery={personalizedCommentSearch}
-                  onSearchChange={setPersonalizedCommentSearch}
+                  searchQuery={addForm.personalizedCommentSearch}
+                  onSearchChange={addForm.setPersonalizedCommentSearch}
                   onSelect={(selectedComment) => {
-                    setComment(selectedComment.comment)
-                    setPersonalizedCommentSearch('')
+                    addForm.setComment(selectedComment.comment)
+                    addForm.setPersonalizedCommentSearch('')
                   }}
                   label="Personalized Comment (Optional)"
                   placeholder="Search personalized comments..."
@@ -679,8 +471,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   </label>
                   <textarea
                     id="comment-input"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
+                    value={addForm.comment}
+                    onChange={(e) => addForm.setComment(e.target.value)}
                     placeholder="Enter optional comment (max 1000 characters)"
                     className="final-comment-textarea"
                     rows={4}
@@ -703,12 +495,12 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       color: colors.text.tertiary,
                     }}
                   >
-                    {comment.length}/1000 characters
+                    {addForm.comment.length}/1000 characters
                   </div>
                 </div>
 
-                {validationError && (
-                  <ErrorMessage message={validationError} />
+                {addForm.validationError && (
+                  <ErrorMessage message={addForm.validationError} />
                 )}
 
                 <Button
@@ -795,10 +587,10 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                           id={`edit-first-name-${comment.id}`}
                                           label="First Name"
                                           required
-                                          value={editFirstName}
-                                          onChange={(e) => setEditFirstName(e.target.value)}
+                                          value={editForm.firstName}
+                                          onChange={(e) => editForm.setFirstName(e.target.value)}
                                           placeholder="Enter student first name"
-                                          error={editValidationError && !editFirstName}
+                                          error={editForm.validationError && !editForm.firstName}
                                         />
                                       </div>
 
@@ -806,8 +598,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         <Input
                                           id={`edit-last-name-${comment.id}`}
                                           label="Last Name"
-                                          value={editLastName}
-                                          onChange={(e) => setEditLastName(e.target.value)}
+                                          value={editForm.lastName}
+                                          onChange={(e) => editForm.setLastName(e.target.value)}
                                           placeholder="Enter student last name (optional)"
                                         />
                                       </div>
@@ -818,15 +610,15 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       label="Grade"
                                       type="number"
                                       required
-                                      value={editGrade}
+                                      value={editForm.grade}
                                       onChange={(e) => {
                                         const value = e.target.value
-                                        setEditGrade(value === '' ? '' : Number(value))
+                                        editForm.setGrade(value === '' ? '' : Number(value))
                                       }}
                                       placeholder="0-100"
                                       min={0}
                                       max={100}
-                                      error={editValidationError && editGrade === ''}
+                                      error={editForm.validationError && editForm.grade === ''}
                                     />
 
                                     {/* FCOI-001: Outcome Comment Display (READ-ONLY) - EDIT MODE */}
@@ -854,7 +646,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         <textarea
                                           id={`edit-outcome-comment-display-${comment.id}`}
                                           aria-label="Outcome Comment by Grade (Edit)"
-                                          value={editMatchedOutcomeComment}
+                                          value={editForm.matchedOutcomeComment || (editForm.grade !== '' ? 'No outcome comment for this subject with this grade level.' : '')}
                                           readOnly
                                           rows={3}
                                           style={{
@@ -865,7 +657,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                             borderRadius: borders.radius.md,
                                             backgroundColor: colors.background.secondary,
                                             color:
-                                              editMatchedOutcomeComment === 'No outcome comment for this subject with this grade level.'
+                                              !editForm.matchedOutcomeComment
                                                 ? colors.text.disabled
                                                 : colors.text.secondary,
                                             resize: 'none',
@@ -892,11 +684,11 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       items={personalizedComments}
                                       getItemLabel={(personalizedComment) => personalizedComment.comment}
                                       getItemKey={(personalizedComment) => personalizedComment.id}
-                                      searchQuery={editPersonalizedCommentSearch}
-                                      onSearchChange={setEditPersonalizedCommentSearch}
+                                      searchQuery={editForm.personalizedCommentSearch}
+                                      onSearchChange={editForm.setPersonalizedCommentSearch}
                                       onSelect={(selectedComment) => {
-                                        setEditComment(selectedComment.comment)
-                                        setEditPersonalizedCommentSearch('')
+                                        editForm.setComment(selectedComment.comment)
+                                        editForm.setPersonalizedCommentSearch('')
                                       }}
                                       label="Personalized Comment (Optional)"
                                       placeholder="Search personalized comments..."
@@ -921,8 +713,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       </label>
                                       <textarea
                                         id={`edit-comment-${comment.id}`}
-                                        value={editComment}
-                                        onChange={(e) => setEditComment(e.target.value)}
+                                        value={editForm.comment}
+                                        onChange={(e) => editForm.setComment(e.target.value)}
                                         placeholder="Enter optional comment (max 1000 characters)"
                                         className="comment-textarea"
                                         rows={4}
@@ -944,13 +736,13 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                           color: colors.text.tertiary,
                                         }}
                                       >
-                                        {editComment.length}/1000 characters
+                                        {editForm.comment.length}/1000 characters
                                       </div>
                                     </div>
 
-                                    {editValidationError && (
+                                    {editForm.validationError && (
                                       <div className="validation-error" role="alert">
-                                        {editValidationError}
+                                        {editForm.validationError}
                                       </div>
                                     )}
 
