@@ -47,6 +47,7 @@ import { Input } from '../common/Input'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
@@ -79,6 +80,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const [comment, setComment] = useState('')
   const [validationError, setValidationError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+
+  // US-PC-TYPEAHEAD-003: Personalized comment search state (Add form)
+  const [personalizedCommentSearch, setPersonalizedCommentSearch] = useState('')
 
   // Delete confirmation state (US-DELETE-CONFIRM-004)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
@@ -120,12 +124,11 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   } = useOutcomeComments()
 
   // US-PC-TYPEAHEAD-002: Use personalized comments hook
-  // NOTE: personalizedComments, personalizedCommentsLoading, and personalizedCommentsError
-  // will be used in US-PC-TYPEAHEAD-003 and US-PC-TYPEAHEAD-004 when TypeaheadSearch component is integrated
+  // US-PC-TYPEAHEAD-003: Now used in Add form TypeaheadSearch component
   const {
-    personalizedComments, // eslint-disable-line @typescript-eslint/no-unused-vars
-    loading: personalizedCommentsLoading, // eslint-disable-line @typescript-eslint/no-unused-vars
-    error: personalizedCommentsError, // eslint-disable-line @typescript-eslint/no-unused-vars
+    personalizedComments,
+    loading: personalizedCommentsLoading,
+    error: personalizedCommentsError,
     loadPersonalizedComments,
   } = usePersonalizedComments()
 
@@ -344,6 +347,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       setLastName('')
       setGrade('')
       setComment('')
+      // US-PC-TYPEAHEAD-003: Clear personalized comment search
+      setPersonalizedCommentSearch('')
     } catch (err) {
       setValidationError('Failed to add final comment. Please try again.')
     } finally {
@@ -618,6 +623,24 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                     </div>
                   )}
                 </div>
+
+                {/* US-PC-TYPEAHEAD-003: Personalized Comment Search */}
+                <TypeaheadSearch
+                  items={personalizedComments}
+                  getItemLabel={(comment) => comment.comment}
+                  searchQuery={personalizedCommentSearch}
+                  onSearchChange={setPersonalizedCommentSearch}
+                  onSelect={(selectedComment) => {
+                    setComment(selectedComment.comment)
+                    setPersonalizedCommentSearch('')
+                  }}
+                  label="Personalized Comment (Optional)"
+                  placeholder="Search personalized comments..."
+                  emptyMessage="No personalized comments available for this subject"
+                  loading={personalizedCommentsLoading}
+                  error={personalizedCommentsError}
+                  disabled={submitting}
+                />
 
                 <div style={{ marginBottom: spacing.lg }}>
                   <label
