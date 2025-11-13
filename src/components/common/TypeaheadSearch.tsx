@@ -15,6 +15,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { colors, spacing, typography, borders, shadows } from '../../theme/tokens'
 
+// Generate unique ID for each TypeaheadSearch instance
+let typeaheadIdCounter = 0
+
 interface TypeaheadSearchProps<T> {
   // Data
   items: T[]
@@ -29,6 +32,7 @@ interface TypeaheadSearchProps<T> {
   label?: string
   placeholder?: string
   emptyMessage?: string
+  id?: string // Optional unique ID for the input element
 
   // States
   loading?: boolean
@@ -45,6 +49,7 @@ export const TypeaheadSearch = <T, >({
   label = 'Search',
   placeholder = 'Type to search...',
   emptyMessage = 'No results found',
+  id,
   loading = false,
   disabled = false,
   error = null,
@@ -53,6 +58,10 @@ export const TypeaheadSearch = <T, >({
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Generate unique ID for this instance if not provided
+  const instanceId = useRef(id || `typeahead-search-${typeaheadIdCounter++}`).current
+  const listboxId = `${instanceId}-listbox`
 
   // Filter items based on search query (case-insensitive substring match)
   const filteredItems = searchQuery.trim()
@@ -128,7 +137,7 @@ export const TypeaheadSearch = <T, >({
     <div ref={containerRef} style={{ marginBottom: spacing.lg, position: 'relative' as const }}>
       {/* Label */}
       <label
-        htmlFor="typeahead-search"
+        htmlFor={instanceId}
         style={{
           display: 'block',
           marginBottom: spacing.sm,
@@ -143,7 +152,7 @@ export const TypeaheadSearch = <T, >({
       {/* Input */}
       <input
         ref={inputRef}
-        id="typeahead-search"
+        id={instanceId}
         type="text"
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
@@ -153,10 +162,10 @@ export const TypeaheadSearch = <T, >({
         disabled={disabled || loading}
         role="combobox"
         aria-expanded={isOpen}
-        aria-controls="typeahead-listbox"
+        aria-controls={listboxId}
         aria-autocomplete="list"
         aria-activedescendant={
-          highlightedIndex >= 0 ? `typeahead-option-${highlightedIndex}` : undefined
+          highlightedIndex >= 0 ? `${instanceId}-option-${highlightedIndex}` : undefined
         }
         style={{
           width: '100%',
@@ -198,7 +207,7 @@ export const TypeaheadSearch = <T, >({
       {/* Dropdown */}
       {isOpen && !loading && !error && (
         <div
-          id="typeahead-listbox"
+          id={listboxId}
           role="listbox"
           style={{
             position: 'absolute' as const,
@@ -230,7 +239,7 @@ export const TypeaheadSearch = <T, >({
                 filteredItems.map((item, index) => (
               <div
                 key={index}
-                id={`typeahead-option-${index}`}
+                id={`${instanceId}-option-${index}`}
                 role="option"
                 aria-selected={highlightedIndex === index}
                 onClick={() => handleSelect(item)}

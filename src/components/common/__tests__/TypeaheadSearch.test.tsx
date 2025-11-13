@@ -597,7 +597,9 @@ describe('TypeaheadSearch Component', () => {
       fireEvent.focus(input)
       fireEvent.keyDown(input, { key: 'ArrowDown' })
 
-      expect(input).toHaveAttribute('aria-activedescendant', 'typeahead-option-0')
+      // Verify aria-activedescendant matches pattern (ID is auto-generated)
+      const ariaActiveDescendant = input.getAttribute('aria-activedescendant')
+      expect(ariaActiveDescendant).toMatch(/^typeahead-search-\d+-option-0$/)
     })
   })
 

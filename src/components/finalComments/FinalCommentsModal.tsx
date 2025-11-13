@@ -107,6 +107,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const [editComment, setEditComment] = useState('')
   const [editValidationError, setEditValidationError] = useState('')
 
+  // US-PC-TYPEAHEAD-004: Personalized comment search state (Edit form)
+  const [editPersonalizedCommentSearch, setEditPersonalizedCommentSearch] = useState('')
+
   // FCOI-001: Outcome comment integration state (create mode)
   const [matchedOutcomeComment, setMatchedOutcomeComment] = useState<string>('')
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -472,6 +475,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       setEditLastName('')
       setEditGrade('')
       setEditComment('')
+      // US-PC-TYPEAHEAD-004: Clear personalized comment search (Edit form)
+      setEditPersonalizedCommentSearch('')
     } catch (err) {
       setEditValidationError('Failed to update final comment. Please try again.')
     }
@@ -485,6 +490,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     setEditGrade('')
     setEditComment('')
     setEditValidationError('')
+    // US-PC-TYPEAHEAD-004: Clear personalized comment search (Edit form)
+    setEditPersonalizedCommentSearch('')
   }
 
   // Sort final comments by firstName alphabetically (A-Z)
@@ -864,6 +871,24 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         </div>
                                       )}
                                     </div>
+
+                                    {/* US-PC-TYPEAHEAD-004: Personalized Comment Search (Edit Form) */}
+                                    <TypeaheadSearch
+                                      items={personalizedComments}
+                                      getItemLabel={(personalizedComment) => personalizedComment.comment}
+                                      searchQuery={editPersonalizedCommentSearch}
+                                      onSearchChange={setEditPersonalizedCommentSearch}
+                                      onSelect={(selectedComment) => {
+                                        setEditComment(selectedComment.comment)
+                                        setEditPersonalizedCommentSearch('')
+                                      }}
+                                      label="Personalized Comment (Optional)"
+                                      placeholder="Search personalized comments..."
+                                      emptyMessage="No personalized comments available for this subject"
+                                      loading={personalizedCommentsLoading}
+                                      error={personalizedCommentsError}
+                                      disabled={submitting}
+                                    />
 
                                     <div style={{ marginBottom: spacing.lg }}>
                                       <label
