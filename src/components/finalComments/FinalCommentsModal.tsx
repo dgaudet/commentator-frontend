@@ -41,11 +41,13 @@ import type {
   Class,
 } from '../../types'
 import { useOutcomeComments } from '../../hooks/useOutcomeComments'
+import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
 import { Button } from '../common/Button'
 import { Input } from '../common/Input'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
@@ -79,6 +81,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const [validationError, setValidationError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
+  // US-PC-TYPEAHEAD-003: Personalized comment search state (Add form)
+  const [personalizedCommentSearch, setPersonalizedCommentSearch] = useState('')
+
   // Delete confirmation state (US-DELETE-CONFIRM-004)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
@@ -102,6 +107,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const [editComment, setEditComment] = useState('')
   const [editValidationError, setEditValidationError] = useState('')
 
+  // US-PC-TYPEAHEAD-004: Personalized comment search state (Edit form)
+  const [editPersonalizedCommentSearch, setEditPersonalizedCommentSearch] = useState('')
+
   // FCOI-001: Outcome comment integration state (create mode)
   const [matchedOutcomeComment, setMatchedOutcomeComment] = useState<string>('')
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -118,6 +126,15 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     loadOutcomeComments,
   } = useOutcomeComments()
 
+  // US-PC-TYPEAHEAD-002: Use personalized comments hook
+  // US-PC-TYPEAHEAD-003: Now used in Add form TypeaheadSearch component
+  const {
+    personalizedComments,
+    loading: personalizedCommentsLoading,
+    error: personalizedCommentsError,
+    loadPersonalizedComments,
+  } = usePersonalizedComments()
+
   /**
    * FCOI-001: Load outcome comments when component mounts
    * Fetches outcome comments for the selected class's subject
@@ -129,6 +146,32 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       loadOutcomeComments(classEntity.subjectId)
     }
   }, [entityData, loadOutcomeComments])
+
+  /**
+   * US-PC-TYPEAHEAD-002: Load personalized comments when component mounts
+   * Fetches personalized comments for the selected class's subject
+   * Only loads if entityData has a subjectId property (type guard)
+   */
+  useEffect(() => {
+    if (entityData && 'subjectId' in entityData) {
+      const classEntity = entityData as unknown as Class
+      loadPersonalizedComments(classEntity.subjectId)
+    }
+  }, [entityData, loadPersonalizedComments])
+
+  /**
+   * US-PC-TYPEAHEAD-003/004: Clear search states and editing mode when modal closes
+   * Prevents search queries and editing state from persisting across modal open/close cycles
+   * Improves UX by ensuring a clean state each time the modal opens
+   */
+  useEffect(() => {
+    if (!isOpen) {
+      setPersonalizedCommentSearch('')
+      setEditPersonalizedCommentSearch('')
+      // Also clear editing state to return to list view
+      setEditingId(null)
+    }
+  }, [isOpen])
 
   /**
    * FCOI-001: Memoized outcome comment matcher
@@ -321,6 +364,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       setLastName('')
       setGrade('')
       setComment('')
+      // US-PC-TYPEAHEAD-003: Clear personalized comment search
+      setPersonalizedCommentSearch('')
     } catch (err) {
       setValidationError('Failed to add final comment. Please try again.')
     } finally {
@@ -444,6 +489,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       setEditLastName('')
       setEditGrade('')
       setEditComment('')
+      // US-PC-TYPEAHEAD-004: Clear personalized comment search (Edit form)
+      setEditPersonalizedCommentSearch('')
     } catch (err) {
       setEditValidationError('Failed to update final comment. Please try again.')
     }
@@ -457,6 +504,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     setEditGrade('')
     setEditComment('')
     setEditValidationError('')
+    // US-PC-TYPEAHEAD-004: Clear personalized comment search (Edit form)
+    setEditPersonalizedCommentSearch('')
   }
 
   // Sort final comments by firstName alphabetically (A-Z)
@@ -595,6 +644,25 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                     </div>
                   )}
                 </div>
+
+                {/* US-PC-TYPEAHEAD-003: Personalized Comment Search */}
+                <TypeaheadSearch
+                  items={personalizedComments}
+                  getItemLabel={(comment) => comment.comment}
+                  getItemKey={(comment) => comment.id}
+                  searchQuery={personalizedCommentSearch}
+                  onSearchChange={setPersonalizedCommentSearch}
+                  onSelect={(selectedComment) => {
+                    setComment(selectedComment.comment)
+                    setPersonalizedCommentSearch('')
+                  }}
+                  label="Personalized Comment (Optional)"
+                  placeholder="Search personalized comments..."
+                  emptyMessage="No personalized comments available for this subject"
+                  loading={personalizedCommentsLoading}
+                  error={personalizedCommentsError}
+                  disabled={submitting}
+                />
 
                 <div style={{ marginBottom: spacing.lg }}>
                   <label
@@ -818,6 +886,25 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         </div>
                                       )}
                                     </div>
+
+                                    {/* US-PC-TYPEAHEAD-004: Personalized Comment Search (Edit Form) */}
+                                    <TypeaheadSearch
+                                      items={personalizedComments}
+                                      getItemLabel={(personalizedComment) => personalizedComment.comment}
+                                      getItemKey={(personalizedComment) => personalizedComment.id}
+                                      searchQuery={editPersonalizedCommentSearch}
+                                      onSearchChange={setEditPersonalizedCommentSearch}
+                                      onSelect={(selectedComment) => {
+                                        setEditComment(selectedComment.comment)
+                                        setEditPersonalizedCommentSearch('')
+                                      }}
+                                      label="Personalized Comment (Optional)"
+                                      placeholder="Search personalized comments..."
+                                      emptyMessage="No personalized comments available for this subject"
+                                      loading={personalizedCommentsLoading}
+                                      error={personalizedCommentsError}
+                                      disabled={submitting}
+                                    />
 
                                     <div style={{ marginBottom: spacing.lg }}>
                                       <label
