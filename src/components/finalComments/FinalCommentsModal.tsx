@@ -216,6 +216,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
 
       // Clear form on success
       addForm.reset()
+      // US-FC-REFACTOR-002: Clear selected personal comment state
+      setSelectedAddPersonalComment('')
     } catch (err) {
       addForm.setValidationError('Failed to add final comment. Please try again.')
     } finally {
@@ -371,6 +373,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       // Exit edit mode on success
       setEditingId(null)
       editForm.reset()
+      // US-FC-REFACTOR-002: Clear selected personal comment state
+      setSelectedEditPersonalComment('')
     } catch (err) {
       editForm.setValidationError('Failed to update final comment. Please try again.')
     }
@@ -380,6 +384,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const handleEditCancel = () => {
     setEditingId(null)
     editForm.reset()
+    // US-FC-REFACTOR-002: Clear selected personal comment state
+    setSelectedEditPersonalComment('')
   }
 
   // Sort final comments by firstName alphabetically (A-Z)
