@@ -30,6 +30,18 @@
  * - Positioned below grade input, above comment textarea
  * - Debounced grade matching (300ms)
  * - Loading and error states for outcome comment fetching
+ *
+ * US-FC-REFACTOR-002 & 003 Features (Populate Button Integration):
+ * - Typeahead search for personalized comments (optional selection)
+ * - "Populate with Above Comments" button to auto-fill final comment
+ * - Combines outcome comment (based on grade) + personalized comment
+ * - Intelligent concatenation: outcome first, personal second, space separator
+ * - Overwrite confirmation when final comment textarea already has text
+ * - Auto-focus on textarea after population for immediate editing
+ * - Persistent selected personal comment display (US-FC-REFACTOR-002)
+ * - Validation: Button disabled when no comments selected
+ * - Edge cases: Whitespace trimming, 1000 char truncation, special char preservation
+ * - Full keyboard accessibility and screen reader support
  */
 
 import { useState, useEffect, useRef } from 'react'
@@ -269,7 +281,27 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     })
   }
 
-  // US-FC-REFACTOR-003: Handle populate with above comments button click
+  /**
+   * US-FC-REFACTOR-003: Handle "Populate with Above Comments" button click
+   *
+   * Initiates the populate action for the final comment textarea by combining:
+   * - Outcome comment (if grade entered and matching range found)
+   * - Personalized comment (if selected from typeahead)
+   *
+   * Behavior:
+   * - If textarea is empty: Populates immediately
+   * - If textarea has content: Shows overwrite confirmation dialog
+   *
+   * @param formType - Whether this is for 'add' or 'edit' form
+   *
+   * @example
+   * // User enters grade 95, selects personal comment, clicks populate button
+   * handlePopulateClick('add')
+   * // Result: Combines "Excellent understanding" + "Great effort this semester"
+   *
+   * @see handlePopulateConfirm For the actual population logic
+   * @see handlePopulateCancel For canceling the overwrite confirmation
+   */
   const handlePopulateClick = (formType: 'add' | 'edit') => {
     const form = formType === 'add' ? addForm : editForm
 
@@ -286,7 +318,41 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     }
   }
 
-  // US-FC-REFACTOR-003: Handle populate confirmation
+  /**
+   * US-FC-REFACTOR-003 & 004: Handle populate confirmation and execute population
+   *
+   * Core logic for populating the final comment textarea with intelligent text combination:
+   *
+   * Processing Steps:
+   * 1. Trim whitespace from outcome and personal comments (US-FC-REFACTOR-004)
+   * 2. Skip empty strings after trimming
+   * 3. Concatenate with single space separator: "[outcome] [personal]"
+   * 4. Truncate to 1000 characters if exceeded (textarea maxlength constraint)
+   * 5. Set textarea value
+   * 6. Auto-focus textarea for immediate editing
+   *
+   * Edge Cases Handled:
+   * - Whitespace-only comments (skipped after trim)
+   * - Missing outcome comment (grade outside range or no grade)
+   * - Missing personal comment (not selected)
+   * - Combined text exceeding 1000 chars (truncated)
+   * - Special characters and Unicode (preserved)
+   *
+   * @param formType - Optional form type override (defaults to populateConfirmation.formType)
+   *                   Used when called directly from handlePopulateClick (no confirmation needed)
+   *
+   * @example
+   * // Outcome: "Shows strong understanding" (26 chars)
+   * // Personal: "Excellent participation this semester" (38 chars)
+   * // Result: "Shows strong understanding Excellent participation this semester" (65 chars = 26 + 1 + 38)
+   *
+   * @example
+   * // Edge case: Very long comments
+   * // Outcome: 600 chars, Personal: 500 chars = 1100 chars
+   * // Result: Truncated to exactly 1000 chars
+   *
+   * @see handlePopulateClick For the button click handler that calls this
+   */
   const handlePopulateConfirm = (formType?: 'add' | 'edit') => {
     const targetFormType = formType || populateConfirmation.formType
     const form = targetFormType === 'add' ? addForm : editForm
@@ -296,18 +362,29 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     // Build the populated comment text
     const parts: string[] = []
 
-    // Add outcome comment if available
+    // US-FC-REFACTOR-004: Add outcome comment if available and trim whitespace
     if (form.matchedOutcomeComment) {
-      parts.push(form.matchedOutcomeComment)
+      const trimmedOutcome = form.matchedOutcomeComment.trim()
+      if (trimmedOutcome) {
+        parts.push(trimmedOutcome)
+      }
     }
 
-    // Add personal comment if selected
+    // US-FC-REFACTOR-004: Add personal comment if selected and trim whitespace
     if (selectedPersonalComment) {
-      parts.push(selectedPersonalComment)
+      const trimmedPersonal = selectedPersonalComment.trim()
+      if (trimmedPersonal) {
+        parts.push(trimmedPersonal)
+      }
     }
 
     // Concatenate with single space separator (per user's choice: Option A)
-    const populatedText = parts.join(' ')
+    let populatedText = parts.join(' ')
+
+    // US-FC-REFACTOR-004: Truncate to 1000 characters if exceeded
+    if (populatedText.length > 1000) {
+      populatedText = populatedText.substring(0, 1000)
+    }
 
     // Set the comment text
     form.setComment(populatedText)
@@ -322,7 +399,21 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     textareaRef.current?.focus()
   }
 
-  // US-FC-REFACTOR-003: Handle populate cancellation
+  /**
+   * US-FC-REFACTOR-003: Handle populate cancellation
+   *
+   * Closes the overwrite confirmation dialog without modifying the final comment textarea.
+   * Preserves formType in state for consistency (though modal is closed).
+   *
+   * User Journey:
+   * 1. User clicks "Populate with Above Comments" when textarea has text
+   * 2. Confirmation dialog appears: "This will replace your current comment"
+   * 3. User clicks "Cancel"
+   * 4. Dialog closes, original textarea content remains unchanged
+   *
+   * @see handlePopulateClick For the flow that triggers the confirmation dialog
+   * @see handlePopulateConfirm For the alternative path when user clicks "Replace"
+   */
   const handlePopulateCancel = () => {
     // Preserve formType for state consistency
     setPopulateConfirmation({
@@ -551,7 +642,11 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   <Button
                     onClick={() => handlePopulateClick('add')}
                     variant="secondary"
-                    disabled={!addForm.matchedOutcomeComment && !selectedAddPersonalComment}
+                    disabled={
+                      // US-FC-REFACTOR-004: Disable if both comments are empty or whitespace-only
+                      (!addForm.matchedOutcomeComment || !addForm.matchedOutcomeComment.trim()) &&
+                      (!selectedAddPersonalComment || !selectedAddPersonalComment.trim())
+                    }
                   >
                     Populate with Above Comments
                   </Button>
@@ -807,7 +902,11 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       <Button
                                         onClick={() => handlePopulateClick('edit')}
                                         variant="secondary"
-                                        disabled={!editForm.matchedOutcomeComment && !selectedEditPersonalComment}
+                                        disabled={
+                                          // US-FC-REFACTOR-004: Disable if both comments are empty or whitespace-only
+                                          (!editForm.matchedOutcomeComment || !editForm.matchedOutcomeComment.trim()) &&
+                                          (!selectedEditPersonalComment || !selectedEditPersonalComment.trim())
+                                        }
                                       >
                                         Populate with Above Comments
                                       </Button>
