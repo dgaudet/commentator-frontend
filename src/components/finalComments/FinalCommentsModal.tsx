@@ -60,6 +60,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
+import { CopyButton } from '../common/CopyButton'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
@@ -665,34 +666,39 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   >
                     Comment
                   </label>
-                  <textarea
-                    id="comment-input"
-                    ref={addCommentTextareaRef}
-                    value={addForm.comment}
-                    onChange={(e) => addForm.setComment(e.target.value)}
-                    placeholder="Enter optional comment (max 1000 characters)"
-                    className="final-comment-textarea"
-                    rows={4}
-                    maxLength={1000}
-                    disabled={submitting}
-                    style={{
-                      width: '100%',
-                      padding: spacing.md,
-                      fontSize: typography.fontSize.base,
-                      border: `${borders.width.thin} solid ${colors.border.default}`,
-                      borderRadius: borders.radius.md,
-                      resize: 'vertical',
-                    }}
-                  />
-                  <div
-                    className="character-counter"
-                    style={{
-                      marginTop: spacing.sm,
-                      fontSize: typography.fontSize.sm,
-                      color: colors.text.tertiary,
-                    }}
-                  >
-                    {addForm.comment.length}/1000 characters
+                  <div style={{ display: 'flex', gap: spacing.md, alignItems: 'flex-start' }}>
+                    <div style={{ flex: 1 }}>
+                      <textarea
+                        id="comment-input"
+                        ref={addCommentTextareaRef}
+                        value={addForm.comment}
+                        onChange={(e) => addForm.setComment(e.target.value)}
+                        placeholder="Enter optional comment (max 1000 characters)"
+                        className="final-comment-textarea"
+                        rows={4}
+                        maxLength={1000}
+                        disabled={submitting}
+                        style={{
+                          width: '100%',
+                          padding: spacing.md,
+                          fontSize: typography.fontSize.base,
+                          border: `${borders.width.thin} solid ${colors.border.default}`,
+                          borderRadius: borders.radius.md,
+                          resize: 'vertical',
+                        }}
+                      />
+                      <div
+                        className="character-counter"
+                        style={{
+                          marginTop: spacing.sm,
+                          fontSize: typography.fontSize.sm,
+                          color: colors.text.tertiary,
+                        }}
+                      >
+                        {addForm.comment.length}/1000 characters
+                      </div>
+                    </div>
+                    <CopyButton text={addForm.comment} disabled={submitting} />
                   </div>
                 </div>
 
@@ -925,33 +931,38 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       >
                                         Comment
                                       </label>
-                                      <textarea
-                                        id={`edit-comment-${comment.id}`}
-                                        ref={editCommentTextareaRef}
-                                        value={editForm.comment}
-                                        onChange={(e) => editForm.setComment(e.target.value)}
-                                        placeholder="Enter optional comment (max 1000 characters)"
-                                        className="comment-textarea"
-                                        rows={4}
-                                        maxLength={1000}
-                                        style={{
-                                          width: '100%',
-                                          padding: spacing.md,
-                                          fontSize: typography.fontSize.base,
-                                          border: `${borders.width.thin} solid ${colors.border.default}`,
-                                          borderRadius: borders.radius.md,
-                                          resize: 'vertical',
-                                        }}
-                                      />
-                                      <div
-                                        className="character-counter"
-                                        style={{
-                                          marginTop: spacing.sm,
-                                          fontSize: typography.fontSize.sm,
-                                          color: colors.text.tertiary,
-                                        }}
-                                      >
-                                        {editForm.comment.length}/1000 characters
+                                      <div style={{ display: 'flex', gap: spacing.md, alignItems: 'flex-start' }}>
+                                        <div style={{ flex: 1 }}>
+                                          <textarea
+                                            id={`edit-comment-${comment.id}`}
+                                            ref={editCommentTextareaRef}
+                                            value={editForm.comment}
+                                            onChange={(e) => editForm.setComment(e.target.value)}
+                                            placeholder="Enter optional comment (max 1000 characters)"
+                                            className="comment-textarea"
+                                            rows={4}
+                                            maxLength={1000}
+                                            style={{
+                                              width: '100%',
+                                              padding: spacing.md,
+                                              fontSize: typography.fontSize.base,
+                                              border: `${borders.width.thin} solid ${colors.border.default}`,
+                                              borderRadius: borders.radius.md,
+                                              resize: 'vertical',
+                                            }}
+                                          />
+                                          <div
+                                            className="character-counter"
+                                            style={{
+                                              marginTop: spacing.sm,
+                                              fontSize: typography.fontSize.sm,
+                                              color: colors.text.tertiary,
+                                            }}
+                                          >
+                                            {editForm.comment.length}/1000 characters
+                                          </div>
+                                        </div>
+                                        <CopyButton text={editForm.comment} />
                                       </div>
                                     </div>
 
@@ -1010,6 +1021,19 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         Created: {formatDate(comment.createdAt)}
                                       </div>
                                     </div>
+
+                                    {/* Copy Button - Positioned on the right below Created label */}
+                                    {comment.comment && (
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          justifyContent: 'flex-end',
+                                          marginBottom: spacing.md,
+                                        }}
+                                      >
+                                        <CopyButton text={comment.comment} />
+                                      </div>
+                                    )}
 
                                     {/* Grade - Secondary info */}
                                     <div
