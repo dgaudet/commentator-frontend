@@ -32,7 +32,7 @@
  * - Loading and error states for outcome comment fetching
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type {
   FinalComment,
   CreateFinalCommentRequest,
@@ -94,6 +94,23 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   // Edit state
   const [editingId, setEditingId] = useState<number | null>(null)
 
+  // US-FC-REFACTOR-003: Populate button confirmation state
+  const [populateConfirmation, setPopulateConfirmation] = useState<{
+    isOpen: boolean
+    formType: 'add' | 'edit'
+  }>({
+    isOpen: false,
+    formType: 'add',
+  })
+
+  // US-FC-REFACTOR-003: Refs for focus management after populate
+  const addCommentTextareaRef = useRef<HTMLTextAreaElement>(null)
+  const editCommentTextareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // US-FC-REFACTOR-003: Track selected personal comments for populate button
+  const [selectedAddPersonalComment, setSelectedAddPersonalComment] = useState<string>('')
+  const [selectedEditPersonalComment, setSelectedEditPersonalComment] = useState<string>('')
+
   // FCOI-001: Use outcome comments hook
   const {
     outcomeComments,
@@ -143,6 +160,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
 
   /**
    * US-FC-REFACTOR-001: Clear form states and editing mode when modal closes
+   * US-FC-REFACTOR-003: Also clear selected personal comments
    * Prevents state from persisting across modal open/close cycles
    * Improves UX by ensuring a clean state each time the modal opens
    */
@@ -151,6 +169,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       addForm.reset()
       editForm.reset()
       setEditingId(null)
+      setSelectedAddPersonalComment('')
+      setSelectedEditPersonalComment('')
     }
   }, [isOpen, addForm, editForm])
 
@@ -244,6 +264,67 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       studentName: '',
       className: '',
       classYear: 0,
+    })
+  }
+
+  // US-FC-REFACTOR-003: Handle populate with above comments button click
+  const handlePopulateClick = (formType: 'add' | 'edit') => {
+    const form = formType === 'add' ? addForm : editForm
+
+    // Check if comment textarea already has text
+    if (form.comment.trim().length > 0) {
+      // Show confirmation dialog
+      setPopulateConfirmation({
+        isOpen: true,
+        formType,
+      })
+    } else {
+      // Populate immediately if empty
+      handlePopulateConfirm(formType)
+    }
+  }
+
+  // US-FC-REFACTOR-003: Handle populate confirmation
+  const handlePopulateConfirm = (formType?: 'add' | 'edit') => {
+    const targetFormType = formType || populateConfirmation.formType
+    const form = targetFormType === 'add' ? addForm : editForm
+    const textareaRef = targetFormType === 'add' ? addCommentTextareaRef : editCommentTextareaRef
+    const selectedPersonalComment = targetFormType === 'add' ? selectedAddPersonalComment : selectedEditPersonalComment
+
+    // Build the populated comment text
+    const parts: string[] = []
+
+    // Add outcome comment if available
+    if (form.matchedOutcomeComment) {
+      parts.push(form.matchedOutcomeComment)
+    }
+
+    // Add personal comment if selected
+    if (selectedPersonalComment) {
+      parts.push(selectedPersonalComment)
+    }
+
+    // Concatenate with single space separator (per user's choice: Option A)
+    const populatedText = parts.join(' ')
+
+    // Set the comment text
+    form.setComment(populatedText)
+
+    // Close confirmation dialog
+    setPopulateConfirmation({
+      isOpen: false,
+      formType: 'add',
+    })
+
+    // Focus the textarea immediately
+    textareaRef.current?.focus()
+  }
+
+  // US-FC-REFACTOR-003: Handle populate cancellation
+  const handlePopulateCancel = () => {
+    setPopulateConfirmation({
+      isOpen: false,
+      formType: 'add',
     })
   }
 
@@ -445,7 +526,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   searchQuery={addForm.personalizedCommentSearch}
                   onSearchChange={addForm.setPersonalizedCommentSearch}
                   onSelect={(selectedComment) => {
-                    addForm.setComment(selectedComment.comment)
+                    // US-FC-REFACTOR-003: Track selected comment for populate button
+                    // Note: Don't populate comment immediately - user must click populate button
+                    setSelectedAddPersonalComment(selectedComment.comment)
                     addForm.setPersonalizedCommentSearch('')
                   }}
                   label="Personalized Comment (Optional)"
@@ -455,6 +538,17 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   error={personalizedCommentsError}
                   disabled={submitting}
                 />
+
+                {/* US-FC-REFACTOR-003: Populate with Above Comments Button */}
+                <div style={{ marginBottom: spacing.lg }}>
+                  <Button
+                    onClick={() => handlePopulateClick('add')}
+                    variant="secondary"
+                    disabled={!addForm.matchedOutcomeComment && !selectedAddPersonalComment}
+                  >
+                    Populate with Above Comments
+                  </Button>
+                </div>
 
                 <div style={{ marginBottom: spacing.lg }}>
                   <label
@@ -471,6 +565,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   </label>
                   <textarea
                     id="comment-input"
+                    ref={addCommentTextareaRef}
                     value={addForm.comment}
                     onChange={(e) => addForm.setComment(e.target.value)}
                     placeholder="Enter optional comment (max 1000 characters)"
@@ -687,7 +782,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       searchQuery={editForm.personalizedCommentSearch}
                                       onSearchChange={editForm.setPersonalizedCommentSearch}
                                       onSelect={(selectedComment) => {
-                                        editForm.setComment(selectedComment.comment)
+                                        // US-FC-REFACTOR-003: Track selected comment for populate button
+                                        // Note: Don't populate comment immediately - user must click populate button
+                                        setSelectedEditPersonalComment(selectedComment.comment)
                                         editForm.setPersonalizedCommentSearch('')
                                       }}
                                       label="Personalized Comment (Optional)"
@@ -697,6 +794,17 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       error={personalizedCommentsError}
                                       disabled={submitting}
                                     />
+
+                                    {/* US-FC-REFACTOR-003: Populate with Above Comments Button (Edit Mode) */}
+                                    <div style={{ marginBottom: spacing.lg }}>
+                                      <Button
+                                        onClick={() => handlePopulateClick('edit')}
+                                        variant="secondary"
+                                        disabled={!editForm.matchedOutcomeComment && !selectedEditPersonalComment}
+                                      >
+                                        Populate with Above Comments
+                                      </Button>
+                                    </div>
 
                                     <div style={{ marginBottom: spacing.lg }}>
                                       <label
@@ -713,6 +821,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       </label>
                                       <textarea
                                         id={`edit-comment-${comment.id}`}
+                                        ref={editCommentTextareaRef}
                                         value={editForm.comment}
                                         onChange={(e) => editForm.setComment(e.target.value)}
                                         placeholder="Enter optional comment (max 1000 characters)"
@@ -876,6 +985,17 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
             </p>
           </div>
         </ConfirmationModal>
+
+        {/* US-FC-REFACTOR-003: Populate Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={populateConfirmation.isOpen}
+          title="Replace Comment?"
+          message="This will replace your current comment. Continue?"
+          onConfirm={() => handlePopulateConfirm()}
+          onCancel={handlePopulateCancel}
+          confirmButtonText="Replace"
+          cancelButtonText="Cancel"
+        />
       </>
     )
   }
@@ -917,6 +1037,17 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
           </p>
         </div>
       </ConfirmationModal>
+
+      {/* US-FC-REFACTOR-003: Populate Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={populateConfirmation.isOpen}
+        title="Replace Comment?"
+        message="This will replace your current comment. Continue?"
+        onConfirm={() => handlePopulateConfirm()}
+        onCancel={handlePopulateCancel}
+        confirmButtonText="Replace"
+        cancelButtonText="Cancel"
+      />
     </div>
   )
 }
