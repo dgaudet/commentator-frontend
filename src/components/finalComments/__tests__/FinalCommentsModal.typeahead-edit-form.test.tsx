@@ -261,7 +261,8 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
       fireEvent.click(replaceButton)
 
       // The edit textarea should now have the selected comment
-      const editTextarea = screen.getByLabelText(/^Comment$/i) as HTMLTextAreaElement
+      const commentTextareas = screen.getAllByLabelText(/^Comment$/i)
+      const editTextarea = commentTextareas[1] as HTMLTextAreaElement // Second textarea is the edit form
       expect(editTextarea.value).toBe('Excellent work this semester')
     })
 
@@ -307,7 +308,8 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
       fireEvent.click(replaceButton)
 
       // Should replace the content
-      editTextarea = screen.getByDisplayValue('Good effort on assignments') as HTMLTextAreaElement
+      const commentTextareas = screen.getAllByLabelText(/^Comment$/i)
+      editTextarea = commentTextareas[1] as HTMLTextAreaElement // Second textarea is the edit form
       expect(editTextarea.value).toBe('Good effort on assignments')
     })
 

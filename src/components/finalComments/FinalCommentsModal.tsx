@@ -310,10 +310,10 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     // Set the comment text
     form.setComment(populatedText)
 
-    // Close confirmation dialog
+    // Close confirmation dialog (preserve formType for state consistency)
     setPopulateConfirmation({
       isOpen: false,
-      formType: 'add',
+      formType: targetFormType,
     })
 
     // Focus the textarea immediately
@@ -322,9 +322,10 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
 
   // US-FC-REFACTOR-003: Handle populate cancellation
   const handlePopulateCancel = () => {
+    // Preserve formType for state consistency
     setPopulateConfirmation({
       isOpen: false,
-      formType: 'add',
+      formType: populateConfirmation.formType,
     })
   }
 
