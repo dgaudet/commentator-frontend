@@ -261,8 +261,8 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
       fireEvent.click(replaceButton)
 
       // The edit textarea should now have the selected comment
-      const editTextarea = screen.getByDisplayValue('Excellent work this semester')
-      expect(editTextarea).toBeInTheDocument()
+      const editTextarea = screen.getByLabelText(/^Comment$/i) as HTMLTextAreaElement
+      expect(editTextarea.value).toBe('Excellent work this semester')
     })
 
     it('should replace existing content when personalized comment is selected in Edit', async () => {
@@ -311,7 +311,7 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
       expect(editTextarea.value).toBe('Good effort on assignments')
     })
 
-    it('should clear Edit search query after selecting personalized comment', () => {
+    it('should display selected comment in Edit form after selection', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -339,8 +339,8 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
       const commentOptions = screen.getAllByText('Excellent work this semester')
       fireEvent.click(commentOptions[commentOptions.length - 1])
 
-      // Search query should be cleared
-      expect(editSearchInput.value).toBe('')
+      // US-FC-REFACTOR-002: Selected comment should remain visible for user feedback
+      expect(editSearchInput.value).toBe('Excellent work this semester')
     })
   })
 

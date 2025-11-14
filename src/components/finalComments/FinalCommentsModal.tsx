@@ -527,9 +527,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   onSearchChange={addForm.setPersonalizedCommentSearch}
                   onSelect={(selectedComment) => {
                     // US-FC-REFACTOR-003: Track selected comment for populate button
-                    // Note: Don't populate comment immediately - user must click populate button
+                    // US-FC-REFACTOR-002: Keep selected comment visible for user feedback
                     setSelectedAddPersonalComment(selectedComment.comment)
-                    addForm.setPersonalizedCommentSearch('')
+                    addForm.setPersonalizedCommentSearch(selectedComment.comment)
                   }}
                   label="Personalized Comment (Optional)"
                   placeholder="Search personalized comments..."
@@ -783,9 +783,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       onSearchChange={editForm.setPersonalizedCommentSearch}
                                       onSelect={(selectedComment) => {
                                         // US-FC-REFACTOR-003: Track selected comment for populate button
-                                        // Note: Don't populate comment immediately - user must click populate button
+                                        // US-FC-REFACTOR-002: Keep selected comment visible for user feedback
                                         setSelectedEditPersonalComment(selectedComment.comment)
-                                        editForm.setPersonalizedCommentSearch('')
+                                        editForm.setPersonalizedCommentSearch(selectedComment.comment)
                                       }}
                                       label="Personalized Comment (Optional)"
                                       placeholder="Search personalized comments..."

@@ -247,7 +247,7 @@ describe('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       expect(finalCommentTextarea).toHaveValue('Good effort on assignments')
     })
 
-    it('should clear search query after selecting personalized comment', () => {
+    it('should display selected comment after selection', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -268,8 +268,8 @@ describe('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       const commentOption = screen.getByText('Excellent work this semester')
       fireEvent.click(commentOption)
 
-      // Search query should be cleared
-      expect(searchInput.value).toBe('')
+      // US-FC-REFACTOR-002: Selected comment should remain visible for user feedback
+      expect(searchInput.value).toBe('Excellent work this semester')
     })
   })
 
