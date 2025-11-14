@@ -342,9 +342,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
    *                   Used when called directly from handlePopulateClick (no confirmation needed)
    *
    * @example
-   * // Outcome: "Shows strong understanding" (28 chars)
+   * // Outcome: "Shows strong understanding" (26 chars)
    * // Personal: "Excellent participation this semester" (38 chars)
-   * // Result: "Shows strong understanding Excellent participation this semester" (67 chars)
+   * // Result: "Shows strong understanding Excellent participation this semester" (65 chars = 26 + 1 + 38)
    *
    * @example
    * // Edge case: Very long comments
