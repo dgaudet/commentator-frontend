@@ -201,11 +201,15 @@ describe('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       const commentOption = screen.getByText('Excellent work this semester')
       fireEvent.click(commentOption)
 
+      // US-FC-REFACTOR-003: Must click populate button to populate textarea
+      const populateButton = screen.getByRole('button', { name: /Populate with Above Comments/i })
+      fireEvent.click(populateButton)
+
       const finalCommentTextarea = screen.getByLabelText(/^Comment$/i)
       expect(finalCommentTextarea).toHaveValue('Excellent work this semester')
     })
 
-    it('should replace existing content when personalized comment is selected', () => {
+    it('should replace existing content when personalized comment is selected', async () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -231,11 +235,19 @@ describe('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       const commentOption = screen.getByText('Good effort on assignments')
       fireEvent.click(commentOption)
 
+      // US-FC-REFACTOR-003: Must click populate button to populate textarea
+      const populateButton = screen.getByRole('button', { name: /Populate with Above Comments/i })
+      fireEvent.click(populateButton)
+
+      // US-FC-REFACTOR-003: Confirm overwrite in dialog
+      const replaceButton = await screen.findByRole('button', { name: /Replace/i })
+      fireEvent.click(replaceButton)
+
       // Should replace the initial content
       expect(finalCommentTextarea).toHaveValue('Good effort on assignments')
     })
 
-    it('should clear search query after selecting personalized comment', () => {
+    it('should display selected comment after selection', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -256,8 +268,8 @@ describe('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       const commentOption = screen.getByText('Excellent work this semester')
       fireEvent.click(commentOption)
 
-      // Search query should be cleared
-      expect(searchInput.value).toBe('')
+      // US-FC-REFACTOR-002: Selected comment should remain visible for user feedback
+      expect(searchInput.value).toBe('Excellent work this semester')
     })
   })
 

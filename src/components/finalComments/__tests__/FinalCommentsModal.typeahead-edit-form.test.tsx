@@ -222,7 +222,7 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
   })
 
   describe('AC3: Select personalized comment populates Edit textarea', () => {
-    it('should populate Edit comment textarea when personalized comment is clicked', () => {
+    it('should populate Edit comment textarea when personalized comment is clicked', async () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -251,12 +251,22 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
       // Should have at least 2 matches (one in Add form dropdown, one in Edit form dropdown)
       fireEvent.click(commentOptions[commentOptions.length - 1])
 
+      // US-FC-REFACTOR-003: Must click populate button to populate textarea
+      const populateButtons = screen.getAllByRole('button', { name: /Populate with Above Comments/i })
+      const editPopulateButton = populateButtons[1] // Second button is for edit form
+      fireEvent.click(editPopulateButton)
+
+      // US-FC-REFACTOR-003: Confirm overwrite in dialog (edit form has existing content)
+      const replaceButton = await screen.findByRole('button', { name: /Replace/i })
+      fireEvent.click(replaceButton)
+
       // The edit textarea should now have the selected comment
-      const editTextarea = screen.getByDisplayValue('Excellent work this semester')
-      expect(editTextarea).toBeInTheDocument()
+      const commentTextareas = screen.getAllByLabelText(/^Comment$/i)
+      const editTextarea = commentTextareas[1] as HTMLTextAreaElement // Second textarea is the edit form
+      expect(editTextarea.value).toBe('Excellent work this semester')
     })
 
-    it('should replace existing content when personalized comment is selected in Edit', () => {
+    it('should replace existing content when personalized comment is selected in Edit', async () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -288,12 +298,22 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
       const commentOptions = screen.getAllByText('Good effort on assignments')
       fireEvent.click(commentOptions[commentOptions.length - 1])
 
+      // US-FC-REFACTOR-003: Must click populate button to populate textarea
+      const populateButtons = screen.getAllByRole('button', { name: /Populate with Above Comments/i })
+      const editPopulateButton = populateButtons[1] // Second button is for edit form
+      fireEvent.click(editPopulateButton)
+
+      // US-FC-REFACTOR-003: Confirm overwrite in dialog
+      const replaceButton = await screen.findByRole('button', { name: /Replace/i })
+      fireEvent.click(replaceButton)
+
       // Should replace the content
-      editTextarea = screen.getByDisplayValue('Good effort on assignments') as HTMLTextAreaElement
+      const commentTextareas = screen.getAllByLabelText(/^Comment$/i)
+      editTextarea = commentTextareas[1] as HTMLTextAreaElement // Second textarea is the edit form
       expect(editTextarea.value).toBe('Good effort on assignments')
     })
 
-    it('should clear Edit search query after selecting personalized comment', () => {
+    it('should display selected comment in Edit form after selection', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -321,8 +341,8 @@ describe('US-PC-TYPEAHEAD-004: Integrate Typeahead in Edit Form', () => {
       const commentOptions = screen.getAllByText('Excellent work this semester')
       fireEvent.click(commentOptions[commentOptions.length - 1])
 
-      // Search query should be cleared
-      expect(editSearchInput.value).toBe('')
+      // US-FC-REFACTOR-002: Selected comment should remain visible for user feedback
+      expect(editSearchInput.value).toBe('Excellent work this semester')
     })
   })
 

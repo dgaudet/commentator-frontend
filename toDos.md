@@ -3,19 +3,6 @@
 ## 🎯 High Priority Features
 
 ### Final Comments Enhancements
-- [ ] **Auto-load matching outcome comment when grade entered**
-  - When you enter a grade for a student, it should load the matching outcome comment
-  - Business value: Speeds up comment generation workflow
-
-- [ ] **Personal comment dropdown with edit capability**
-  - Drop-down for personal comment, which when you pick it, posts into a text box below you can edit
-  - Then when you choose it, have another box that puts the 2 sections together with a copy button
-  - Business value: Streamlines personalized comment workflow
-
-- [ ] **Type-ahead search for personal comments**
-  - Picking the personal comment should be a type-ahead search box
-  - Business value: Faster comment selection for large lists
-
 - [ ] **Print view for all comments in a class**
   - Button to view all comments for class that you can print
   - Business value: Enables batch printing/review
@@ -117,6 +104,6 @@ the error labels aren't standardized, the add subject is different from the rest
 
 When adding a new class, it should be selected by default after creation.
 
-Add a button to the Final Comment component to copy replace the final comment with the outcome comment, maybe `Populate with Above Comments`
+The list of existing comments should have a copy comments button to copy all comments to clipboard for easier sharing.
 
-Can you create stories to add a typeahead search box for personal comments to the Final Comments add and edit components? This would load the personal comments for the currently selected subject and allow searching by typing. The new input box should show up directly below the outcome comment box. 
+The final comments error text doesn't use the standardized error label component.

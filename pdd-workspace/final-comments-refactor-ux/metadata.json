@@ -1,0 +1,90 @@
+{
+  "feature": {
+    "name": "final-comments-refactor-ux",
+    "id": "FC-REFACTOR-001",
+    "branch": "feat/final-comments-refactor-ux",
+    "description": "Refactor shared Add/Edit form logic and enhance UX with persistent personal comment selection and populate-above-comments button",
+    "type": "Feature Enhancement + Technical Debt",
+    "impact": "Improves code maintainability (DRY principle) and streamlines teacher workflow with better comment composition tools"
+  },
+  "complexity": {
+    "level": "L1",
+    "label": "MICRO",
+    "reasoning": "5 user stories (~12 story points total), 1-2 weeks effort, single developer, frontend refactoring + new UX features, no backend changes",
+    "assessedAt": "2025-11-13T00:00:00Z",
+    "assessedBy": "product-owner-persona"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "testing": "PENDING",
+    "deployed": "PENDING"
+  },
+  "team": {
+    "size": 1,
+    "roles": ["frontend-developer"],
+    "skills": ["React", "TypeScript", "Refactoring", "Component Composition", "State Management"]
+  },
+  "technical": {
+    "scope": "Component refactoring + UX enhancements",
+    "backend_changes": false,
+    "new_components": ["Shared form logic component or hook"],
+    "existing_components": ["FinalCommentsModal", "TypeaheadSearch"],
+    "refactoring_targets": [
+      "FinalCommentsModal Add form",
+      "FinalCommentsModal Edit form"
+    ],
+    "integration_points": [
+      "usePersonalizedComments hook",
+      "useOutcomeComments hook",
+      "TypeaheadSearch component",
+      "Design token system"
+    ],
+    "files_to_modify": [
+      "src/components/finalComments/FinalCommentsModal.tsx (major refactoring)",
+      "src/components/finalComments/__tests__/FinalCommentsModal.*.test.tsx (update tests)"
+    ],
+    "files_to_create": [
+      "Potentially: src/components/finalComments/useFinalCommentForm.ts (shared hook)",
+      "New test files for shared logic"
+    ]
+  },
+  "timeline": {
+    "estimated_duration": "1-2 weeks",
+    "story_count": 5,
+    "story_points": 12,
+    "breakdown": {
+      "US-FC-REFACTOR-001": 3,
+      "US-FC-REFACTOR-002": 2,
+      "US-FC-REFACTOR-003": 3,
+      "US-FC-REFACTOR-004": 2,
+      "US-FC-REFACTOR-005": 2
+    },
+    "complexity_factors": [
+      "Component refactoring with test preservation",
+      "State management changes (persistent selection)",
+      "Multi-source text concatenation logic",
+      "Edge case handling (missing comments)",
+      "Regression risk mitigation"
+    ]
+  },
+  "user_value": {
+    "workflow_improvement": "Enables faster final comment composition by combining outcome and personal comments with one click",
+    "code_quality": "Reduces code duplication (DRY), improves maintainability",
+    "ux_enhancement": "Persistent selection provides better feedback and context",
+    "efficiency_gain": "Estimated 20-30% time savings when composing final comments using templates"
+  },
+  "artifacts": {
+    "required": ["prd.md", "user-stories.md"],
+    "optional": ["refactoring-guide.md"],
+    "created": [
+      "pdd-workspace/final-comments-refactor-ux/metadata.json",
+      "pdd-workspace/final-comments-refactor-ux/planning/prd.md",
+      "pdd-workspace/final-comments-refactor-ux/planning/user-stories.md"
+    ]
+  },
+  "created_by": "product-owner-persona",
+  "created_at": "2025-11-13T00:00:00Z",
+  "updated_at": "2025-11-13T00:00:00Z"
+}
