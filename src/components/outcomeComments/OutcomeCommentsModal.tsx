@@ -29,6 +29,7 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { validatePlaceholders } from '../../utils/placeholders'
 
 interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -68,6 +69,10 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
     commentText: '',
   })
   const [validationError, setValidationError] = useState('')
+
+  // US-PLACEHOLDER-003: Placeholder validation warnings
+  const [newCommentWarnings, setNewCommentWarnings] = useState<string[]>([])
+  const [editCommentWarnings, setEditCommentWarnings] = useState<string[]>([])
 
   if (!isOpen) return null
 
@@ -211,10 +216,70 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                 >
                   Add New Outcome Comment
                 </h3>
+
+                {/* US-PLACEHOLDER-002: Placeholder documentation */}
+                <div
+                  style={{
+                    marginBottom: spacing.lg,
+                    padding: spacing.md,
+                    backgroundColor: colors.primary[50],
+                    border: `${borders.width.thin} solid ${colors.primary[200]}`,
+                    borderRadius: borders.radius.md,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.semibold,
+                      color: colors.primary[700],
+                      marginBottom: spacing.xs,
+                    }}
+                  >
+                    💡 Tip: Use Dynamic Placeholders
+                  </div>
+                  <div
+                    style={{
+                      fontSize: typography.fontSize.sm,
+                      color: colors.text.secondary,
+                      lineHeight: typography.lineHeight.relaxed,
+                    }}
+                  >
+                    Add placeholders to personalize comments for each student:
+                    <br />
+                    <code style={{
+                      padding: '2px 4px',
+                      backgroundColor: colors.background.secondary,
+                      borderRadius: borders.radius.sm,
+                      fontSize: typography.fontSize.xs,
+                    }}>&lt;first name&gt;</code>{' '}
+                    <code style={{
+                      padding: '2px 4px',
+                      backgroundColor: colors.background.secondary,
+                      borderRadius: borders.radius.sm,
+                      fontSize: typography.fontSize.xs,
+                    }}>&lt;last name&gt;</code>{' '}
+                    <code style={{
+                      padding: '2px 4px',
+                      backgroundColor: colors.background.secondary,
+                      borderRadius: borders.radius.sm,
+                      fontSize: typography.fontSize.xs,
+                    }}>&lt;grade&gt;</code>
+                    <br />
+                    <em style={{ color: colors.text.tertiary }}>
+                      Example: "&lt;first name&gt; earned &lt;grade&gt; points" → "Alice earned 95 points"
+                    </em>
+                  </div>
+                </div>
+
                 <div style={{ marginBottom: spacing.lg }}>
                   <textarea
                     value={newCommentContent}
-                    onChange={(e) => setNewCommentContent(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setNewCommentContent(value)
+                      // US-PLACEHOLDER-003: Validate placeholders on change
+                      setNewCommentWarnings(validatePlaceholders(value))
+                    }}
                     placeholder="Enter outcome comment..."
                     aria-label="Add new outcome comment"
                     rows={3}
@@ -227,6 +292,34 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                       resize: 'vertical' as const,
                     }}
                   />
+
+                  {/* US-PLACEHOLDER-003: Display validation warnings */}
+                  {newCommentWarnings.length > 0 && (
+                    <div
+                      role="alert"
+                      aria-live="polite"
+                      style={{
+                        marginTop: spacing.sm,
+                        padding: spacing.sm,
+                        backgroundColor: colors.semantic.warningLight,
+                        border: `${borders.width.thin} solid ${colors.semantic.warning}`,
+                        borderRadius: borders.radius.md,
+                      }}
+                    >
+                      {newCommentWarnings.map((warning, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            fontSize: typography.fontSize.sm,
+                            color: colors.semantic.warningDark,
+                            marginBottom: index < newCommentWarnings.length - 1 ? spacing.xs : 0,
+                          }}
+                        >
+                          {warning}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div
                   style={{
@@ -381,9 +474,52 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                           ? (
                             /* Edit Mode */
                               <div>
+                                {/* US-PLACEHOLDER-002: Placeholder documentation (Edit Mode) */}
+                                <div
+                                  style={{
+                                    marginBottom: spacing.md,
+                                    padding: spacing.sm,
+                                    backgroundColor: colors.primary[50],
+                                    border: `${borders.width.thin} solid ${colors.primary[200]}`,
+                                    borderRadius: borders.radius.md,
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      fontSize: typography.fontSize.xs,
+                                      color: colors.text.secondary,
+                                    }}
+                                  >
+                                    <strong style={{ color: colors.primary[700] }}>Placeholders:</strong>{' '}
+                                    <code style={{
+                                      padding: '2px 4px',
+                                      backgroundColor: colors.background.secondary,
+                                      borderRadius: borders.radius.sm,
+                                      fontSize: typography.fontSize.xs,
+                                    }}>&lt;first name&gt;</code>{' '}
+                                    <code style={{
+                                      padding: '2px 4px',
+                                      backgroundColor: colors.background.secondary,
+                                      borderRadius: borders.radius.sm,
+                                      fontSize: typography.fontSize.xs,
+                                    }}>&lt;last name&gt;</code>{' '}
+                                    <code style={{
+                                      padding: '2px 4px',
+                                      backgroundColor: colors.background.secondary,
+                                      borderRadius: borders.radius.sm,
+                                      fontSize: typography.fontSize.xs,
+                                    }}>&lt;grade&gt;</code>
+                                  </div>
+                                </div>
+
                                 <textarea
                                   value={editContent}
-                                  onChange={(e) => setEditContent(e.target.value)}
+                                  onChange={(e) => {
+                                    const value = e.target.value
+                                    setEditContent(value)
+                                    // US-PLACEHOLDER-003: Validate placeholders on change
+                                    setEditCommentWarnings(validatePlaceholders(value))
+                                  }}
                                   rows={3}
                                   style={{
                                     width: '100%',
@@ -392,9 +528,37 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                     border: `${borders.width.thin} solid ${colors.border.default}`,
                                     borderRadius: borders.radius.md,
                                     resize: 'vertical' as const,
-                                    marginBottom: spacing.lg,
+                                    marginBottom: spacing.sm,
                                   }}
                                 />
+
+                                {/* US-PLACEHOLDER-003: Display validation warnings (Edit Mode) */}
+                                {editCommentWarnings.length > 0 && (
+                                  <div
+                                    role="alert"
+                                    aria-live="polite"
+                                    style={{
+                                      marginBottom: spacing.lg,
+                                      padding: spacing.sm,
+                                      backgroundColor: colors.semantic.warningLight,
+                                      border: `${borders.width.thin} solid ${colors.semantic.warning}`,
+                                      borderRadius: borders.radius.md,
+                                    }}
+                                  >
+                                    {editCommentWarnings.map((warning, index) => (
+                                      <div
+                                        key={index}
+                                        style={{
+                                          fontSize: typography.fontSize.sm,
+                                          color: colors.semantic.warningDark,
+                                          marginBottom: index < editCommentWarnings.length - 1 ? spacing.xs : 0,
+                                        }}
+                                      >
+                                        {warning}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                                 <div
                                   style={{
                                     display: 'flex',

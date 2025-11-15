@@ -105,3 +105,7 @@ the error labels aren't standardized, the add subject is different from the rest
 When adding a new class, it should be selected by default after creation.
 
 The final comments error text doesn't use the standardized error label component.
+
+Questions:
+* should you be able to create outcome comments that overlap in ranges?
+* should the personal comments have placeholders as well?

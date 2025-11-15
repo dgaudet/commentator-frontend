@@ -62,6 +62,7 @@ import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { CopyButton } from '../common/CopyButton'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -321,16 +322,18 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
 
   /**
    * US-FC-REFACTOR-003 & 004: Handle populate confirmation and execute population
+   * US-PLACEHOLDER-004: Apply dynamic placeholder replacement
    *
    * Core logic for populating the final comment textarea with intelligent text combination:
    *
    * Processing Steps:
    * 1. Trim whitespace from outcome and personal comments (US-FC-REFACTOR-004)
-   * 2. Skip empty strings after trimming
-   * 3. Concatenate with single space separator: "[outcome] [personal]"
-   * 4. Truncate to 1000 characters if exceeded (textarea maxlength constraint)
-   * 5. Set textarea value
-   * 6. Auto-focus textarea for immediate editing
+   * 2. Replace placeholders with student data (US-PLACEHOLDER-004)
+   * 3. Skip empty strings after trimming
+   * 4. Concatenate with single space separator: "[outcome] [personal]"
+   * 5. Truncate to 1000 characters if exceeded (textarea maxlength constraint)
+   * 6. Set textarea value
+   * 7. Auto-focus textarea for immediate editing
    *
    * Edge Cases Handled:
    * - Whitespace-only comments (skipped after trim)
@@ -338,6 +341,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
    * - Missing personal comment (not selected)
    * - Combined text exceeding 1000 chars (truncated)
    * - Special characters and Unicode (preserved)
+   * - Placeholders in comments (replaced with actual student data)
    *
    * @param formType - Optional form type override (defaults to populateConfirmation.formType)
    *                   Used when called directly from handlePopulateClick (no confirmation needed)
@@ -346,6 +350,12 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
    * // Outcome: "Shows strong understanding" (26 chars)
    * // Personal: "Excellent participation this semester" (38 chars)
    * // Result: "Shows strong understanding Excellent participation this semester" (65 chars = 26 + 1 + 38)
+   *
+   * @example
+   * // US-PLACEHOLDER-004: Placeholder replacement
+   * // Outcome: "<first name> earned <grade> points"
+   * // Student data: { firstName: "Alice", grade: 95 }
+   * // Result: "Alice earned 95 points"
    *
    * @example
    * // Edge case: Very long comments
@@ -360,22 +370,33 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     const textareaRef = targetFormType === 'add' ? addCommentTextareaRef : editCommentTextareaRef
     const selectedPersonalComment = targetFormType === 'add' ? selectedAddPersonalComment : selectedEditPersonalComment
 
+    // US-PLACEHOLDER-004: Prepare student data for placeholder replacement
+    const studentData: StudentData = {
+      firstName: form.firstName || undefined,
+      lastName: form.lastName || undefined,
+      grade: form.grade !== '' ? Number(form.grade) : undefined,
+    }
+
     // Build the populated comment text
     const parts: string[] = []
 
     // US-FC-REFACTOR-004: Add outcome comment if available and trim whitespace
+    // US-PLACEHOLDER-004: Replace placeholders before adding to parts
     if (form.matchedOutcomeComment) {
       const trimmedOutcome = form.matchedOutcomeComment.trim()
       if (trimmedOutcome) {
-        parts.push(trimmedOutcome)
+        const withPlaceholdersReplaced = replacePlaceholders(trimmedOutcome, studentData)
+        parts.push(withPlaceholdersReplaced)
       }
     }
 
     // US-FC-REFACTOR-004: Add personal comment if selected and trim whitespace
+    // US-PLACEHOLDER-004: Replace placeholders before adding to parts
     if (selectedPersonalComment) {
       const trimmedPersonal = selectedPersonalComment.trim()
       if (trimmedPersonal) {
-        parts.push(trimmedPersonal)
+        const withPlaceholdersReplaced = replacePlaceholders(trimmedPersonal, studentData)
+        parts.push(withPlaceholdersReplaced)
       }
     }
 
