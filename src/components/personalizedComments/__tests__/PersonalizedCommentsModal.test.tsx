@@ -110,6 +110,7 @@ describe('PersonalizedCommentsModal', () => {
         expect(onCreateComment).toHaveBeenCalledWith({
           subjectId: 1,
           comment: 'This is a valid comment',
+          rating: 3, // Default rating
         })
       })
     })
@@ -153,6 +154,7 @@ describe('PersonalizedCommentsModal', () => {
       await waitFor(() => {
         expect(onUpdateComment).toHaveBeenCalledWith(1, {
           comment: 'Updated comment text that is long enough',
+          rating: 3, // Default rating (mockComment has undefined rating → normalized to 3)
         })
       })
     })
