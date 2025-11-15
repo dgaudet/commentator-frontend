@@ -1,0 +1,35 @@
+{
+  "feature": "copy-comment-buttons",
+  "complexity": {
+    "level": "L1-MICRO",
+    "reasoning": "Simple feature with 5 user stories, 1-2 week duration, single frontend developer, no external integrations, no data migrations, standard browser API usage",
+    "assessedAt": "2025-01-14T00:00:00Z",
+    "scope": {
+      "storyCount": 5,
+      "estimatedPoints": 8,
+      "duration": "1-2 weeks"
+    },
+    "technical": {
+      "externalIntegrations": false,
+      "dataMigrations": false,
+      "performanceCritical": false,
+      "apis": ["Browser Clipboard API"]
+    },
+    "team": {
+      "size": "single developer",
+      "specializedSkills": false,
+      "compliance": false
+    }
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "NOT_STARTED",
+    "testing": "NOT_STARTED"
+  },
+  "artifacts": {
+    "required": ["prd.md"],
+    "optional": [],
+    "created": ["metadata.json", "prd.md"]
+  }
+}

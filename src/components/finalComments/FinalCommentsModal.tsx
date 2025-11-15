@@ -60,6 +60,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
+import { CopyButton } from '../common/CopyButton'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
@@ -653,18 +654,26 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                 </div>
 
                 <div style={{ marginBottom: spacing.lg }}>
-                  <label
-                    htmlFor="comment-input"
+                  <div
                     style={{
-                      display: 'block',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                       marginBottom: spacing.sm,
-                      fontSize: typography.fontSize.sm,
-                      fontWeight: typography.fontWeight.medium,
-                      color: colors.text.secondary,
                     }}
                   >
-                    Comment
-                  </label>
+                    <label
+                      htmlFor="comment-input"
+                      style={{
+                        fontSize: typography.fontSize.sm,
+                        fontWeight: typography.fontWeight.medium,
+                        color: colors.text.secondary,
+                      }}
+                    >
+                      Comment
+                    </label>
+                    <CopyButton text={addForm.comment} disabled={submitting} />
+                  </div>
                   <textarea
                     id="comment-input"
                     ref={addCommentTextareaRef}
@@ -913,18 +922,26 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                     </div>
 
                                     <div style={{ marginBottom: spacing.lg }}>
-                                      <label
-                                        htmlFor={`edit-comment-${comment.id}`}
+                                      <div
                                         style={{
-                                          display: 'block',
+                                          display: 'flex',
+                                          justifyContent: 'space-between',
+                                          alignItems: 'center',
                                           marginBottom: spacing.sm,
-                                          fontSize: typography.fontSize.sm,
-                                          fontWeight: typography.fontWeight.medium,
-                                          color: colors.text.secondary,
                                         }}
                                       >
-                                        Comment
-                                      </label>
+                                        <label
+                                          htmlFor={`edit-comment-${comment.id}`}
+                                          style={{
+                                            fontSize: typography.fontSize.sm,
+                                            fontWeight: typography.fontWeight.medium,
+                                            color: colors.text.secondary,
+                                          }}
+                                        >
+                                          Comment
+                                        </label>
+                                        <CopyButton text={editForm.comment} />
+                                      </div>
                                       <textarea
                                         id={`edit-comment-${comment.id}`}
                                         ref={editCommentTextareaRef}
@@ -986,29 +1003,38 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       style={{
                                         display: 'flex',
                                         justifyContent: 'space-between',
-                                        alignItems: 'center',
+                                        alignItems: 'flex-start',
                                         marginBottom: spacing.md,
                                       }}
                                     >
-                                      <div
-                                        style={{
-                                          fontSize: typography.fontSize.base,
-                                          fontWeight: typography.fontWeight.semibold,
-                                          color: colors.text.primary,
-                                          lineHeight: typography.lineHeight.normal,
-                                        }}
-                                      >
-                                        {comment.firstName}
-                                        {comment.lastName ? ` ${comment.lastName}` : ''}
+                                      <div style={{ flex: 1 }}>
+                                        <div
+                                          style={{
+                                            fontSize: typography.fontSize.base,
+                                            fontWeight: typography.fontWeight.semibold,
+                                            color: colors.text.primary,
+                                            lineHeight: typography.lineHeight.normal,
+                                            marginBottom: spacing.xs,
+                                          }}
+                                        >
+                                          {comment.firstName}
+                                          {comment.lastName ? ` ${comment.lastName}` : ''}
+                                        </div>
+                                        <div
+                                          style={{
+                                            fontSize: typography.fontSize.xs,
+                                            color: colors.text.disabled,
+                                          }}
+                                        >
+                                          Created: {formatDate(comment.createdAt)}
+                                        </div>
                                       </div>
-                                      <div
-                                        style={{
-                                          fontSize: typography.fontSize.xs,
-                                          color: colors.text.disabled,
-                                        }}
-                                      >
-                                        Created: {formatDate(comment.createdAt)}
-                                      </div>
+                                      {/* Copy Button - Positioned on the right below Created label */}
+                                      {comment.comment && (
+                                        <div style={{ marginLeft: spacing.md }}>
+                                          <CopyButton text={comment.comment} />
+                                        </div>
+                                      )}
                                     </div>
 
                                     {/* Grade - Secondary info */}
