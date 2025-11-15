@@ -107,11 +107,11 @@ When adding a new class, it should be selected by default after creation.
 The final comments error text doesn't use the standardized error label component.
 
 Questions:
-* should you be able to create outcome comments that overlap in ranges?
-** sure
 * should the personal comments have placeholders as well?
 ** yes
-* Order the outcome comments high to low
 * Add a rating to the personalized comments, so they can be ordered in the dropdown and in the existing.
 * Like a star system, or emoji system, with around 5 levels.
 * Need to allow multiple personalized comments, and be able to order them once pickedplac
+* 
+* Order the outcome comments high to low
+
