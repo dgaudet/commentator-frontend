@@ -1003,43 +1003,39 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       style={{
                                         display: 'flex',
                                         justifyContent: 'space-between',
-                                        alignItems: 'center',
+                                        alignItems: 'flex-start',
                                         marginBottom: spacing.md,
                                       }}
                                     >
-                                      <div
-                                        style={{
-                                          fontSize: typography.fontSize.base,
-                                          fontWeight: typography.fontWeight.semibold,
-                                          color: colors.text.primary,
-                                          lineHeight: typography.lineHeight.normal,
-                                        }}
-                                      >
-                                        {comment.firstName}
-                                        {comment.lastName ? ` ${comment.lastName}` : ''}
+                                      <div style={{ flex: 1 }}>
+                                        <div
+                                          style={{
+                                            fontSize: typography.fontSize.base,
+                                            fontWeight: typography.fontWeight.semibold,
+                                            color: colors.text.primary,
+                                            lineHeight: typography.lineHeight.normal,
+                                            marginBottom: spacing.xs,
+                                          }}
+                                        >
+                                          {comment.firstName}
+                                          {comment.lastName ? ` ${comment.lastName}` : ''}
+                                        </div>
+                                        <div
+                                          style={{
+                                            fontSize: typography.fontSize.xs,
+                                            color: colors.text.disabled,
+                                          }}
+                                        >
+                                          Created: {formatDate(comment.createdAt)}
+                                        </div>
                                       </div>
-                                      <div
-                                        style={{
-                                          fontSize: typography.fontSize.xs,
-                                          color: colors.text.disabled,
-                                        }}
-                                      >
-                                        Created: {formatDate(comment.createdAt)}
-                                      </div>
+                                      {/* Copy Button - Positioned on the right below Created label */}
+                                      {comment.comment && (
+                                        <div style={{ marginLeft: spacing.md }}>
+                                          <CopyButton text={comment.comment} />
+                                        </div>
+                                      )}
                                     </div>
-
-                                    {/* Copy Button - Positioned on the right below Created label */}
-                                    {comment.comment && (
-                                      <div
-                                        style={{
-                                          display: 'flex',
-                                          justifyContent: 'flex-end',
-                                          marginBottom: spacing.md,
-                                        }}
-                                      >
-                                        <CopyButton text={comment.comment} />
-                                      </div>
-                                    )}
 
                                     {/* Grade - Secondary info */}
                                     <div
