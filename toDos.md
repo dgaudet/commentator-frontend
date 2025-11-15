@@ -105,5 +105,3 @@ the error labels aren't standardized, the add subject is different from the rest
 When adding a new class, it should be selected by default after creation.
 
 The final comments error text doesn't use the standardized error label component.
-
-Can you create some stories to add the ability to include some placeholders in outcome comments? For example, the ability to add the student's last name dynamically. The placeholders would be <first name>, <last name>, and <grade>. The placeholders would be used when clicking the Populate with above comments button in the final comment modal, so that when the final comments are generated, they would include the student's actual last name, first name, and grade.

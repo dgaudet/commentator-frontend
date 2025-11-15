@@ -1,0 +1,35 @@
+{
+  "feature": "outcome-comment-placeholders",
+  "complexity": {
+    "level": "L1-MICRO",
+    "reasoning": "Simple feature enhancement with 6 user stories, 1-2 week duration, single frontend developer, no external integrations, no data migrations. Adds placeholder replacement logic to existing OutcomeComment system.",
+    "assessedAt": "2025-01-14T00:00:00Z",
+    "scope": {
+      "storyCount": 6,
+      "estimatedPoints": 10,
+      "duration": "1-2 weeks"
+    },
+    "technical": {
+      "externalIntegrations": false,
+      "dataMigrations": false,
+      "performanceCritical": false,
+      "affectedComponents": ["OutcomeComments", "FinalCommentsModal", "Populate Button"]
+    },
+    "team": {
+      "size": "single developer",
+      "specializedSkills": false,
+      "compliance": false
+    }
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "NOT_STARTED",
+    "testing": "NOT_STARTED"
+  },
+  "artifacts": {
+    "required": ["prd.md"],
+    "optional": [],
+    "created": ["metadata.json", "prd.md"]
+  }
+}
