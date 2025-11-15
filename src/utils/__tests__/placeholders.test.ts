@@ -320,13 +320,24 @@ describe('validatePlaceholders', () => {
       expect(warnings[0]).toContain('<first name>')
     })
 
-    it('detects unclosed placeholder in middle of text', () => {
+    it('detects unclosed placeholder that starts in middle and extends to end', () => {
       const text = 'Hello, <first name and goodbye.'
 
       const warnings = validatePlaceholders(text)
 
       expect(warnings).toHaveLength(1)
       expect(warnings[0]).toContain('not closed')
+    })
+
+    it('does not detect unclosed placeholder in middle when followed by other content', () => {
+      // This is expected behavior - we only detect unclosed placeholders at the END
+      // to avoid false positives while user is still typing
+      const text = 'Hello, <first name and <last name>'
+
+      const warnings = validatePlaceholders(text)
+
+      // The <last name> at the end is closed, so no warning
+      expect(warnings).toHaveLength(0)
     })
   })
 
