@@ -106,4 +106,12 @@ When adding a new class, it should be selected by default after creation.
 
 The final comments error text doesn't use the standardized error label component.
 
-Can you create some stories to add the ability to include some placeholders in outcome comments? For example, the ability to add the student's last name dynamically. The placeholders would be <first name>, <last name>, and <grade>. The placeholders would be used when clicking the Populate with above comments button in the final comment modal, so that when the final comments are generated, they would include the student's actual last name, first name, and grade.
+Questions:
+* should you be able to create outcome comments that overlap in ranges?
+** sure
+* should the personal comments have placeholders as well?
+** yes
+* Order the outcome comments high to low
+* Add a rating to the personalized comments, so they can be ordered in the dropdown and in the existing.
+* Like a star system, or emoji system, with around 5 levels.
+* Need to allow multiple personalized comments, and be able to order them once pickedplac
