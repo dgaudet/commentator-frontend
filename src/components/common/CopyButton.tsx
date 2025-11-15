@@ -34,8 +34,8 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
 }) => {
   const [copied, setCopied] = useState(false)
   const [announcement, setAnnouncement] = useState('')
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const announcementTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<number | null>(null)
+  const announcementTimeoutRef = useRef<number | null>(null)
 
   // US-COPY-005: Feature detection for Clipboard API
   const isClipboardSupported = typeof navigator !== 'undefined' && navigator.clipboard
