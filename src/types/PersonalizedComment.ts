@@ -53,6 +53,8 @@ export interface CreatePersonalizedCommentRequest {
  * Used by: PUT /personalized-comment/:id
  */
 export interface UpdatePersonalizedCommentRequest {
+  /** Associated subject ID - Required (immutable, but needed for backend validation) */
+  subjectId: number
   /** Comment text - Required (10-500 characters) */
   comment: string
   /** Comment rating (1-5) - Required, must be > 0 */

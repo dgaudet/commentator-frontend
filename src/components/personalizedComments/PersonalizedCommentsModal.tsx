@@ -129,6 +129,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     if (editingId) {
       setValidationError('')
       await onUpdateComment(editingId, {
+        subjectId: entityData.id,
         comment: editContent.trim(),
         rating: editRating, // US-RATING-003: Include rating
       })

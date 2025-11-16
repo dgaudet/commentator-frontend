@@ -153,6 +153,7 @@ describe('PersonalizedCommentsModal', () => {
 
       await waitFor(() => {
         expect(onUpdateComment).toHaveBeenCalledWith(1, {
+          subjectId: 1,
           comment: 'Updated comment text that is long enough',
           rating: 3, // Default rating (mockComment has undefined rating → normalized to 3)
         })

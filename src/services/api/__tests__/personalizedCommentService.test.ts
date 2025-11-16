@@ -63,14 +63,14 @@ describe('PersonalizedCommentService', () => {
         config: {} as InternalAxiosRequestConfig,
       })
       mockApiClient.post.mockResolvedValue({
-        data: { id: 1, comment: 'test', subjectId: 1, createdAt: '', updatedAt: '' },
+        data: { id: 1, comment: 'test', subjectId: 1, rating: 3, createdAt: '', updatedAt: '' },
         status: 201,
         statusText: 'Created',
         headers: {},
         config: {} as InternalAxiosRequestConfig,
       })
       mockApiClient.put.mockResolvedValue({
-        data: { id: 1, comment: 'updated', subjectId: 1, createdAt: '', updatedAt: '' },
+        data: { id: 1, comment: 'updated', subjectId: 1, rating: 4, createdAt: '', updatedAt: '' },
         status: 200,
         statusText: 'OK',
         headers: {},
@@ -94,20 +94,28 @@ describe('PersonalizedCommentService', () => {
       const request = {
         comment: 'Test comment',
         subjectId: 1,
+        rating: 3,
       }
       await personalizedCommentService.create(request)
       expect(mockApiClient.post).toHaveBeenCalledWith('/personalized-comment', {
         comment: 'Test comment',
         subjectId: 1,
+        rating: 3,
       })
     })
 
     it('update should accept id and UpdatePersonalizedCommentRequest', async () => {
       const request = {
+        subjectId: 1,
         comment: 'Updated comment',
+        rating: 4,
       }
       await personalizedCommentService.update(1, request)
-      expect(mockApiClient.put).toHaveBeenCalledWith('/personalized-comment/1', request)
+      expect(mockApiClient.put).toHaveBeenCalledWith('/personalized-comment/1', {
+        subjectId: 1,
+        comment: 'Updated comment',
+        rating: 4,
+      })
     })
 
     it('delete should accept an id parameter', async () => {
@@ -127,14 +135,14 @@ describe('PersonalizedCommentService', () => {
     it('create should throw error on API failure', async () => {
       mockApiClient.post.mockRejectedValue(new Error('API Error'))
       await expect(
-        personalizedCommentService.create({ comment: 'Test', subjectId: 1 }),
+        personalizedCommentService.create({ comment: 'Test', subjectId: 1, rating: 3 }),
       ).rejects.toThrow('Failed to create personalized comment')
     })
 
     it('update should throw error on API failure', async () => {
       mockApiClient.put.mockRejectedValue(new Error('API Error'))
       await expect(
-        personalizedCommentService.update(1, { comment: 'Updated' }),
+        personalizedCommentService.update(1, { subjectId: 1, comment: 'Updated', rating: 4 }),
       ).rejects.toThrow('Failed to update personalized comment')
     })
 

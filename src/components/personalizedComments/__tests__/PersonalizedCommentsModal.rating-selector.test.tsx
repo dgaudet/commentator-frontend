@@ -268,6 +268,7 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
       await waitFor(() => {
         expect(onUpdateComment).toHaveBeenCalledTimes(1)
         expect(onUpdateComment).toHaveBeenCalledWith(1, {
+          subjectId: 1,
           comment: 'Existing comment',
           rating: 5,
         })
