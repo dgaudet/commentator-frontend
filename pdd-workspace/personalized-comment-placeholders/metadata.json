@@ -1,0 +1,46 @@
+{
+  "feature": "personalized-comment-placeholders",
+  "title": "Personalized Comments - Placeholder Support",
+  "description": "Extend PersonalizedComments with dynamic placeholder support matching OutcomeComments functionality",
+  "complexity": {
+    "level": "L1-MICRO",
+    "reasoning": "3-5 user stories, 1-2 weeks effort, extends existing placeholder system (already built), simple UI reorganization, no external integrations or complex logic",
+    "storyPoints": 8,
+    "estimatedWeeks": "1-2",
+    "assessedAt": "2025-01-16T21:30:00Z"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "testing": "PENDING",
+    "deployment": "PENDING"
+  },
+  "artifacts": {
+    "prd": "pdd-workspace/personalized-comment-placeholders/planning/prd.md",
+    "userStories": "pdd-workspace/personalized-comment-placeholders/planning/user-stories.md"
+  },
+  "dependencies": {
+    "internal": [
+      "src/utils/placeholders.ts",
+      "src/components/common/EmojiRatingSelector.tsx",
+      "Design token system"
+    ],
+    "external": []
+  },
+  "stakeholders": {
+    "productOwner": "Principal Product Owner",
+    "techLead": "TBD",
+    "developers": ["TBD"]
+  },
+  "successMetrics": {
+    "adoptionRate": "50%+ of personalized comments use placeholders within 1 month",
+    "timeSavings": "30% reduction in time spent creating personalized comments",
+    "errorReduction": "80% decrease in typos in student names/grades",
+    "userSatisfaction": "85%+ positive feedback"
+  },
+  "tags": ["ui-enhancement", "teacher-experience", "placeholder", "validation", "accessibility"],
+  "priority": "HIGH",
+  "createdAt": "2025-01-16T21:30:00Z",
+  "updatedAt": "2025-01-16T21:30:00Z"
+}
