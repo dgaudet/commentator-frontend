@@ -50,6 +50,7 @@ import type {
   CreateFinalCommentRequest,
   UpdateFinalCommentRequest,
   Class,
+  PersonalizedComment,
 } from '../../types'
 import { useOutcomeComments } from '../../hooks/useOutcomeComments'
 import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
@@ -59,11 +60,11 @@ import { Input } from '../common/Input'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
-import { TypeaheadSearch } from '../common/TypeaheadSearch'
+import { PersonalizedCommentMultiSelect } from './PersonalizedCommentMultiSelect'
+import { SelectedCommentsList } from './SelectedCommentsList'
 import { CopyButton } from '../common/CopyButton'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
-import { getRatingEmoji, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -122,9 +123,13 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const addCommentTextareaRef = useRef<HTMLTextAreaElement>(null)
   const editCommentTextareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // US-FC-REFACTOR-003: Track selected personal comments for populate button
-  const [selectedAddPersonalComment, setSelectedAddPersonalComment] = useState<string>('')
-  const [selectedEditPersonalComment, setSelectedEditPersonalComment] = useState<string>('')
+  // US-RATING-006: Track selected personal comment IDs for multi-select
+  const [selectedAddCommentIds, setSelectedAddCommentIds] = useState<number[]>([])
+  const [selectedEditCommentIds, setSelectedEditCommentIds] = useState<number[]>([])
+
+  // US-RATING-006: Track ordered selected comments for display
+  const [orderedAddComments, setOrderedAddComments] = useState<PersonalizedComment[]>([])
+  const [orderedEditComments, setOrderedEditComments] = useState<PersonalizedComment[]>([])
 
   // FCOI-001: Use outcome comments hook
   const {
@@ -184,8 +189,11 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       addForm.reset()
       editForm.reset()
       setEditingId(null)
-      setSelectedAddPersonalComment('')
-      setSelectedEditPersonalComment('')
+      // US-RATING-006: Clear multi-select state
+      setSelectedAddCommentIds([])
+      setSelectedEditCommentIds([])
+      setOrderedAddComments([])
+      setOrderedEditComments([])
     }
   }, [isOpen, addForm, editForm])
 
@@ -231,8 +239,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
 
       // Clear form on success
       addForm.reset()
-      // US-FC-REFACTOR-002: Clear selected personal comment state
-      setSelectedAddPersonalComment('')
+      // US-RATING-006: Clear multi-select state
+      setSelectedAddCommentIds([])
+      setOrderedAddComments([])
     } catch (err) {
       addForm.setValidationError('Failed to add final comment. Please try again.')
     } finally {
@@ -282,6 +291,60 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       className: '',
       classYear: 0,
     })
+  }
+
+  /**
+   * US-RATING-006: Handle selection change in multi-select component
+   * Updates both the selected IDs and the ordered comments list
+   */
+  const handleSelectionChange = (formType: 'add' | 'edit', selectedIds: number[]) => {
+    // Update selected IDs
+    if (formType === 'add') {
+      setSelectedAddCommentIds(selectedIds)
+
+      // Update ordered comments: preserve existing order, add new selections at end
+      const existingIds = orderedAddComments.map(c => c.id)
+      const newIds = selectedIds.filter(id => !existingIds.includes(id))
+      const newComments = personalizedComments.filter(c => newIds.includes(c.id))
+      const updatedComments = orderedAddComments.filter(c => selectedIds.includes(c.id))
+      setOrderedAddComments([...updatedComments, ...newComments])
+    } else {
+      setSelectedEditCommentIds(selectedIds)
+
+      const existingIds = orderedEditComments.map(c => c.id)
+      const newIds = selectedIds.filter(id => !existingIds.includes(id))
+      const newComments = personalizedComments.filter(c => newIds.includes(c.id))
+      const updatedComments = orderedEditComments.filter(c => selectedIds.includes(c.id))
+      setOrderedEditComments([...updatedComments, ...newComments])
+    }
+  }
+
+  /**
+   * US-RATING-006: Handle reordering of selected comments
+   * Swaps two items in the ordered list
+   */
+  const handleReorder = (formType: 'add' | 'edit', fromIndex: number, toIndex: number) => {
+    const orderedComments = formType === 'add' ? orderedAddComments : orderedEditComments
+    const setOrderedComments = formType === 'add' ? setOrderedAddComments : setOrderedEditComments
+
+    const newOrder = [...orderedComments]
+    const [movedItem] = newOrder.splice(fromIndex, 1)
+    newOrder.splice(toIndex, 0, movedItem)
+    setOrderedComments(newOrder)
+  }
+
+  /**
+   * US-RATING-006: Handle removal of a selected comment
+   * Removes from both selected IDs and ordered list
+   */
+  const handleRemove = (formType: 'add' | 'edit', commentId: number) => {
+    if (formType === 'add') {
+      setSelectedAddCommentIds(ids => ids.filter(id => id !== commentId))
+      setOrderedAddComments(comments => comments.filter(c => c.id !== commentId))
+    } else {
+      setSelectedEditCommentIds(ids => ids.filter(id => id !== commentId))
+      setOrderedEditComments(comments => comments.filter(c => c.id !== commentId))
+    }
   }
 
   /**
@@ -369,7 +432,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     const targetFormType = formType || populateConfirmation.formType
     const form = targetFormType === 'add' ? addForm : editForm
     const textareaRef = targetFormType === 'add' ? addCommentTextareaRef : editCommentTextareaRef
-    const selectedPersonalComment = targetFormType === 'add' ? selectedAddPersonalComment : selectedEditPersonalComment
+    // US-RATING-006 & US-RATING-008: Use ordered comments array instead of single comment
+    const orderedComments = targetFormType === 'add' ? orderedAddComments : orderedEditComments
 
     // US-PLACEHOLDER-004: Prepare student data for placeholder replacement
     const studentData: StudentData = {
@@ -391,15 +455,15 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       }
     }
 
-    // US-FC-REFACTOR-004: Add personal comment if selected and trim whitespace
+    // US-RATING-006 & US-RATING-008: Add personalized comments in order
     // US-PLACEHOLDER-004: Replace placeholders before adding to parts
-    if (selectedPersonalComment) {
-      const trimmedPersonal = selectedPersonalComment.trim()
+    orderedComments.forEach((comment) => {
+      const trimmedPersonal = comment.comment.trim()
       if (trimmedPersonal) {
         const withPlaceholdersReplaced = replacePlaceholders(trimmedPersonal, studentData)
         parts.push(withPlaceholdersReplaced)
       }
-    }
+    })
 
     // Concatenate with single space separator (per user's choice: Option A)
     let populatedText = parts.join(' ')
@@ -487,8 +551,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       // Exit edit mode on success
       setEditingId(null)
       editForm.reset()
-      // US-FC-REFACTOR-002: Clear selected personal comment state
-      setSelectedEditPersonalComment('')
+      // US-RATING-006: Clear multi-select state
+      setSelectedEditCommentIds([])
+      setOrderedEditComments([])
     } catch (err) {
       editForm.setValidationError('Failed to update final comment. Please try again.')
     }
@@ -498,8 +563,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const handleEditCancel = () => {
     setEditingId(null)
     editForm.reset()
-    // US-FC-REFACTOR-002: Clear selected personal comment state
-    setSelectedEditPersonalComment('')
+    // US-RATING-006: Clear multi-select state
+    setSelectedEditCommentIds([])
+    setOrderedEditComments([])
   }
 
   // Sort final comments by firstName alphabetically (A-Z)
@@ -639,38 +705,35 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   )}
                 </div>
 
-                {/* US-PC-TYPEAHEAD-003: Personalized Comment Search */}
-                {/* US-RATING-005: Sorted by rating with emoji display */}
-                <TypeaheadSearch
-                  items={sortPersonalizedCommentsByRating(personalizedComments)}
-                  getItemLabel={(comment) => comment.comment}
-                  getItemKey={(comment) => comment.id}
-                  getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
-                  searchQuery={addForm.personalizedCommentSearch}
-                  onSearchChange={addForm.setPersonalizedCommentSearch}
-                  onSelect={(selectedComment) => {
-                    // US-FC-REFACTOR-003: Track selected comment for populate button
-                    // US-FC-REFACTOR-002: Keep selected comment visible for user feedback
-                    setSelectedAddPersonalComment(selectedComment.comment)
-                    addForm.setPersonalizedCommentSearch(selectedComment.comment)
-                  }}
-                  label="Personalized Comment (Optional)"
-                  placeholder="Search personalized comments..."
-                  emptyMessage="No personalized comments available for this subject"
+                {/* US-RATING-006: Multi-select personalized comments */}
+                <PersonalizedCommentMultiSelect
+                  comments={personalizedComments}
+                  selectedIds={selectedAddCommentIds}
+                  onSelectionChange={(selectedIds) => handleSelectionChange('add', selectedIds)}
                   loading={personalizedCommentsLoading}
                   error={personalizedCommentsError}
-                  disabled={submitting}
                 />
 
-                {/* US-FC-REFACTOR-003: Populate with Above Comments Button */}
+                {/* US-RATING-006: Show selected comments in order with reorder/remove controls */}
+                {orderedAddComments.length > 0 && (
+                  <div style={{ marginBottom: spacing.lg }}>
+                    <SelectedCommentsList
+                      selectedComments={orderedAddComments}
+                      onReorder={(fromIndex, toIndex) => handleReorder('add', fromIndex, toIndex)}
+                      onRemove={(commentId) => handleRemove('add', commentId)}
+                    />
+                  </div>
+                )}
+
+                {/* US-RATING-006 & US-RATING-008: Populate with Above Comments Button */}
                 <div style={{ marginBottom: spacing.lg }}>
                   <Button
                     onClick={() => handlePopulateClick('add')}
                     variant="secondary"
                     disabled={
-                      // US-FC-REFACTOR-004: Disable if both comments are empty or whitespace-only
+                      // US-RATING-006: Disable if both outcome comment and ordered comments are empty
                       (!addForm.matchedOutcomeComment || !addForm.matchedOutcomeComment.trim()) &&
-                      (!selectedAddPersonalComment || !selectedAddPersonalComment.trim())
+                      orderedAddComments.length === 0
                     }
                   >
                     Populate with Above Comments
@@ -909,38 +972,35 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       )}
                                     </div>
 
-                                    {/* US-PC-TYPEAHEAD-004: Personalized Comment Search (Edit Form) */}
-                                    {/* US-RATING-005: Sorted by rating with emoji display */}
-                                    <TypeaheadSearch
-                                      items={sortPersonalizedCommentsByRating(personalizedComments)}
-                                      getItemLabel={(personalizedComment) => personalizedComment.comment}
-                                      getItemKey={(personalizedComment) => personalizedComment.id}
-                                      getItemPrefix={(personalizedComment) => getRatingEmoji(getNormalizedRating(personalizedComment))}
-                                      searchQuery={editForm.personalizedCommentSearch}
-                                      onSearchChange={editForm.setPersonalizedCommentSearch}
-                                      onSelect={(selectedComment) => {
-                                        // US-FC-REFACTOR-003: Track selected comment for populate button
-                                        // US-FC-REFACTOR-002: Keep selected comment visible for user feedback
-                                        setSelectedEditPersonalComment(selectedComment.comment)
-                                        editForm.setPersonalizedCommentSearch(selectedComment.comment)
-                                      }}
-                                      label="Personalized Comment (Optional)"
-                                      placeholder="Search personalized comments..."
-                                      emptyMessage="No personalized comments available for this subject"
+                                    {/* US-RATING-006: Multi-select personalized comments (Edit Form) */}
+                                    <PersonalizedCommentMultiSelect
+                                      comments={personalizedComments}
+                                      selectedIds={selectedEditCommentIds}
+                                      onSelectionChange={(selectedIds) => handleSelectionChange('edit', selectedIds)}
                                       loading={personalizedCommentsLoading}
                                       error={personalizedCommentsError}
-                                      disabled={submitting}
                                     />
 
-                                    {/* US-FC-REFACTOR-003: Populate with Above Comments Button (Edit Mode) */}
+                                    {/* US-RATING-006: Show selected comments in order with reorder/remove controls (Edit Form) */}
+                                    {orderedEditComments.length > 0 && (
+                                      <div style={{ marginBottom: spacing.lg }}>
+                                        <SelectedCommentsList
+                                          selectedComments={orderedEditComments}
+                                          onReorder={(fromIndex, toIndex) => handleReorder('edit', fromIndex, toIndex)}
+                                          onRemove={(commentId) => handleRemove('edit', commentId)}
+                                        />
+                                      </div>
+                                    )}
+
+                                    {/* US-RATING-006 & US-RATING-008: Populate with Above Comments Button (Edit Mode) */}
                                     <div style={{ marginBottom: spacing.lg }}>
                                       <Button
                                         onClick={() => handlePopulateClick('edit')}
                                         variant="secondary"
                                         disabled={
-                                          // US-FC-REFACTOR-004: Disable if both comments are empty or whitespace-only
+                                          // US-RATING-006: Disable if both outcome comment and ordered comments are empty
                                           (!editForm.matchedOutcomeComment || !editForm.matchedOutcomeComment.trim()) &&
-                                          (!selectedEditPersonalComment || !selectedEditPersonalComment.trim())
+                                          orderedEditComments.length === 0
                                         }
                                       >
                                         Populate with Above Comments
