@@ -182,7 +182,7 @@ describe('SelectedCommentsList', () => {
       expect(removeButtons).toHaveLength(3)
     })
 
-    it('should call onRemove with comment id when remove clicked', () => {
+    it('should call onRemove with index when remove clicked', () => {
       render(
         <SelectedCommentsList
           selectedComments={mockComments}
@@ -194,7 +194,7 @@ describe('SelectedCommentsList', () => {
       const removeButtons = screen.getAllByLabelText(/Remove/i)
       fireEvent.click(removeButtons[1]) // Remove second item
 
-      expect(mockOnRemove).toHaveBeenCalledWith(2) // id of second comment
+      expect(mockOnRemove).toHaveBeenCalledWith(1) // index of second comment
     })
   })
 

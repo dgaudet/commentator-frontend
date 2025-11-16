@@ -21,8 +21,8 @@ interface SelectedCommentsListProps {
   selectedComments: PersonalizedComment[]
   /** Callback when item order changes */
   onReorder: (fromIndex: number, toIndex: number) => void
-  /** Callback when item is removed */
-  onRemove: (commentId: number) => void
+  /** Callback when item is removed (by index to support duplicates) */
+  onRemove: (index: number) => void
 }
 
 /**
@@ -81,7 +81,7 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
 
           return (
             <div
-              key={comment.id}
+              key={index}
               role="listitem"
               style={{
                 display: 'flex',
@@ -170,7 +170,7 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
               {/* Remove button */}
               <button
                 type="button"
-                onClick={() => onRemove(comment.id)}
+                onClick={() => onRemove(index)}
                 aria-label={`Remove: ${comment.comment}`}
                 style={{
                   padding: spacing.xs,

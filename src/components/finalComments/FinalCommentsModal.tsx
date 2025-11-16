@@ -60,11 +60,12 @@ import { Input } from '../common/Input'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
-import { PersonalizedCommentMultiSelect } from './PersonalizedCommentMultiSelect'
+import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { SelectedCommentsList } from './SelectedCommentsList'
 import { CopyButton } from '../common/CopyButton'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
+import { getRatingEmoji, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -122,10 +123,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   // US-FC-REFACTOR-003: Refs for focus management after populate
   const addCommentTextareaRef = useRef<HTMLTextAreaElement>(null)
   const editCommentTextareaRef = useRef<HTMLTextAreaElement>(null)
-
-  // US-RATING-006: Track selected personal comment IDs for multi-select
-  const [selectedAddCommentIds, setSelectedAddCommentIds] = useState<number[]>([])
-  const [selectedEditCommentIds, setSelectedEditCommentIds] = useState<number[]>([])
 
   // US-RATING-006: Track ordered selected comments for display
   const [orderedAddComments, setOrderedAddComments] = useState<PersonalizedComment[]>([])
@@ -189,9 +186,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       addForm.reset()
       editForm.reset()
       setEditingId(null)
-      // US-RATING-006: Clear multi-select state
-      setSelectedAddCommentIds([])
-      setSelectedEditCommentIds([])
+      // US-RATING-006: Clear ordered comments state
       setOrderedAddComments([])
       setOrderedEditComments([])
     }
@@ -239,8 +234,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
 
       // Clear form on success
       addForm.reset()
-      // US-RATING-006: Clear multi-select state
-      setSelectedAddCommentIds([])
+      // US-RATING-006: Clear ordered comments state
       setOrderedAddComments([])
     } catch (err) {
       addForm.setValidationError('Failed to add final comment. Please try again.')
@@ -294,32 +288,6 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   }
 
   /**
-   * US-RATING-006: Handle selection change in multi-select component
-   * Updates both the selected IDs and the ordered comments list
-   */
-  const handleSelectionChange = (formType: 'add' | 'edit', selectedIds: number[]) => {
-    // Update selected IDs
-    if (formType === 'add') {
-      setSelectedAddCommentIds(selectedIds)
-
-      // Update ordered comments: preserve existing order, add new selections at end
-      const existingIds = orderedAddComments.map(c => c.id)
-      const newIds = selectedIds.filter(id => !existingIds.includes(id))
-      const newComments = personalizedComments.filter(c => newIds.includes(c.id))
-      const updatedComments = orderedAddComments.filter(c => selectedIds.includes(c.id))
-      setOrderedAddComments([...updatedComments, ...newComments])
-    } else {
-      setSelectedEditCommentIds(selectedIds)
-
-      const existingIds = orderedEditComments.map(c => c.id)
-      const newIds = selectedIds.filter(id => !existingIds.includes(id))
-      const newComments = personalizedComments.filter(c => newIds.includes(c.id))
-      const updatedComments = orderedEditComments.filter(c => selectedIds.includes(c.id))
-      setOrderedEditComments([...updatedComments, ...newComments])
-    }
-  }
-
-  /**
    * US-RATING-006: Handle reordering of selected comments
    * Swaps two items in the ordered list
    */
@@ -335,15 +303,13 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
 
   /**
    * US-RATING-006: Handle removal of a selected comment
-   * Removes from both selected IDs and ordered list
+   * Removes from ordered list by index (supports duplicates)
    */
-  const handleRemove = (formType: 'add' | 'edit', commentId: number) => {
+  const handleRemove = (formType: 'add' | 'edit', index: number) => {
     if (formType === 'add') {
-      setSelectedAddCommentIds(ids => ids.filter(id => id !== commentId))
-      setOrderedAddComments(comments => comments.filter(c => c.id !== commentId))
+      setOrderedAddComments(comments => comments.filter((_, i) => i !== index))
     } else {
-      setSelectedEditCommentIds(ids => ids.filter(id => id !== commentId))
-      setOrderedEditComments(comments => comments.filter(c => c.id !== commentId))
+      setOrderedEditComments(comments => comments.filter((_, i) => i !== index))
     }
   }
 
@@ -551,8 +517,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
       // Exit edit mode on success
       setEditingId(null)
       editForm.reset()
-      // US-RATING-006: Clear multi-select state
-      setSelectedEditCommentIds([])
+      // US-RATING-006: Clear ordered comments state
       setOrderedEditComments([])
     } catch (err) {
       editForm.setValidationError('Failed to update final comment. Please try again.')
@@ -563,8 +528,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   const handleEditCancel = () => {
     setEditingId(null)
     editForm.reset()
-    // US-RATING-006: Clear multi-select state
-    setSelectedEditCommentIds([])
+    // US-RATING-006: Clear ordered comments state
     setOrderedEditComments([])
   }
 
@@ -705,13 +669,26 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   )}
                 </div>
 
-                {/* US-RATING-006: Multi-select personalized comments */}
-                <PersonalizedCommentMultiSelect
-                  comments={personalizedComments}
-                  selectedIds={selectedAddCommentIds}
-                  onSelectionChange={(selectedIds) => handleSelectionChange('add', selectedIds)}
+                {/* US-RATING-006: Typeahead to select multiple personalized comments */}
+                <TypeaheadSearch
+                  items={sortPersonalizedCommentsByRating(personalizedComments)}
+                  getItemLabel={(comment) => comment.comment}
+                  getItemKey={(comment) => comment.id}
+                  getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
+                  searchQuery={addForm.personalizedCommentSearch}
+                  onSearchChange={addForm.setPersonalizedCommentSearch}
+                  onSelect={(selectedComment) => {
+                    // Add to ordered list (allow duplicates)
+                    setOrderedAddComments([...orderedAddComments, selectedComment])
+                    // Clear search for next selection
+                    addForm.setPersonalizedCommentSearch('')
+                  }}
+                  label="Personalized Comment (Optional)"
+                  placeholder={orderedAddComments.length > 0 ? 'Search personalized comments to add...' : 'Search personalized comments...'}
+                  emptyMessage="No personalized comments available for this subject"
                   loading={personalizedCommentsLoading}
                   error={personalizedCommentsError}
+                  disabled={submitting}
                 />
 
                 {/* US-RATING-006: Show selected comments in order with reorder/remove controls */}
@@ -720,7 +697,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                     <SelectedCommentsList
                       selectedComments={orderedAddComments}
                       onReorder={(fromIndex, toIndex) => handleReorder('add', fromIndex, toIndex)}
-                      onRemove={(commentId) => handleRemove('add', commentId)}
+                      onRemove={(index) => handleRemove('add', index)}
                     />
                   </div>
                 )}
@@ -972,13 +949,26 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       )}
                                     </div>
 
-                                    {/* US-RATING-006: Multi-select personalized comments (Edit Form) */}
-                                    <PersonalizedCommentMultiSelect
-                                      comments={personalizedComments}
-                                      selectedIds={selectedEditCommentIds}
-                                      onSelectionChange={(selectedIds) => handleSelectionChange('edit', selectedIds)}
+                                    {/* US-RATING-006: Typeahead to select multiple personalized comments (Edit Form) */}
+                                    <TypeaheadSearch
+                                      items={sortPersonalizedCommentsByRating(personalizedComments)}
+                                      getItemLabel={(comment) => comment.comment}
+                                      getItemKey={(comment) => comment.id}
+                                      getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
+                                      searchQuery={editForm.personalizedCommentSearch}
+                                      onSearchChange={editForm.setPersonalizedCommentSearch}
+                                      onSelect={(selectedComment) => {
+                                        // Add to ordered list (allow duplicates)
+                                        setOrderedEditComments([...orderedEditComments, selectedComment])
+                                        // Clear search for next selection
+                                        editForm.setPersonalizedCommentSearch('')
+                                      }}
+                                      label="Personalized Comment (Optional)"
+                                      placeholder={orderedEditComments.length > 0 ? 'Search personalized comments to add...' : 'Search personalized comments...'}
+                                      emptyMessage="No personalized comments available for this subject"
                                       loading={personalizedCommentsLoading}
                                       error={personalizedCommentsError}
+                                      disabled={submitting}
                                     />
 
                                     {/* US-RATING-006: Show selected comments in order with reorder/remove controls (Edit Form) */}
@@ -987,7 +977,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         <SelectedCommentsList
                                           selectedComments={orderedEditComments}
                                           onReorder={(fromIndex, toIndex) => handleReorder('edit', fromIndex, toIndex)}
-                                          onRemove={(commentId) => handleRemove('edit', commentId)}
+                                          onRemove={(index) => handleRemove('edit', index)}
                                         />
                                       </div>
                                     )}
