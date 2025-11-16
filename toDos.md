@@ -115,3 +115,5 @@ Questions:
 * Need to allow multiple personalized comments, and be able to order them once picked
 * 
 * Order the outcome comments high to low
+
+The personalized comment validation for placeholders is too low

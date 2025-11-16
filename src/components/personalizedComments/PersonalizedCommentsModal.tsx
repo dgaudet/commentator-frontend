@@ -33,6 +33,7 @@ import { ConfirmationModal } from '../common/ConfirmationModal'
 import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
+import { validatePlaceholders } from '../../utils/placeholders'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -57,9 +58,11 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
 }: PersonalizedCommentsModalProps<T>) => {
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newCommentRating, setNewCommentRating] = useState(3) // Default rating: 3 (Neutral)
+  const [newCommentPlaceholderWarnings, setNewCommentPlaceholderWarnings] = useState<string[]>([])
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editContent, setEditContent] = useState('')
   const [editRating, setEditRating] = useState(3)
+  const [editPlaceholderWarnings, setEditPlaceholderWarnings] = useState<string[]>([])
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
     commentId: number | null
@@ -216,18 +219,71 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                 >
                   Add New Personalized Comment
                 </h3>
-                {/* US-RATING-003: Rating Selector */}
-                <EmojiRatingSelector
-                  id="new-comment-rating"
-                  label="Rating"
-                  value={newCommentRating}
-                  onChange={setNewCommentRating}
-                  required
-                />
+
+                {/* US-PLACEHOLDER-PC-001: Placeholder Tips Box */}
+                <div
+                  style={{
+                    padding: spacing.md,
+                    marginBottom: spacing.md,
+                    backgroundColor: colors.primary[50],
+                    border: `${borders.width.thin} solid ${colors.primary[200]}`,
+                    borderRadius: borders.radius.md,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.semibold,
+                      color: colors.primary[700],
+                      marginBottom: spacing.xs,
+                    }}
+                  >
+                    💡 Tip: Use Dynamic Placeholders
+                  </div>
+                  <div
+                    style={{
+                      fontSize: typography.fontSize.sm,
+                      color: colors.text.secondary,
+                      lineHeight: typography.lineHeight.relaxed,
+                    }}
+                  >
+                    Add placeholders to personalize comments for each student:
+                    <br />
+                    <code style={{
+                      padding: '2px 4px',
+                      backgroundColor: colors.background.secondary,
+                      borderRadius: borders.radius.sm,
+                      fontSize: typography.fontSize.xs,
+                    }}>&lt;first name&gt;</code>{' '}
+                    <code style={{
+                      padding: '2px 4px',
+                      backgroundColor: colors.background.secondary,
+                      borderRadius: borders.radius.sm,
+                      fontSize: typography.fontSize.xs,
+                    }}>&lt;last name&gt;</code>{' '}
+                    <code style={{
+                      padding: '2px 4px',
+                      backgroundColor: colors.background.secondary,
+                      borderRadius: borders.radius.sm,
+                      fontSize: typography.fontSize.xs,
+                    }}>&lt;grade&gt;</code>
+                    <br />
+                    <em style={{ color: colors.text.tertiary }}>
+                      Example: "&lt;first name&gt; earned &lt;grade&gt; points" → "Alice earned 95 points"
+                    </em>
+                  </div>
+                </div>
+
+                {/* US-PLACEHOLDER-PC-004: Textarea before rating selector */}
                 <div style={{ marginBottom: spacing.lg }}>
                   <textarea
                     value={newCommentContent}
-                    onChange={(e) => setNewCommentContent(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setNewCommentContent(value)
+                      // US-PLACEHOLDER-PC-003: Validate placeholders on input
+                      setNewCommentPlaceholderWarnings(validatePlaceholders(value))
+                    }}
                     placeholder="Enter personalized comment (10-500 characters)..."
                     aria-label="Add new personalized comment"
                     rows={4}
@@ -259,7 +315,37 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                       <span style={{ color: colors.text.tertiary }}> (minimum 10)</span>
                     )}
                   </div>
+
+                  {/* US-PLACEHOLDER-PC-003: Placeholder validation warnings */}
+                  {newCommentPlaceholderWarnings.length > 0 && (
+                    <div
+                      role="alert"
+                      aria-live="polite"
+                      style={{
+                        padding: spacing.md,
+                        marginTop: spacing.md,
+                        backgroundColor: colors.semantic.warningLight,
+                        border: `${borders.width.thin} solid ${colors.semantic.warning}`,
+                        borderRadius: borders.radius.md,
+                        color: colors.semantic.warning,
+                        fontSize: typography.fontSize.sm,
+                      }}
+                    >
+                      {newCommentPlaceholderWarnings.map((warning, index) => (
+                        <div key={index}>{warning}</div>
+                      ))}
+                    </div>
+                  )}
                 </div>
+
+                {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
+                <EmojiRatingSelector
+                  id="new-comment-rating"
+                  label="Rating"
+                  value={newCommentRating}
+                  onChange={setNewCommentRating}
+                  required
+                />
                 {validationError && (
                   <div
                     role="alert"
@@ -350,17 +436,69 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                           ? (
                             /* Edit Mode */
                               <div>
-                                {/* US-RATING-003: Rating Selector */}
-                                <EmojiRatingSelector
-                                  id="edit-comment-rating"
-                                  label="Rating"
-                                  value={editRating}
-                                  onChange={setEditRating}
-                                  required
-                                />
+                                {/* US-PLACEHOLDER-PC-002: Placeholder Tips Box */}
+                                <div
+                                  style={{
+                                    padding: spacing.md,
+                                    marginBottom: spacing.md,
+                                    backgroundColor: colors.primary[50],
+                                    border: `${borders.width.thin} solid ${colors.primary[200]}`,
+                                    borderRadius: borders.radius.md,
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      fontSize: typography.fontSize.sm,
+                                      fontWeight: typography.fontWeight.semibold,
+                                      color: colors.primary[700],
+                                      marginBottom: spacing.xs,
+                                    }}
+                                  >
+                                    💡 Tip: Use Dynamic Placeholders
+                                  </div>
+                                  <div
+                                    style={{
+                                      fontSize: typography.fontSize.sm,
+                                      color: colors.text.secondary,
+                                      lineHeight: typography.lineHeight.relaxed,
+                                    }}
+                                  >
+                                    Add placeholders to personalize comments for each student:
+                                    <br />
+                                    <code style={{
+                                      padding: '2px 4px',
+                                      backgroundColor: colors.background.secondary,
+                                      borderRadius: borders.radius.sm,
+                                      fontSize: typography.fontSize.xs,
+                                    }}>&lt;first name&gt;</code>{' '}
+                                    <code style={{
+                                      padding: '2px 4px',
+                                      backgroundColor: colors.background.secondary,
+                                      borderRadius: borders.radius.sm,
+                                      fontSize: typography.fontSize.xs,
+                                    }}>&lt;last name&gt;</code>{' '}
+                                    <code style={{
+                                      padding: '2px 4px',
+                                      backgroundColor: colors.background.secondary,
+                                      borderRadius: borders.radius.sm,
+                                      fontSize: typography.fontSize.xs,
+                                    }}>&lt;grade&gt;</code>
+                                    <br />
+                                    <em style={{ color: colors.text.tertiary }}>
+                                      Example: "&lt;first name&gt; earned &lt;grade&gt; points" → "Alice earned 95 points"
+                                    </em>
+                                  </div>
+                                </div>
+
+                                {/* US-PLACEHOLDER-PC-004: Textarea before rating selector */}
                                 <textarea
                                   value={editContent}
-                                  onChange={(e) => setEditContent(e.target.value)}
+                                  onChange={(e) => {
+                                    const value = e.target.value
+                                    setEditContent(value)
+                                    // US-PLACEHOLDER-PC-003: Validate placeholders on input
+                                    setEditPlaceholderWarnings(validatePlaceholders(value))
+                                  }}
                                   rows={4}
                                   maxLength={500}
                                   style={{
@@ -392,6 +530,36 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                     <span style={{ color: colors.text.tertiary }}> (minimum 10)</span>
                                   )}
                                 </div>
+
+                                {/* US-PLACEHOLDER-PC-003: Placeholder validation warnings */}
+                                {editPlaceholderWarnings.length > 0 && (
+                                  <div
+                                    role="alert"
+                                    aria-live="polite"
+                                    style={{
+                                      padding: spacing.md,
+                                      marginBottom: spacing.lg,
+                                      backgroundColor: colors.semantic.warningLight,
+                                      border: `${borders.width.thin} solid ${colors.semantic.warning}`,
+                                      borderRadius: borders.radius.md,
+                                      color: colors.semantic.warning,
+                                      fontSize: typography.fontSize.sm,
+                                    }}
+                                  >
+                                    {editPlaceholderWarnings.map((warning, index) => (
+                                      <div key={index}>{warning}</div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
+                                <EmojiRatingSelector
+                                  id="edit-comment-rating"
+                                  label="Rating"
+                                  value={editRating}
+                                  onChange={setEditRating}
+                                  required
+                                />
                                 {validationError && (
                                   <div
                                     role="alert"

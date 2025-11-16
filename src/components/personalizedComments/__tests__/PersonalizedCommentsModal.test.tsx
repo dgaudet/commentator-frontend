@@ -381,11 +381,23 @@ describe('PersonalizedCommentsModal', () => {
         />,
       )
 
-      const commentElements = screen.getAllByText(/comment/)
+      // Use more specific queries to avoid matching placeholder tips text
+      const alphaComment = screen.getByText('Alpha comment')
+      const betaComment = screen.getByText('Beta comment')
+      const zebraComment = screen.getByText('Zebra comment')
+
+      // Verify sort order by checking DOM positions
+      const allText = document.body.textContent || ''
+      const alphaPos = allText.indexOf('Alpha comment')
+      const betaPos = allText.indexOf('Beta comment')
+      const zebraPos = allText.indexOf('Zebra comment')
+
       // Should be sorted alphabetically: Alpha, Beta, Zebra
-      expect(commentElements[0]).toHaveTextContent('Alpha comment')
-      expect(commentElements[1]).toHaveTextContent('Beta comment')
-      expect(commentElements[2]).toHaveTextContent('Zebra comment')
+      expect(alphaPos).toBeLessThan(betaPos)
+      expect(betaPos).toBeLessThan(zebraPos)
+      expect(alphaComment).toBeInTheDocument()
+      expect(betaComment).toBeInTheDocument()
+      expect(zebraComment).toBeInTheDocument()
     })
 
     it('should handle null/undefined ratings (default to 3)', () => {
@@ -438,6 +450,250 @@ describe('PersonalizedCommentsModal', () => {
       expect(posB).toBeGreaterThan(-1)
       expect(posA).toBeLessThan(posC) // Rating 5 before null (3)
       expect(posC).toBeLessThan(posB) // Null (3) before rating 1
+    })
+  })
+
+  describe('US-PLACEHOLDER-PC-001: Placeholder Tips in Add Form', () => {
+    it('should display placeholder tips box above textarea in add form', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      // Verify placeholder tips box heading
+      expect(screen.getByText('💡 Tip: Use Dynamic Placeholders')).toBeInTheDocument()
+    })
+
+    it('should display all three placeholders as code elements', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      // Verify all placeholders are displayed
+      expect(screen.getByText('<first name>')).toBeInTheDocument()
+      expect(screen.getByText('<last name>')).toBeInTheDocument()
+      expect(screen.getByText('<grade>')).toBeInTheDocument()
+    })
+
+    it('should display example transformation text', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      // Verify example text is present
+      expect(screen.getByText(/Alice earned 95 points/i)).toBeInTheDocument()
+    })
+
+    it('should display instructional text for placeholders', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      // Verify instructional text
+      expect(screen.getByText(/Add placeholders to personalize comments/i)).toBeInTheDocument()
+    })
+
+    it('should have proper styling matching OutcomeComments tips box', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      // Find the tips box by its heading
+      const heading = screen.getByText('💡 Tip: Use Dynamic Placeholders')
+      const tipsBox = heading.parentElement?.parentElement
+
+      // Verify tips box exists
+      expect(tipsBox).toBeInTheDocument()
+
+      // Note: Detailed style verification would require checking computed styles
+      // For now, we verify the component renders with the expected structure
+    })
+  })
+
+  describe('US-PLACEHOLDER-PC-002: Placeholder Tips in Edit Form', () => {
+    it('should display placeholder tips box in edit mode', () => {
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[mockComment]}
+        />,
+      )
+
+      // Enter edit mode
+      const editButton = screen.getByRole('button', { name: /Edit/i })
+      fireEvent.click(editButton)
+
+      // Verify placeholder tips box is present (should have 2 instances: add form + edit form)
+      const tipsHeadings = screen.getAllByText('💡 Tip: Use Dynamic Placeholders')
+      expect(tipsHeadings).toHaveLength(2)
+    })
+
+    it('should display all three placeholders in edit mode', () => {
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[mockComment]}
+        />,
+      )
+
+      // Enter edit mode
+      const editButton = screen.getByRole('button', { name: /Edit/i })
+      fireEvent.click(editButton)
+
+      // Verify all placeholders are displayed (2 instances each: add form + edit form)
+      const firstNamePlaceholders = screen.getAllByText('<first name>')
+      const lastNamePlaceholders = screen.getAllByText('<last name>')
+      const gradePlaceholders = screen.getAllByText('<grade>')
+      expect(firstNamePlaceholders).toHaveLength(2)
+      expect(lastNamePlaceholders).toHaveLength(2)
+      expect(gradePlaceholders).toHaveLength(2)
+    })
+
+    it('should display example transformation text in edit mode', () => {
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[mockComment]}
+        />,
+      )
+
+      // Enter edit mode
+      const editButton = screen.getByRole('button', { name: /Edit/i })
+      fireEvent.click(editButton)
+
+      // Verify example text is present (2 instances: add form + edit form)
+      const exampleTexts = screen.getAllByText(/Alice earned 95 points/i)
+      expect(exampleTexts).toHaveLength(2)
+    })
+
+    it('should maintain tips visibility when switching from add to edit mode', () => {
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[mockComment]}
+        />,
+      )
+
+      // Verify tips box is present in add form (1 instance)
+      let tipsHeadings = screen.getAllByText('💡 Tip: Use Dynamic Placeholders')
+      expect(tipsHeadings).toHaveLength(1)
+
+      // Enter edit mode
+      const editButton = screen.getByRole('button', { name: /Edit/i })
+      fireEvent.click(editButton)
+
+      // Tips box should now appear in both add form and edit form (2 instances)
+      tipsHeadings = screen.getAllByText('💡 Tip: Use Dynamic Placeholders')
+      expect(tipsHeadings).toHaveLength(2)
+    })
+  })
+
+  describe('US-PLACEHOLDER-PC-003: Validate Placeholders on Input', () => {
+    it('should show warning for unclosed placeholder in add form', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter personalized comment/i)
+      fireEvent.change(textarea, { target: { value: 'Hello <first name' } })
+
+      // Should display unclosed placeholder warning
+      expect(screen.getByText(/Placeholder not closed/i)).toBeInTheDocument()
+    })
+
+    it('should show warning for empty placeholder in add form', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter personalized comment/i)
+      fireEvent.change(textarea, { target: { value: 'Hello <>' } })
+
+      // Should display empty placeholder warning
+      expect(screen.getByText(/Empty placeholder detected/i)).toBeInTheDocument()
+    })
+
+    it('should show multiple warnings when multiple errors exist', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter personalized comment/i)
+      // Text with both unclosed and empty placeholders
+      fireEvent.change(textarea, { target: { value: 'Hello <> and <first name' } })
+
+      // Should display both warnings
+      expect(screen.getByText(/Empty placeholder detected/i)).toBeInTheDocument()
+      expect(screen.getByText(/Placeholder not closed/i)).toBeInTheDocument()
+    })
+
+    it('should hide warnings when errors are corrected', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter personalized comment/i)
+
+      // First, create an error
+      fireEvent.change(textarea, { target: { value: 'Hello <first name' } })
+      expect(screen.getByText(/Placeholder not closed/i)).toBeInTheDocument()
+
+      // Then, correct the error
+      fireEvent.change(textarea, { target: { value: 'Hello <first name>' } })
+      expect(screen.queryByText(/Placeholder not closed/i)).not.toBeInTheDocument()
+    })
+
+    it('should have proper ARIA attributes for warning box', () => {
+      render(<PersonalizedCommentsModal {...defaultProps} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter personalized comment/i)
+      fireEvent.change(textarea, { target: { value: 'Hello <>' } })
+
+      // Warning box should have role="alert" and aria-live="polite"
+      const warningBox = screen.getByRole('alert')
+      expect(warningBox).toHaveAttribute('aria-live', 'polite')
+    })
+
+    it('should not prevent form submission with warnings', () => {
+      const onCreateComment = jest.fn().mockResolvedValue(undefined)
+      render(
+        <PersonalizedCommentsModal {...defaultProps} onCreateComment={onCreateComment} />,
+      )
+
+      const textarea = screen.getByPlaceholderText(/Enter personalized comment/i)
+      const addButton = screen.getByRole('button', { name: /Add Comment/i })
+
+      // Enter text with placeholder warning (but long enough to be valid)
+      fireEvent.change(textarea, { target: { value: 'This is a valid comment with <>' } })
+
+      // Button should still be enabled (warnings don't block submission)
+      expect(addButton).not.toBeDisabled()
+    })
+
+    it('should show warning for unclosed placeholder in edit form', () => {
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[mockComment]}
+        />,
+      )
+
+      // Enter edit mode
+      const editButton = screen.getByRole('button', { name: /Edit/i })
+      fireEvent.click(editButton)
+
+      // Get edit textarea and add unclosed placeholder
+      const textarea = screen.getByDisplayValue(mockComment.comment)
+      fireEvent.change(textarea, { target: { value: 'Hello <first name' } })
+
+      // Should display unclosed placeholder warning
+      const warnings = screen.getAllByText(/Placeholder not closed/i)
+      expect(warnings.length).toBeGreaterThan(0)
+    })
+
+    it('should hide warnings in edit form when corrected', () => {
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[mockComment]}
+        />,
+      )
+
+      // Enter edit mode
+      const editButton = screen.getByRole('button', { name: /Edit/i })
+      fireEvent.click(editButton)
+
+      // Get edit textarea
+      const textarea = screen.getByDisplayValue(mockComment.comment)
+
+      // Create an error
+      fireEvent.change(textarea, { target: { value: 'Hello <first name' } })
+      expect(screen.getByText(/Placeholder not closed/i)).toBeInTheDocument()
+
+      // Correct the error
+      fireEvent.change(textarea, { target: { value: 'Hello <first name>' } })
+      expect(screen.queryByText(/Placeholder not closed/i)).not.toBeInTheDocument()
     })
   })
 })
