@@ -4,8 +4,8 @@
   "description": "Extend PersonalizedComments with dynamic placeholder support matching OutcomeComments functionality",
   "complexity": {
     "level": "L1-MICRO",
-    "reasoning": "3-5 user stories, 1-2 weeks effort, extends existing placeholder system (already built), simple UI reorganization, no external integrations or complex logic",
-    "storyPoints": 8,
+    "reasoning": "6 user stories, 1-2 weeks effort, extends existing placeholder system (already built), simple UI reorganization, integration with FinalCommentsModal populate flow, no external integrations or complex logic",
+    "storyPoints": 10,
     "estimatedWeeks": "1-2",
     "assessedAt": "2025-01-16T21:30:00Z"
   },

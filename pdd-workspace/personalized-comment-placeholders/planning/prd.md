@@ -4,8 +4,8 @@
 **Feature Name**: Personalized Comments Placeholder Support
 **Complexity Level**: L1-MICRO
 **Estimated Duration**: 1-2 weeks
-**Story Points**: 8
-**PRD Version**: 1.0
+**Story Points**: 10
+**PRD Version**: 1.1
 **Date**: 2025-01-16
 **Product Owner**: Principal Product Owner
 
@@ -253,6 +253,75 @@ AFTER:
 
 ---
 
+#### US-PLACEHOLDER-PC-006: Replace Placeholders When Populating Final Comments
+**Priority**: HIGH (MVP - Must Have)
+**Story Points**: 2
+**Complexity**: Integration with existing populate flow
+
+**User Story**:
+As a **teacher**, I want **placeholders in personalized comments to be automatically replaced with student data when I click "Populate with Above Comments"** so that **the final comment contains personalized, student-specific text**.
+
+**Acceptance Criteria** (EARS Format):
+1. **WHEN** clicking "Populate with Above Comments" in FinalCommentsModal, **THE SYSTEM SHALL** collect student data from the form (firstName, lastName, grade)
+2. **WHEN** building the final comment text, **THE SYSTEM SHALL** call `replacePlaceholders(comment, studentData)` for each selected personalized comment
+3. **WHEN** a personalized comment contains `<first name>`, **THE SYSTEM SHALL** replace it with the student's firstName from the form
+4. **WHEN** a personalized comment contains `<last name>`, **THE SYSTEM SHALL** replace it with the student's lastName from the form
+5. **WHEN** a personalized comment contains `<grade>`, **THE SYSTEM SHALL** replace it with the student's grade from the form
+6. **WHEN** multiple personalized comments are selected, **THE SYSTEM SHALL** replace placeholders in each comment individually before concatenation
+7. **WHEN** student data is missing (e.g., no lastName entered), **THE SYSTEM SHALL** leave the placeholder text unchanged (e.g., `<last name>` remains as-is)
+8. **WHEN** both outcome comments and personalized comments contain placeholders, **THE SYSTEM SHALL** replace placeholders in both types of comments
+9. **WHEN** the final comment text exceeds 1000 characters after replacement, **THE SYSTEM SHALL** truncate to 1000 characters
+
+**Workflow Example**:
+```
+1. Teacher enters student data:
+   - First Name: "Alice"
+   - Last Name: "Smith"
+   - Grade: 95
+
+2. Teacher selects personalized comment: "<first name> earned <grade> points this semester"
+
+3. Teacher clicks "Populate with Above Comments"
+
+4. System replaces placeholders:
+   - "<first name>" → "Alice"
+   - "<grade>" → "95"
+   - Result: "Alice earned 95 points this semester"
+
+5. Final comment textarea populated with: "Alice earned 95 points this semester"
+```
+
+**Technical Implementation**:
+```typescript
+// In handlePopulateConfirm function (FinalCommentsModal.tsx)
+
+// Prepare student data for placeholder replacement
+const studentData: StudentData = {
+  firstName: form.firstName || undefined,
+  lastName: form.lastName || undefined,
+  grade: form.grade !== '' ? Number(form.grade) : undefined,
+}
+
+// Replace placeholders in personalized comments (lines 426-432)
+orderedComments.forEach((comment) => {
+  const trimmedPersonal = comment.comment.trim()
+  if (trimmedPersonal) {
+    const withPlaceholdersReplaced = replacePlaceholders(trimmedPersonal, studentData)
+    parts.push(withPlaceholdersReplaced)
+  }
+})
+```
+
+**Current Status**:
+- ✅ Code structure already exists in FinalCommentsModal.tsx (lines 426-432)
+- ✅ `replacePlaceholders()` utility already implemented and tested
+- 🔄 Need to verify placeholder replacement works when PersonalizedComments now contain placeholders
+- 🔄 Need integration tests for combined OutcomeComment + PersonalizedComment placeholder replacement
+
+**Risk**: LOW - Code structure already exists, needs verification and testing
+
+---
+
 #### US-PLACEHOLDER-PC-005: Test Placeholder Functionality End-to-End
 **Priority**: HIGH (MVP - Quality Gate)
 **Story Points**: 1
@@ -266,9 +335,10 @@ As a **developer**, I want **comprehensive test coverage for placeholder functio
 2. **WHEN** running unit tests, **THE SYSTEM SHALL** verify validation warnings appear for malformed placeholders
 3. **WHEN** running unit tests, **THE SYSTEM SHALL** verify validation warnings disappear when placeholders are corrected
 4. **WHEN** running unit tests, **THE SYSTEM SHALL** verify rating selector appears below textarea
-5. **WHEN** running integration tests, **THE SYSTEM SHALL** verify full workflow: create personalized comment with placeholders → apply to final comment → verify replacement occurs
-6. **WHEN** running accessibility tests, **THE SYSTEM SHALL** verify ARIA attributes, keyboard navigation, and screen reader support
-7. **WHEN** running tests, **THE SYSTEM SHALL** achieve ≥90% code coverage for new components and logic
+5. **WHEN** running integration tests, **THE SYSTEM SHALL** verify full workflow: create personalized comment with placeholders → apply to final comment → verify replacement occurs (US-PLACEHOLDER-PC-006)
+6. **WHEN** running integration tests, **THE SYSTEM SHALL** verify both OutcomeComment and PersonalizedComment placeholders are replaced when populating final comments
+7. **WHEN** running accessibility tests, **THE SYSTEM SHALL** verify ARIA attributes, keyboard navigation, and screen reader support
+8. **WHEN** running tests, **THE SYSTEM SHALL** achieve ≥90% code coverage for new components and logic
 
 **Test Scenarios**:
 1. **Unit Tests**:
@@ -587,8 +657,9 @@ const handleEditCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 | US-PLACEHOLDER-PC-002 | Display placeholder tips (edit) | HIGH | 1 | LOW |
 | US-PLACEHOLDER-PC-003 | Validate placeholders on input | HIGH | 2 | LOW |
 | US-PLACEHOLDER-PC-004 | Move rating below textarea | MEDIUM | 2 | LOW |
+| US-PLACEHOLDER-PC-006 | Replace placeholders in final comments | HIGH | 2 | LOW |
 | US-PLACEHOLDER-PC-005 | Test coverage | HIGH | 1 | LOW |
-| **TOTAL** | | | **8** | |
+| **TOTAL** | | | **10** | |
 
 ---
 

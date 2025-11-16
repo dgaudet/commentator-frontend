@@ -2,7 +2,7 @@
 
 **Feature**: personalized-comment-placeholders
 **Complexity**: L1-MICRO
-**Story Points**: 8
+**Story Points**: 10
 **Duration**: 1-2 weeks
 
 ---
@@ -92,6 +92,36 @@
 
 ---
 
+### US-PLACEHOLDER-PC-006: Replace Placeholders When Populating Final Comments
+**Priority**: HIGH | **Points**: 2 | **Risk**: LOW
+
+**As a** teacher
+**I want** placeholders in personalized comments to be automatically replaced with student data when I click "Populate with Above Comments"
+**So that** the final comment contains personalized, student-specific text
+
+**Acceptance Criteria**:
+1. Collect student data from form (firstName, lastName, grade) when populating
+2. Call `replacePlaceholders(comment, studentData)` for each selected personalized comment
+3. Replace `<first name>` with student's firstName
+4. Replace `<last name>` with student's lastName
+5. Replace `<grade>` with student's grade
+6. Replace placeholders in each comment individually before concatenation
+7. Leave placeholder text unchanged when student data is missing
+8. Replace placeholders in both OutcomeComments and PersonalizedComments
+9. Truncate to 1000 characters after replacement if needed
+
+**Workflow Example**:
+- Student data: firstName="Alice", grade=95
+- Personalized comment: `"<first name> earned <grade> points this semester"`
+- Result after populate: `"Alice earned 95 points this semester"`
+
+**Technical Notes**:
+- Code structure already exists in FinalCommentsModal.tsx (lines 426-432)
+- Uses existing `replacePlaceholders()` utility
+- Needs verification and integration testing
+
+---
+
 ### US-PLACEHOLDER-PC-005: Test Placeholder Functionality End-to-End
 **Priority**: HIGH | **Points**: 1 | **Risk**: LOW
 
@@ -121,6 +151,7 @@
 - [ ] US-PLACEHOLDER-PC-001: Placeholder tips in add form
 - [ ] US-PLACEHOLDER-PC-002: Placeholder tips in edit form
 - [ ] US-PLACEHOLDER-PC-003: Validation on input
+- [ ] US-PLACEHOLDER-PC-006: Replace placeholders in final comments
 - [ ] US-PLACEHOLDER-PC-005: Test coverage
 
 ### Phase 2: UI Refinement (Week 1-2)
