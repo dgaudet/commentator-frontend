@@ -136,8 +136,9 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
       const personalCommentOption = screen.getByText('Excellent work this semester')
       fireEvent.click(personalCommentOption)
 
-      // Verify selected personal comment is displayed
-      expect((searchInput as HTMLInputElement).value).toBe('Excellent work this semester')
+      // US-RATING-006: Verify search input is cleared and comment is added to ordered list
+      expect((searchInput as HTMLInputElement).value).toBe('')
+      expect(screen.getByText('Excellent work this semester')).toBeInTheDocument()
 
       // Step 4: Click populate button
       const populateButton = screen.getByRole('button', { name: /Populate with Above Comments/i })
@@ -420,8 +421,12 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
         'Demonstrates exceptional understanding of mathematical concepts Excellent work this semester',
       )
 
-      // Second populate: Change to personal comment 2
-      // Clear search input and re-focus to show all options
+      // US-RATING-006: Remove first comment, then add second comment
+      // Find and click remove button for first comment
+      const removeButtons = screen.getAllByLabelText(/Remove:/i)
+      fireEvent.click(removeButtons[0])
+
+      // Add second personal comment
       fireEvent.change(searchInput, { target: { value: '' } })
       fireEvent.focus(searchInput)
       fireEvent.click(screen.getByText('Good participation in class discussions'))

@@ -1,11 +1,10 @@
 /**
  * SelectedCommentsList Component Tests
- * TDD Phase: RED - Writing failing tests first
- * Reference: US-RATING-006
+ * Reference: US-RATING-007
  *
- * Testing ordered list of selected personalized comments:
+ * Testing ordered list with drag-and-drop reordering:
  * - Display selected comments in order with rating emojis
- * - Reorder items (move up/down with buttons)
+ * - Drag-and-drop handles visible
  * - Remove individual items
  * - Empty state when no selections
  * - Accessibility (ARIA attributes, keyboard navigation)
@@ -106,10 +105,8 @@ describe('SelectedCommentsList', () => {
       expect(screen.getByText('2')).toBeInTheDocument()
       expect(screen.getByText('3')).toBeInTheDocument()
     })
-  })
 
-  describe('reordering', () => {
-    it('should show move up button for all items except first', () => {
+    it('should display drag handles for each comment', () => {
       render(
         <SelectedCommentsList
           selectedComments={mockComments}
@@ -118,11 +115,12 @@ describe('SelectedCommentsList', () => {
         />,
       )
 
-      const upButtons = screen.getAllByLabelText(/Move up/i)
-      expect(upButtons).toHaveLength(2) // Items 2 and 3 only
+      // Drag handles (⋮⋮) should be present
+      const dragHandles = screen.getAllByLabelText(/Drag handle/i)
+      expect(dragHandles).toHaveLength(3)
     })
 
-    it('should show move down button for all items except last', () => {
+    it('should display label indicating drag-to-reorder functionality', () => {
       render(
         <SelectedCommentsList
           selectedComments={mockComments}
@@ -131,40 +129,7 @@ describe('SelectedCommentsList', () => {
         />,
       )
 
-      const downButtons = screen.getAllByLabelText(/Move down/i)
-      expect(downButtons).toHaveLength(2) // Items 1 and 2 only
-    })
-
-    it('should call onReorder with correct indices when move up clicked', () => {
-      render(
-        <SelectedCommentsList
-          selectedComments={mockComments}
-          onReorder={mockOnReorder}
-          onRemove={mockOnRemove}
-        />,
-      )
-
-      // Click move up on second item (index 1)
-      const upButtons = screen.getAllByLabelText(/Move up/i)
-      fireEvent.click(upButtons[0])
-
-      expect(mockOnReorder).toHaveBeenCalledWith(1, 0)
-    })
-
-    it('should call onReorder with correct indices when move down clicked', () => {
-      render(
-        <SelectedCommentsList
-          selectedComments={mockComments}
-          onReorder={mockOnReorder}
-          onRemove={mockOnRemove}
-        />,
-      )
-
-      // Click move down on first item (index 0)
-      const downButtons = screen.getAllByLabelText(/Move down/i)
-      fireEvent.click(downButtons[0])
-
-      expect(mockOnReorder).toHaveBeenCalledWith(0, 1)
+      expect(screen.getByText(/Selected Comments \(drag to reorder\)/i)).toBeInTheDocument()
     })
   })
 
@@ -178,7 +143,7 @@ describe('SelectedCommentsList', () => {
         />,
       )
 
-      const removeButtons = screen.getAllByLabelText(/Remove/i)
+      const removeButtons = screen.getAllByLabelText(/Remove:/i)
       expect(removeButtons).toHaveLength(3)
     })
 
@@ -191,7 +156,7 @@ describe('SelectedCommentsList', () => {
         />,
       )
 
-      const removeButtons = screen.getAllByLabelText(/Remove/i)
+      const removeButtons = screen.getAllByLabelText(/Remove:/i)
       fireEvent.click(removeButtons[1]) // Remove second item
 
       expect(mockOnRemove).toHaveBeenCalledWith(1) // index of second comment
@@ -209,7 +174,7 @@ describe('SelectedCommentsList', () => {
       )
 
       // Should have list role
-      const list = screen.getByRole('list')
+      const list = screen.getByRole('list', { name: /Selected personalized comments/i })
       expect(list).toBeInTheDocument()
 
       // Should have listitems
@@ -226,11 +191,50 @@ describe('SelectedCommentsList', () => {
         />,
       )
 
-      // All buttons should have accessible names
+      // All remove buttons should have accessible names
       const buttons = screen.getAllByRole('button')
       buttons.forEach((button) => {
         expect(button).toHaveAccessibleName()
       })
+    })
+
+    it('should have screen reader announcements for drag operations', () => {
+      render(
+        <SelectedCommentsList
+          selectedComments={mockComments}
+          onReorder={mockOnReorder}
+          onRemove={mockOnRemove}
+        />,
+      )
+
+      // Should have ARIA live regions for announcements
+      // Note: @dnd-kit adds its own live region, so we check for multiple
+      const liveRegions = screen.getAllByRole('status')
+      expect(liveRegions.length).toBeGreaterThanOrEqual(1)
+
+      // At least one should have assertive aria-live
+      const assertiveLiveRegions = liveRegions.filter(region =>
+        region.getAttribute('aria-live') === 'assertive' &&
+        region.getAttribute('aria-atomic') === 'true',
+      )
+      expect(assertiveLiveRegions.length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('should provide keyboard navigation instructions in ARIA labels', () => {
+      render(
+        <SelectedCommentsList
+          selectedComments={mockComments}
+          onReorder={mockOnReorder}
+          onRemove={mockOnRemove}
+        />,
+      )
+
+      const items = screen.getAllByRole('listitem')
+      // First item should have keyboard instructions
+      expect(items[0]).toHaveAttribute(
+        'aria-label',
+        expect.stringContaining('Press space to lift'),
+      )
     })
   })
 })
