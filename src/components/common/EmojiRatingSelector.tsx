@@ -136,6 +136,8 @@ export const EmojiRatingSelector: React.FC<EmojiRatingSelectorProps> = ({
           const isSelected = normalizedValue === rating
           const emoji = getRatingEmoji(rating)
           const ratingLabel = getRatingLabel(rating)
+          // ARIA radiogroup best practice: first button has tabIndex={0} when no selection
+          const tabIndex = isSelected ? 0 : (normalizedValue === 0 && rating === 1 ? 0 : -1)
 
           return (
             <button
@@ -143,8 +145,8 @@ export const EmojiRatingSelector: React.FC<EmojiRatingSelectorProps> = ({
               type="button"
               role="radio"
               aria-label={`Rate ${rating} out of 5: ${ratingLabel}`}
-              aria-pressed={isSelected ? 'true' : 'false'}
-              tabIndex={isSelected ? 0 : -1}
+              aria-checked={isSelected}
+              tabIndex={tabIndex}
               disabled={disabled}
               onClick={() => handleClick(rating)}
               onKeyDown={(e) => handleKeyDown(e, rating)}

@@ -18,7 +18,7 @@ import type { PersonalizedComment } from '../types/PersonalizedComment'
  * 4: Positive (🙂)
  * 5: Very Positive (😊)
  */
-const RATING_EMOJIS: Record<number, string> = {
+const RATING_EMOJIS = {
   1: '😢',
   2: '😟',
   3: '😐',
@@ -26,7 +26,7 @@ const RATING_EMOJIS: Record<number, string> = {
   5: '😊',
 } as const
 
-const RATING_LABELS: Record<number, string> = {
+const RATING_LABELS = {
   1: 'Very Negative',
   2: 'Negative',
   3: 'Neutral',

@@ -65,7 +65,7 @@ describe('EmojiRatingSelector - Selection', () => {
     render(<EmojiRatingSelector id="rating" value={4} onChange={() => {}} />)
 
     const button4 = screen.getByLabelText('Rate 4 out of 5: Positive')
-    expect(button4).toHaveAttribute('aria-pressed', 'true')
+    expect(button4).toHaveAttribute('aria-checked', 'true')
   })
 
   it('does not highlight unselected ratings', () => {
@@ -74,8 +74,8 @@ describe('EmojiRatingSelector - Selection', () => {
     const button1 = screen.getByLabelText('Rate 1 out of 5: Very Negative')
     const button5 = screen.getByLabelText('Rate 5 out of 5: Very Positive')
 
-    expect(button1).toHaveAttribute('aria-pressed', 'false')
-    expect(button5).toHaveAttribute('aria-pressed', 'false')
+    expect(button1).toHaveAttribute('aria-checked', 'false')
+    expect(button5).toHaveAttribute('aria-checked', 'false')
   })
 
   it('calls onChange with new rating when emoji clicked', () => {
@@ -104,7 +104,7 @@ describe('EmojiRatingSelector - Selection', () => {
     const { rerender } = render(<EmojiRatingSelector id="rating" value={2} onChange={() => {}} />)
 
     let button2 = screen.getByLabelText('Rate 2 out of 5: Negative')
-    expect(button2).toHaveAttribute('aria-pressed', 'true')
+    expect(button2).toHaveAttribute('aria-checked', 'true')
 
     // Update value prop
     rerender(<EmojiRatingSelector id="rating" value={5} onChange={() => {}} />)
@@ -112,8 +112,8 @@ describe('EmojiRatingSelector - Selection', () => {
     button2 = screen.getByLabelText('Rate 2 out of 5: Negative')
     const button5 = screen.getByLabelText('Rate 5 out of 5: Very Positive')
 
-    expect(button2).toHaveAttribute('aria-pressed', 'false')
-    expect(button5).toHaveAttribute('aria-pressed', 'true')
+    expect(button2).toHaveAttribute('aria-checked', 'false')
+    expect(button5).toHaveAttribute('aria-checked', 'true')
   })
 })
 
@@ -341,8 +341,22 @@ describe('EmojiRatingSelector - Edge Cases', () => {
     // No button should be selected
     const buttons = screen.getAllByRole('radio')
     buttons.forEach((button) => {
-      expect(button).toHaveAttribute('aria-pressed', 'false')
+      expect(button).toHaveAttribute('aria-checked', 'false')
     })
+  })
+
+  it('first button has tabIndex={0} when no selection (value=0) for keyboard accessibility', () => {
+    render(<EmojiRatingSelector id="rating" value={0} onChange={() => {}} />)
+
+    const button1 = screen.getByLabelText('Rate 1 out of 5: Very Negative')
+    const button2 = screen.getByLabelText('Rate 2 out of 5: Negative')
+    const button3 = screen.getByLabelText('Rate 3 out of 5: Neutral')
+
+    // First button should be keyboard-accessible (tabIndex=0)
+    expect(button1).toHaveAttribute('tabIndex', '0')
+    // All other buttons should have tabIndex=-1
+    expect(button2).toHaveAttribute('tabIndex', '-1')
+    expect(button3).toHaveAttribute('tabIndex', '-1')
   })
 
   it('handles negative value (invalid rating)', () => {
@@ -351,8 +365,12 @@ describe('EmojiRatingSelector - Edge Cases', () => {
     // No button should be selected
     const buttons = screen.getAllByRole('radio')
     buttons.forEach((button) => {
-      expect(button).toHaveAttribute('aria-pressed', 'false')
+      expect(button).toHaveAttribute('aria-checked', 'false')
     })
+
+    // First button should still be keyboard-accessible
+    const button1 = screen.getByLabelText('Rate 1 out of 5: Very Negative')
+    expect(button1).toHaveAttribute('tabIndex', '0')
   })
 
   it('handles value > 5 (invalid rating)', () => {
@@ -361,8 +379,12 @@ describe('EmojiRatingSelector - Edge Cases', () => {
     // No button should be selected
     const buttons = screen.getAllByRole('radio')
     buttons.forEach((button) => {
-      expect(button).toHaveAttribute('aria-pressed', 'false')
+      expect(button).toHaveAttribute('aria-checked', 'false')
     })
+
+    // First button should still be keyboard-accessible
+    const button1 = screen.getByLabelText('Rate 1 out of 5: Very Negative')
+    expect(button1).toHaveAttribute('tabIndex', '0')
   })
 
   it('handles decimal value by rounding to nearest integer', () => {
@@ -370,6 +392,6 @@ describe('EmojiRatingSelector - Edge Cases', () => {
 
     // Should select rating 4 (rounded from 3.7)
     const button4 = screen.getByLabelText('Rate 4 out of 5: Positive')
-    expect(button4).toHaveAttribute('aria-pressed', 'true')
+    expect(button4).toHaveAttribute('aria-checked', 'true')
   })
 })

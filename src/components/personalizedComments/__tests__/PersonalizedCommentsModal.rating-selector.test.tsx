@@ -46,9 +46,9 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
     it('defaults to rating 3 (Neutral) in add comment form', () => {
       render(<PersonalizedCommentsModal {...defaultProps} />)
 
-      // Rating 3 button should be selected (aria-pressed="true")
+      // Rating 3 button should be selected (aria-checked="true")
       const rating3Button = screen.getByLabelText(/rate 3 out of 5.*neutral/i)
-      expect(rating3Button).toHaveAttribute('aria-pressed', 'true')
+      expect(rating3Button).toHaveAttribute('aria-checked', 'true')
     })
 
     it('allows changing rating in add comment form', () => {
@@ -59,7 +59,7 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
       fireEvent.click(rating5Button)
 
       // Rating 5 should now be selected
-      expect(rating5Button).toHaveAttribute('aria-pressed', 'true')
+      expect(rating5Button).toHaveAttribute('aria-checked', 'true')
     })
 
     it('includes rating in onCreateComment API call', async () => {
@@ -122,7 +122,7 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
       // Select rating 5
       const rating5Button = screen.getByLabelText(/rate 5 out of 5.*very positive/i)
       fireEvent.click(rating5Button)
-      expect(rating5Button).toHaveAttribute('aria-pressed', 'true')
+      expect(rating5Button).toHaveAttribute('aria-checked', 'true')
 
       // Submit form
       const textarea = screen.getByPlaceholderText(/enter personalized comment/i)
@@ -137,7 +137,7 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
       // Rating should reset to 3 after successful create
       await waitFor(() => {
         const rating3Button = screen.getByLabelText(/rate 3 out of 5.*neutral/i)
-        expect(rating3Button).toHaveAttribute('aria-pressed', 'true')
+        expect(rating3Button).toHaveAttribute('aria-checked', 'true')
       })
     })
   })
@@ -193,10 +193,10 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
       fireEvent.click(editButton)
 
       // Rating 4 should be selected in edit form
-      // There are 2 rating 4 buttons (add form + edit form), filter by aria-pressed
+      // There are 2 rating 4 buttons (add form + edit form), filter by aria-checked
       await waitFor(() => {
         const rating4Buttons = screen.getAllByLabelText(/rate 4 out of 5.*positive/i)
-        const selectedRating4 = rating4Buttons.find(btn => btn.getAttribute('aria-pressed') === 'true')
+        const selectedRating4 = rating4Buttons.find(btn => btn.getAttribute('aria-checked') === 'true')
         expect(selectedRating4).toBeDefined()
       })
     })
@@ -227,7 +227,7 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
         const rating5Buttons = screen.getAllByLabelText(/rate 5 out of 5.*very positive/i)
         // Click the edit form rating button (second one)
         fireEvent.click(rating5Buttons[1])
-        const selectedRating5 = rating5Buttons.find(btn => btn.getAttribute('aria-pressed') === 'true')
+        const selectedRating5 = rating5Buttons.find(btn => btn.getAttribute('aria-checked') === 'true')
         expect(selectedRating5).toBeDefined()
       })
     })
@@ -300,8 +300,8 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
       // There are 2 rating 3 buttons (add form + edit form)
       await waitFor(() => {
         const rating3Buttons = screen.getAllByLabelText(/rate 3 out of 5.*neutral/i)
-        // Both should have aria-pressed="true" (add form defaults to 3, edit form loads null as 3)
-        const selectedButtons = rating3Buttons.filter(btn => btn.getAttribute('aria-pressed') === 'true')
+        // Both should have aria-checked="true" (add form defaults to 3, edit form loads null as 3)
+        const selectedButtons = rating3Buttons.filter(btn => btn.getAttribute('aria-checked') === 'true')
         expect(selectedButtons.length).toBe(2) // Both add and edit forms show rating 3 selected
       })
     })

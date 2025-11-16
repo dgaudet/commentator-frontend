@@ -111,7 +111,8 @@ Questions:
 ** yes
 * Add a rating to the personalized comments, so they can be ordered in the dropdown and in the existing.
 * Like a star system, or emoji system, with around 5 levels.
-* Need to allow multiple personalized comments, and be able to order them once pickedplac
+** When edit/create comment, I think the rating should be under the comment, and doesn't need to be in a panel
+* Need to allow multiple personalized comments, and be able to order them once picked
 * 
 * Order the outcome comments high to low
 
