@@ -49,6 +49,16 @@ interface TypeaheadSearchProps<T> {
    */
   getItemKey?: (item: T) => string | number
 
+  /**
+   * Optional function to extract a prefix (e.g., emoji, icon) to display before the item label.
+   * The prefix is shown in the dropdown but NOT included in the selected value.
+   * @param item - The item to extract the prefix from
+   * @returns A string prefix (e.g., emoji) to prepend to the label
+   * @example getItemPrefix={(comment) => getRatingEmoji(comment.rating)}
+   * @see US-RATING-005
+   */
+  getItemPrefix?: (item: T) => string
+
   // ==================== Search State ====================
 
   /**
@@ -180,6 +190,7 @@ export const TypeaheadSearch = <T, >({
   items,
   getItemLabel,
   getItemKey,
+  getItemPrefix,
   searchQuery,
   onSearchChange,
   onSelect,
@@ -373,30 +384,35 @@ export const TypeaheadSearch = <T, >({
             </div>
               )
             : (
-                filteredItems.map((item, index) => (
-              <div
-                key={getItemKey ? getItemKey(item) : index}
-                id={`${instanceId}-option-${index}`}
-                role="option"
-                aria-selected={highlightedIndex === index}
-                onClick={() => handleSelect(item)}
-                onMouseEnter={() => setHighlightedIndex(index)}
-                style={{
-                  padding: spacing.md,
-                  fontSize: typography.fontSize.sm,
-                  color: colors.text.primary,
-                  backgroundColor:
-                    highlightedIndex === index ? colors.neutral[100] : 'transparent',
-                  cursor: 'pointer',
-                  borderBottom:
-                    index < filteredItems.length - 1
-                      ? `${borders.width.thin} solid ${colors.border.default}`
-                      : 'none',
-                }}
-              >
-                {getItemLabel(item)}
-              </div>
-                ))
+                filteredItems.map((item, index) => {
+                  const prefix = getItemPrefix ? getItemPrefix(item) : ''
+                  const label = getItemLabel(item)
+                  return (
+                    <div
+                      key={getItemKey ? getItemKey(item) : index}
+                      id={`${instanceId}-option-${index}`}
+                      role="option"
+                      aria-selected={highlightedIndex === index}
+                      onClick={() => handleSelect(item)}
+                      onMouseEnter={() => setHighlightedIndex(index)}
+                      style={{
+                        padding: spacing.md,
+                        fontSize: typography.fontSize.sm,
+                        color: colors.text.primary,
+                        backgroundColor:
+                          highlightedIndex === index ? colors.neutral[100] : 'transparent',
+                        cursor: 'pointer',
+                        borderBottom:
+                          index < filteredItems.length - 1
+                            ? `${borders.width.thin} solid ${colors.border.default}`
+                            : 'none',
+                      }}
+                    >
+                      {prefix && <span style={{ marginRight: spacing.sm }}>{prefix}</span>}
+                      {label}
+                    </div>
+                  )
+                })
               )}
         </div>
       )}

@@ -63,6 +63,7 @@ import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { CopyButton } from '../common/CopyButton'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
+import { getRatingEmoji, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
 interface FinalCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -639,10 +640,12 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                 </div>
 
                 {/* US-PC-TYPEAHEAD-003: Personalized Comment Search */}
+                {/* US-RATING-005: Sorted by rating with emoji display */}
                 <TypeaheadSearch
-                  items={personalizedComments}
+                  items={sortPersonalizedCommentsByRating(personalizedComments)}
                   getItemLabel={(comment) => comment.comment}
                   getItemKey={(comment) => comment.id}
+                  getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
                   searchQuery={addForm.personalizedCommentSearch}
                   onSearchChange={addForm.setPersonalizedCommentSearch}
                   onSelect={(selectedComment) => {
@@ -907,10 +910,12 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                     </div>
 
                                     {/* US-PC-TYPEAHEAD-004: Personalized Comment Search (Edit Form) */}
+                                    {/* US-RATING-005: Sorted by rating with emoji display */}
                                     <TypeaheadSearch
-                                      items={personalizedComments}
+                                      items={sortPersonalizedCommentsByRating(personalizedComments)}
                                       getItemLabel={(personalizedComment) => personalizedComment.comment}
                                       getItemKey={(personalizedComment) => personalizedComment.id}
+                                      getItemPrefix={(personalizedComment) => getRatingEmoji(getNormalizedRating(personalizedComment))}
                                       searchQuery={editForm.personalizedCommentSearch}
                                       onSearchChange={editForm.setPersonalizedCommentSearch}
                                       onSelect={(selectedComment) => {

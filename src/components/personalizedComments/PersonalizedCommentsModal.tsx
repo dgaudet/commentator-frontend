@@ -32,7 +32,7 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
-import { getRatingEmoji, getRatingLabel, getNormalizedRating } from '../../utils/personalizedCommentRating'
+import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -178,6 +178,9 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
   const editCommentCharCount = editContent.trim().length
   const editCommentIsValid = editCommentCharCount >= 10 && editCommentCharCount <= 500
 
+  // US-RATING-004: Sort comments by rating (descending) with alphabetical tie-breaking
+  const sortedComments = sortPersonalizedCommentsByRating(personalizedComments)
+
   return (
     <>
       <div
@@ -294,7 +297,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                 >
                   Existing Comments
                 </h3>
-                {personalizedComments.length === 0
+                {sortedComments.length === 0
                   ? (
                       <div
                         style={{
@@ -333,7 +336,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                       gap: spacing.lg,
                     }}
                   >
-                    {personalizedComments.map((comment) => (
+                    {sortedComments.map((comment) => (
                       <div
                         key={comment.id}
                         style={{
