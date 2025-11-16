@@ -45,6 +45,7 @@ export const personalizedCommentService = {
         {
           comment: request.comment,
           subjectId: request.subjectId,
+          rating: request.rating, // US-RATING-003: Include rating field
         },
       )
       return response.data
@@ -56,12 +57,17 @@ export const personalizedCommentService = {
 
   /**
    * Update an existing personalized comment
+   * Note: subjectId is immutable and cannot be changed, but backend requires it for validation
    */
   async update(id: number, request: UpdatePersonalizedCommentRequest): Promise<PersonalizedComment> {
     try {
       const response = await apiClient.put<PersonalizedComment>(
         `/personalized-comment/${id}`,
-        request,
+        {
+          subjectId: request.subjectId,
+          comment: request.comment,
+          rating: request.rating, // US-RATING-003: Include rating field
+        },
       )
       return response.data
     } catch (error) {

@@ -110,6 +110,7 @@ describe('PersonalizedCommentsModal', () => {
         expect(onCreateComment).toHaveBeenCalledWith({
           subjectId: 1,
           comment: 'This is a valid comment',
+          rating: 3, // Default rating
         })
       })
     })
@@ -152,7 +153,9 @@ describe('PersonalizedCommentsModal', () => {
 
       await waitFor(() => {
         expect(onUpdateComment).toHaveBeenCalledWith(1, {
+          subjectId: 1,
           comment: 'Updated comment text that is long enough',
+          rating: 3, // Default rating (mockComment has undefined rating → normalized to 3)
         })
       })
     })
@@ -297,6 +300,144 @@ describe('PersonalizedCommentsModal', () => {
 
       const closeButton = screen.queryByLabelText(/Close modal/i)
       expect(closeButton).not.toBeInTheDocument()
+    })
+  })
+
+  describe('sorting - US-RATING-004', () => {
+    it('should sort comments by rating descending (highest first)', () => {
+      const comments: PersonalizedComment[] = [
+        {
+          id: 1,
+          subjectId: 1,
+          comment: 'Comment with rating 3',
+          rating: 3,
+          createdAt: '2024-01-01T10:00:00Z',
+          updatedAt: '2024-01-01T10:00:00Z',
+        },
+        {
+          id: 2,
+          subjectId: 1,
+          comment: 'Comment with rating 5',
+          rating: 5,
+          createdAt: '2024-01-02T10:00:00Z',
+          updatedAt: '2024-01-02T10:00:00Z',
+        },
+        {
+          id: 3,
+          subjectId: 1,
+          comment: 'Comment with rating 1',
+          rating: 1,
+          createdAt: '2024-01-03T10:00:00Z',
+          updatedAt: '2024-01-03T10:00:00Z',
+        },
+      ]
+
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={comments}
+        />,
+      )
+
+      const commentElements = screen.getAllByText(/Comment with rating/)
+      // Should be sorted: rating 5, then 3, then 1
+      expect(commentElements[0]).toHaveTextContent('Comment with rating 5')
+      expect(commentElements[1]).toHaveTextContent('Comment with rating 3')
+      expect(commentElements[2]).toHaveTextContent('Comment with rating 1')
+    })
+
+    it('should sort alphabetically when ratings are equal', () => {
+      const comments: PersonalizedComment[] = [
+        {
+          id: 1,
+          subjectId: 1,
+          comment: 'Zebra comment',
+          rating: 4,
+          createdAt: '2024-01-01T10:00:00Z',
+          updatedAt: '2024-01-01T10:00:00Z',
+        },
+        {
+          id: 2,
+          subjectId: 1,
+          comment: 'Alpha comment',
+          rating: 4,
+          createdAt: '2024-01-02T10:00:00Z',
+          updatedAt: '2024-01-02T10:00:00Z',
+        },
+        {
+          id: 3,
+          subjectId: 1,
+          comment: 'Beta comment',
+          rating: 4,
+          createdAt: '2024-01-03T10:00:00Z',
+          updatedAt: '2024-01-03T10:00:00Z',
+        },
+      ]
+
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={comments}
+        />,
+      )
+
+      const commentElements = screen.getAllByText(/comment/)
+      // Should be sorted alphabetically: Alpha, Beta, Zebra
+      expect(commentElements[0]).toHaveTextContent('Alpha comment')
+      expect(commentElements[1]).toHaveTextContent('Beta comment')
+      expect(commentElements[2]).toHaveTextContent('Zebra comment')
+    })
+
+    it('should handle null/undefined ratings (default to 3)', () => {
+      const comments: PersonalizedComment[] = [
+        {
+          id: 1,
+          subjectId: 1,
+          comment: 'Comment C-null',
+          rating: null,
+          createdAt: '2024-01-01T10:00:00Z',
+          updatedAt: '2024-01-01T10:00:00Z',
+        },
+        {
+          id: 2,
+          subjectId: 1,
+          comment: 'Comment A-five',
+          rating: 5,
+          createdAt: '2024-01-02T10:00:00Z',
+          updatedAt: '2024-01-02T10:00:00Z',
+        },
+        {
+          id: 3,
+          subjectId: 1,
+          comment: 'Comment B-one',
+          rating: 1,
+          createdAt: '2024-01-03T10:00:00Z',
+          updatedAt: '2024-01-03T10:00:00Z',
+        },
+      ]
+
+      const { container } = render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={comments}
+        />,
+      )
+
+      // Get all comments in the document
+      const allText = container.textContent
+
+      // Find positions of each comment text in the full text
+      // They should appear in order: rating 5, null (treated as 3), then 1
+      const posA = allText?.indexOf('Comment A-five') ?? -1
+      const posC = allText?.indexOf('Comment C-null') ?? -1
+      const posB = allText?.indexOf('Comment B-one') ?? -1
+
+      // Verify sort order: rating 5 appears before null, null appears before 1
+      expect(posA).toBeGreaterThan(-1)
+      expect(posC).toBeGreaterThan(-1)
+      expect(posB).toBeGreaterThan(-1)
+      expect(posA).toBeLessThan(posC) // Rating 5 before null (3)
+      expect(posC).toBeLessThan(posB) // Null (3) before rating 1
     })
   })
 })

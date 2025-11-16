@@ -1,0 +1,40 @@
+{
+  "feature": "personalized-comments-rating",
+  "complexity": {
+    "level": "L2-SMALL",
+    "reasoning": "Moderate feature with 8-12 user stories spanning 2-3 weeks. Involves data model changes (adding rating field), UI enhancements across multiple components (PersonalizedCommentsModal, TypeaheadSearch, FinalCommentsModal), drag-and-drop functionality, and default data migration. Frontend-only implementation with backend API already updated. Standard team size with no external integrations or performance-critical requirements.",
+    "assessedAt": "2025-01-15T00:00:00Z",
+    "scope": {
+      "storyCount": 10,
+      "estimatedPoints": 21,
+      "duration": "2-3 weeks"
+    },
+    "technical": {
+      "externalIntegrations": false,
+      "dataMigrations": true,
+      "performanceCritical": false,
+      "affectedComponents": [
+        "PersonalizedCommentsModal",
+        "TypeaheadSearch",
+        "FinalCommentsModal",
+        "PersonalizedComment type definition"
+      ]
+    },
+    "team": {
+      "size": "1-2 frontend developers",
+      "specializedSkills": false,
+      "compliance": false
+    }
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "OPTIONAL",
+    "implementation": "NOT_STARTED",
+    "testing": "NOT_STARTED"
+  },
+  "artifacts": {
+    "required": ["prd.md"],
+    "optional": ["tech-spec.md"],
+    "created": ["metadata.json", "prd.md"]
+  }
+}

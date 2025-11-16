@@ -30,7 +30,9 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -54,8 +56,10 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
   error,
 }: PersonalizedCommentsModalProps<T>) => {
   const [newCommentContent, setNewCommentContent] = useState('')
+  const [newCommentRating, setNewCommentRating] = useState(3) // Default rating: 3 (Neutral)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editContent, setEditContent] = useState('')
+  const [editRating, setEditRating] = useState(3)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
     commentId: number | null
@@ -102,13 +106,16 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     await onCreateComment({
       subjectId: entityData.id,
       comment: newCommentContent.trim(),
+      rating: newCommentRating, // US-RATING-003: Include rating
     })
     setNewCommentContent('')
+    setNewCommentRating(3) // Reset to default rating
   }
 
   const handleEditStart = (comment: PersonalizedComment) => {
     setEditingId(comment.id)
     setEditContent(comment.comment)
+    setEditRating(getNormalizedRating(comment)) // US-RATING-003: Load existing rating (default to 3 if null/undefined)
     setValidationError('')
   }
 
@@ -122,16 +129,20 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     if (editingId) {
       setValidationError('')
       await onUpdateComment(editingId, {
+        subjectId: entityData.id,
         comment: editContent.trim(),
+        rating: editRating, // US-RATING-003: Include rating
       })
       setEditingId(null)
       setEditContent('')
+      setEditRating(3) // Reset to default
     }
   }
 
   const handleEditCancel = () => {
     setEditingId(null)
     setEditContent('')
+    setEditRating(3) // Reset to default
     setValidationError('')
   }
 
@@ -166,6 +177,9 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
   // Character count for edit comment
   const editCommentCharCount = editContent.trim().length
   const editCommentIsValid = editCommentCharCount >= 10 && editCommentCharCount <= 500
+
+  // US-RATING-004: Sort comments by rating (descending) with alphabetical tie-breaking
+  const sortedComments = sortPersonalizedCommentsByRating(personalizedComments)
 
   return (
     <>
@@ -202,6 +216,14 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                 >
                   Add New Personalized Comment
                 </h3>
+                {/* US-RATING-003: Rating Selector */}
+                <EmojiRatingSelector
+                  id="new-comment-rating"
+                  label="Rating"
+                  value={newCommentRating}
+                  onChange={setNewCommentRating}
+                  required
+                />
                 <div style={{ marginBottom: spacing.lg }}>
                   <textarea
                     value={newCommentContent}
@@ -275,7 +297,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                 >
                   Existing Comments
                 </h3>
-                {personalizedComments.length === 0
+                {sortedComments.length === 0
                   ? (
                       <div
                         style={{
@@ -314,7 +336,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                       gap: spacing.lg,
                     }}
                   >
-                    {personalizedComments.map((comment) => (
+                    {sortedComments.map((comment) => (
                       <div
                         key={comment.id}
                         style={{
@@ -328,6 +350,14 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                           ? (
                             /* Edit Mode */
                               <div>
+                                {/* US-RATING-003: Rating Selector */}
+                                <EmojiRatingSelector
+                                  id="edit-comment-rating"
+                                  label="Rating"
+                                  value={editRating}
+                                  onChange={setEditRating}
+                                  required
+                                />
                                 <textarea
                                   value={editContent}
                                   onChange={(e) => setEditContent(e.target.value)}
@@ -398,15 +428,34 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                           : (
                             /* View Mode */
                               <div>
+                            {/* Rating Display (US-RATING-004) */}
                             <div
                               style={{
-                                fontSize: typography.fontSize.base,
-                                color: colors.text.primary,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: spacing.md,
                                 marginBottom: spacing.md,
-                                lineHeight: typography.lineHeight.normal,
                               }}
                             >
-                              {comment.comment}
+                              <span
+                                aria-label={`Rating: ${getNormalizedRating(comment)} out of 5 - ${getRatingLabel(getNormalizedRating(comment))}`}
+                                style={{
+                                  fontSize: '1.5rem',
+                                  lineHeight: 1,
+                                }}
+                              >
+                                {getRatingEmoji(getNormalizedRating(comment))}
+                              </span>
+                              <div
+                                style={{
+                                  fontSize: typography.fontSize.base,
+                                  color: colors.text.primary,
+                                  lineHeight: typography.lineHeight.normal,
+                                  flex: 1,
+                                }}
+                              >
+                                {comment.comment}
+                              </div>
                             </div>
                             <div
                               style={{

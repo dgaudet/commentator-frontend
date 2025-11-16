@@ -619,4 +619,131 @@ describe('TypeaheadSearch Component', () => {
       expect(screen.getByRole('combobox')).toBeDisabled()
     })
   })
+
+  describe('US-RATING-005: Item Prefix (Rating Display)', () => {
+    interface MockItemWithRating {
+      id: number
+      label: string
+      rating: number
+    }
+
+    const itemsWithRatings: MockItemWithRating[] = [
+      { id: 1, label: 'Excellent work', rating: 5 },
+      { id: 2, label: 'Good effort', rating: 4 },
+      { id: 3, label: 'Satisfactory', rating: 3 },
+    ]
+
+    const getRatingEmoji = (rating: number): string => {
+      const emojis: Record<number, string> = { 1: '😢', 2: '😟', 3: '😐', 4: '🙂', 5: '😊' }
+      return emojis[rating] || '😐'
+    }
+
+    it('should display prefix before item label in dropdown when getItemPrefix is provided', () => {
+      render(
+        <TypeaheadSearch
+          items={itemsWithRatings}
+          getItemLabel={(item) => item.label}
+          getItemPrefix={(item) => getRatingEmoji(item.rating)}
+          searchQuery=""
+          onSearchChange={mockOnSearchChange}
+          onSelect={mockOnSelect}
+        />,
+      )
+
+      const input = screen.getByRole('combobox')
+      fireEvent.focus(input)
+
+      // Dropdown should show emoji and label (they're in separate elements)
+      expect(screen.getByText('😊')).toBeInTheDocument()
+      expect(screen.getByText('Excellent work')).toBeInTheDocument()
+      expect(screen.getByText('🙂')).toBeInTheDocument()
+      expect(screen.getByText('Good effort')).toBeInTheDocument()
+      expect(screen.getByText('😐')).toBeInTheDocument()
+      expect(screen.getByText('Satisfactory')).toBeInTheDocument()
+    })
+
+    it('should NOT include prefix in selected value', () => {
+      render(
+        <TypeaheadSearch
+          items={itemsWithRatings}
+          getItemLabel={(item) => item.label}
+          getItemPrefix={(item) => getRatingEmoji(item.rating)}
+          searchQuery=""
+          onSearchChange={mockOnSearchChange}
+          onSelect={mockOnSelect}
+        />,
+      )
+
+      const input = screen.getByRole('combobox')
+      fireEvent.focus(input)
+
+      // Click on the first option (get by role for more reliability)
+      const options = screen.getAllByRole('option')
+      fireEvent.click(options[0])
+
+      // onSelect should receive the item (not the prefixed string)
+      expect(mockOnSelect).toHaveBeenCalledWith(itemsWithRatings[0])
+    })
+
+    it('should work without getItemPrefix (backward compatibility)', () => {
+      render(
+        <TypeaheadSearch
+          items={mockItems}
+          getItemLabel={(item) => item.label}
+          searchQuery=""
+          onSearchChange={mockOnSearchChange}
+          onSelect={mockOnSelect}
+        />,
+      )
+
+      const input = screen.getByRole('combobox')
+      fireEvent.focus(input)
+
+      // Should display labels without prefix
+      expect(screen.getByText('Excellent work this semester')).toBeInTheDocument()
+      expect(screen.queryByText(/😊/)).not.toBeInTheDocument()
+    })
+
+    it('should display correct prefix for each item', () => {
+      render(
+        <TypeaheadSearch
+          items={itemsWithRatings}
+          getItemLabel={(item) => item.label}
+          getItemPrefix={(item) => getRatingEmoji(item.rating)}
+          searchQuery=""
+          onSearchChange={mockOnSearchChange}
+          onSelect={mockOnSelect}
+        />,
+      )
+
+      const input = screen.getByRole('combobox')
+      fireEvent.focus(input)
+
+      // Each item should have its own emoji
+      expect(screen.getByText(/😊/)).toBeInTheDocument() // rating 5
+      expect(screen.getByText(/🙂/)).toBeInTheDocument() // rating 4
+      expect(screen.getByText(/😐/)).toBeInTheDocument() // rating 3
+    })
+
+    it('should filter items and preserve prefixes', () => {
+      render(
+        <TypeaheadSearch
+          items={itemsWithRatings}
+          getItemLabel={(item) => item.label}
+          getItemPrefix={(item) => getRatingEmoji(item.rating)}
+          searchQuery="excellent"
+          onSearchChange={mockOnSearchChange}
+          onSelect={mockOnSelect}
+        />,
+      )
+
+      const input = screen.getByRole('combobox')
+      fireEvent.focus(input)
+
+      // Filtered item should still show prefix and label
+      expect(screen.getByText('😊')).toBeInTheDocument()
+      expect(screen.getByText('Excellent work')).toBeInTheDocument()
+      expect(screen.queryByText('Good effort')).not.toBeInTheDocument()
+    })
+  })
 })

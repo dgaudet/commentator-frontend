@@ -17,6 +17,18 @@ export interface PersonalizedComment {
   comment: string
   /** Associated subject ID */
   subjectId: number
+  /**
+   * Comment rating (1-5 scale)
+   * - 1: Very Negative (😢)
+   * - 2: Negative (😟)
+   * - 3: Neutral (😐)
+   * - 4: Positive (🙂)
+   * - 5: Very Positive (😊)
+   *
+   * Optional for backward compatibility - existing comments default to 3 (Neutral)
+   * Backend accepts decimals but frontend uses integers only
+   */
+  rating?: number | null
   /** Creation timestamp (ISO 8601) - Auto-generated, immutable */
   createdAt: string
   /** Last update timestamp (ISO 8601) - Auto-updated by backend */
@@ -32,6 +44,8 @@ export interface CreatePersonalizedCommentRequest {
   comment: string
   /** Associated subject ID - Required */
   subjectId: number
+  /** Comment rating (1-5) - Required, must be > 0 */
+  rating: number
 }
 
 /**
@@ -39,6 +53,10 @@ export interface CreatePersonalizedCommentRequest {
  * Used by: PUT /personalized-comment/:id
  */
 export interface UpdatePersonalizedCommentRequest {
+  /** Associated subject ID - Required (immutable, but needed for backend validation) */
+  subjectId: number
   /** Comment text - Required (10-500 characters) */
   comment: string
+  /** Comment rating (1-5) - Required, must be > 0 */
+  rating: number
 }
