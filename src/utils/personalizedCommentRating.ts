@@ -71,7 +71,7 @@ export function getNormalizedRating(comment: PersonalizedComment): number {
  */
 export function getRatingEmoji(rating: number): string {
   const rounded = Math.round(rating)
-  return RATING_EMOJIS[rounded] || RATING_EMOJIS[DEFAULT_RATING]
+  return RATING_EMOJIS[rounded as keyof typeof RATING_EMOJIS] ?? RATING_EMOJIS[DEFAULT_RATING]
 }
 
 /**
@@ -89,7 +89,7 @@ export function getRatingEmoji(rating: number): string {
  */
 export function getRatingLabel(rating: number): string {
   const rounded = Math.round(rating)
-  return RATING_LABELS[rounded] || RATING_LABELS[DEFAULT_RATING]
+  return RATING_LABELS[rounded as keyof typeof RATING_LABELS] ?? RATING_LABELS[DEFAULT_RATING]
 }
 
 /**
