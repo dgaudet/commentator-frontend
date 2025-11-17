@@ -7,7 +7,11 @@
  * Eliminates code duplication between OutcomeCommentsModal and PersonalizedCommentsModal
  */
 
-import { ChangeEvent } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { PlaceholderTipsBox } from './PlaceholderTipsBox'
+import { PlaceholderWarningsBox } from './PlaceholderWarningsBox'
+import { validatePlaceholders } from '../../utils/placeholders'
+import { colors, spacing, typography, borders } from '../../theme/tokens'
 
 interface CommentTextFieldProps {
   /** Current comment text */
@@ -37,23 +41,83 @@ interface CommentTextFieldProps {
 export const CommentTextField = ({
   value,
   onChange,
+  onValidationChange,
   placeholder = 'Enter comment...',
+  minLength = 10,
+  maxLength = 500,
   rows = 3,
+  showCharCount = true,
+  showPlaceholderTips = true,
   ariaLabel,
   disabled = false,
 }: CommentTextFieldProps) => {
+  const [warnings, setWarnings] = useState<string[]>([])
+
+  // Validate placeholders whenever value changes
+  useEffect(() => {
+    const newWarnings = validatePlaceholders(value)
+    setWarnings(newWarnings)
+    onValidationChange?.(newWarnings)
+  }, [value, onValidationChange])
+
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value)
   }
 
+  const charCount = value.length
+  const isValid = charCount >= minLength
+  const showMinHint = charCount > 0 && charCount < minLength
+
   return (
-    <textarea
-      value={value}
-      onChange={handleChange}
-      placeholder={placeholder}
-      rows={rows}
-      aria-label={ariaLabel}
-      disabled={disabled}
-    />
+    <div style={{ marginBottom: spacing.lg }}>
+      {/* Placeholder Tips */}
+      {showPlaceholderTips && <PlaceholderTipsBox />}
+
+      {/* Textarea */}
+      <textarea
+        value={value}
+        onChange={handleChange}
+        placeholder={placeholder}
+        rows={rows}
+        aria-label={ariaLabel}
+        disabled={disabled}
+        style={{
+          width: '100%',
+          padding: spacing.md,
+          fontSize: typography.fontSize.base,
+          border: `${borders.width.thin} solid ${colors.border.default}`,
+          borderRadius: borders.radius.md,
+          resize: 'vertical' as const,
+          fontFamily: 'inherit',
+        }}
+      />
+
+      {/* Character Counter */}
+      {showCharCount && (
+        <div
+          style={{
+            marginTop: spacing.sm,
+            fontSize: typography.fontSize.sm,
+            textAlign: 'right' as const,
+          }}
+        >
+          <span
+            style={{
+              color: isValid ? colors.semantic.success : colors.semantic.error,
+            }}
+          >
+            {charCount} / {maxLength} characters
+          </span>
+          {showMinHint && (
+            <span style={{ color: colors.text.tertiary }}>
+              {' '}(minimum {minLength})
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Placeholder Warnings */}
+      <PlaceholderWarningsBox warnings={warnings} />
+    </div>
   )
 }

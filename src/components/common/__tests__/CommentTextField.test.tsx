@@ -16,7 +16,7 @@ describe('CommentTextField - Basic Rendering', () => {
       <CommentTextField
         value=""
         onChange={handleChange}
-      />
+      />,
     )
 
     // Should render a textarea
@@ -33,7 +33,7 @@ describe('CommentTextField - Basic Rendering', () => {
       <CommentTextField
         value={testValue}
         onChange={handleChange}
-      />
+      />,
     )
 
     const textarea = screen.getByRole('textbox')
@@ -47,7 +47,7 @@ describe('CommentTextField - Basic Rendering', () => {
       <CommentTextField
         value=""
         onChange={handleChange}
-      />
+      />,
     )
 
     const textarea = screen.getByRole('textbox')
@@ -70,7 +70,7 @@ describe('CommentTextField - Character Validation', () => {
         onChange={handleChange}
         showCharCount={true}
         maxLength={500}
-      />
+      />,
     )
 
     // Should show "4 / 500 characters"
@@ -85,7 +85,7 @@ describe('CommentTextField - Character Validation', () => {
         value="Test"
         onChange={handleChange}
         showCharCount={false}
-      />
+      />,
     )
 
     // Should not show character counter
@@ -101,7 +101,7 @@ describe('CommentTextField - Character Validation', () => {
         onChange={handleChange}
         showCharCount={true}
         minLength={10}
-      />
+      />,
     )
 
     // Should show minimum hint
@@ -117,7 +117,7 @@ describe('CommentTextField - Character Validation', () => {
         onChange={handleChange}
         showCharCount={true}
         minLength={10}
-      />
+      />,
     )
 
     // Should not show minimum hint
@@ -132,12 +132,90 @@ describe('CommentTextField - Character Validation', () => {
         value="Test"
         onChange={handleChange}
         showCharCount={true}
-      />
+      />,
     )
 
     // Should show default maxLength of 500
     expect(screen.getByText(/4 \/ 500 characters/i)).toBeInTheDocument()
     // Should show minimum hint for default minLength of 10
     expect(screen.getByText(/\(minimum 10\)/i)).toBeInTheDocument()
+  })
+})
+
+describe('CommentTextField - Placeholder Integration', () => {
+  it('displays PlaceholderTipsBox when showPlaceholderTips is true', () => {
+    const handleChange = jest.fn()
+
+    render(
+      <CommentTextField
+        value=""
+        onChange={handleChange}
+        showPlaceholderTips={true}
+      />,
+    )
+
+    // Should show the tips box with tip text
+    expect(screen.getByText(/use dynamic placeholders/i)).toBeInTheDocument()
+  })
+
+  it('does not display PlaceholderTipsBox when showPlaceholderTips is false', () => {
+    const handleChange = jest.fn()
+
+    render(
+      <CommentTextField
+        value=""
+        onChange={handleChange}
+        showPlaceholderTips={false}
+      />,
+    )
+
+    // Should not show the tips box
+    expect(screen.queryByText(/use dynamic placeholders/i)).not.toBeInTheDocument()
+  })
+
+  it('validates placeholders and shows warnings for malformed placeholders', () => {
+    const handleChange = jest.fn()
+
+    render(
+      <CommentTextField
+        value="Test <first name comment"
+        onChange={handleChange}
+      />,
+    )
+
+    // Should show warning for malformed placeholder (missing closing bracket)
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+  })
+
+  it('does not show warnings for valid placeholders', () => {
+    const handleChange = jest.fn()
+
+    render(
+      <CommentTextField
+        value="Test <first name> comment"
+        onChange={handleChange}
+      />,
+    )
+
+    // Should not show warnings
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('calls onValidationChange callback with warnings', () => {
+    const handleChange = jest.fn()
+    const handleValidationChange = jest.fn()
+
+    render(
+      <CommentTextField
+        value="Test <first name comment"
+        onChange={handleChange}
+        onValidationChange={handleValidationChange}
+      />,
+    )
+
+    // Should have called onValidationChange with warnings array
+    expect(handleValidationChange).toHaveBeenCalledWith(
+      expect.arrayContaining([expect.stringContaining('not closed')]),
+    )
   })
 })
