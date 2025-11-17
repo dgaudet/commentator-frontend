@@ -110,5 +110,4 @@ Questions:
 * Order the outcome comments high to low
 
 The personalized comment validation for placeholders is too low
-
-Can you create some stories to make the OutcomeCommentsModal and PersonalizedCommentsModal use a shared component. They should both have the same validation requirements around length, and placeholders, as well as the same tips. 
+ 

@@ -1,0 +1,32 @@
+{
+  "feature": "shared-comment-field",
+  "description": "Create shared CommentTextField component to eliminate code duplication between OutcomeCommentsModal and PersonalizedCommentsModal",
+  "complexity": {
+    "level": "L1",
+    "label": "MICRO",
+    "reasoning": "Straightforward component extraction refactoring with 3 user stories, 1-2 day effort, single developer, no new features or external integrations",
+    "assessedAt": "2025-11-17",
+    "criteria": {
+      "stories": 3,
+      "duration": "1-2 days",
+      "teamSize": 1,
+      "externalIntegrations": false,
+      "dataMigrations": false,
+      "specializedSkills": false
+    }
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "NOT_STARTED",
+    "testing": "NOT_STARTED",
+    "deployment": "NOT_STARTED"
+  },
+  "artifacts": {
+    "required": ["minimal-prd.md"],
+    "optional": [],
+    "completed": ["prd.md"]
+  },
+  "createdAt": "2025-11-17",
+  "updatedAt": "2025-11-17"
+}
