@@ -146,7 +146,7 @@ describe('US-UI-003: PersonalizedCommentsModal Component Design Tokens', () => {
         />,
       )
 
-      const counterText = screen.getByText(/0 \/ 500 characters/)
+      const counterText = screen.getByText(/0 \/ 1000 characters/)
       const counterContainer = counterText.parentElement
 
       expect(counterContainer).toHaveStyle({
@@ -170,7 +170,7 @@ describe('US-UI-003: PersonalizedCommentsModal Component Design Tokens', () => {
         />,
       )
 
-      const counterText = screen.getByText(/0 \/ 500 characters/)
+      const counterText = screen.getByText(/0 \/ 1000 characters/)
 
       expect(counterText).toHaveStyle({
         color: colors.semantic.error,
@@ -197,7 +197,7 @@ describe('US-UI-003: PersonalizedCommentsModal Component Design Tokens', () => {
       const validComment = 'This is a valid comment with more than 10 characters'
       fireEvent.change(textarea, { target: { value: validComment } })
 
-      const counterText = screen.getByText(new RegExp(`${validComment.length} / 500 characters`))
+      const counterText = screen.getByText(new RegExp(`${validComment.length} / 1000 characters`))
 
       expect(counterText).toHaveStyle({
         color: colors.semantic.success,
