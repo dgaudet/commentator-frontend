@@ -184,6 +184,22 @@ Create a reusable `CommentTextField` component to eliminate code duplication bet
 ### FR-1: Shared Component API
 The `CommentTextField` component shall provide a flexible, reusable API supporting both modal use cases.
 
+**Component Composition:**
+The component **internally renders all child elements**, eliminating the need for parent components to render them:
+- ✅ `PlaceholderTipsBox` - Rendered when `showPlaceholderTips={true}`
+- ✅ `<textarea>` - Main input field with validation
+- ✅ Character counter - Rendered when `showCharCount={true}`
+- ✅ `PlaceholderWarningsBox` - Rendered automatically when validation warnings exist
+
+**Parent components only need:**
+```typescript
+<CommentTextField
+  value={commentText}
+  onChange={setCommentText}
+  showPlaceholderTips={true}
+/>
+```
+
 **Required Props:**
 - `value: string` - Controlled component value
 - `onChange: (value: string) => void` - Value change handler
