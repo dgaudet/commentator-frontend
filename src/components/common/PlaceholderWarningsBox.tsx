@@ -32,8 +32,8 @@ export const PlaceholderWarningsBox = ({ warnings }: PlaceholderWarningsBoxProps
         fontSize: typography.fontSize.sm,
       }}
     >
-      {warnings.map((warning, index) => (
-        <div key={index}>{warning}</div>
+      {warnings.map((warning) => (
+        <div key={warning}>{warning}</div>
       ))}
     </div>
   )
