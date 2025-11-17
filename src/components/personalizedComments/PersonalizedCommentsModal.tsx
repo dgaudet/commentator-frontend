@@ -31,6 +31,7 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
+import { PlaceholderTipsBox } from '../common/PlaceholderTipsBox'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 import { validatePlaceholders } from '../../utils/placeholders'
@@ -113,12 +114,14 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     })
     setNewCommentContent('')
     setNewCommentRating(3) // Reset to default rating
+    setNewCommentPlaceholderWarnings([]) // US-PLACEHOLDER-PC-003: Clear warnings after successful create
   }
 
   const handleEditStart = (comment: PersonalizedComment) => {
     setEditingId(comment.id)
     setEditContent(comment.comment)
     setEditRating(getNormalizedRating(comment)) // US-RATING-003: Load existing rating (default to 3 if null/undefined)
+    setEditPlaceholderWarnings([]) // US-PLACEHOLDER-PC-003: Clear warnings when starting edit
     setValidationError('')
   }
 
@@ -146,6 +149,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     setEditingId(null)
     setEditContent('')
     setEditRating(3) // Reset to default
+    setEditPlaceholderWarnings([]) // US-PLACEHOLDER-PC-003: Clear warnings when cancelling edit
     setValidationError('')
   }
 
@@ -221,58 +225,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                 </h3>
 
                 {/* US-PLACEHOLDER-PC-001: Placeholder Tips Box */}
-                <div
-                  style={{
-                    padding: spacing.md,
-                    marginBottom: spacing.md,
-                    backgroundColor: colors.primary[50],
-                    border: `${borders.width.thin} solid ${colors.primary[200]}`,
-                    borderRadius: borders.radius.md,
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: typography.fontSize.sm,
-                      fontWeight: typography.fontWeight.semibold,
-                      color: colors.primary[700],
-                      marginBottom: spacing.xs,
-                    }}
-                  >
-                    💡 Tip: Use Dynamic Placeholders
-                  </div>
-                  <div
-                    style={{
-                      fontSize: typography.fontSize.sm,
-                      color: colors.text.secondary,
-                      lineHeight: typography.lineHeight.relaxed,
-                    }}
-                  >
-                    Add placeholders to personalize comments for each student:
-                    <br />
-                    <code style={{
-                      padding: '2px 4px',
-                      backgroundColor: colors.background.secondary,
-                      borderRadius: borders.radius.sm,
-                      fontSize: typography.fontSize.xs,
-                    }}>&lt;first name&gt;</code>{' '}
-                    <code style={{
-                      padding: '2px 4px',
-                      backgroundColor: colors.background.secondary,
-                      borderRadius: borders.radius.sm,
-                      fontSize: typography.fontSize.xs,
-                    }}>&lt;last name&gt;</code>{' '}
-                    <code style={{
-                      padding: '2px 4px',
-                      backgroundColor: colors.background.secondary,
-                      borderRadius: borders.radius.sm,
-                      fontSize: typography.fontSize.xs,
-                    }}>&lt;grade&gt;</code>
-                    <br />
-                    <em style={{ color: colors.text.tertiary }}>
-                      Example: "&lt;first name&gt; earned &lt;grade&gt; points" → "Alice earned 95 points"
-                    </em>
-                  </div>
-                </div>
+                <PlaceholderTipsBox />
 
                 {/* US-PLACEHOLDER-PC-004: Textarea before rating selector */}
                 <div style={{ marginBottom: spacing.lg }}>
@@ -437,58 +390,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                             /* Edit Mode */
                               <div>
                                 {/* US-PLACEHOLDER-PC-002: Placeholder Tips Box */}
-                                <div
-                                  style={{
-                                    padding: spacing.md,
-                                    marginBottom: spacing.md,
-                                    backgroundColor: colors.primary[50],
-                                    border: `${borders.width.thin} solid ${colors.primary[200]}`,
-                                    borderRadius: borders.radius.md,
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      fontSize: typography.fontSize.sm,
-                                      fontWeight: typography.fontWeight.semibold,
-                                      color: colors.primary[700],
-                                      marginBottom: spacing.xs,
-                                    }}
-                                  >
-                                    💡 Tip: Use Dynamic Placeholders
-                                  </div>
-                                  <div
-                                    style={{
-                                      fontSize: typography.fontSize.sm,
-                                      color: colors.text.secondary,
-                                      lineHeight: typography.lineHeight.relaxed,
-                                    }}
-                                  >
-                                    Add placeholders to personalize comments for each student:
-                                    <br />
-                                    <code style={{
-                                      padding: '2px 4px',
-                                      backgroundColor: colors.background.secondary,
-                                      borderRadius: borders.radius.sm,
-                                      fontSize: typography.fontSize.xs,
-                                    }}>&lt;first name&gt;</code>{' '}
-                                    <code style={{
-                                      padding: '2px 4px',
-                                      backgroundColor: colors.background.secondary,
-                                      borderRadius: borders.radius.sm,
-                                      fontSize: typography.fontSize.xs,
-                                    }}>&lt;last name&gt;</code>{' '}
-                                    <code style={{
-                                      padding: '2px 4px',
-                                      backgroundColor: colors.background.secondary,
-                                      borderRadius: borders.radius.sm,
-                                      fontSize: typography.fontSize.xs,
-                                    }}>&lt;grade&gt;</code>
-                                    <br />
-                                    <em style={{ color: colors.text.tertiary }}>
-                                      Example: "&lt;first name&gt; earned &lt;grade&gt; points" → "Alice earned 95 points"
-                                    </em>
-                                  </div>
-                                </div>
+                                <PlaceholderTipsBox />
 
                                 {/* US-PLACEHOLDER-PC-004: Textarea before rating selector */}
                                 <textarea
@@ -619,6 +521,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                   fontSize: typography.fontSize.base,
                                   color: colors.text.primary,
                                   lineHeight: typography.lineHeight.normal,
+                                  marginBottom: spacing.md,
                                   flex: 1,
                                 }}
                               >

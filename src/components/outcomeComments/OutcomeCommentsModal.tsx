@@ -28,6 +28,7 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { PlaceholderTipsBox } from '../common/PlaceholderTipsBox'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { validatePlaceholders } from '../../utils/placeholders'
 
@@ -218,58 +219,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                 </h3>
 
                 {/* US-PLACEHOLDER-002: Placeholder documentation */}
-                <div
-                  style={{
-                    marginBottom: spacing.lg,
-                    padding: spacing.md,
-                    backgroundColor: colors.primary[50],
-                    border: `${borders.width.thin} solid ${colors.primary[200]}`,
-                    borderRadius: borders.radius.md,
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: typography.fontSize.sm,
-                      fontWeight: typography.fontWeight.semibold,
-                      color: colors.primary[700],
-                      marginBottom: spacing.xs,
-                    }}
-                  >
-                    💡 Tip: Use Dynamic Placeholders
-                  </div>
-                  <div
-                    style={{
-                      fontSize: typography.fontSize.sm,
-                      color: colors.text.secondary,
-                      lineHeight: typography.lineHeight.relaxed,
-                    }}
-                  >
-                    Add placeholders to personalize comments for each student:
-                    <br />
-                    <code style={{
-                      padding: '2px 4px',
-                      backgroundColor: colors.background.secondary,
-                      borderRadius: borders.radius.sm,
-                      fontSize: typography.fontSize.xs,
-                    }}>&lt;first name&gt;</code>{' '}
-                    <code style={{
-                      padding: '2px 4px',
-                      backgroundColor: colors.background.secondary,
-                      borderRadius: borders.radius.sm,
-                      fontSize: typography.fontSize.xs,
-                    }}>&lt;last name&gt;</code>{' '}
-                    <code style={{
-                      padding: '2px 4px',
-                      backgroundColor: colors.background.secondary,
-                      borderRadius: borders.radius.sm,
-                      fontSize: typography.fontSize.xs,
-                    }}>&lt;grade&gt;</code>
-                    <br />
-                    <em style={{ color: colors.text.tertiary }}>
-                      Example: "&lt;first name&gt; earned &lt;grade&gt; points" → "Alice earned 95 points"
-                    </em>
-                  </div>
-                </div>
+                <PlaceholderTipsBox />
 
                 <div style={{ marginBottom: spacing.lg }}>
                   <textarea
