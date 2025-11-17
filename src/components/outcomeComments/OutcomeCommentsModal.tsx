@@ -30,6 +30,7 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { CommentTextField } from '../common/CommentTextField'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { MIN_COMMENT_LENGTH, MAX_OUTCOME_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -80,9 +81,24 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
     })
   }
 
+  const validateComment = (comment: string): string | null => {
+    const trimmed = comment.trim()
+    if (!trimmed) {
+      return 'Comment is required'
+    }
+    if (trimmed.length < MIN_COMMENT_LENGTH) {
+      return `Comment must be at least ${MIN_COMMENT_LENGTH} characters`
+    }
+    if (trimmed.length > MAX_OUTCOME_COMMENT_LENGTH) {
+      return `Comment cannot exceed ${MAX_OUTCOME_COMMENT_LENGTH} characters`
+    }
+    return null
+  }
+
   const handleCreateComment = async () => {
-    if (!newCommentContent.trim()) {
-      setValidationError('Comment is required')
+    const commentError = validateComment(newCommentContent)
+    if (commentError) {
+      setValidationError(commentError)
       return
     }
 
@@ -116,8 +132,9 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   }
 
   const handleEditSave = async () => {
-    if (!editContent.trim()) {
-      setValidationError('Comment is required')
+    const commentError = validateComment(editContent)
+    if (commentError) {
+      setValidationError(commentError)
       return
     }
 
@@ -177,6 +194,13 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
     return text.length > 100 ? `${text.substring(0, 100)}...` : text
   }
 
+  // Character count validation for button disabled states
+  const newCommentCharCount = newCommentContent.trim().length
+  const newCommentIsValid = newCommentCharCount >= MIN_COMMENT_LENGTH && newCommentCharCount <= MAX_OUTCOME_COMMENT_LENGTH
+
+  const editCommentCharCount = editContent.trim().length
+  const editCommentIsValid = editCommentCharCount >= MIN_COMMENT_LENGTH && editCommentCharCount <= MAX_OUTCOME_COMMENT_LENGTH
+
   return (
     <>
       <div
@@ -217,8 +241,10 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                 <CommentTextField
                   value={newCommentContent}
                   onChange={setNewCommentContent}
-                  placeholder="Enter outcome comment..."
+                  placeholder={`Enter outcome comment (${MIN_COMMENT_LENGTH}-${MAX_OUTCOME_COMMENT_LENGTH} characters)...`}
                   ariaLabel="Add new outcome comment"
+                  minLength={MIN_COMMENT_LENGTH}
+                  maxLength={MAX_OUTCOME_COMMENT_LENGTH}
                   showCharCount={false}
                   showPlaceholderTips={true}
                 />
@@ -305,6 +331,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                 <Button
                   onClick={handleCreateComment}
                   variant="primary"
+                  disabled={!newCommentIsValid}
                 >
                   Add Comment
                 </Button>
@@ -379,8 +406,10 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                 <CommentTextField
                                   value={editContent}
                                   onChange={setEditContent}
-                                  placeholder="Enter outcome comment..."
+                                  placeholder="Edit outcome comment..."
                                   ariaLabel="Edit outcome comment"
+                                  minLength={MIN_COMMENT_LENGTH}
+                                  maxLength={MAX_OUTCOME_COMMENT_LENGTH}
                                   showCharCount={false}
                                   showPlaceholderTips={true}
                                 />
@@ -450,6 +479,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                   <Button
                                     onClick={handleEditSave}
                                     variant="primary"
+                                    disabled={!editCommentIsValid}
                                   >
                                     Save
                                   </Button>

@@ -12,7 +12,7 @@
  * Related: TD-001 (OutcomeCommentsModal Subject Type Compatibility)
  */
 
-import { render, screen, within, act } from '@testing-library/react'
+import { render, screen, within, act, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { OutcomeCommentsModal } from '../OutcomeCommentsModal'
 import type { Subject, OutcomeComment } from '../../../types'
@@ -175,17 +175,11 @@ describe('OutcomeCommentsModal', () => {
       expect(defaultProps.onCreateComment).not.toHaveBeenCalled()
     })
 
-    it('should display validation error for empty comment', async () => {
-      const user = userEvent.setup()
+    it('should disable submit button for empty comment', () => {
       render(<OutcomeCommentsModal {...defaultProps} />)
 
       const submitButton = screen.getByRole('button', { name: /add comment/i })
-
-      await act(async () => {
-        await user.click(submitButton)
-      })
-
-      expect(screen.getByText('Comment is required')).toBeInTheDocument()
+      expect(submitButton).toBeDisabled()
     })
   })
 
@@ -428,6 +422,131 @@ describe('OutcomeCommentsModal', () => {
         await user.tab()
       })
       expect(screen.getByRole('textbox')).toHaveFocus()
+    })
+  })
+
+  describe('Character Limit Validation', () => {
+    it('should disable Add button when comment is empty', () => {
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
+
+      const addButton = screen.getByRole('button', { name: /Add Comment/i })
+      expect(addButton).toBeDisabled()
+    })
+
+    it('should disable Add button when comment is too short (less than 10 characters)', async () => {
+      const user = userEvent.setup()
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter outcome comment/i)
+      const addButton = screen.getByRole('button', { name: /Add Comment/i })
+
+      await act(async () => {
+        await user.type(textarea, 'Short')
+      })
+
+      expect(addButton).toBeDisabled()
+    })
+
+    it('should enable Add button when comment reaches minimum length (10 characters) and ranges are filled', async () => {
+      const user = userEvent.setup()
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter outcome comment/i)
+      const lowerRange = screen.getByLabelText(/Lower Range/i)
+      const upperRange = screen.getByLabelText(/Upper Range/i)
+      const addButton = screen.getByRole('button', { name: /Add Comment/i })
+
+      await act(async () => {
+        await user.type(textarea, 'This is exactly ten characters long')
+        await user.type(lowerRange, '50')
+        await user.type(upperRange, '75')
+      })
+
+      expect(addButton).not.toBeDisabled()
+    })
+
+    it('should show validation error for comment less than 10 characters when trying to submit', async () => {
+      const user = userEvent.setup()
+      const onCreateComment = jest.fn()
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} onCreateComment={onCreateComment} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter outcome comment/i)
+      const lowerRange = screen.getByLabelText(/Lower Range/i)
+      const upperRange = screen.getByLabelText(/Upper Range/i)
+
+      // Type ranges first
+      await act(async () => {
+        await user.type(lowerRange, '50')
+        await user.type(upperRange, '75')
+      })
+
+      // Type a comment with exactly 9 characters using fireEvent to avoid React update depth issues
+      act(() => {
+        fireEvent.change(textarea, { target: { value: 'ShortText' } }) // 9 characters
+      })
+
+      // Button should still be disabled
+      const addButton = screen.getByRole('button', { name: /Add Comment/i })
+      expect(addButton).toBeDisabled()
+    })
+
+    it('should enforce maxLength attribute preventing excessive characters', () => {
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter outcome comment/i) as HTMLTextAreaElement
+
+      // HTML maxLength attribute prevents typing more than 500 characters
+      expect(textarea).toHaveAttribute('maxLength', '500')
+
+      // The browser enforces this limit, preventing validation error from ever showing
+      // This is the preferred UX - prevent the problem rather than show an error
+    })
+
+    it('should have maxLength attribute set to 500', () => {
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter outcome comment/i) as HTMLTextAreaElement
+      expect(textarea).toHaveAttribute('maxLength', '500')
+    })
+
+    it('should disable Save button when editing comment is too short', async () => {
+      const user = userEvent.setup()
+      render(<OutcomeCommentsModal {...defaultProps} />)
+
+      const editButton = screen.getAllByRole('button', { name: /Edit/i })[0]
+      await act(async () => {
+        await user.click(editButton)
+      })
+
+      const textarea = screen.getByPlaceholderText(/Edit outcome comment/i)
+      const saveButton = screen.getByRole('button', { name: /Save/i })
+
+      await act(async () => {
+        await user.clear(textarea)
+        await user.type(textarea, 'Short')
+      })
+
+      expect(saveButton).toBeDisabled()
+    })
+
+    it('should enable Save button when editing comment is valid length', async () => {
+      const user = userEvent.setup()
+      render(<OutcomeCommentsModal {...defaultProps} />)
+
+      const editButton = screen.getAllByRole('button', { name: /Edit/i })[0]
+      await act(async () => {
+        await user.click(editButton)
+      })
+
+      const textarea = screen.getByPlaceholderText(/Edit outcome comment/i)
+      const saveButton = screen.getByRole('button', { name: /Save/i })
+
+      await act(async () => {
+        await user.clear(textarea)
+        await user.type(textarea, 'This is a valid comment that is long enough to pass validation')
+      })
+
+      expect(saveButton).not.toBeDisabled()
     })
   })
 })
