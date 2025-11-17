@@ -31,8 +31,11 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
+import { PlaceholderTipsBox } from '../common/PlaceholderTipsBox'
+import { PlaceholderWarningsBox } from '../common/PlaceholderWarningsBox'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
+import { validatePlaceholders } from '../../utils/placeholders'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -57,9 +60,11 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
 }: PersonalizedCommentsModalProps<T>) => {
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newCommentRating, setNewCommentRating] = useState(3) // Default rating: 3 (Neutral)
+  const [newCommentPlaceholderWarnings, setNewCommentPlaceholderWarnings] = useState<string[]>([])
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editContent, setEditContent] = useState('')
   const [editRating, setEditRating] = useState(3)
+  const [editPlaceholderWarnings, setEditPlaceholderWarnings] = useState<string[]>([])
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
     commentId: number | null
@@ -110,12 +115,14 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     })
     setNewCommentContent('')
     setNewCommentRating(3) // Reset to default rating
+    setNewCommentPlaceholderWarnings([]) // US-PLACEHOLDER-PC-003: Clear warnings after successful create
   }
 
   const handleEditStart = (comment: PersonalizedComment) => {
     setEditingId(comment.id)
     setEditContent(comment.comment)
     setEditRating(getNormalizedRating(comment)) // US-RATING-003: Load existing rating (default to 3 if null/undefined)
+    setEditPlaceholderWarnings([]) // US-PLACEHOLDER-PC-003: Clear warnings when starting edit
     setValidationError('')
   }
 
@@ -143,6 +150,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     setEditingId(null)
     setEditContent('')
     setEditRating(3) // Reset to default
+    setEditPlaceholderWarnings([]) // US-PLACEHOLDER-PC-003: Clear warnings when cancelling edit
     setValidationError('')
   }
 
@@ -216,18 +224,20 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                 >
                   Add New Personalized Comment
                 </h3>
-                {/* US-RATING-003: Rating Selector */}
-                <EmojiRatingSelector
-                  id="new-comment-rating"
-                  label="Rating"
-                  value={newCommentRating}
-                  onChange={setNewCommentRating}
-                  required
-                />
+
+                {/* US-PLACEHOLDER-PC-001: Placeholder Tips Box */}
+                <PlaceholderTipsBox />
+
+                {/* US-PLACEHOLDER-PC-004: Textarea before rating selector */}
                 <div style={{ marginBottom: spacing.lg }}>
                   <textarea
                     value={newCommentContent}
-                    onChange={(e) => setNewCommentContent(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setNewCommentContent(value)
+                      // US-PLACEHOLDER-PC-003: Validate placeholders on input
+                      setNewCommentPlaceholderWarnings(validatePlaceholders(value))
+                    }}
                     placeholder="Enter personalized comment (10-500 characters)..."
                     aria-label="Add new personalized comment"
                     rows={4}
@@ -259,7 +269,19 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                       <span style={{ color: colors.text.tertiary }}> (minimum 10)</span>
                     )}
                   </div>
+
+                  {/* US-PLACEHOLDER-PC-003: Placeholder validation warnings */}
+                  <PlaceholderWarningsBox warnings={newCommentPlaceholderWarnings} />
                 </div>
+
+                {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
+                <EmojiRatingSelector
+                  id="new-comment-rating"
+                  label="Rating"
+                  value={newCommentRating}
+                  onChange={setNewCommentRating}
+                  required
+                />
                 {validationError && (
                   <div
                     role="alert"
@@ -350,17 +372,18 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                           ? (
                             /* Edit Mode */
                               <div>
-                                {/* US-RATING-003: Rating Selector */}
-                                <EmojiRatingSelector
-                                  id="edit-comment-rating"
-                                  label="Rating"
-                                  value={editRating}
-                                  onChange={setEditRating}
-                                  required
-                                />
+                                {/* US-PLACEHOLDER-PC-002: Placeholder Tips Box */}
+                                <PlaceholderTipsBox />
+
+                                {/* US-PLACEHOLDER-PC-004: Textarea before rating selector */}
                                 <textarea
                                   value={editContent}
-                                  onChange={(e) => setEditContent(e.target.value)}
+                                  onChange={(e) => {
+                                    const value = e.target.value
+                                    setEditContent(value)
+                                    // US-PLACEHOLDER-PC-003: Validate placeholders on input
+                                    setEditPlaceholderWarnings(validatePlaceholders(value))
+                                  }}
                                   rows={4}
                                   maxLength={500}
                                   style={{
@@ -392,6 +415,18 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                     <span style={{ color: colors.text.tertiary }}> (minimum 10)</span>
                                   )}
                                 </div>
+
+                                {/* US-PLACEHOLDER-PC-003: Placeholder validation warnings */}
+                                <PlaceholderWarningsBox warnings={editPlaceholderWarnings} />
+
+                                {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
+                                <EmojiRatingSelector
+                                  id="edit-comment-rating"
+                                  label="Rating"
+                                  value={editRating}
+                                  onChange={setEditRating}
+                                  required
+                                />
                                 {validationError && (
                                   <div
                                     role="alert"
@@ -451,6 +486,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                   fontSize: typography.fontSize.base,
                                   color: colors.text.primary,
                                   lineHeight: typography.lineHeight.normal,
+                                  marginBottom: spacing.md,
                                   flex: 1,
                                 }}
                               >

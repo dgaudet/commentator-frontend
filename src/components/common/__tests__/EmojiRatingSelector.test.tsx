@@ -322,15 +322,21 @@ describe('EmojiRatingSelector - Visual Styling', () => {
     })
   })
 
-  it('applies default border when no error', () => {
+  it('has minimal styling when no error (no panel appearance)', () => {
     render(<EmojiRatingSelector id="rating" value={3} onChange={() => {}} />)
 
     const radiogroup = screen.getByRole('radiogroup')
 
-    // Check for default border color
+    // Verify it has flex layout and gap but no border/padding/background
     expect(radiogroup).toHaveStyle({
-      borderColor: '#E5E7EB', // colors.border.default
+      display: 'flex',
     })
+
+    // Get computed styles to verify no border/padding/background
+    const styles = window.getComputedStyle(radiogroup)
+    expect(styles.border).toBe('')
+    expect(styles.padding).toBe('')
+    expect(styles.backgroundColor).toBe('')
   })
 })
 
