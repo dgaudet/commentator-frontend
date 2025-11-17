@@ -79,6 +79,7 @@ export const CommentTextField = ({
         onChange={handleChange}
         placeholder={placeholder}
         rows={rows}
+        maxLength={maxLength}
         aria-label={ariaLabel}
         disabled={disabled}
         style={{

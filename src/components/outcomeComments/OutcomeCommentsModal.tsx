@@ -28,10 +28,8 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
-import { PlaceholderTipsBox } from '../common/PlaceholderTipsBox'
-import { PlaceholderWarningsBox } from '../common/PlaceholderWarningsBox'
+import { CommentTextField } from '../common/CommentTextField'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
-import { validatePlaceholders } from '../../utils/placeholders'
 
 interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -71,10 +69,6 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
     commentText: '',
   })
   const [validationError, setValidationError] = useState('')
-
-  // US-PLACEHOLDER-003: Placeholder validation warnings
-  const [newCommentWarnings, setNewCommentWarnings] = useState<string[]>([])
-  const [editCommentWarnings, setEditCommentWarnings] = useState<string[]>([])
 
   if (!isOpen) return null
 
@@ -219,34 +213,15 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                   Add New Outcome Comment
                 </h3>
 
-                {/* US-PLACEHOLDER-002: Placeholder documentation */}
-                <PlaceholderTipsBox />
-
-                <div style={{ marginBottom: spacing.lg }}>
-                  <textarea
-                    value={newCommentContent}
-                    onChange={(e) => {
-                      const value = e.target.value
-                      setNewCommentContent(value)
-                      // US-PLACEHOLDER-003: Validate placeholders on change
-                      setNewCommentWarnings(validatePlaceholders(value))
-                    }}
-                    placeholder="Enter outcome comment..."
-                    aria-label="Add new outcome comment"
-                    rows={3}
-                    style={{
-                      width: '100%',
-                      padding: spacing.md,
-                      fontSize: typography.fontSize.base,
-                      border: `${borders.width.thin} solid ${colors.border.default}`,
-                      borderRadius: borders.radius.md,
-                      resize: 'vertical' as const,
-                    }}
-                  />
-
-                  {/* US-PLACEHOLDER-003: Display validation warnings */}
-                  <PlaceholderWarningsBox warnings={newCommentWarnings} />
-                </div>
+                {/* US-SHARED-002: Use shared CommentTextField component */}
+                <CommentTextField
+                  value={newCommentContent}
+                  onChange={setNewCommentContent}
+                  placeholder="Enter outcome comment..."
+                  ariaLabel="Add new outcome comment"
+                  showCharCount={false}
+                  showPlaceholderTips={true}
+                />
                 <div
                   style={{
                     display: 'flex',
@@ -400,66 +375,15 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                           ? (
                             /* Edit Mode */
                               <div>
-                                {/* US-PLACEHOLDER-002: Placeholder documentation (Edit Mode) */}
-                                <div
-                                  style={{
-                                    marginBottom: spacing.md,
-                                    padding: spacing.sm,
-                                    backgroundColor: colors.primary[50],
-                                    border: `${borders.width.thin} solid ${colors.primary[200]}`,
-                                    borderRadius: borders.radius.md,
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      fontSize: typography.fontSize.xs,
-                                      color: colors.text.secondary,
-                                    }}
-                                  >
-                                    <strong style={{ color: colors.primary[700] }}>Placeholders:</strong>{' '}
-                                    <code style={{
-                                      padding: '2px 4px',
-                                      backgroundColor: colors.background.secondary,
-                                      borderRadius: borders.radius.sm,
-                                      fontSize: typography.fontSize.xs,
-                                    }}>&lt;first name&gt;</code>{' '}
-                                    <code style={{
-                                      padding: '2px 4px',
-                                      backgroundColor: colors.background.secondary,
-                                      borderRadius: borders.radius.sm,
-                                      fontSize: typography.fontSize.xs,
-                                    }}>&lt;last name&gt;</code>{' '}
-                                    <code style={{
-                                      padding: '2px 4px',
-                                      backgroundColor: colors.background.secondary,
-                                      borderRadius: borders.radius.sm,
-                                      fontSize: typography.fontSize.xs,
-                                    }}>&lt;grade&gt;</code>
-                                  </div>
-                                </div>
-
-                                <textarea
+                                {/* US-SHARED-002: Use shared CommentTextField component (Edit Mode) */}
+                                <CommentTextField
                                   value={editContent}
-                                  onChange={(e) => {
-                                    const value = e.target.value
-                                    setEditContent(value)
-                                    // US-PLACEHOLDER-003: Validate placeholders on change
-                                    setEditCommentWarnings(validatePlaceholders(value))
-                                  }}
-                                  rows={3}
-                                  style={{
-                                    width: '100%',
-                                    padding: spacing.md,
-                                    fontSize: typography.fontSize.base,
-                                    border: `${borders.width.thin} solid ${colors.border.default}`,
-                                    borderRadius: borders.radius.md,
-                                    resize: 'vertical' as const,
-                                    marginBottom: spacing.sm,
-                                  }}
+                                  onChange={setEditContent}
+                                  placeholder="Enter outcome comment..."
+                                  ariaLabel="Edit outcome comment"
+                                  showCharCount={false}
+                                  showPlaceholderTips={true}
                                 />
-
-                                {/* US-PLACEHOLDER-003: Display validation warnings (Edit Mode) */}
-                                <PlaceholderWarningsBox warnings={editCommentWarnings} />
                                 <div
                                   style={{
                                     display: 'flex',
