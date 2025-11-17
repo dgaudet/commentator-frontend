@@ -107,14 +107,8 @@ When adding a new class, it should be selected by default after creation.
 The final comments error text doesn't use the standardized error label component.
 
 Questions:
-* should the personal comments have placeholders as well?
-** yes
-* Add a rating to the personalized comments, so they can be ordered in the dropdown and in the existing.
-* Like a star system, or emoji system, with around 5 levels.
-** When edit/create comment, I think the rating should be under the comment, and doesn't need to be in a panel
-* Need to allow multiple personalized comments, and be able to order them once picked
-* 
 * Order the outcome comments high to low
 
 The personalized comment validation for placeholders is too low
-The rating selection doesn't need to be in a panel
+
+Can you create some stories to make the OutcomeCommentsModal and PersonalizedCommentsModal use a shared component. They should both have the same validation requirements around length, and placeholders, as well as the same tips. 

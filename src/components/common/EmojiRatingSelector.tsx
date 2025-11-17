@@ -126,10 +126,12 @@ export const EmojiRatingSelector: React.FC<EmojiRatingSelectorProps> = ({
         style={{
           display: 'flex',
           gap: spacing.sm,
-          padding: spacing.md,
-          border: `${borders.width.thin} solid ${hasError ? colors.semantic.error : colors.border.default}`,
-          borderRadius: borders.radius.md,
-          backgroundColor: colors.background.primary,
+          ...(hasError && {
+            padding: spacing.sm,
+            border: `${borders.width.thin} solid ${colors.semantic.error}`,
+            borderRadius: borders.radius.md,
+            backgroundColor: colors.semantic.errorLight,
+          }),
         }}
       >
         {ratings.map((rating) => {
