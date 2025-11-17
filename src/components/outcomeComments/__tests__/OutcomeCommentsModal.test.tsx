@@ -430,7 +430,7 @@ describe('OutcomeCommentsModal', () => {
       render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
 
       // Should show "0 / 500 characters" initially
-      expect(screen.getByText(/0 \/ 500 characters/i)).toBeInTheDocument()
+      expect(screen.getByText(/0 \/ 1000 characters/i)).toBeInTheDocument()
     })
 
     it('should display character counter in red when below minimum', async () => {
@@ -444,7 +444,7 @@ describe('OutcomeCommentsModal', () => {
       })
 
       // Counter should show "5 / 500 characters" with error color
-      const counter = screen.getByText(/5 \/ 500 characters/i)
+      const counter = screen.getByText(/5 \/ 1000 characters/i)
       expect(counter).toBeInTheDocument()
       expect(counter).toHaveStyle({ color: 'rgb(220, 38, 38)' }) // colors.semantic.error
     })
@@ -460,7 +460,7 @@ describe('OutcomeCommentsModal', () => {
       })
 
       // Counter should show success color for valid length
-      const counter = screen.getByText(/23 \/ 500 characters/i)
+      const counter = screen.getByText(/23 \/ 1000 characters/i)
       expect(counter).toBeInTheDocument()
       expect(counter).toHaveStyle({ color: 'rgb(16, 185, 129)' }) // colors.semantic.success
     })
@@ -548,18 +548,18 @@ describe('OutcomeCommentsModal', () => {
 
       const textarea = screen.getByPlaceholderText(/Enter outcome comment/i) as HTMLTextAreaElement
 
-      // HTML maxLength attribute prevents typing more than 500 characters
-      expect(textarea).toHaveAttribute('maxLength', '500')
+      // HTML maxLength attribute prevents typing more than 1000 characters
+      expect(textarea).toHaveAttribute('maxLength', '1000')
 
       // The browser enforces this limit, preventing validation error from ever showing
       // This is the preferred UX - prevent the problem rather than show an error
     })
 
-    it('should have maxLength attribute set to 500', () => {
+    it('should have maxLength attribute set to 1000', () => {
       render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
 
       const textarea = screen.getByPlaceholderText(/Enter outcome comment/i) as HTMLTextAreaElement
-      expect(textarea).toHaveAttribute('maxLength', '500')
+      expect(textarea).toHaveAttribute('maxLength', '1000')
     })
 
     it('should disable Save button when editing comment is too short', async () => {

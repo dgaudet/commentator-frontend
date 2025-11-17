@@ -34,7 +34,7 @@ import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
 import { CommentTextField } from '../common/CommentTextField'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
-import { MIN_COMMENT_LENGTH, MAX_PERSONALIZED_COMMENT_LENGTH } from '../../constants/commentLimits'
+import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -91,8 +91,8 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     if (trimmed.length < MIN_COMMENT_LENGTH) {
       return `Comment must be at least ${MIN_COMMENT_LENGTH} characters`
     }
-    if (trimmed.length > MAX_PERSONALIZED_COMMENT_LENGTH) {
-      return `Comment cannot exceed ${MAX_PERSONALIZED_COMMENT_LENGTH} characters`
+    if (trimmed.length > MAX_COMMENT_LENGTH) {
+      return `Comment cannot exceed ${MAX_COMMENT_LENGTH} characters`
     }
     return null
   }
@@ -174,10 +174,10 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
 
   // Character count validation for button disabled states
   const newCommentCharCount = newCommentContent.trim().length
-  const newCommentIsValid = newCommentCharCount >= MIN_COMMENT_LENGTH && newCommentCharCount <= MAX_PERSONALIZED_COMMENT_LENGTH
+  const newCommentIsValid = newCommentCharCount >= MIN_COMMENT_LENGTH && newCommentCharCount <= MAX_COMMENT_LENGTH
 
   const editCommentCharCount = editContent.trim().length
-  const editCommentIsValid = editCommentCharCount >= MIN_COMMENT_LENGTH && editCommentCharCount <= MAX_PERSONALIZED_COMMENT_LENGTH
+  const editCommentIsValid = editCommentCharCount >= MIN_COMMENT_LENGTH && editCommentCharCount <= MAX_COMMENT_LENGTH
 
   // US-RATING-004: Sort comments by rating (descending) with alphabetical tie-breaking
   const sortedComments = sortPersonalizedCommentsByRating(personalizedComments)
@@ -222,11 +222,11 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                 <CommentTextField
                   value={newCommentContent}
                   onChange={setNewCommentContent}
-                  placeholder={`Enter personalized comment (${MIN_COMMENT_LENGTH}-${MAX_PERSONALIZED_COMMENT_LENGTH} characters)...`}
+                  placeholder={`Enter personalized comment (${MIN_COMMENT_LENGTH}-${MAX_COMMENT_LENGTH} characters)...`}
                   ariaLabel="Add new personalized comment"
                   rows={4}
                   minLength={MIN_COMMENT_LENGTH}
-                  maxLength={MAX_PERSONALIZED_COMMENT_LENGTH}
+                  maxLength={MAX_COMMENT_LENGTH}
                   showCharCount={true}
                   showPlaceholderTips={true}
                 />
@@ -337,7 +337,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                   ariaLabel="Edit personalized comment"
                                   rows={4}
                                   minLength={MIN_COMMENT_LENGTH}
-                                  maxLength={MAX_PERSONALIZED_COMMENT_LENGTH}
+                                  maxLength={MAX_COMMENT_LENGTH}
                                   showCharCount={true}
                                   showPlaceholderTips={true}
                                 />

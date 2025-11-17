@@ -30,7 +30,7 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { CommentTextField } from '../common/CommentTextField'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
-import { MIN_COMMENT_LENGTH, MAX_OUTCOME_COMMENT_LENGTH } from '../../constants/commentLimits'
+import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -89,8 +89,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
     if (trimmed.length < MIN_COMMENT_LENGTH) {
       return `Comment must be at least ${MIN_COMMENT_LENGTH} characters`
     }
-    if (trimmed.length > MAX_OUTCOME_COMMENT_LENGTH) {
-      return `Comment cannot exceed ${MAX_OUTCOME_COMMENT_LENGTH} characters`
+    if (trimmed.length > MAX_COMMENT_LENGTH) {
+      return `Comment cannot exceed ${MAX_COMMENT_LENGTH} characters`
     }
     return null
   }
@@ -196,10 +196,10 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
 
   // Character count validation for button disabled states
   const newCommentCharCount = newCommentContent.trim().length
-  const newCommentIsValid = newCommentCharCount >= MIN_COMMENT_LENGTH && newCommentCharCount <= MAX_OUTCOME_COMMENT_LENGTH
+  const newCommentIsValid = newCommentCharCount >= MIN_COMMENT_LENGTH && newCommentCharCount <= MAX_COMMENT_LENGTH
 
   const editCommentCharCount = editContent.trim().length
-  const editCommentIsValid = editCommentCharCount >= MIN_COMMENT_LENGTH && editCommentCharCount <= MAX_OUTCOME_COMMENT_LENGTH
+  const editCommentIsValid = editCommentCharCount >= MIN_COMMENT_LENGTH && editCommentCharCount <= MAX_COMMENT_LENGTH
 
   return (
     <>
@@ -241,10 +241,10 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                 <CommentTextField
                   value={newCommentContent}
                   onChange={setNewCommentContent}
-                  placeholder={`Enter outcome comment (${MIN_COMMENT_LENGTH}-${MAX_OUTCOME_COMMENT_LENGTH} characters)...`}
+                  placeholder={`Enter outcome comment (${MIN_COMMENT_LENGTH}-${MAX_COMMENT_LENGTH} characters)...`}
                   ariaLabel="Add new outcome comment"
                   minLength={MIN_COMMENT_LENGTH}
-                  maxLength={MAX_OUTCOME_COMMENT_LENGTH}
+                  maxLength={MAX_COMMENT_LENGTH}
                   showCharCount={true}
                   showPlaceholderTips={true}
                 />
@@ -409,7 +409,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                   placeholder="Edit outcome comment..."
                                   ariaLabel="Edit outcome comment"
                                   minLength={MIN_COMMENT_LENGTH}
-                                  maxLength={MAX_OUTCOME_COMMENT_LENGTH}
+                                  maxLength={MAX_COMMENT_LENGTH}
                                   showCharCount={true}
                                   showPlaceholderTips={true}
                                 />
