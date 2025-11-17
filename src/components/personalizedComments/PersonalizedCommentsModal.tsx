@@ -32,6 +32,7 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
 import { PlaceholderTipsBox } from '../common/PlaceholderTipsBox'
+import { PlaceholderWarningsBox } from '../common/PlaceholderWarningsBox'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 import { validatePlaceholders } from '../../utils/placeholders'
@@ -270,25 +271,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                   </div>
 
                   {/* US-PLACEHOLDER-PC-003: Placeholder validation warnings */}
-                  {newCommentPlaceholderWarnings.length > 0 && (
-                    <div
-                      role="alert"
-                      aria-live="polite"
-                      style={{
-                        padding: spacing.md,
-                        marginTop: spacing.md,
-                        backgroundColor: colors.semantic.warningLight,
-                        border: `${borders.width.thin} solid ${colors.semantic.warning}`,
-                        borderRadius: borders.radius.md,
-                        color: colors.semantic.warning,
-                        fontSize: typography.fontSize.sm,
-                      }}
-                    >
-                      {newCommentPlaceholderWarnings.map((warning, index) => (
-                        <div key={index}>{warning}</div>
-                      ))}
-                    </div>
-                  )}
+                  <PlaceholderWarningsBox warnings={newCommentPlaceholderWarnings} />
                 </div>
 
                 {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
@@ -434,25 +417,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                 </div>
 
                                 {/* US-PLACEHOLDER-PC-003: Placeholder validation warnings */}
-                                {editPlaceholderWarnings.length > 0 && (
-                                  <div
-                                    role="alert"
-                                    aria-live="polite"
-                                    style={{
-                                      padding: spacing.md,
-                                      marginBottom: spacing.lg,
-                                      backgroundColor: colors.semantic.warningLight,
-                                      border: `${borders.width.thin} solid ${colors.semantic.warning}`,
-                                      borderRadius: borders.radius.md,
-                                      color: colors.semantic.warning,
-                                      fontSize: typography.fontSize.sm,
-                                    }}
-                                  >
-                                    {editPlaceholderWarnings.map((warning, index) => (
-                                      <div key={index}>{warning}</div>
-                                    ))}
-                                  </div>
-                                )}
+                                <PlaceholderWarningsBox warnings={editPlaceholderWarnings} />
 
                                 {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
                                 <EmojiRatingSelector

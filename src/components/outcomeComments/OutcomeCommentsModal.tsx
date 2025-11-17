@@ -29,6 +29,7 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { PlaceholderTipsBox } from '../common/PlaceholderTipsBox'
+import { PlaceholderWarningsBox } from '../common/PlaceholderWarningsBox'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { validatePlaceholders } from '../../utils/placeholders'
 
@@ -244,32 +245,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                   />
 
                   {/* US-PLACEHOLDER-003: Display validation warnings */}
-                  {newCommentWarnings.length > 0 && (
-                    <div
-                      role="alert"
-                      aria-live="polite"
-                      style={{
-                        marginTop: spacing.sm,
-                        padding: spacing.sm,
-                        backgroundColor: colors.semantic.warningLight,
-                        border: `${borders.width.thin} solid ${colors.semantic.warning}`,
-                        borderRadius: borders.radius.md,
-                      }}
-                    >
-                      {newCommentWarnings.map((warning, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            fontSize: typography.fontSize.sm,
-                            color: colors.semantic.warningDark,
-                            marginBottom: index < newCommentWarnings.length - 1 ? spacing.xs : 0,
-                          }}
-                        >
-                          {warning}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <PlaceholderWarningsBox warnings={newCommentWarnings} />
                 </div>
                 <div
                   style={{
@@ -483,32 +459,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                 />
 
                                 {/* US-PLACEHOLDER-003: Display validation warnings (Edit Mode) */}
-                                {editCommentWarnings.length > 0 && (
-                                  <div
-                                    role="alert"
-                                    aria-live="polite"
-                                    style={{
-                                      marginBottom: spacing.lg,
-                                      padding: spacing.sm,
-                                      backgroundColor: colors.semantic.warningLight,
-                                      border: `${borders.width.thin} solid ${colors.semantic.warning}`,
-                                      borderRadius: borders.radius.md,
-                                    }}
-                                  >
-                                    {editCommentWarnings.map((warning, index) => (
-                                      <div
-                                        key={index}
-                                        style={{
-                                          fontSize: typography.fontSize.sm,
-                                          color: colors.semantic.warningDark,
-                                          marginBottom: index < editCommentWarnings.length - 1 ? spacing.xs : 0,
-                                        }}
-                                      >
-                                        {warning}
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
+                                <PlaceholderWarningsBox warnings={editCommentWarnings} />
                                 <div
                                   style={{
                                     display: 'flex',

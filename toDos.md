@@ -117,5 +117,4 @@ Questions:
 * Order the outcome comments high to low
 
 The personalized comment validation for placeholders is too low
-The placeholder tips is duplicated for both the Outcome and Personalized comments
 The rating selection doesn't need to be in a panel
