@@ -426,6 +426,59 @@ describe('OutcomeCommentsModal', () => {
   })
 
   describe('Character Limit Validation', () => {
+    it('should display character counter showing current and maximum characters', () => {
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
+
+      // Should show "0 / 500 characters" initially
+      expect(screen.getByText(/0 \/ 500 characters/i)).toBeInTheDocument()
+    })
+
+    it('should display character counter in red when below minimum', async () => {
+      const user = userEvent.setup()
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter outcome comment/i)
+
+      await act(async () => {
+        await user.type(textarea, 'Short')
+      })
+
+      // Counter should show "5 / 500 characters" with error color
+      const counter = screen.getByText(/5 \/ 500 characters/i)
+      expect(counter).toBeInTheDocument()
+      expect(counter).toHaveStyle({ color: 'rgb(220, 38, 38)' }) // colors.semantic.error
+    })
+
+    it('should display character counter in green when valid', async () => {
+      const user = userEvent.setup()
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter outcome comment/i)
+
+      await act(async () => {
+        await user.type(textarea, 'This is a valid comment')
+      })
+
+      // Counter should show success color for valid length
+      const counter = screen.getByText(/23 \/ 500 characters/i)
+      expect(counter).toBeInTheDocument()
+      expect(counter).toHaveStyle({ color: 'rgb(16, 185, 129)' }) // colors.semantic.success
+    })
+
+    it('should show minimum character hint when below minimum', async () => {
+      const user = userEvent.setup()
+      render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
+
+      const textarea = screen.getByPlaceholderText(/Enter outcome comment/i)
+
+      await act(async () => {
+        await user.type(textarea, 'Short')
+      })
+
+      // Should show "(minimum 10)" hint
+      expect(screen.getByText(/\(minimum 10\)/i)).toBeInTheDocument()
+    })
+
     it('should disable Add button when comment is empty', () => {
       render(<OutcomeCommentsModal {...defaultProps} outcomeComments={[]} />)
 

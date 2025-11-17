@@ -245,7 +245,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                   ariaLabel="Add new outcome comment"
                   minLength={MIN_COMMENT_LENGTH}
                   maxLength={MAX_OUTCOME_COMMENT_LENGTH}
-                  showCharCount={false}
+                  showCharCount={true}
                   showPlaceholderTips={true}
                 />
                 <div
@@ -410,7 +410,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                   ariaLabel="Edit outcome comment"
                                   minLength={MIN_COMMENT_LENGTH}
                                   maxLength={MAX_OUTCOME_COMMENT_LENGTH}
-                                  showCharCount={false}
+                                  showCharCount={true}
                                   showPlaceholderTips={true}
                                 />
                                 <div
