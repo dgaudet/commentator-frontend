@@ -289,7 +289,7 @@ describe('US-DARK-002: Dark Theme Color Tokens', () => {
 
       // Apply gamma correction
       const [rg, gg, bg] = [r, g, b].map(val =>
-        val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4)
+        val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4),
       )
 
       return 0.2126 * rg + 0.7152 * gg + 0.0722 * bg
@@ -312,7 +312,7 @@ describe('US-DARK-002: Dark Theme Color Tokens', () => {
     it('should have sufficient contrast for primary text on primary background (min 4.5:1)', () => {
       const contrast = getContrastRatio(
         darkColors.text.primary,
-        darkColors.background.primary
+        darkColors.background.primary,
       )
 
       expect(contrast).toBeGreaterThanOrEqual(4.5)
@@ -321,7 +321,7 @@ describe('US-DARK-002: Dark Theme Color Tokens', () => {
     it('should have sufficient contrast for secondary text on primary background (min 4.5:1)', () => {
       const contrast = getContrastRatio(
         darkColors.text.secondary,
-        darkColors.background.primary
+        darkColors.background.primary,
       )
 
       expect(contrast).toBeGreaterThanOrEqual(4.5)
@@ -330,7 +330,7 @@ describe('US-DARK-002: Dark Theme Color Tokens', () => {
     it('should have sufficient contrast for error text on error background (min 3:1 for large text)', () => {
       const contrast = getContrastRatio(
         darkColors.semantic.error,
-        darkColors.semantic.errorLight
+        darkColors.semantic.errorLight,
       )
 
       // Using 3:1 for large text as error messages are often displayed in larger font
