@@ -7,11 +7,12 @@
  * Eliminates code duplication between OutcomeCommentsModal and PersonalizedCommentsModal
  */
 
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState, useRef } from 'react'
 import { PlaceholderTipsBox } from './PlaceholderTipsBox'
 import { PlaceholderWarningsBox } from './PlaceholderWarningsBox'
 import { validatePlaceholders } from '../../utils/placeholders'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface CommentTextFieldProps {
   /** Current comment text */
@@ -43,8 +44,8 @@ export const CommentTextField = ({
   onChange,
   onValidationChange,
   placeholder = 'Enter comment...',
-  minLength = 10,
-  maxLength = 500,
+  minLength = MIN_COMMENT_LENGTH,
+  maxLength = MAX_COMMENT_LENGTH,
   rows = 3,
   showCharCount = true,
   showPlaceholderTips = true,
@@ -53,18 +54,29 @@ export const CommentTextField = ({
 }: CommentTextFieldProps) => {
   const [warnings, setWarnings] = useState<string[]>([])
 
+  // Use ref to store callback to avoid unnecessary re-renders
+  // This prevents the effect from running when parent doesn't memoize the callback
+  const onValidationChangeRef = useRef(onValidationChange)
+
+  // Keep ref up-to-date with latest callback
+  useEffect(() => {
+    onValidationChangeRef.current = onValidationChange
+  }, [onValidationChange])
+
   // Validate placeholders whenever value changes
   useEffect(() => {
     const newWarnings = validatePlaceholders(value)
     setWarnings(newWarnings)
-    onValidationChange?.(newWarnings)
-  }, [value, onValidationChange])
+    // Use ref to call callback without including it in dependencies
+    onValidationChangeRef.current?.(newWarnings)
+  }, [value])
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value)
   }
 
-  const charCount = value.length
+  // Use trimmed length to match parent validation logic (e.g., OutcomeCommentsModal line 198)
+  const charCount = value.trim().length
   const isValid = charCount >= minLength
   const showMinHint = charCount > 0 && charCount < minLength
 
