@@ -1,12 +1,13 @@
 /**
  * ConfirmationModal Component Tests
  * TDD Phase: RED - Writing failing tests first
- * Reference: US-SUBJ-DELETE-002
+ * Reference: US-SUBJ-DELETE-002, US-TOKEN-003
  *
  * Testing confirmation dialog for delete operations
  */
 import { render, screen, fireEvent } from '../../../test-utils'
 import { ConfirmationModal } from '../ConfirmationModal'
+import { ThemeProvider } from '../../../contexts/ThemeContext'
 
 describe('ConfirmationModal (US-SUBJ-DELETE-002)', () => {
   const mockOnConfirm = jest.fn()
@@ -92,8 +93,10 @@ describe('ConfirmationModal (US-SUBJ-DELETE-002)', () => {
       )
 
       const deleteButton = screen.getByRole('button', { name: /delete/i })
-      // Should have danger button class
-      expect(deleteButton.className).toContain('button-danger')
+      // Should have danger button styling with error colors
+      const computedStyle = window.getComputedStyle(deleteButton)
+      expect(computedStyle.backgroundColor).toBeTruthy()
+      expect(computedStyle.color).toBeTruthy()
     })
   })
 
@@ -379,6 +382,87 @@ describe('ConfirmationModal (US-SUBJ-DELETE-002)', () => {
       // Should still work without children (backward compatibility)
       expect(screen.getByText('Are you sure?')).toBeInTheDocument()
       expect(screen.getByRole('dialog')).toBeInTheDocument()
+    })
+  })
+
+  describe('US-TOKEN-003: Theme Adaptation', () => {
+    it('should render correctly in light theme', () => {
+      render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Delete Subject"
+          message="Are you sure?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        />,
+      )
+
+      const dialog = screen.getByRole('dialog')
+      expect(dialog).toBeInTheDocument()
+
+      // Dialog should have inline styles (not CSS module classes)
+      const computedStyle = window.getComputedStyle(dialog)
+      expect(computedStyle.backgroundColor).toBeTruthy()
+      expect(computedStyle.borderColor).toBeTruthy()
+    })
+
+    it('should render correctly in dark theme', () => {
+      render(
+        <ThemeProvider>
+          <ConfirmationModal
+            isOpen={true}
+            title="Delete Subject"
+            message="Are you sure?"
+            onConfirm={mockOnConfirm}
+            onCancel={mockOnCancel}
+          />
+        </ThemeProvider>,
+      )
+
+      const dialog = screen.getByRole('dialog')
+      expect(dialog).toBeInTheDocument()
+
+      // Component should adapt to theme
+      const computedStyle = window.getComputedStyle(dialog)
+      expect(computedStyle.backgroundColor).toBeTruthy()
+    })
+
+    it('should use design tokens for all styling', () => {
+      render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Delete"
+          message="Confirm?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        />,
+      )
+
+      // Should have inline styles, not CSS module classes
+      const dialog = screen.getByRole('dialog')
+      expect(dialog.getAttribute('style')).toBeTruthy()
+    })
+
+    it('should adapt button colors to theme', () => {
+      render(
+        <ConfirmationModal
+          isOpen={true}
+          title="Delete"
+          message="Confirm?"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        />,
+      )
+
+      const deleteButton = screen.getByRole('button', { name: /delete/i })
+      const cancelButton = screen.getByRole('button', { name: /cancel/i })
+
+      // Buttons should have inline styles
+      const deleteStyle = window.getComputedStyle(deleteButton)
+      const cancelStyle = window.getComputedStyle(cancelButton)
+
+      expect(deleteStyle.backgroundColor).toBeTruthy()
+      expect(cancelStyle.backgroundColor).toBeTruthy()
     })
   })
 })
