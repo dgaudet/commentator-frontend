@@ -10,7 +10,7 @@
  */
 
 import { useEffect } from 'react'
-import { useTheme } from '../../contexts/ThemeContext'
+import { useTheme } from '../../hooks/useTheme'
 import { colors, darkColors } from '../../theme/tokens'
 
 export const ThemeStyles: React.FC = () => {

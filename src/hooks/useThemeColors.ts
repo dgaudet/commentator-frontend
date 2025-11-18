@@ -19,7 +19,7 @@
  */
 
 import { useMemo } from 'react'
-import { useTheme } from '../contexts/ThemeContext'
+import { useTheme } from './useTheme'
 import { colors, darkColors } from '../theme/tokens'
 import type { Colors, DarkColors } from '../theme/tokens'
 

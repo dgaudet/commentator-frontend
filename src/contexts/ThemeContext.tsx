@@ -15,30 +15,11 @@
  * - setThemePreference: Function to update preference
  */
 
-import React, { createContext, useContext, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useSystemThemeDetection, Theme } from '../hooks/useSystemThemeDetection'
-import { useThemePersistence, ThemePreference } from '../hooks/useThemePersistence'
-
-interface ThemeContextValue {
-  /**
-   * The currently active theme ('light' or 'dark')
-   * - If preference is 'light' or 'dark', returns that value
-   * - If preference is 'system', returns the system-detected theme
-   */
-  theme: Theme
-
-  /**
-   * The user's theme preference ('light', 'dark', or 'system')
-   */
-  themePreference: ThemePreference
-
-  /**
-   * Updates the user's theme preference
-   */
-  setThemePreference: (preference: ThemePreference) => void
-}
-
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
+import { useThemePersistence } from '../hooks/useThemePersistence'
+import { ThemeContextValue } from '../hooks/useTheme'
+import { ThemeContext } from './themeContextInstance'
 
 interface ThemeProviderProps {
   children: React.ReactNode
@@ -66,18 +47,4 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-}
-
-/**
- * Hook to access theme context
- * @throws Error if used outside ThemeProvider
- */
-export const useTheme = (): ThemeContextValue => {
-  const context = useContext(ThemeContext)
-
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider')
-  }
-
-  return context
 }

@@ -17,7 +17,7 @@
  */
 
 import React from 'react'
-import { useTheme } from '../../contexts/ThemeContext'
+import { useTheme } from '../../hooks/useTheme'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import type { ThemePreference } from '../../hooks/useThemePersistence'
 
