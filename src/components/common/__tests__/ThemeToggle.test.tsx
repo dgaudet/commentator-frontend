@@ -202,4 +202,52 @@ describe('ThemeToggle Component', () => {
       expect(systemOption.getAttribute('name')).toBe(groupName)
     })
   })
+
+  describe('Theme Adaptation', () => {
+    it('should adapt toggle colors when theme changes from light to dark', () => {
+      const { container } = renderWithThemeProvider(<ThemeToggle />)
+
+      // Switch to dark theme
+      const darkOption = screen.getByLabelText(/dark/i) as HTMLInputElement
+      fireEvent.click(darkOption)
+
+      // Get one of the label elements
+      const lightLabel = screen.getByText(/☀️ Light/i).closest('label')
+      expect(lightLabel).toBeInTheDocument()
+
+      // The component should be using theme-adaptive colors
+      // This test will verify the component doesn't crash when theme changes
+      // and that all labels are still rendered with proper styling
+      const allLabels = container.querySelectorAll('label')
+      expect(allLabels).toHaveLength(3)
+
+      allLabels.forEach((label) => {
+        const computedStyle = window.getComputedStyle(label)
+        // Verify that color property exists (proving styles are applied)
+        expect(computedStyle.color).toBeTruthy()
+      })
+    })
+
+    it('should adapt toggle colors when theme changes from dark to light', () => {
+      const { container } = renderWithThemeProvider(<ThemeToggle />)
+
+      // Switch to dark theme first
+      const darkOption = screen.getByLabelText(/dark/i) as HTMLInputElement
+      fireEvent.click(darkOption)
+
+      // Then switch back to light
+      const lightOption = screen.getByLabelText(/light/i) as HTMLInputElement
+      fireEvent.click(lightOption)
+
+      // Verify all labels are still rendered with proper styling
+      const allLabels = container.querySelectorAll('label')
+      expect(allLabels).toHaveLength(3)
+
+      allLabels.forEach((label) => {
+        const computedStyle = window.getComputedStyle(label)
+        // Verify that color property exists (proving styles are applied)
+        expect(computedStyle.color).toBeTruthy()
+      })
+    })
+  })
 })

@@ -18,11 +18,13 @@
 
 import React from 'react'
 import { useTheme } from '../../hooks/useTheme'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
+import { spacing, typography, borders } from '../../theme/tokens'
 import type { ThemePreference } from '../../hooks/useThemePersistence'
 
 export const ThemeToggle: React.FC = () => {
   const { themePreference, setThemePreference } = useTheme()
+  const themeColors = useThemeColors()
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setThemePreference(event.target.value as ThemePreference)
@@ -44,14 +46,14 @@ export const ThemeToggle: React.FC = () => {
     transition: 'background-color 0.2s ease',
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
-    color: colors.text.primary,
+    color: themeColors.text.primary,
   }
 
   const inputStyle: React.CSSProperties = {
     cursor: 'pointer',
     width: '1.125rem',
     height: '1.125rem',
-    accentColor: colors.primary.main,
+    accentColor: themeColors.primary.main,
   }
 
   return (
@@ -66,12 +68,12 @@ export const ThemeToggle: React.FC = () => {
           ...labelStyle,
           backgroundColor:
             themePreference === 'light'
-              ? colors.neutral[100]
+              ? themeColors.neutral[100]
               : 'transparent',
         }}
         onMouseEnter={(e) => {
           if (themePreference !== 'light') {
-            e.currentTarget.style.backgroundColor = colors.neutral[50]
+            e.currentTarget.style.backgroundColor = themeColors.neutral[50]
           }
         }}
         onMouseLeave={(e) => {
@@ -98,12 +100,12 @@ export const ThemeToggle: React.FC = () => {
           ...labelStyle,
           backgroundColor:
             themePreference === 'dark'
-              ? colors.neutral[100]
+              ? themeColors.neutral[100]
               : 'transparent',
         }}
         onMouseEnter={(e) => {
           if (themePreference !== 'dark') {
-            e.currentTarget.style.backgroundColor = colors.neutral[50]
+            e.currentTarget.style.backgroundColor = themeColors.neutral[50]
           }
         }}
         onMouseLeave={(e) => {
@@ -130,12 +132,12 @@ export const ThemeToggle: React.FC = () => {
           ...labelStyle,
           backgroundColor:
             themePreference === 'system'
-              ? colors.neutral[100]
+              ? themeColors.neutral[100]
               : 'transparent',
         }}
         onMouseEnter={(e) => {
           if (themePreference !== 'system') {
-            e.currentTarget.style.backgroundColor = colors.neutral[50]
+            e.currentTarget.style.backgroundColor = themeColors.neutral[50]
           }
         }}
         onMouseLeave={(e) => {

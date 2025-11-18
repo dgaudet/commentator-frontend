@@ -147,7 +147,10 @@ describe('useThemePersistence', () => {
         const storageEvent = new StorageEvent('storage', {
           key: STORAGE_KEY,
           newValue: 'dark',
-          storageArea: localStorage,
+        })
+        Object.defineProperty(storageEvent, 'storageArea', {
+          value: localStorage,
+          writable: false,
         })
         window.dispatchEvent(storageEvent)
       })
@@ -169,7 +172,10 @@ describe('useThemePersistence', () => {
         const storageEvent = new StorageEvent('storage', {
           key: 'other-key',
           newValue: 'dark',
-          storageArea: localStorage,
+        })
+        Object.defineProperty(storageEvent, 'storageArea', {
+          value: localStorage,
+          writable: false,
         })
         window.dispatchEvent(storageEvent)
       })
