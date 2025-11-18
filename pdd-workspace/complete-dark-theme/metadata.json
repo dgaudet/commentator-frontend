@@ -1,0 +1,31 @@
+{
+  "feature": "complete-dark-theme",
+  "description": "Complete design token migration and dark theme support for all remaining components",
+  "complexity": {
+    "level": "L1-MICRO",
+    "reasoning": "8 components to migrate, straightforward pattern established. Estimated 1-2 weeks with existing infrastructure and migration patterns.",
+    "assessedAt": "2025-11-18T00:00:00Z",
+    "criteria": {
+      "storyCount": 8,
+      "duration": "1-2 weeks",
+      "teamSize": "small",
+      "integrations": "none",
+      "technicalComplexity": "low"
+    }
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "testing": "PENDING",
+    "deployment": "PENDING"
+  },
+  "stakeholders": [
+    "End Users (teachers)",
+    "Development Team",
+    "UX/Design Lead"
+  ],
+  "businessValue": "HIGH - Completes dark theme experience across entire application",
+  "created": "2025-11-18T00:00:00Z",
+  "lastUpdated": "2025-11-18T00:00:00Z"
+}
