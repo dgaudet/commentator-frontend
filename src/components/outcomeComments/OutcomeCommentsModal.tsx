@@ -28,10 +28,9 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
-import { PlaceholderTipsBox } from '../common/PlaceholderTipsBox'
-import { PlaceholderWarningsBox } from '../common/PlaceholderWarningsBox'
+import { CommentTextField } from '../common/CommentTextField'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
-import { validatePlaceholders } from '../../utils/placeholders'
+import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -72,10 +71,6 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   })
   const [validationError, setValidationError] = useState('')
 
-  // US-PLACEHOLDER-003: Placeholder validation warnings
-  const [newCommentWarnings, setNewCommentWarnings] = useState<string[]>([])
-  const [editCommentWarnings, setEditCommentWarnings] = useState<string[]>([])
-
   if (!isOpen) return null
 
   const formatDate = (dateString: string): string => {
@@ -86,9 +81,24 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
     })
   }
 
+  const validateComment = (comment: string): string | null => {
+    const trimmed = comment.trim()
+    if (!trimmed) {
+      return 'Comment is required'
+    }
+    if (trimmed.length < MIN_COMMENT_LENGTH) {
+      return `Comment must be at least ${MIN_COMMENT_LENGTH} characters`
+    }
+    if (trimmed.length > MAX_COMMENT_LENGTH) {
+      return `Comment cannot exceed ${MAX_COMMENT_LENGTH} characters`
+    }
+    return null
+  }
+
   const handleCreateComment = async () => {
-    if (!newCommentContent.trim()) {
-      setValidationError('Comment is required')
+    const commentError = validateComment(newCommentContent)
+    if (commentError) {
+      setValidationError(commentError)
       return
     }
 
@@ -122,8 +132,9 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   }
 
   const handleEditSave = async () => {
-    if (!editContent.trim()) {
-      setValidationError('Comment is required')
+    const commentError = validateComment(editContent)
+    if (commentError) {
+      setValidationError(commentError)
       return
     }
 
@@ -183,6 +194,13 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
     return text.length > 100 ? `${text.substring(0, 100)}...` : text
   }
 
+  // Character count validation for button disabled states
+  const newCommentCharCount = newCommentContent.trim().length
+  const newCommentIsValid = newCommentCharCount >= MIN_COMMENT_LENGTH && newCommentCharCount <= MAX_COMMENT_LENGTH
+
+  const editCommentCharCount = editContent.trim().length
+  const editCommentIsValid = editCommentCharCount >= MIN_COMMENT_LENGTH && editCommentCharCount <= MAX_COMMENT_LENGTH
+
   return (
     <>
       <div
@@ -219,34 +237,17 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                   Add New Outcome Comment
                 </h3>
 
-                {/* US-PLACEHOLDER-002: Placeholder documentation */}
-                <PlaceholderTipsBox />
-
-                <div style={{ marginBottom: spacing.lg }}>
-                  <textarea
-                    value={newCommentContent}
-                    onChange={(e) => {
-                      const value = e.target.value
-                      setNewCommentContent(value)
-                      // US-PLACEHOLDER-003: Validate placeholders on change
-                      setNewCommentWarnings(validatePlaceholders(value))
-                    }}
-                    placeholder="Enter outcome comment..."
-                    aria-label="Add new outcome comment"
-                    rows={3}
-                    style={{
-                      width: '100%',
-                      padding: spacing.md,
-                      fontSize: typography.fontSize.base,
-                      border: `${borders.width.thin} solid ${colors.border.default}`,
-                      borderRadius: borders.radius.md,
-                      resize: 'vertical' as const,
-                    }}
-                  />
-
-                  {/* US-PLACEHOLDER-003: Display validation warnings */}
-                  <PlaceholderWarningsBox warnings={newCommentWarnings} />
-                </div>
+                {/* US-SHARED-002: Use shared CommentTextField component */}
+                <CommentTextField
+                  value={newCommentContent}
+                  onChange={setNewCommentContent}
+                  placeholder={`Enter outcome comment (${MIN_COMMENT_LENGTH}-${MAX_COMMENT_LENGTH} characters)...`}
+                  ariaLabel="Add new outcome comment"
+                  minLength={MIN_COMMENT_LENGTH}
+                  maxLength={MAX_COMMENT_LENGTH}
+                  showCharCount={true}
+                  showPlaceholderTips={true}
+                />
                 <div
                   style={{
                     display: 'flex',
@@ -330,6 +331,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                 <Button
                   onClick={handleCreateComment}
                   variant="primary"
+                  disabled={!newCommentIsValid}
                 >
                   Add Comment
                 </Button>
@@ -400,66 +402,17 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                           ? (
                             /* Edit Mode */
                               <div>
-                                {/* US-PLACEHOLDER-002: Placeholder documentation (Edit Mode) */}
-                                <div
-                                  style={{
-                                    marginBottom: spacing.md,
-                                    padding: spacing.sm,
-                                    backgroundColor: colors.primary[50],
-                                    border: `${borders.width.thin} solid ${colors.primary[200]}`,
-                                    borderRadius: borders.radius.md,
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      fontSize: typography.fontSize.xs,
-                                      color: colors.text.secondary,
-                                    }}
-                                  >
-                                    <strong style={{ color: colors.primary[700] }}>Placeholders:</strong>{' '}
-                                    <code style={{
-                                      padding: '2px 4px',
-                                      backgroundColor: colors.background.secondary,
-                                      borderRadius: borders.radius.sm,
-                                      fontSize: typography.fontSize.xs,
-                                    }}>&lt;first name&gt;</code>{' '}
-                                    <code style={{
-                                      padding: '2px 4px',
-                                      backgroundColor: colors.background.secondary,
-                                      borderRadius: borders.radius.sm,
-                                      fontSize: typography.fontSize.xs,
-                                    }}>&lt;last name&gt;</code>{' '}
-                                    <code style={{
-                                      padding: '2px 4px',
-                                      backgroundColor: colors.background.secondary,
-                                      borderRadius: borders.radius.sm,
-                                      fontSize: typography.fontSize.xs,
-                                    }}>&lt;grade&gt;</code>
-                                  </div>
-                                </div>
-
-                                <textarea
+                                {/* US-SHARED-002: Use shared CommentTextField component (Edit Mode) */}
+                                <CommentTextField
                                   value={editContent}
-                                  onChange={(e) => {
-                                    const value = e.target.value
-                                    setEditContent(value)
-                                    // US-PLACEHOLDER-003: Validate placeholders on change
-                                    setEditCommentWarnings(validatePlaceholders(value))
-                                  }}
-                                  rows={3}
-                                  style={{
-                                    width: '100%',
-                                    padding: spacing.md,
-                                    fontSize: typography.fontSize.base,
-                                    border: `${borders.width.thin} solid ${colors.border.default}`,
-                                    borderRadius: borders.radius.md,
-                                    resize: 'vertical' as const,
-                                    marginBottom: spacing.sm,
-                                  }}
+                                  onChange={setEditContent}
+                                  placeholder="Edit outcome comment..."
+                                  ariaLabel="Edit outcome comment"
+                                  minLength={MIN_COMMENT_LENGTH}
+                                  maxLength={MAX_COMMENT_LENGTH}
+                                  showCharCount={true}
+                                  showPlaceholderTips={true}
                                 />
-
-                                {/* US-PLACEHOLDER-003: Display validation warnings (Edit Mode) */}
-                                <PlaceholderWarningsBox warnings={editCommentWarnings} />
                                 <div
                                   style={{
                                     display: 'flex',
@@ -526,6 +479,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                   <Button
                                     onClick={handleEditSave}
                                     variant="primary"
+                                    disabled={!editCommentIsValid}
                                   >
                                     Save
                                   </Button>

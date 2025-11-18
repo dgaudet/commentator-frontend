@@ -108,6 +108,4 @@ The final comments error text doesn't use the standardized error label component
 
 Questions:
 * Order the outcome comments high to low
-
-The personalized comment validation for placeholders is too low
  

@@ -76,7 +76,7 @@ describe('PersonalizedCommentsModal', () => {
   describe('create comment', () => {
     it('should show character counter', () => {
       render(<PersonalizedCommentsModal {...defaultProps} />)
-      expect(screen.getByText(/0 \/ 500 characters/i)).toBeInTheDocument()
+      expect(screen.getByText(/0 \/ 1000 characters/i)).toBeInTheDocument()
     })
 
     it('should disable Add button when comment is too short', () => {
@@ -277,12 +277,12 @@ describe('PersonalizedCommentsModal', () => {
       expect(addButton).toBeDisabled()
     })
 
-    it('should have maxLength attribute set to 500', () => {
+    it('should have maxLength attribute set to 1000', () => {
       render(<PersonalizedCommentsModal {...defaultProps} />)
 
       const textarea = screen.getByPlaceholderText(/Enter personalized comment/i) as HTMLTextAreaElement
       // Verify maxLength attribute is set (browser will enforce this)
-      expect(textarea).toHaveAttribute('maxLength', '500')
+      expect(textarea).toHaveAttribute('maxLength', '1000')
     })
   })
 

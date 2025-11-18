@@ -31,11 +31,10 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
-import { PlaceholderTipsBox } from '../common/PlaceholderTipsBox'
-import { PlaceholderWarningsBox } from '../common/PlaceholderWarningsBox'
+import { CommentTextField } from '../common/CommentTextField'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
-import { validatePlaceholders } from '../../utils/placeholders'
+import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -60,11 +59,9 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
 }: PersonalizedCommentsModalProps<T>) => {
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newCommentRating, setNewCommentRating] = useState(3) // Default rating: 3 (Neutral)
-  const [newCommentPlaceholderWarnings, setNewCommentPlaceholderWarnings] = useState<string[]>([])
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editContent, setEditContent] = useState('')
   const [editRating, setEditRating] = useState(3)
-  const [editPlaceholderWarnings, setEditPlaceholderWarnings] = useState<string[]>([])
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
     commentId: number | null
@@ -91,11 +88,11 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     if (!trimmed) {
       return 'Comment is required'
     }
-    if (trimmed.length < 10) {
-      return 'Comment must be at least 10 characters'
+    if (trimmed.length < MIN_COMMENT_LENGTH) {
+      return `Comment must be at least ${MIN_COMMENT_LENGTH} characters`
     }
-    if (trimmed.length > 500) {
-      return 'Comment cannot exceed 500 characters'
+    if (trimmed.length > MAX_COMMENT_LENGTH) {
+      return `Comment cannot exceed ${MAX_COMMENT_LENGTH} characters`
     }
     return null
   }
@@ -115,14 +112,12 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     })
     setNewCommentContent('')
     setNewCommentRating(3) // Reset to default rating
-    setNewCommentPlaceholderWarnings([]) // US-PLACEHOLDER-PC-003: Clear warnings after successful create
   }
 
   const handleEditStart = (comment: PersonalizedComment) => {
     setEditingId(comment.id)
     setEditContent(comment.comment)
     setEditRating(getNormalizedRating(comment)) // US-RATING-003: Load existing rating (default to 3 if null/undefined)
-    setEditPlaceholderWarnings([]) // US-PLACEHOLDER-PC-003: Clear warnings when starting edit
     setValidationError('')
   }
 
@@ -150,7 +145,6 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     setEditingId(null)
     setEditContent('')
     setEditRating(3) // Reset to default
-    setEditPlaceholderWarnings([]) // US-PLACEHOLDER-PC-003: Clear warnings when cancelling edit
     setValidationError('')
   }
 
@@ -178,13 +172,12 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
     return text.length > 100 ? `${text.substring(0, 100)}...` : text
   }
 
-  // Character count for new comment
+  // Character count validation for button disabled states
   const newCommentCharCount = newCommentContent.trim().length
-  const newCommentIsValid = newCommentCharCount >= 10 && newCommentCharCount <= 500
+  const newCommentIsValid = newCommentCharCount >= MIN_COMMENT_LENGTH && newCommentCharCount <= MAX_COMMENT_LENGTH
 
-  // Character count for edit comment
   const editCommentCharCount = editContent.trim().length
-  const editCommentIsValid = editCommentCharCount >= 10 && editCommentCharCount <= 500
+  const editCommentIsValid = editCommentCharCount >= MIN_COMMENT_LENGTH && editCommentCharCount <= MAX_COMMENT_LENGTH
 
   // US-RATING-004: Sort comments by rating (descending) with alphabetical tie-breaking
   const sortedComments = sortPersonalizedCommentsByRating(personalizedComments)
@@ -225,54 +218,18 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                   Add New Personalized Comment
                 </h3>
 
-                {/* US-PLACEHOLDER-PC-001: Placeholder Tips Box */}
-                <PlaceholderTipsBox />
-
-                {/* US-PLACEHOLDER-PC-004: Textarea before rating selector */}
-                <div style={{ marginBottom: spacing.lg }}>
-                  <textarea
-                    value={newCommentContent}
-                    onChange={(e) => {
-                      const value = e.target.value
-                      setNewCommentContent(value)
-                      // US-PLACEHOLDER-PC-003: Validate placeholders on input
-                      setNewCommentPlaceholderWarnings(validatePlaceholders(value))
-                    }}
-                    placeholder="Enter personalized comment (10-500 characters)..."
-                    aria-label="Add new personalized comment"
-                    rows={4}
-                    maxLength={500}
-                    style={{
-                      width: '100%',
-                      padding: spacing.md,
-                      fontSize: typography.fontSize.base,
-                      border: `${borders.width.thin} solid ${colors.border.default}`,
-                      borderRadius: borders.radius.md,
-                      resize: 'vertical' as const,
-                    }}
-                  />
-                  <div
-                    style={{
-                      marginTop: spacing.sm,
-                      fontSize: typography.fontSize.sm,
-                      textAlign: 'right' as const,
-                    }}
-                  >
-                    <span
-                      style={{
-                        color: newCommentIsValid ? colors.semantic.success : colors.semantic.error,
-                      }}
-                    >
-                      {newCommentCharCount} / 500 characters
-                    </span>
-                    {newCommentCharCount > 0 && newCommentCharCount < 10 && (
-                      <span style={{ color: colors.text.tertiary }}> (minimum 10)</span>
-                    )}
-                  </div>
-
-                  {/* US-PLACEHOLDER-PC-003: Placeholder validation warnings */}
-                  <PlaceholderWarningsBox warnings={newCommentPlaceholderWarnings} />
-                </div>
+                {/* US-SHARED-002 & US-PLACEHOLDER-PC-001/003/004: Use shared CommentTextField component */}
+                <CommentTextField
+                  value={newCommentContent}
+                  onChange={setNewCommentContent}
+                  placeholder={`Enter personalized comment (${MIN_COMMENT_LENGTH}-${MAX_COMMENT_LENGTH} characters)...`}
+                  ariaLabel="Add new personalized comment"
+                  rows={4}
+                  minLength={MIN_COMMENT_LENGTH}
+                  maxLength={MAX_COMMENT_LENGTH}
+                  showCharCount={true}
+                  showPlaceholderTips={true}
+                />
 
                 {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
                 <EmojiRatingSelector
@@ -372,52 +329,18 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                           ? (
                             /* Edit Mode */
                               <div>
-                                {/* US-PLACEHOLDER-PC-002: Placeholder Tips Box */}
-                                <PlaceholderTipsBox />
-
-                                {/* US-PLACEHOLDER-PC-004: Textarea before rating selector */}
-                                <textarea
+                                {/* US-SHARED-002 & US-PLACEHOLDER-PC-002/003/004: Use shared CommentTextField component */}
+                                <CommentTextField
                                   value={editContent}
-                                  onChange={(e) => {
-                                    const value = e.target.value
-                                    setEditContent(value)
-                                    // US-PLACEHOLDER-PC-003: Validate placeholders on input
-                                    setEditPlaceholderWarnings(validatePlaceholders(value))
-                                  }}
+                                  onChange={setEditContent}
+                                  placeholder="Edit personalized comment..."
+                                  ariaLabel="Edit personalized comment"
                                   rows={4}
-                                  maxLength={500}
-                                  style={{
-                                    width: '100%',
-                                    padding: spacing.md,
-                                    fontSize: typography.fontSize.base,
-                                    border: `${borders.width.thin} solid ${colors.border.default}`,
-                                    borderRadius: borders.radius.md,
-                                    resize: 'vertical' as const,
-                                    marginBottom: spacing.sm,
-                                  }}
+                                  minLength={MIN_COMMENT_LENGTH}
+                                  maxLength={MAX_COMMENT_LENGTH}
+                                  showCharCount={true}
+                                  showPlaceholderTips={true}
                                 />
-                                <div
-                                  style={{
-                                    marginTop: spacing.sm,
-                                    fontSize: typography.fontSize.sm,
-                                    textAlign: 'right' as const,
-                                    marginBottom: spacing.lg,
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      color: editCommentIsValid ? colors.semantic.success : colors.semantic.error,
-                                    }}
-                                  >
-                                    {editCommentCharCount} / 500 characters
-                                  </span>
-                                  {editCommentCharCount > 0 && editCommentCharCount < 10 && (
-                                    <span style={{ color: colors.text.tertiary }}> (minimum 10)</span>
-                                  )}
-                                </div>
-
-                                {/* US-PLACEHOLDER-PC-003: Placeholder validation warnings */}
-                                <PlaceholderWarningsBox warnings={editPlaceholderWarnings} />
 
                                 {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
                                 <EmojiRatingSelector
