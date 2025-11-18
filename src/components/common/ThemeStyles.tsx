@@ -19,8 +19,16 @@ export const ThemeStyles: React.FC = () => {
   useEffect(() => {
     const themeColors = theme === 'dark' ? darkColors : colors
 
+    // US-TOKEN-010: Apply theme-aware background gradients
+    // Light theme: cyan gradient (original design)
+    // Dark theme: darker gradient for dark mode
+    const backgroundGradient = theme === 'dark'
+      ? `linear-gradient(180deg, ${themeColors.primary.dark} 0%, ${themeColors.background.primary} 100%)`
+      : 'linear-gradient(180deg, #E0F7FF 0%, #FFFFFF 100%)'
+
     // Apply theme colors to document body
-    document.body.style.backgroundColor = themeColors.background.primary
+    document.body.style.background = backgroundGradient
+    document.body.style.backgroundAttachment = 'fixed'
     document.body.style.color = themeColors.text.primary
     document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease'
 
@@ -30,7 +38,7 @@ export const ThemeStyles: React.FC = () => {
     // Cleanup function
     return () => {
       // Reset to defaults on unmount (not strictly necessary but good practice)
-      document.body.style.backgroundColor = ''
+      document.body.style.background = ''
       document.body.style.color = ''
       document.documentElement.style.backgroundColor = ''
     }

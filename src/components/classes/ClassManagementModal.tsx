@@ -35,7 +35,7 @@ import { Tabs, Tab } from '../common/Tabs'
 import { TabPanel } from '../common/TabPanel'
 import { FinalCommentsModal } from '../finalComments/FinalCommentsModal'
 import { colors, spacing, typography, borders } from '../../theme/tokens'
-import styles from '../common/ConfirmationModal.module.css'
+import { useThemeColors } from '../../hooks/useThemeColors'
 
 interface ClassManagementModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -95,6 +95,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
     checkFailed: false,
   })
   const [validationError, setValidationError] = useState('')
+  const themeColors = useThemeColors()
 
   // US-CLASS-TABS-001: Tab group state management (TDD GREEN phase)
   // Track active tab state - default to 'edit-class'
@@ -563,23 +564,52 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
         confirmButtonText="Delete"
         cancelButtonText="Cancel"
       >
-        <p className={styles['preview-text']}>
+        {/* US-TOKEN-011: Class name preview (migrated from styles['preview-text']) */}
+        <p
+          style={{
+            fontSize: typography.fontSize.base,
+            fontWeight: typography.fontWeight.medium,
+            color: themeColors.text.primary,
+            marginBottom: spacing.md,
+            padding: spacing.md,
+            backgroundColor: themeColors.background.secondary,
+            borderRadius: borders.radius.sm,
+          }}
+        >
           {deleteConfirmation.className}
         </p>
 
-        {/* Cascading Delete Warning (US-DELETE-CONFIRM-003 AC5) */}
+        {/* Cascading Delete Warning (US-DELETE-CONFIRM-003 AC5) - migrated from styles['warning-banner'] + styles['warning-banner-yellow'] */}
         {deleteConfirmation.hasFinalComments && (
-          <div className={`${styles['warning-banner']} ${styles['warning-banner-yellow']}`}>
-            <p>
+          <div
+            style={{
+              padding: spacing.md,
+              marginTop: spacing.md,
+              backgroundColor: '#FEF3C7',
+              borderLeft: '4px solid #F59E0B',
+              borderRadius: borders.radius.sm,
+              color: '#92400E',
+            }}
+          >
+            <p style={{ margin: 0 }}>
               ⚠️ This class has {deleteConfirmation.finalCommentsCount} final comment(s) that will also be deleted.
             </p>
           </div>
         )}
 
-        {/* Error checking final comments - show warning */}
+        {/* Error checking final comments - show warning - migrated from styles['warning-banner'] + styles['warning-banner-orange'] */}
         {deleteConfirmation.checkFailed && (
-          <div className={`${styles['warning-banner']} ${styles['warning-banner-orange']}`}>
-            <p>
+          <div
+            style={{
+              padding: spacing.md,
+              marginTop: spacing.md,
+              backgroundColor: '#FEED7D',
+              borderLeft: '4px solid #F59E0B',
+              borderRadius: borders.radius.sm,
+              color: '#92400E',
+            }}
+          >
+            <p style={{ margin: 0 }}>
               ⚠️ Unable to verify if this class has final comments. Deleting this class may also delete associated final comments.
             </p>
           </div>

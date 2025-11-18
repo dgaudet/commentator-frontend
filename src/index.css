@@ -1,12 +1,12 @@
-/* US-STYLE-001: Modern light blue/cyan color scheme */
+/**
+ * Global Base Styles
+ * Theme colors are applied dynamically by ThemeStyles component (US-TOKEN-010)
+ * Reference: US-STYLE-001
+ */
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  /* Force light color scheme */
-  color-scheme: light;
-  color: #213547;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,9 +24,9 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  /* US-STYLE-001 AC1: Light blue/cyan gradient background */
-  background: linear-gradient(180deg, #E0F7FF 0%, #FFFFFF 100%);
-  background-attachment: fixed;
+  /* US-TOKEN-010: Theme colors applied by ThemeStyles component via inline styles */
+  /* Light theme default: cyan gradient background */
+  /* Dark theme: applied dynamically on theme change */
 }
 
 #root {

@@ -73,14 +73,9 @@ export const Tabs: React.FC<TabsProps> = ({
   // Style definitions using design tokens
   const tablistStyle: React.CSSProperties = {
     display: 'flex',
-    ...(orientation === 'vertical' && {
-      flexDirection: 'column',
-      borderRight: `${borders.width.thin} solid ${themeColors.border.default}`,
-      borderBottom: 'none',
-    }),
-    ...(orientation === 'horizontal' && {
-      borderBottom: `${borders.width.thin} solid ${themeColors.border.default}`,
-    }),
+    flexDirection: orientation === 'vertical' ? 'column' : 'row',
+    borderBottom: orientation === 'horizontal' ? `${borders.width.thin} solid ${themeColors.border.default}` : 'none',
+    borderRight: orientation === 'vertical' ? `${borders.width.thin} solid ${themeColors.border.default}` : 'none',
   }
 
   const getTabStyle = (isSelected: boolean, isDisabled: boolean): React.CSSProperties => ({
@@ -97,7 +92,7 @@ export const Tabs: React.FC<TabsProps> = ({
     position: 'relative' as const,
     fontSize: typography.fontSize.base,
     fontWeight: isSelected ? typography.fontWeight.semibold : typography.fontWeight.medium,
-    transition: 'color 0.2s ease, border-color 0.2s ease',
+    transition: 'color 0.2s ease, border-color 0.2s ease, box-shadow 0.15s ease',
     cursor: isDisabled ? 'not-allowed' : 'pointer',
     opacity: isDisabled ? 0.5 : 1,
     color: isSelected ? themeColors.primary.main : themeColors.text.tertiary,
@@ -254,17 +249,20 @@ export const Tabs: React.FC<TabsProps> = ({
               style={tabStyle}
               data-label={tab.label}
               onMouseEnter={(e) => {
-                if (!isDisabled && !isSelected) {
-                  e.currentTarget.style.color = themeColors.text.primary
+                if (!isDisabled) {
+                  // Hover effect: use primary color for visual emphasis
+                  e.currentTarget.style.color = themeColors.primary.main
                 }
               }}
               onMouseLeave={(e) => {
-                if (!isDisabled && !isSelected) {
-                  e.currentTarget.style.color = themeColors.text.tertiary
+                if (!isDisabled) {
+                  // Return to normal color based on selection state
+                  e.currentTarget.style.color = isSelected ? themeColors.primary.main : themeColors.text.tertiary
                 }
               }}
               onFocus={(e) => {
-                if (!isDisabled && !isSelected) {
+                if (!isDisabled) {
+                  // Focus ring: visible on all states (active and inactive)
                   e.currentTarget.style.boxShadow = `0 0 0 2px ${themeColors.primary.main}, 0 0 0 4px ${themeColors.primary.light}33`
                 }
               }}
