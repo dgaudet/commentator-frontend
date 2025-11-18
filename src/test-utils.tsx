@@ -7,14 +7,11 @@
  */
 import { ReactElement } from 'react'
 import { render as rtlRender, RenderOptions } from '@testing-library/react'
+import { ThemeProvider } from './contexts/ThemeContext'
 
 /**
  * Custom render function that wraps components with providers
- * Currently returns standard render, but can be extended with:
- * - Router providers
- * - Theme providers
- * - Context providers
- * - Redux store providers
+ * Includes ThemeProvider to support components using useThemeColors()
  *
  * @param ui - React component to render
  * @param options - Render options
@@ -24,7 +21,10 @@ function customRender(
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>,
 ) {
-  return rtlRender(ui, { ...options })
+  return rtlRender(ui, {
+    wrapper: ({ children }) => <ThemeProvider>{children}</ThemeProvider>,
+    ...options,
+  })
 }
 
 // Re-export everything from RTL except render (we provide custom render below)

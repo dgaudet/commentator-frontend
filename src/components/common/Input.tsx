@@ -3,9 +3,11 @@
  * Form input with label, error handling, and accessibility features
  * Uses CSS :focus-visible for proper keyboard navigation and assistive technology support
  * Reference: US-CSS-003 - Standardized Input Component using design tokens
+ * US-DARK-005: Updated to use dynamic theme colors
  */
 import React from 'react'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 import './Input.css'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -24,6 +26,7 @@ export const Input: React.FC<InputProps> = ({
 }) => {
   const hasError = Boolean(error)
   const errorMessage = typeof error === 'string' ? error : undefined
+  const themeColors = useThemeColors()
 
   return (
     <div style={{ marginBottom: spacing.lg }}>
@@ -34,13 +37,13 @@ export const Input: React.FC<InputProps> = ({
             display: 'block',
             fontSize: typography.fontSize.sm,
             fontWeight: typography.fontWeight.medium,
-            color: colors.text.secondary,
+            color: themeColors.text.secondary,
             marginBottom: spacing.sm,
           }}
         >
           {label}
           {required && (
-            <span style={{ color: colors.semantic.error, marginLeft: spacing.xs }}>*</span>
+            <span style={{ color: themeColors.semantic.error, marginLeft: spacing.xs }}>*</span>
           )}
         </label>
       )}
@@ -52,9 +55,9 @@ export const Input: React.FC<InputProps> = ({
           width: '100%',
           padding: spacing.md,
           fontSize: typography.fontSize.base,
-          border: `${borders.width.thin} solid ${hasError ? colors.semantic.error : colors.border.default}`,
+          border: `${borders.width.thin} solid ${hasError ? themeColors.semantic.error : themeColors.border.default}`,
           borderRadius: borders.radius.md,
-          backgroundColor: colors.background.primary,
+          backgroundColor: themeColors.background.primary,
           outline: 'none',
         }}
         aria-invalid={hasError ? 'true' : 'false'}
@@ -68,7 +71,7 @@ export const Input: React.FC<InputProps> = ({
           style={{
             marginTop: spacing.sm,
             fontSize: typography.fontSize.sm,
-            color: colors.semantic.error,
+            color: themeColors.semantic.error,
           }}
         >
           {errorMessage}
