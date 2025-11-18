@@ -1,7 +1,7 @@
 /**
  * SubjectListItem Component
  * Displays a single subject in the list with formatted dates
- * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001, US-TAB-002, US-TABPANEL-002, US-TABPANEL-003
+ * Reference: US-REFACTOR-006, US-SUBJ-DELETE-001, US-TAB-002, US-TABPANEL-002, US-TABPANEL-003, US-TOKEN-006
  *
  * Key Changes:
  * - Subject has no year field, so year display removed
@@ -9,11 +9,14 @@
  * - Action buttons replaced with tabbed interface (US-TAB-002)
  * - Tab panels display content below tabs (US-TABPANEL-002)
  * - Tab panels update when subject changes (US-TABPANEL-003)
+ * - Migrated to design tokens for theme support (US-TOKEN-006)
  * Performance: Memoized to prevent unnecessary re-renders
  */
 import React, { useMemo, useCallback, useState, useEffect } from 'react'
 import { Subject } from '../../types/Subject'
 import { formatDate } from '../../utils/dateFormatter'
+import { useThemeColors } from '../../hooks/useThemeColors'
+import { spacing, borders } from '../../theme/tokens'
 import { Tabs, Tab } from '../common/Tabs'
 import { TabPanel } from '../common/TabPanel'
 import { Button } from '../common/Button'
@@ -195,22 +198,50 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
     }
   }, [subjectItem.id, onViewOutcomeComments, onViewPersonalizedComments, onViewClasses])
 
+  const themeColors = useThemeColors()
+
+  const containerStyle: React.CSSProperties = {
+    marginBottom: spacing.xl,
+  }
+
+  const headerStyle: React.CSSProperties = {
+    marginBottom: spacing.lg,
+  }
+
+  const titleRowStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: spacing.lg,
+    marginBottom: spacing.md,
+  }
+
+  const titleStyle: React.CSSProperties = {
+    fontSize: '1.875rem',
+    fontWeight: 'bold',
+    color: themeColors.text.primary,
+    cursor: onView ? 'pointer' : 'default',
+    margin: 0,
+  }
+
+  const dateStyle: React.CSSProperties = {
+    fontSize: '0.875rem',
+    color: themeColors.text.secondary,
+  }
+
+  const cardStyle: React.CSSProperties = {
+    border: `${borders.width.thin} solid ${themeColors.border.default}`,
+    borderRadius: borders.radius.md,
+    padding: spacing.xl,
+    backgroundColor: themeColors.background.primary,
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+  }
+
   return (
-    <div
-      style={{ marginBottom: '1.5rem' }}
-      data-testid={`subject-item-${subjectItem.id}`}
-    >
+    <div style={containerStyle} data-testid={`subject-item-${subjectItem.id}`}>
       {/* Subject info section - OUTSIDE the bordered card */}
-      <div style={{ marginBottom: '1rem' }}>
+      <div style={headerStyle}>
         {/* Subject name + delete button on same line (US-STYLE-002 AC3) */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            marginBottom: '0.5rem',
-          }}
-        >
+        <div style={titleRowStyle}>
           <h3
             onClick={() => onView?.(subjectItem.id)}
             role={onView ? 'button' : undefined}
@@ -221,13 +252,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                 onView(subjectItem.id)
               }
             }}
-            style={{
-              fontSize: '1.875rem',
-              fontWeight: 'bold',
-              color: '#111827',
-              cursor: onView ? 'pointer' : 'default',
-              margin: 0,
-            }}
+            style={titleStyle}
           >
             {subjectItem.name}
           </h3>
@@ -246,22 +271,14 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
         </div>
 
         {/* Created date (US-STYLE-003: Updated date removed) */}
-        <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+        <div style={dateStyle}>
           <p style={{ margin: 0 }}>Created: {formatDate(subjectItem.createdAt)}</p>
         </div>
       </div>
 
       {/* Tabs and Panels section - INSIDE bordered card */}
       {tabs.length > 0 && (
-        <div
-          style={{
-            border: '1px solid #E5E7EB',
-            borderRadius: '8px',
-            padding: '1.5rem',
-            backgroundColor: '#FFFFFF',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-          }}
-        >
+        <div style={cardStyle}>
           {/* Tabbed interface (US-TAB-002) */}
           <div style={{ marginBottom: '1rem' }}>
             <Tabs

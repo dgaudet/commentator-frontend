@@ -1,13 +1,14 @@
 /**
  * Tabs Component
  * Reusable tabbed interface with full keyboard navigation and accessibility
- * Reference: US-TAB-001
+ * Reference: US-TAB-001, US-TOKEN-004
  *
  * Features:
  * - Keyboard accessible (Arrow keys, Home, End, Enter, Space)
  * - WCAG 2.1 AA compliant with proper ARIA attributes
  * - Supports disabled tabs
  * - Unique IDs per instance using React 18 useId()
+ * - Theme-adaptive styling with design tokens
  *
  * @example
  * ```tsx
@@ -22,7 +23,8 @@
  * ```
  */
 import React, { useState, useId, useRef, KeyboardEvent, useCallback, useEffect } from 'react'
-import styles from './Tabs.module.css'
+import { useThemeColors } from '../../hooks/useThemeColors'
+import { spacing, typography, borders } from '../../theme/tokens'
 
 /**
  * Individual tab definition
@@ -63,9 +65,45 @@ export const Tabs: React.FC<TabsProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   variant = 'default',
 }) => {
+  const themeColors = useThemeColors()
   const baseId = useId()
   const [selectedTab, setSelectedTab] = useState<string>(defaultTab || tabs[0]?.id)
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map())
+
+  // Style definitions using design tokens
+  const tablistStyle: React.CSSProperties = {
+    display: 'flex',
+    ...(orientation === 'vertical' && {
+      flexDirection: 'column',
+      borderRight: `${borders.width.thin} solid ${themeColors.border.default}`,
+      borderBottom: 'none',
+    }),
+    ...(orientation === 'horizontal' && {
+      borderBottom: `${borders.width.thin} solid ${themeColors.border.default}`,
+    }),
+  }
+
+  const getTabStyle = (isSelected: boolean, isDisabled: boolean): React.CSSProperties => ({
+    appearance: 'none' as const,
+    background: 'transparent',
+    border: 'none',
+    borderBottom: orientation === 'horizontal' ? '3px solid transparent' : undefined,
+    borderRight: orientation === 'vertical' ? '3px solid transparent' : undefined,
+    borderRadius: 0,
+    boxShadow: 'none',
+    padding: `${spacing.md} ${spacing.lg}`,
+    marginBottom: orientation === 'horizontal' ? '-1px' : undefined,
+    marginRight: orientation === 'vertical' ? '-1px' : undefined,
+    position: 'relative' as const,
+    fontSize: typography.fontSize.base,
+    fontWeight: isSelected ? typography.fontWeight.semibold : typography.fontWeight.medium,
+    transition: 'color 0.2s ease, border-color 0.2s ease',
+    cursor: isDisabled ? 'not-allowed' : 'pointer',
+    opacity: isDisabled ? 0.5 : 1,
+    color: isSelected ? themeColors.primary.main : themeColors.text.tertiary,
+    borderBottomColor: orientation === 'horizontal' ? (isSelected ? themeColors.primary.main : 'transparent') : undefined,
+    borderRightColor: orientation === 'vertical' ? (isSelected ? themeColors.primary.main : 'transparent') : undefined,
+  })
 
   /**
    * Sync internal state when defaultTab prop changes (US-TABPANEL-003)
@@ -167,39 +205,79 @@ export const Tabs: React.FC<TabsProps> = ({
     }
   }, [])
 
-  return (
-    <div
-      role="tablist"
-      aria-orientation={orientation}
-      id={`${baseId}-tablist`}
-      className={styles.tablist}
-      data-orientation={orientation}
-    >
-      {tabs.map((tab, index) => {
-        const isSelected = selectedTab === tab.id
-        const isDisabled = tab.disabled || false
+  const iconStyle: React.CSSProperties = {
+    marginRight: spacing.sm,
+    display: 'inline-block',
+  }
 
-        return (
-          <button
-            key={tab.id}
-            ref={(el) => setTabRef(tab.id, el)}
-            role="tab"
-            aria-selected={isSelected}
-            aria-disabled={isDisabled}
-            aria-controls={`${baseId}-tabpanel-${tab.id}`}
-            id={`${baseId}-tab-${tab.id}`}
-            tabIndex={isSelected ? 0 : -1}
-            onClick={() => handleTabClick(tab.id, isDisabled)}
-            onKeyDown={(e) => handleKeyDown(e, index)}
-            disabled={isDisabled}
-            className={styles.tab}
-            data-label={tab.label}
-          >
-            {tab.icon && <span className={styles.tabIcon} aria-hidden="true">{tab.icon}</span>}
-            {tab.label}
-          </button>
-        )
-      })}
-    </div>
+  return (
+    <>
+      <style>
+        {`
+          [role="tab"]::after {
+            content: attr(data-label);
+            display: block;
+            font-weight: 600;
+            height: 0;
+            visibility: hidden;
+            overflow: hidden;
+            user-select: none;
+            pointer-events: none;
+          }
+        `}
+      </style>
+      <div
+        role="tablist"
+        aria-orientation={orientation}
+        id={`${baseId}-tablist`}
+        style={tablistStyle}
+        data-orientation={orientation}
+      >
+        {tabs.map((tab, index) => {
+          const isSelected = selectedTab === tab.id
+          const isDisabled = tab.disabled || false
+          const tabStyle = getTabStyle(isSelected, isDisabled)
+
+          return (
+            <button
+              key={tab.id}
+              ref={(el) => setTabRef(tab.id, el)}
+              role="tab"
+              aria-selected={isSelected}
+              aria-disabled={isDisabled}
+              aria-controls={`${baseId}-tabpanel-${tab.id}`}
+              id={`${baseId}-tab-${tab.id}`}
+              tabIndex={isSelected ? 0 : -1}
+              onClick={() => handleTabClick(tab.id, isDisabled)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              disabled={isDisabled}
+              style={tabStyle}
+              data-label={tab.label}
+              onMouseEnter={(e) => {
+                if (!isDisabled && !isSelected) {
+                  e.currentTarget.style.color = themeColors.text.primary
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isDisabled && !isSelected) {
+                  e.currentTarget.style.color = themeColors.text.tertiary
+                }
+              }}
+              onFocus={(e) => {
+                if (!isDisabled && !isSelected) {
+                  e.currentTarget.style.boxShadow = `0 0 0 2px ${themeColors.primary.main}, 0 0 0 4px ${themeColors.primary.light}33`
+                }
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
+              {tab.icon && <span style={iconStyle} aria-hidden="true">{tab.icon}</span>}
+              {tab.label}
+            </button>
+          )
+        })}
+      </div>
+    </>
   )
 }

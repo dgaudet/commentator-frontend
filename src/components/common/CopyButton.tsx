@@ -1,6 +1,6 @@
 /**
  * CopyButton Component
- * Reference: US-COPY-001, US-COPY-004, US-COPY-005
+ * Reference: US-COPY-001, US-COPY-004, US-COPY-005, US-TOKEN-008
  *
  * A reusable button component for copying text to the clipboard.
  * Provides visual feedback, accessibility features, and fallback support.
@@ -10,10 +10,12 @@
  * - ARIA live region for screen reader announcements
  * - Enhanced accessibility labels
  * - Feature detection for older browsers
+ * - Theme-adaptive styling with design tokens
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import './CopyButton.css'
+import { useThemeColors } from '../../hooks/useThemeColors'
+import { spacing, typography, borders } from '../../theme/tokens'
 
 export interface CopyButtonProps {
   /** The text to copy to clipboard */
@@ -32,10 +34,24 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   onCopySuccess,
   onCopyError,
 }) => {
+  const themeColors = useThemeColors()
   const [copied, setCopied] = useState(false)
   const [announcement, setAnnouncement] = useState('')
   const timeoutRef = useRef<number | null>(null)
   const announcementTimeoutRef = useRef<number | null>(null)
+
+  const buttonStyle: React.CSSProperties = {
+    padding: `${spacing.sm} ${spacing.lg}`,
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium,
+    color: themeColors.text.secondary,
+    backgroundColor: themeColors.background.primary,
+    border: `${borders.width.thin} solid ${themeColors.neutral[300]}`,
+    borderRadius: borders.radius.sm,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out',
+    whiteSpace: 'nowrap' as const,
+  }
 
   // US-COPY-005: Feature detection for Clipboard API
   const isClipboardSupported = typeof navigator !== 'undefined' && navigator.clipboard
@@ -148,7 +164,11 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
     return (
       <button
         type="button"
-        className="copy-button"
+        style={{
+          ...buttonStyle,
+          opacity: 0.5,
+          cursor: 'not-allowed',
+        }}
         disabled={true}
         aria-label="Copy not supported"
       >
@@ -161,10 +181,33 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
     <>
       <button
         type="button"
-        className="copy-button"
+        style={{
+          ...buttonStyle,
+          opacity: isDisabled ? 0.5 : 1,
+          backgroundColor: isDisabled ? themeColors.neutral[100] : themeColors.background.primary,
+        }}
         onClick={handleCopy}
         disabled={isDisabled}
         aria-label={copied ? 'Copied to clipboard' : 'Copy to clipboard'}
+        onMouseEnter={(e) => {
+          if (!isDisabled) {
+            e.currentTarget.style.backgroundColor = themeColors.neutral[50]
+            e.currentTarget.style.borderColor = themeColors.neutral[400]
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isDisabled) {
+            e.currentTarget.style.backgroundColor = themeColors.background.primary
+            e.currentTarget.style.borderColor = themeColors.neutral[300]
+          }
+        }}
+        onFocus={(e) => {
+          e.currentTarget.style.outline = `2px solid ${themeColors.border.focus}`
+          e.currentTarget.style.outlineOffset = '2px'
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.outline = 'none'
+        }}
       >
         {copied ? 'Copied!' : 'Copy'}
       </button>

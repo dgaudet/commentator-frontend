@@ -1,11 +1,15 @@
 /**
  * SubjectEmptyState Component
  * Displayed when no subjects exist
- * Reference: US-REFACTOR-005
+ * Reference: US-REFACTOR-005, US-TOKEN-007
  *
- * Key Change: "class" → "subject" in all text
+ * Key Changes:
+ * - "class" → "subject" in all text
+ * - Migrated to design tokens for theme support
  */
 import React from 'react'
+import { useThemeColors } from '../../hooks/useThemeColors'
+import { spacing, typography } from '../../theme/tokens'
 import { Button } from '../common/Button'
 
 interface SubjectEmptyStateProps {
@@ -13,11 +17,42 @@ interface SubjectEmptyStateProps {
 }
 
 export const SubjectEmptyState: React.FC<SubjectEmptyStateProps> = ({ onCreateFirst }) => {
+  const themeColors = useThemeColors()
+
+  const containerStyle: React.CSSProperties = {
+    textAlign: 'center' as const,
+    padding: `${spacing.xl} 0`,
+  }
+
+  const iconStyle: React.CSSProperties = {
+    color: themeColors.text.disabled,
+    marginBottom: spacing.lg,
+  }
+
+  const iconSvgStyle: React.CSSProperties = {
+    margin: '0 auto',
+    height: '3rem',
+    width: '3rem',
+    display: 'block',
+  }
+
+  const titleStyle: React.CSSProperties = {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.medium,
+    color: themeColors.text.primary,
+    marginBottom: spacing.sm,
+  }
+
+  const descriptionStyle: React.CSSProperties = {
+    color: themeColors.text.secondary,
+    marginBottom: spacing.xl,
+  }
+
   return (
-    <div className="text-center py-12">
-      <div className="text-gray-400 mb-4">
+    <div style={containerStyle}>
+      <div style={iconStyle}>
         <svg
-          className="mx-auto h-12 w-12"
+          style={iconSvgStyle}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -32,8 +67,8 @@ export const SubjectEmptyState: React.FC<SubjectEmptyStateProps> = ({ onCreateFi
           />
         </svg>
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">No subjects found</h3>
-      <p className="text-gray-500 mb-6">
+      <h3 style={titleStyle}>No subjects found</h3>
+      <p style={descriptionStyle}>
         Get started by creating your first subject to manage student comments.
       </p>
       {onCreateFirst && (
