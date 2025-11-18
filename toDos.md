@@ -109,3 +109,5 @@ The final comments error text doesn't use the standardized error label component
 Questions:
 * Order the outcome comments high to low
  
+Tests don't pass anymore, claude says - The 3 test suites that crashed with "JavaScript heap out of memory" are a pre-existing issue unrelated to my changes - the test suite is very large and
+occasionally runs out of memory

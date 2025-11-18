@@ -5,7 +5,7 @@
  * Tests verify modal for managing classes with dropdown selector
  */
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '../../../test-utils'
 import { ClassManagementModal } from '../ClassManagementModal'
 import type { Class } from '../../../types'
 

@@ -9,7 +9,7 @@
  * - Rating is included in onCreate/onUpdate API calls
  * - Rating is required field (validation)
  */
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '../../../test-utils'
 import { PersonalizedCommentsModal } from '../PersonalizedCommentsModal'
 import type { PersonalizedComment } from '../../../types'
 
