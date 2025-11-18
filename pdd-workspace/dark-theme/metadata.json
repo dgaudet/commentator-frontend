@@ -1,0 +1,31 @@
+{
+  "feature": "dark-theme",
+  "description": "Implement dark theme with OS/browser preference detection and user toggle",
+  "complexity": {
+    "level": "L1-MICRO",
+    "reasoning": "Extends existing design token system with 6 stories, estimated 1-2 weeks. No new architecture needed - leverages existing token infrastructure.",
+    "assessedAt": "2025-11-17T00:00:00Z",
+    "criteria": {
+      "storyCount": 6,
+      "duration": "1-2 weeks",
+      "teamSize": "small",
+      "integrations": "none",
+      "technicalComplexity": "low-medium"
+    }
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "testing": "PENDING",
+    "deployment": "PENDING"
+  },
+  "stakeholders": [
+    "End Users (teachers)",
+    "Development Team",
+    "UX/Design Lead"
+  ],
+  "businessValue": "HIGH - Improves accessibility, reduces eye strain, modern UX expectation",
+  "created": "2025-11-17T00:00:00Z",
+  "lastUpdated": "2025-11-17T00:00:00Z"
+}
