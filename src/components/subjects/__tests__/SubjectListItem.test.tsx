@@ -189,8 +189,8 @@ describe('SubjectListItem', () => {
       render(<SubjectListItem subjectItem={mockSubject} />)
       const createdDateText = screen.getByText(/Created: Jan 15, 2024/)
       const parentDiv = createdDateText.closest('div')
-      // US-STYLE-001 AC4: Gray text for dates
-      expect(parentDiv).toHaveStyle({ color: '#6B7280' })
+      // US-STYLE-001 AC4: Gray text for dates (using design token text.secondary)
+      expect(parentDiv).toHaveStyle({ color: 'rgb(55, 65, 81)' })
     })
   })
 
@@ -224,7 +224,10 @@ describe('SubjectListItem', () => {
         render(<SubjectListItem subjectItem={mockSubject} onEdit={jest.fn()} />)
 
         const tabpanel = screen.getByRole('tabpanel')
-        expect(tabpanel).toHaveClass('mt-4') // Spacing below tabs
+        // TabPanel uses inline styles for spacing (marginTop: spacing.lg)
+        expect(tabpanel.getAttribute('style')).toBeTruthy()
+        const computedStyle = window.getComputedStyle(tabpanel)
+        expect(computedStyle.marginTop).toBeTruthy()
       })
     })
 

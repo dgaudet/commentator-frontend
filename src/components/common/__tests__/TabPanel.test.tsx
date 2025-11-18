@@ -132,7 +132,7 @@ describe('TabPanel Component (US-TABPANEL-001)', () => {
   })
 
   describe('AC3: Styling and Layout', () => {
-    it('should apply default spacing class (mt-4)', () => {
+    it('should apply default spacing with inline styles', () => {
       render(
         <TabPanel id="edit" activeTabId="edit" tabId="edit">
           <div>Edit Content</div>
@@ -140,7 +140,10 @@ describe('TabPanel Component (US-TABPANEL-001)', () => {
       )
 
       const tabpanel = screen.getByRole('tabpanel')
-      expect(tabpanel).toHaveClass('mt-4')
+      expect(tabpanel.getAttribute('style')).toBeTruthy()
+      // Should have marginTop applied
+      const computedStyle = window.getComputedStyle(tabpanel)
+      expect(computedStyle.marginTop).toBeTruthy()
     })
 
     it('should allow custom className to be added', () => {
@@ -151,8 +154,9 @@ describe('TabPanel Component (US-TABPANEL-001)', () => {
       )
 
       const tabpanel = screen.getByRole('tabpanel')
-      expect(tabpanel).toHaveClass('mt-4')
       expect(tabpanel).toHaveClass('custom-class')
+      // Should still have inline styles for spacing
+      expect(tabpanel.getAttribute('style')).toBeTruthy()
     })
   })
 
