@@ -21,12 +21,12 @@
 import { useMemo } from 'react'
 import { useTheme } from '../contexts/ThemeContext'
 import { colors, darkColors } from '../theme/tokens'
-import type { Colors } from '../theme/tokens'
+import type { Colors, DarkColors } from '../theme/tokens'
 
-export const useThemeColors = (): Colors => {
+export const useThemeColors = (): Colors | DarkColors => {
   const { theme } = useTheme()
 
-  const themeColors = useMemo(() => {
+  const themeColors = useMemo((): Colors | DarkColors => {
     return theme === 'dark' ? darkColors : colors
   }, [theme])
 
