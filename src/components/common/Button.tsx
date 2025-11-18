@@ -2,9 +2,11 @@
  * Button Component
  * Reusable button with variants and accessibility features
  * Reference: US-CSS-005 - Enhanced Button Component with Design Tokens
+ * US-DARK-005: Updated to use dynamic theme colors
  */
 import React from 'react'
-import { colors, spacing, typography, borders, shadows } from '../../theme/tokens'
+import { spacing, typography, borders, shadows } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger'
@@ -18,6 +20,8 @@ export const Button: React.FC<ButtonProps> = ({
   type = 'button',
   ...props
 }) => {
+  const themeColors = useThemeColors()
+
   // US-STYLE-001 AC2: Modern blue button styling from test.webp
   // US-CSS-005: Updated to use design tokens for maintainability
   // Accessibility: Using transparent borders that become visible in high-contrast mode
@@ -35,26 +39,26 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles: Record<string, React.CSSProperties> = {
     primary: {
-      backgroundColor: colors.primary.main,
-      color: colors.text.inverse,
-      borderColor: colors.primary.main,
+      backgroundColor: themeColors.primary.main,
+      color: themeColors.text.inverse,
+      borderColor: themeColors.primary.main,
     },
     secondary: {
-      backgroundColor: colors.neutral[200],
-      color: colors.neutral[800],
-      borderColor: colors.neutral[200],
+      backgroundColor: themeColors.neutral[200],
+      color: themeColors.neutral[800],
+      borderColor: themeColors.neutral[200],
     },
     danger: {
-      backgroundColor: colors.semantic.error,
-      color: colors.text.inverse,
-      borderColor: colors.semantic.error,
+      backgroundColor: themeColors.semantic.error,
+      color: themeColors.text.inverse,
+      borderColor: themeColors.semantic.error,
     },
   }
 
   const hoverColors: Record<string, string> = {
-    primary: colors.primary.dark,
-    secondary: colors.neutral[300],
-    danger: colors.semantic.errorDark,
+    primary: themeColors.primary.dark,
+    secondary: themeColors.neutral[300],
+    danger: themeColors.semantic.errorDark,
   }
 
   return (

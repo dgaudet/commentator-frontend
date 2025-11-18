@@ -4,6 +4,9 @@ import { SubjectList } from './components/subjects/SubjectList'
 import { SubjectForm } from './components/subjects/SubjectForm'
 import { saveSelectedSubjectId } from './utils/subjectStorageUtils'
 import type { Subject } from './types/Subject'
+import { ThemeProvider } from './contexts/ThemeContext'
+import { ThemeToggle } from './components/common/ThemeToggle'
+import { ThemeStyles } from './components/common/ThemeStyles'
 
 /**
  * Main application component
@@ -54,30 +57,38 @@ function App() {
   }
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Commentator</h1>
-        <p>Student Report Card Comment Management</p>
-      </header>
-      <main className="app-main">
-        {showForm
-          ? (
-              <SubjectForm
-                existingSubject={editingSubject}
-                onSuccess={handleFormSuccess}
-                onCancel={handleFormCancel}
-              />
-            )
-          : (
-              <SubjectList
-                onAddSubject={handleAddSubject}
-                onEdit={handleEditSubject}
-                onEditSuccess={handleFormSuccess}
-                onEditCancel={handleFormCancel}
-              />
-            )}
-      </main>
-    </div>
+    <ThemeProvider>
+      <ThemeStyles />
+      <div className="app">
+        <header className="app-header">
+          <div className="header-content">
+            <div className="header-text">
+              <h1>Commentator</h1>
+              <p>Student Report Card Comment Management</p>
+            </div>
+            <ThemeToggle />
+          </div>
+        </header>
+        <main className="app-main">
+          {showForm
+            ? (
+                <SubjectForm
+                  existingSubject={editingSubject}
+                  onSuccess={handleFormSuccess}
+                  onCancel={handleFormCancel}
+                />
+              )
+            : (
+                <SubjectList
+                  onAddSubject={handleAddSubject}
+                  onEdit={handleEditSubject}
+                  onEditSuccess={handleFormSuccess}
+                  onEditCancel={handleFormCancel}
+                />
+              )}
+        </main>
+      </div>
+    </ThemeProvider>
   )
 }
 

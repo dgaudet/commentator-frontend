@@ -71,6 +71,62 @@ export const colors = {
 } as const
 
 /**
+ * Dark Theme Color Palette
+ * Reference: US-DARK-002
+ *
+ * Colors optimized for dark mode with WCAG 2.1 AA contrast ratios.
+ * Uses dark grays instead of pure black to reduce eye strain.
+ *
+ * Design Principles:
+ * - Background: Dark grays (#1A1A1A to #2D2D2D) instead of pure black
+ * - Text: Light colors for readability on dark backgrounds
+ * - Neutral: Inverted scale from light theme
+ * - Semantic: Adjusted for visibility on dark backgrounds
+ */
+export const darkColors = {
+  neutral: {
+    50: '#1F2937', // Darkest (inverted from light theme 800)
+    100: '#374151', // Dark
+    200: '#4B5563', // Medium-dark
+    300: '#6B7280', // Medium
+    400: '#9CA3AF', // Medium-light (same as light theme)
+    500: '#D1D5DB', // Light
+    600: '#E5E7EB', // Lighter
+    700: '#F3F4F6', // Very light
+    800: '#F9FAFB', // Almost white
+    900: '#FFFFFF', // White (inverted from light theme 50)
+  },
+  primary: {
+    main: '#3D8BFF', // Brighter blue for dark backgrounds
+    dark: '#0066FF', // Same as light theme main
+    light: '#6BA5FF', // Lighter variant
+  },
+  semantic: {
+    error: '#F87171', // Lighter red for visibility
+    errorDark: '#DC2626', // Same as light theme error
+    errorLight: '#7F1D1D', // Dark red background
+    success: '#34D399', // Lighter green for visibility
+  },
+  background: {
+    primary: '#1A1A1A', // Main background (dark gray, not pure black)
+    secondary: '#2D2D2D', // Cards, modals
+    tertiary: '#3A3A3A', // Hover states
+  },
+  border: {
+    default: '#4B5563', // Visible borders on dark background
+    focus: '#3D8BFF', // Same as primary.main
+    error: '#F87171', // Same as semantic.error
+  },
+  text: {
+    primary: '#E5E7EB', // Main text (light gray)
+    secondary: '#9CA3AF', // Secondary text
+    tertiary: '#6B7280', // Muted text
+    disabled: '#4B5563', // Disabled state
+    inverse: '#111827', // Text on light surfaces (same as light theme primary)
+  },
+} as const
+
+/**
  * Spacing Scale
  *
  * Uses rem units for accessibility and scalability.
@@ -153,6 +209,7 @@ export const shadows = {
  * Export types for better IDE autocomplete and type safety.
  */
 export type Colors = typeof colors
+export type DarkColors = typeof darkColors
 export type Spacing = typeof spacing
 export type Typography = typeof typography
 export type Borders = typeof borders

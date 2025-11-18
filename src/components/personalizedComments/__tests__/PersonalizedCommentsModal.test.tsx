@@ -3,7 +3,7 @@
  * Tests modal rendering, CRUD operations, and validation
  */
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '../../../test-utils'
 import { PersonalizedCommentsModal } from '../PersonalizedCommentsModal'
 import type { PersonalizedComment } from '../../../types'
 

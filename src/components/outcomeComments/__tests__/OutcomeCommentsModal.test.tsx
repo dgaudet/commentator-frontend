@@ -12,7 +12,7 @@
  * Related: TD-001 (OutcomeCommentsModal Subject Type Compatibility)
  */
 
-import { render, screen, within, act, fireEvent } from '@testing-library/react'
+import { render, screen, within, act, fireEvent } from '../../../test-utils'
 import userEvent from '@testing-library/user-event'
 import { OutcomeCommentsModal } from '../OutcomeCommentsModal'
 import type { Subject, OutcomeComment } from '../../../types'

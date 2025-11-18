@@ -9,7 +9,7 @@
  * - Default rating (3-Neutral) for null/undefined ratings
  * - Accessibility labels for screen readers
  */
-import { render, screen } from '@testing-library/react'
+import { render, screen } from '../../../test-utils'
 import { PersonalizedCommentsModal } from '../PersonalizedCommentsModal'
 import type { PersonalizedComment } from '../../../types'
 

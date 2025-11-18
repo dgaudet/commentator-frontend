@@ -22,6 +22,7 @@
  * - Consistent UX with other delete operations
  *
  * UI Consistency: Migrated to design tokens (US-UI-003)
+ * US-DARK-005: Updated to use dynamic theme colors
  */
 
 import { useState } from 'react'
@@ -32,7 +33,8 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
 import { CommentTextField } from '../common/CommentTextField'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
@@ -57,6 +59,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
   loading,
   error,
 }: PersonalizedCommentsModalProps<T>) => {
+  const themeColors = useThemeColors()
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newCommentRating, setNewCommentRating] = useState(3) // Default rating: 3 (Neutral)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -190,7 +193,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
         aria-label="Personalized Comments"
         style={{
           padding: spacing.xl,
-          backgroundColor: colors.background.primary,
+          backgroundColor: themeColors.background.primary,
         }}
       >
           {loading && (
@@ -211,7 +214,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                   style={{
                     fontSize: typography.fontSize.lg,
                     fontWeight: typography.fontWeight.semibold,
-                    color: colors.text.primary,
+                    color: themeColors.text.primary,
                     marginBottom: spacing.lg,
                   }}
                 >
@@ -245,10 +248,10 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                     style={{
                       padding: spacing.md,
                       marginBottom: spacing.lg,
-                      backgroundColor: colors.semantic.errorLight,
-                      border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                      backgroundColor: themeColors.semantic.errorLight,
+                      border: `${borders.width.thin} solid ${themeColors.semantic.error}`,
                       borderRadius: borders.radius.md,
-                      color: colors.semantic.error,
+                      color: themeColors.semantic.error,
                       fontSize: typography.fontSize.sm,
                     }}
                   >
@@ -270,7 +273,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                   style={{
                     fontSize: typography.fontSize.lg,
                     fontWeight: typography.fontWeight.semibold,
-                    color: colors.text.primary,
+                    color: themeColors.text.primary,
                     marginBottom: spacing.lg,
                   }}
                 >
@@ -282,16 +285,16 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                         style={{
                           textAlign: 'center' as const,
                           padding: spacing['2xl'],
-                          backgroundColor: colors.neutral[50],
+                          backgroundColor: themeColors.neutral[50],
                           borderRadius: borders.radius.md,
-                          border: `${borders.width.thin} dashed ${colors.border.default}`,
+                          border: `${borders.width.thin} dashed ${themeColors.border.default}`,
                         }}
                       >
                         <p
                           style={{
                             margin: 0,
                             fontSize: typography.fontSize.base,
-                            color: colors.text.tertiary,
+                            color: themeColors.text.tertiary,
                           }}
                         >
                           No personalized comments yet
@@ -300,7 +303,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                           style={{
                             margin: `${spacing.sm} 0 0`,
                             fontSize: typography.fontSize.sm,
-                            color: colors.text.disabled,
+                            color: themeColors.text.disabled,
                           }}
                         >
                           Add your first personalized comment above.
@@ -320,9 +323,9 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                         key={comment.id}
                         style={{
                           padding: spacing.xl,
-                          border: `${borders.width.thin} solid ${colors.border.default}`,
+                          border: `${borders.width.thin} solid ${themeColors.border.default}`,
                           borderRadius: borders.radius.md,
-                          backgroundColor: colors.background.primary,
+                          backgroundColor: themeColors.background.primary,
                         }}
                       >
                         {editingId === comment.id
@@ -356,10 +359,10 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                                     style={{
                                       padding: spacing.md,
                                       marginBottom: spacing.lg,
-                                      backgroundColor: colors.semantic.errorLight,
-                                      border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                                      backgroundColor: themeColors.semantic.errorLight,
+                                      border: `${borders.width.thin} solid ${themeColors.semantic.error}`,
                                       borderRadius: borders.radius.md,
-                                      color: colors.semantic.error,
+                                      color: themeColors.semantic.error,
                                       fontSize: typography.fontSize.sm,
                                     }}
                                   >
@@ -407,7 +410,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                               <div
                                 style={{
                                   fontSize: typography.fontSize.base,
-                                  color: colors.text.primary,
+                                  color: themeColors.text.primary,
                                   lineHeight: typography.lineHeight.normal,
                                   marginBottom: spacing.md,
                                   flex: 1,
@@ -419,7 +422,7 @@ export const PersonalizedCommentsModal = <T extends { id: number; name: string }
                             <div
                               style={{
                                 fontSize: typography.fontSize.xs,
-                                color: colors.text.disabled,
+                                color: themeColors.text.disabled,
                                 marginBottom: spacing.lg,
                               }}
                             >
