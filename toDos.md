@@ -113,4 +113,3 @@ Tests don't pass anymore, claude says - The 3 test suites that crashed with "Jav
 occasionally runs out of memory
 
 remove the Edit Subject label from the subject component - it should just be Update Subject instead of Save Changes
-when selecting a comment, or upper/lower range the focus color is incorrect

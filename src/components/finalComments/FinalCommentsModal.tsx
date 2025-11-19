@@ -207,6 +207,20 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
     })
   }
 
+  // Focus/Blur handlers for comment textarea - match Input component styling
+  const handleCommentFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const focusColor = themeColors.primary.main
+    const focusShadowColor = 'rgba(0, 102, 255, 0.1)'
+
+    e.currentTarget.style.borderColor = focusColor
+    e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`
+  }
+
+  const handleCommentBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    e.currentTarget.style.borderColor = themeColors.border.default
+    e.currentTarget.style.boxShadow = 'none'
+  }
+
   // US-FC-REFACTOR-001: Handle create final comment using hook
   const handleCreateComment = async () => {
     const error = addForm.validate()
@@ -746,6 +760,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                     ref={addCommentTextareaRef}
                     value={addForm.comment}
                     onChange={(e) => addForm.setComment(e.target.value)}
+                    onFocus={handleCommentFocus}
+                    onBlur={handleCommentBlur}
                     placeholder="Enter optional comment (max 1000 characters)"
                     className="final-comment-textarea"
                     rows={4}
@@ -755,9 +771,13 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       width: '100%',
                       padding: spacing.md,
                       fontSize: typography.fontSize.base,
+                      color: themeColors.text.primary,
+                      backgroundColor: themeColors.background.primary,
                       border: `${borders.width.thin} solid ${themeColors.border.default}`,
                       borderRadius: borders.radius.md,
+                      outline: 'none',
                       resize: 'vertical',
+                      transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
                     }}
                   />
                   <div
@@ -1026,6 +1046,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         ref={editCommentTextareaRef}
                                         value={editForm.comment}
                                         onChange={(e) => editForm.setComment(e.target.value)}
+                                        onFocus={handleCommentFocus}
+                                        onBlur={handleCommentBlur}
                                         placeholder="Enter optional comment (max 1000 characters)"
                                         className="comment-textarea"
                                         rows={4}
@@ -1034,9 +1056,13 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                           width: '100%',
                                           padding: spacing.md,
                                           fontSize: typography.fontSize.base,
+                                          color: themeColors.text.primary,
+                                          backgroundColor: themeColors.background.primary,
                                           border: `${borders.width.thin} solid ${themeColors.border.default}`,
                                           borderRadius: borders.radius.md,
+                                          outline: 'none',
                                           resize: 'vertical',
+                                          transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
                                         }}
                                       />
                                       <div
