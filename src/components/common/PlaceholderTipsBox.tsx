@@ -7,16 +7,18 @@
  * US-PLACEHOLDER-PC-001, US-PLACEHOLDER-PC-002, US-PLACEHOLDER-001
  */
 
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 
 export const PlaceholderTipsBox = () => {
+  const themeColors = useThemeColors()
   return (
     <div
       style={{
         padding: spacing.md,
         marginBottom: spacing.md,
-        backgroundColor: colors.primary[50],
-        border: `${borders.width.thin} solid ${colors.primary[200]}`,
+        backgroundColor: themeColors.primary[50],
+        border: `${borders.width.thin} solid ${themeColors.primary[200]}`,
         borderRadius: borders.radius.md,
       }}
     >
@@ -24,7 +26,7 @@ export const PlaceholderTipsBox = () => {
         style={{
           fontSize: typography.fontSize.sm,
           fontWeight: typography.fontWeight.semibold,
-          color: colors.primary[700],
+          color: themeColors.primary[700],
           marginBottom: spacing.xs,
         }}
       >
@@ -33,7 +35,7 @@ export const PlaceholderTipsBox = () => {
       <div
         style={{
           fontSize: typography.fontSize.sm,
-          color: colors.text.secondary,
+          color: themeColors.text.secondary,
           lineHeight: typography.lineHeight.relaxed,
         }}
       >
@@ -42,7 +44,7 @@ export const PlaceholderTipsBox = () => {
         <code
           style={{
             padding: '2px 4px',
-            backgroundColor: colors.background.secondary,
+            backgroundColor: themeColors.background.secondary,
             borderRadius: borders.radius.sm,
             fontSize: typography.fontSize.xs,
           }}
@@ -52,7 +54,7 @@ export const PlaceholderTipsBox = () => {
         <code
           style={{
             padding: '2px 4px',
-            backgroundColor: colors.background.secondary,
+            backgroundColor: themeColors.background.secondary,
             borderRadius: borders.radius.sm,
             fontSize: typography.fontSize.xs,
           }}
@@ -62,7 +64,7 @@ export const PlaceholderTipsBox = () => {
         <code
           style={{
             padding: '2px 4px',
-            backgroundColor: colors.background.secondary,
+            backgroundColor: themeColors.background.secondary,
             borderRadius: borders.radius.sm,
             fontSize: typography.fontSize.xs,
           }}
@@ -70,7 +72,7 @@ export const PlaceholderTipsBox = () => {
           &lt;grade&gt;
         </code>
         <br />
-        <em style={{ color: colors.text.tertiary }}>
+        <em style={{ color: themeColors.text.tertiary }}>
           Example: &quot;&lt;first name&gt; earned &lt;grade&gt; points&quot; → &quot;Alice earned 95
           points&quot;
         </em>

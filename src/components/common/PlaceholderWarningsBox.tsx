@@ -7,13 +7,15 @@
  * US-PLACEHOLDER-PC-003, US-PLACEHOLDER-003
  */
 
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 
 interface PlaceholderWarningsBoxProps {
   warnings: string[]
 }
 
 export const PlaceholderWarningsBox = ({ warnings }: PlaceholderWarningsBoxProps) => {
+  const themeColors = useThemeColors()
   if (warnings.length === 0) {
     return null
   }
@@ -25,10 +27,10 @@ export const PlaceholderWarningsBox = ({ warnings }: PlaceholderWarningsBoxProps
       style={{
         padding: spacing.md,
         marginTop: spacing.md,
-        backgroundColor: colors.semantic.warningLight,
-        border: `${borders.width.thin} solid ${colors.semantic.warning}`,
+        backgroundColor: themeColors.semantic.warningLight,
+        border: `${borders.width.thin} solid ${themeColors.semantic.warning}`,
         borderRadius: borders.radius.md,
-        color: colors.semantic.warning,
+        color: themeColors.semantic.warning,
         fontSize: typography.fontSize.sm,
       }}
     >
