@@ -100,6 +100,8 @@ export const CommentTextField = ({
           width: '100%',
           padding: spacing.md,
           fontSize: typography.fontSize.base,
+          color: themeColors.text.primary,
+          backgroundColor: themeColors.background.primary,
           border: `${borders.width.thin} solid ${themeColors.border.default}`,
           borderRadius: borders.radius.md,
           resize: 'vertical' as const,

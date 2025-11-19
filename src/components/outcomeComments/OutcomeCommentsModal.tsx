@@ -280,6 +280,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         width: '100%',
                         padding: spacing.md,
                         fontSize: typography.fontSize.base,
+                        color: themeColors.text.primary,
+                        backgroundColor: themeColors.background.primary,
                         border: `${borders.width.thin} solid ${themeColors.border.default}`,
                         borderRadius: borders.radius.md,
                       }}
@@ -308,6 +310,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         width: '100%',
                         padding: spacing.md,
                         fontSize: typography.fontSize.base,
+                        color: themeColors.text.primary,
+                        backgroundColor: themeColors.background.primary,
                         border: `${borders.width.thin} solid ${themeColors.border.default}`,
                         borderRadius: borders.radius.md,
                       }}
@@ -444,6 +448,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                         width: '100%',
                                         padding: spacing.md,
                                         fontSize: typography.fontSize.base,
+                                        color: themeColors.text.primary,
+                                        backgroundColor: themeColors.background.primary,
                                         border: `${borders.width.thin} solid ${themeColors.border.default}`,
                                         borderRadius: borders.radius.md,
                                       }}
@@ -471,6 +477,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                         width: '100%',
                                         padding: spacing.md,
                                         fontSize: typography.fontSize.base,
+                                        color: themeColors.text.primary,
+                                        backgroundColor: themeColors.background.primary,
                                         border: `${borders.width.thin} solid ${themeColors.border.default}`,
                                         borderRadius: borders.radius.md,
                                       }}
