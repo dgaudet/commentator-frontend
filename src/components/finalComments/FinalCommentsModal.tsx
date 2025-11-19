@@ -63,7 +63,8 @@ import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { SelectedCommentsList } from './SelectedCommentsList'
 import { CopyButton } from '../common/CopyButton'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
 import { getRatingEmoji, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
@@ -90,6 +91,8 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   error,
   embedded = false, // US-CLASS-TABS-003: Default to false for backward compatibility
 }: FinalCommentsModalProps<T>) => {
+  const themeColors = useThemeColors()
+
   // US-FC-REFACTOR-001: Shared hook state management
   const [submitting, setSubmitting] = useState(false)
 
@@ -562,7 +565,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   style={{
                     fontSize: typography.fontSize.lg,
                     fontWeight: typography.fontWeight.semibold,
-                    color: colors.text.primary,
+                    color: themeColors.text.primary,
                     marginBottom: spacing.lg,
                   }}
                 >
@@ -620,7 +623,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       marginBottom: spacing.sm,
                       fontSize: typography.fontSize.sm,
                       fontWeight: typography.fontWeight.medium,
-                      color: colors.text.secondary,
+                      color: themeColors.text.secondary,
                     }}
                   >
                     Outcome Comment by Grade
@@ -643,13 +646,13 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                         width: '100%',
                         padding: spacing.md,
                         fontSize: typography.fontSize.base,
-                        border: `${borders.width.thin} solid ${colors.border.default}`,
+                        border: `${borders.width.thin} solid ${themeColors.border.default}`,
                         borderRadius: borders.radius.md,
-                        backgroundColor: colors.background.secondary,
+                        backgroundColor: themeColors.background.secondary,
                         color:
                           !addForm.matchedOutcomeComment
-                            ? colors.text.disabled
-                            : colors.text.secondary,
+                            ? themeColors.text.disabled
+                            : themeColors.text.secondary,
                         resize: 'none',
                         cursor: 'default',
                       }}
@@ -661,7 +664,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       style={{
                         marginTop: spacing.sm,
                         fontSize: typography.fontSize.sm,
-                        color: colors.semantic.error,
+                        color: themeColors.semantic.error,
                       }}
                     >
                       Failed to load outcome comment. {outcomeCommentsError}
@@ -731,7 +734,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       style={{
                         fontSize: typography.fontSize.sm,
                         fontWeight: typography.fontWeight.medium,
-                        color: colors.text.secondary,
+                        color: themeColors.text.secondary,
                       }}
                     >
                       Comment
@@ -752,7 +755,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                       width: '100%',
                       padding: spacing.md,
                       fontSize: typography.fontSize.base,
-                      border: `${borders.width.thin} solid ${colors.border.default}`,
+                      border: `${borders.width.thin} solid ${themeColors.border.default}`,
                       borderRadius: borders.radius.md,
                       resize: 'vertical',
                     }}
@@ -762,7 +765,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                     style={{
                       marginTop: spacing.sm,
                       fontSize: typography.fontSize.sm,
-                      color: colors.text.tertiary,
+                      color: themeColors.text.tertiary,
                     }}
                   >
                     {addForm.comment.length}/1000 characters
@@ -788,7 +791,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                   style={{
                     fontSize: typography.fontSize.lg,
                     fontWeight: typography.fontWeight.semibold,
-                    color: colors.text.primary,
+                    color: themeColors.text.primary,
                     marginBottom: spacing.lg,
                   }}
                 >
@@ -802,16 +805,16 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                         style={{
                           textAlign: 'center' as const,
                           padding: spacing['2xl'],
-                          backgroundColor: colors.neutral[50],
+                          backgroundColor: themeColors.neutral[50],
                           borderRadius: borders.radius.md,
-                          border: `${borders.width.thin} dashed ${colors.border.default}`,
+                          border: `${borders.width.thin} dashed ${themeColors.border.default}`,
                         }}
                       >
                         <p
                           style={{
                             margin: 0,
                             fontSize: typography.fontSize.base,
-                            color: colors.text.tertiary,
+                            color: themeColors.text.tertiary,
                           }}
                         >
                           No final comments yet for this class.
@@ -820,7 +823,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                           style={{
                             margin: `${spacing.sm} 0 0`,
                             fontSize: typography.fontSize.sm,
-                            color: colors.text.disabled,
+                            color: themeColors.text.disabled,
                           }}
                         >
                           Add your first student grade!
@@ -841,9 +844,9 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                             key={comment.id}
                             style={{
                               padding: spacing.xl,
-                              border: `${borders.width.thin} solid ${colors.border.default}`,
+                              border: `${borders.width.thin} solid ${themeColors.border.default}`,
                               borderRadius: borders.radius.md,
-                              backgroundColor: colors.background.primary,
+                              backgroundColor: themeColors.background.primary,
                             }}
                           >
                             {editingId === comment.id
@@ -900,7 +903,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                           marginBottom: spacing.sm,
                                           fontSize: typography.fontSize.sm,
                                           fontWeight: typography.fontWeight.medium,
-                                          color: colors.text.secondary,
+                                          color: themeColors.text.secondary,
                                         }}
                                       >
                                         Outcome Comment by Grade (Edit)
@@ -923,13 +926,13 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                             width: '100%',
                                             padding: spacing.md,
                                             fontSize: typography.fontSize.base,
-                                            border: `${borders.width.thin} solid ${colors.border.default}`,
+                                            border: `${borders.width.thin} solid ${themeColors.border.default}`,
                                             borderRadius: borders.radius.md,
-                                            backgroundColor: colors.background.secondary,
+                                            backgroundColor: themeColors.background.secondary,
                                             color:
                                               !editForm.matchedOutcomeComment
-                                                ? colors.text.disabled
-                                                : colors.text.secondary,
+                                                ? themeColors.text.disabled
+                                                : themeColors.text.secondary,
                                             resize: 'none',
                                             cursor: 'default',
                                           }}
@@ -941,7 +944,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                           style={{
                                             marginTop: spacing.sm,
                                             fontSize: typography.fontSize.sm,
-                                            color: colors.semantic.error,
+                                            color: themeColors.semantic.error,
                                           }}
                                         >
                                           Failed to load outcome comment. {outcomeCommentsError}
@@ -1011,7 +1014,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                           style={{
                                             fontSize: typography.fontSize.sm,
                                             fontWeight: typography.fontWeight.medium,
-                                            color: colors.text.secondary,
+                                            color: themeColors.text.secondary,
                                           }}
                                         >
                                           Comment
@@ -1031,7 +1034,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                           width: '100%',
                                           padding: spacing.md,
                                           fontSize: typography.fontSize.base,
-                                          border: `${borders.width.thin} solid ${colors.border.default}`,
+                                          border: `${borders.width.thin} solid ${themeColors.border.default}`,
                                           borderRadius: borders.radius.md,
                                           resize: 'vertical',
                                         }}
@@ -1041,7 +1044,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         style={{
                                           marginTop: spacing.sm,
                                           fontSize: typography.fontSize.sm,
-                                          color: colors.text.tertiary,
+                                          color: themeColors.text.tertiary,
                                         }}
                                       >
                                         {editForm.comment.length}/1000 characters
@@ -1088,7 +1091,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                           style={{
                                             fontSize: typography.fontSize.base,
                                             fontWeight: typography.fontWeight.semibold,
-                                            color: colors.text.primary,
+                                            color: themeColors.text.primary,
                                             lineHeight: typography.lineHeight.normal,
                                             marginBottom: spacing.xs,
                                           }}
@@ -1099,7 +1102,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                         <div
                                           style={{
                                             fontSize: typography.fontSize.xs,
-                                            color: colors.text.disabled,
+                                            color: themeColors.text.disabled,
                                           }}
                                         >
                                           Created: {formatDate(comment.createdAt)}
@@ -1117,7 +1120,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                     <div
                                       style={{
                                         fontSize: typography.fontSize.sm,
-                                        color: colors.text.tertiary,
+                                        color: themeColors.text.tertiary,
                                         marginBottom: spacing.md,
                                       }}
                                     >
@@ -1129,7 +1132,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
                                       <div
                                         style={{
                                           fontSize: typography.fontSize.sm,
-                                          color: colors.text.secondary,
+                                          color: themeColors.text.secondary,
                                           marginBottom: spacing.lg,
                                           lineHeight: typography.lineHeight.relaxed,
                                         }}
