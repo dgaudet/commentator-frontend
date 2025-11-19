@@ -65,6 +65,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
   onRemove,
   isDragging = false,
 }) => {
+  const themeColors = useThemeColors()
   const {
     attributes,
     listeners,
@@ -92,7 +93,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
           index < totalCount - 1
             ? `${borders.width.thin} solid ${themeColors.border.default}`
             : 'none',
-        backgroundColor: isDragging ? themeColors.primary[50] : themeColors.background.primary,
+        backgroundColor: isDragging ? themeColors.background.secondary : themeColors.background.primary,
         cursor: isDragging ? 'grabbing' : 'grab',
       }}
     >
