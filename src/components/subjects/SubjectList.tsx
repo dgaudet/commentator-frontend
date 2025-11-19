@@ -26,7 +26,8 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Subject } from '../../types/Subject'
 import { getSelectedSubjectId, saveSelectedSubjectId, clearSelectedSubjectId } from '../../utils/subjectStorageUtils'
-import { colors, spacing, typography, borders, shadows } from '../../theme/tokens'
+import { spacing, typography, borders, shadows } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 import type { Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
 interface SubjectListProps {
@@ -53,6 +54,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   onViewFinalComments,
 }) => {
   const { subjects, isLoading, error, clearError, deleteSubject, fetchSubjects } = useSubjects()
+  const themeColors = useThemeColors()
 
   // Hooks for managing tab panel data
   const {
@@ -351,7 +353,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
           style={{
             fontSize: typography.fontSize.xl,
             fontWeight: typography.fontWeight.bold,
-            color: colors.text.primary,
+            color: themeColors.text.primary,
             margin: 0,
           }}
         >
@@ -378,7 +380,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             display: 'block',
             fontSize: typography.fontSize.lg,
             fontWeight: typography.fontWeight.medium,
-            color: colors.text.secondary,
+            color: themeColors.text.secondary,
             marginBottom: spacing.md,
           }}
         >
@@ -395,9 +397,10 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             width: '100%',
             padding: spacing.md,
             fontSize: typography.fontSize.base,
-            border: `${borders.width.thick} solid ${colors.border.default}`,
+            color: themeColors.text.primary,
+            border: `${borders.width.thick} solid ${themeColors.border.default}`,
             borderRadius: borders.radius.md,
-            backgroundColor: colors.background.secondary,
+            backgroundColor: themeColors.background.secondary,
             boxShadow: shadows.sm,
             cursor: 'pointer',
           }}

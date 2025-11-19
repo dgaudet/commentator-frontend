@@ -81,6 +81,7 @@ export const Input: React.FC<InputProps> = ({
           width: '100%',
           padding: spacing.md,
           fontSize: typography.fontSize.base,
+          color: themeColors.text.primary,
           border: `${borders.width.thin} solid ${hasError ? themeColors.semantic.error : themeColors.border.default}`,
           borderRadius: borders.radius.md,
           backgroundColor: themeColors.background.primary,

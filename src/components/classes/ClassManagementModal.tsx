@@ -369,6 +369,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                             width: '100%',
                             padding: spacing.md,
                             fontSize: typography.fontSize.base,
+                            color: themeColors.text.primary,
                             border: `${borders.width.thin} solid ${themeColors.border.default}`,
                             borderRadius: borders.radius.md,
                             backgroundColor: themeColors.background.primary,
