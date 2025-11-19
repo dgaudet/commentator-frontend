@@ -77,6 +77,19 @@ export const CommentTextField = ({
     onChange(e.target.value)
   }
 
+  const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const focusColor = themeColors.primary.main
+    const focusShadowColor = 'rgba(0, 102, 255, 0.1)'
+
+    e.currentTarget.style.borderColor = focusColor
+    e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`
+  }
+
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    e.currentTarget.style.borderColor = themeColors.border.default
+    e.currentTarget.style.boxShadow = 'none'
+  }
+
   // Use trimmed length to match parent validation logic (e.g., OutcomeCommentsModal line 198)
   const charCount = value.trim().length
   const isValid = charCount >= minLength
@@ -91,6 +104,8 @@ export const CommentTextField = ({
       <textarea
         value={value}
         onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholder={placeholder}
         rows={rows}
         maxLength={maxLength}
@@ -104,8 +119,10 @@ export const CommentTextField = ({
           backgroundColor: themeColors.background.primary,
           border: `${borders.width.thin} solid ${themeColors.border.default}`,
           borderRadius: borders.radius.md,
+          outline: 'none',
           resize: 'vertical' as const,
           fontFamily: 'inherit',
+          transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
         }}
       />
 

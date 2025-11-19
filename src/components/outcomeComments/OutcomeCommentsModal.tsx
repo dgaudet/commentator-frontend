@@ -203,6 +203,20 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   const editCommentCharCount = editContent.trim().length
   const editCommentIsValid = editCommentCharCount >= MIN_COMMENT_LENGTH && editCommentCharCount <= MAX_COMMENT_LENGTH
 
+  // Focus/Blur handlers for range inputs - match Input component styling
+  const handleRangeFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    const focusColor = themeColors.primary.main
+    const focusShadowColor = 'rgba(0, 102, 255, 0.1)'
+
+    e.currentTarget.style.borderColor = focusColor
+    e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`
+  }
+
+  const handleRangeBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.style.borderColor = themeColors.border.default
+    e.currentTarget.style.boxShadow = 'none'
+  }
+
   return (
     <>
       <div
@@ -275,6 +289,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                       type="number"
                       value={newLowerRange}
                       onChange={(e) => setNewLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
+                      onFocus={handleRangeFocus}
+                      onBlur={handleRangeBlur}
                       placeholder="Min score"
                       style={{
                         width: '100%',
@@ -284,6 +300,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         backgroundColor: themeColors.background.primary,
                         border: `${borders.width.thin} solid ${themeColors.border.default}`,
                         borderRadius: borders.radius.md,
+                        outline: 'none',
+                        transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
                       }}
                     />
                   </div>
@@ -305,6 +323,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                       type="number"
                       value={newUpperRange}
                       onChange={(e) => setNewUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
+                      onFocus={handleRangeFocus}
+                      onBlur={handleRangeBlur}
                       placeholder="Max score"
                       style={{
                         width: '100%',
@@ -314,6 +334,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         backgroundColor: themeColors.background.primary,
                         border: `${borders.width.thin} solid ${themeColors.border.default}`,
                         borderRadius: borders.radius.md,
+                        outline: 'none',
+                        transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
                       }}
                     />
                   </div>
@@ -444,6 +466,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                       type="number"
                                       value={editLowerRange}
                                       onChange={(e) => setEditLowerRange(e.target.value === '' ? '' : Number(e.target.value))}
+                                      onFocus={handleRangeFocus}
+                                      onBlur={handleRangeBlur}
                                       style={{
                                         width: '100%',
                                         padding: spacing.md,
@@ -452,6 +476,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                         backgroundColor: themeColors.background.primary,
                                         border: `${borders.width.thin} solid ${themeColors.border.default}`,
                                         borderRadius: borders.radius.md,
+                                        outline: 'none',
+                                        transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
                                       }}
                                     />
                                   </div>
@@ -473,6 +499,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                       type="number"
                                       value={editUpperRange}
                                       onChange={(e) => setEditUpperRange(e.target.value === '' ? '' : Number(e.target.value))}
+                                      onFocus={handleRangeFocus}
+                                      onBlur={handleRangeBlur}
                                       style={{
                                         width: '100%',
                                         padding: spacing.md,
@@ -481,6 +509,8 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                         backgroundColor: themeColors.background.primary,
                                         border: `${borders.width.thin} solid ${themeColors.border.default}`,
                                         borderRadius: borders.radius.md,
+                                        outline: 'none',
+                                        transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
                                       }}
                                     />
                                   </div>
