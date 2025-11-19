@@ -34,7 +34,7 @@ import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Tabs, Tab } from '../common/Tabs'
 import { TabPanel } from '../common/TabPanel'
 import { FinalCommentsModal } from '../finalComments/FinalCommentsModal'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 
 interface ClassManagementModalProps<T extends { id: number; name: string }> {
@@ -288,7 +288,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
         aria-label="Class Management"
         style={{
           padding: spacing.xl,
-          backgroundColor: colors.background.primary,
+          backgroundColor: themeColors.background.primary,
         }}
       >
           {loading && (
@@ -309,7 +309,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                   style={{
                     fontSize: typography.fontSize.lg,
                     fontWeight: typography.fontWeight.semibold,
-                    color: colors.text.primary,
+                    color: themeColors.text.primary,
                     marginBottom: spacing.lg,
                   }}
                 >
@@ -321,16 +321,16 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                         style={{
                           textAlign: 'center',
                           padding: spacing['2xl'],
-                          backgroundColor: colors.background.secondary,
+                          backgroundColor: themeColors.background.secondary,
                           borderRadius: borders.radius.md,
-                          border: `${borders.width.thin} dashed ${colors.border.default}`,
+                          border: `${borders.width.thin} dashed ${themeColors.border.default}`,
                         }}
                       >
                         <p
                           style={{
                             margin: 0,
                             fontSize: typography.fontSize.base,
-                            color: colors.text.tertiary,
+                            color: themeColors.text.tertiary,
                           }}
                         >
                           No classes yet
@@ -339,7 +339,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                           style={{
                             margin: `${spacing.sm} 0 0`,
                             fontSize: typography.fontSize.sm,
-                            color: colors.text.disabled,
+                            color: themeColors.text.disabled,
                           }}
                         >
                           Add your first class below.
@@ -355,7 +355,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                             marginBottom: spacing.sm,
                             fontSize: typography.fontSize.sm,
                             fontWeight: typography.fontWeight.medium,
-                            color: colors.text.secondary,
+                            color: themeColors.text.secondary,
                           }}
                         >
                           Select a class to edit or delete:
@@ -369,9 +369,9 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                             width: '100%',
                             padding: spacing.md,
                             fontSize: typography.fontSize.base,
-                            border: `${borders.width.thin} solid ${colors.border.default}`,
+                            border: `${borders.width.thin} solid ${themeColors.border.default}`,
                             borderRadius: borders.radius.md,
-                            backgroundColor: colors.background.primary,
+                            backgroundColor: themeColors.background.primary,
                             cursor: 'pointer',
                           }}
                         >
@@ -430,10 +430,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                               style={{
                                 padding: spacing.md,
                                 marginBottom: spacing.lg,
-                                backgroundColor: colors.semantic.errorLight,
-                                border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                                backgroundColor: themeColors.semantic.errorLight,
+                                border: `${borders.width.thin} solid ${themeColors.semantic.error}`,
                                 borderRadius: borders.radius.md,
-                                color: colors.semantic.error,
+                                color: themeColors.semantic.error,
                                 fontSize: typography.fontSize.sm,
                               }}
                             >
@@ -495,7 +495,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                         style={{
                           fontSize: typography.fontSize.lg,
                           fontWeight: typography.fontWeight.semibold,
-                          color: colors.text.primary,
+                          color: themeColors.text.primary,
                           marginBottom: spacing.lg,
                         }}
                       >
@@ -531,10 +531,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                           style={{
                             padding: spacing.md,
                             marginBottom: spacing.lg,
-                            backgroundColor: colors.semantic.errorLight,
-                            border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                            backgroundColor: themeColors.semantic.errorLight,
+                            border: `${borders.width.thin} solid ${themeColors.semantic.error}`,
                             borderRadius: borders.radius.md,
-                            color: colors.semantic.error,
+                            color: themeColors.semantic.error,
                             fontSize: typography.fontSize.sm,
                           }}
                         >

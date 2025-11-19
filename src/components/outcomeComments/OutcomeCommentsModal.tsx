@@ -29,7 +29,8 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { CommentTextField } from '../common/CommentTextField'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
@@ -53,6 +54,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   loading,
   error,
 }: OutcomeCommentsModalProps<T>) => {
+  const themeColors = useThemeColors()
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newUpperRange, setNewUpperRange] = useState<number | ''>('')
   const [newLowerRange, setNewLowerRange] = useState<number | ''>('')
@@ -209,7 +211,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
         aria-label="Outcome Comments"
         style={{
           padding: spacing.xl,
-          backgroundColor: colors.background.primary,
+          backgroundColor: themeColors.background.primary,
         }}
       >
           {loading && (
@@ -230,7 +232,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                   style={{
                     fontSize: typography.fontSize.lg,
                     fontWeight: typography.fontWeight.semibold,
-                    color: colors.text.primary,
+                    color: themeColors.text.primary,
                     marginBottom: spacing.lg,
                   }}
                 >
@@ -263,7 +265,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         marginBottom: spacing.sm,
                         fontSize: typography.fontSize.sm,
                         fontWeight: typography.fontWeight.medium,
-                        color: colors.text.secondary,
+                        color: themeColors.text.secondary,
                       }}
                     >
                       Lower Range:
@@ -278,7 +280,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         width: '100%',
                         padding: spacing.md,
                         fontSize: typography.fontSize.base,
-                        border: `${borders.width.thin} solid ${colors.border.default}`,
+                        border: `${borders.width.thin} solid ${themeColors.border.default}`,
                         borderRadius: borders.radius.md,
                       }}
                     />
@@ -291,7 +293,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         marginBottom: spacing.sm,
                         fontSize: typography.fontSize.sm,
                         fontWeight: typography.fontWeight.medium,
-                        color: colors.text.secondary,
+                        color: themeColors.text.secondary,
                       }}
                     >
                       Upper Range:
@@ -306,7 +308,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         width: '100%',
                         padding: spacing.md,
                         fontSize: typography.fontSize.base,
-                        border: `${borders.width.thin} solid ${colors.border.default}`,
+                        border: `${borders.width.thin} solid ${themeColors.border.default}`,
                         borderRadius: borders.radius.md,
                       }}
                     />
@@ -318,10 +320,10 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                     style={{
                       padding: spacing.md,
                       marginBottom: spacing.lg,
-                      backgroundColor: colors.semantic.errorLight,
-                      border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                      backgroundColor: themeColors.semantic.errorLight,
+                      border: `${borders.width.thin} solid ${themeColors.semantic.error}`,
                       borderRadius: borders.radius.md,
-                      color: colors.semantic.error,
+                      color: themeColors.semantic.error,
                       fontSize: typography.fontSize.sm,
                     }}
                   >
@@ -343,7 +345,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                   style={{
                     fontSize: typography.fontSize.lg,
                     fontWeight: typography.fontWeight.semibold,
-                    color: colors.text.primary,
+                    color: themeColors.text.primary,
                     marginBottom: spacing.lg,
                   }}
                 >
@@ -355,16 +357,16 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         style={{
                           textAlign: 'center' as const,
                           padding: spacing['2xl'],
-                          backgroundColor: colors.neutral[50],
+                          backgroundColor: themeColors.neutral[50],
                           borderRadius: borders.radius.md,
-                          border: `${borders.width.thin} dashed ${colors.border.default}`,
+                          border: `${borders.width.thin} dashed ${themeColors.border.default}`,
                         }}
                       >
                         <p
                           style={{
                             margin: 0,
                             fontSize: typography.fontSize.base,
-                            color: colors.text.tertiary,
+                            color: themeColors.text.tertiary,
                           }}
                         >
                           No outcome comments found
@@ -373,7 +375,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                           style={{
                             margin: `${spacing.sm} 0 0`,
                             fontSize: typography.fontSize.sm,
-                            color: colors.text.disabled,
+                            color: themeColors.text.disabled,
                           }}
                         >
                           Be the first to add an outcome comment.
@@ -393,9 +395,9 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                         key={comment.id}
                         style={{
                           padding: spacing.xl,
-                          border: `${borders.width.thin} solid ${colors.border.default}`,
+                          border: `${borders.width.thin} solid ${themeColors.border.default}`,
                           borderRadius: borders.radius.md,
-                          backgroundColor: colors.background.primary,
+                          backgroundColor: themeColors.background.primary,
                         }}
                       >
                         {editingId === comment.id
@@ -428,7 +430,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                         marginBottom: spacing.sm,
                                         fontSize: typography.fontSize.sm,
                                         fontWeight: typography.fontWeight.medium,
-                                        color: colors.text.secondary,
+                                        color: themeColors.text.secondary,
                                       }}
                                     >
                                       Lower Range:
@@ -442,7 +444,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                         width: '100%',
                                         padding: spacing.md,
                                         fontSize: typography.fontSize.base,
-                                        border: `${borders.width.thin} solid ${colors.border.default}`,
+                                        border: `${borders.width.thin} solid ${themeColors.border.default}`,
                                         borderRadius: borders.radius.md,
                                       }}
                                     />
@@ -455,7 +457,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                         marginBottom: spacing.sm,
                                         fontSize: typography.fontSize.sm,
                                         fontWeight: typography.fontWeight.medium,
-                                        color: colors.text.secondary,
+                                        color: themeColors.text.secondary,
                                       }}
                                     >
                                       Upper Range:
@@ -469,7 +471,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                                         width: '100%',
                                         padding: spacing.md,
                                         fontSize: typography.fontSize.base,
-                                        border: `${borders.width.thin} solid ${colors.border.default}`,
+                                        border: `${borders.width.thin} solid ${themeColors.border.default}`,
                                         borderRadius: borders.radius.md,
                                       }}
                                     />
@@ -498,7 +500,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                             <div
                               style={{
                                 fontSize: typography.fontSize.base,
-                                color: colors.text.primary,
+                                color: themeColors.text.primary,
                                 marginBottom: spacing.md,
                                 lineHeight: typography.lineHeight.normal,
                               }}
@@ -508,7 +510,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                             <div
                               style={{
                                 fontSize: typography.fontSize.sm,
-                                color: colors.text.tertiary,
+                                color: themeColors.text.tertiary,
                                 marginBottom: spacing.md,
                               }}
                             >
@@ -517,7 +519,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                             <div
                               style={{
                                 fontSize: typography.fontSize.xs,
-                                color: colors.text.disabled,
+                                color: themeColors.text.disabled,
                                 marginBottom: spacing.lg,
                               }}
                             >

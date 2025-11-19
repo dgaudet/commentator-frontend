@@ -82,8 +82,10 @@ export const Tabs: React.FC<TabsProps> = ({
     appearance: 'none' as const,
     background: 'transparent',
     border: 'none',
-    borderBottom: orientation === 'horizontal' ? '3px solid transparent' : undefined,
-    borderRight: orientation === 'vertical' ? '3px solid transparent' : undefined,
+    borderTop: 'none',
+    borderLeft: 'none',
+    borderRight: 'none',
+    borderBottom: orientation === 'horizontal' ? '3px solid transparent' : 'none',
     borderRadius: 0,
     boxShadow: 'none',
     padding: `${spacing.md} ${spacing.lg}`,
@@ -97,7 +99,6 @@ export const Tabs: React.FC<TabsProps> = ({
     opacity: isDisabled ? 0.5 : 1,
     color: isSelected ? themeColors.primary.main : themeColors.text.tertiary,
     borderBottomColor: orientation === 'horizontal' ? (isSelected ? themeColors.primary.main : 'transparent') : undefined,
-    borderRightColor: orientation === 'vertical' ? (isSelected ? themeColors.primary.main : 'transparent') : undefined,
   })
 
   /**
@@ -250,8 +251,8 @@ export const Tabs: React.FC<TabsProps> = ({
               data-label={tab.label}
               onMouseEnter={(e) => {
                 if (!isDisabled) {
-                  // Hover effect: use primary color for visual emphasis
-                  e.currentTarget.style.color = themeColors.primary.main
+                  // Hover effect: use darker primary for visual emphasis (similar to original navy)
+                  e.currentTarget.style.color = themeColors.primary.dark
                 }
               }}
               onMouseLeave={(e) => {
@@ -261,8 +262,8 @@ export const Tabs: React.FC<TabsProps> = ({
                 }
               }}
               onFocus={(e) => {
-                if (!isDisabled) {
-                  // Focus ring: visible on all states (active and inactive)
+                if (!isDisabled && !isSelected) {
+                  // Focus ring: only visible on inactive tabs (selected tab has blue underline as indicator)
                   e.currentTarget.style.boxShadow = `0 0 0 2px ${themeColors.primary.main}, 0 0 0 4px ${themeColors.primary.light}33`
                 }
               }}
