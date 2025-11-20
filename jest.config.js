@@ -41,4 +41,11 @@ export default {
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
+  // Memory optimization: Run tests serially to prevent OOM errors
+  // Default Jest uses CPU core count (8+ workers), causing ~2-4GB peak memory.
+  // FinalCommentsModal tests have 13 separate files with heavy component setup.
+  // Setting maxWorkers to 1 runs tests sequentially, limiting peak memory to ~800MB.
+  // This is temporary - Phase 2 will consolidate tests and optimize setup.
+  // See: pdd-workspace/unit-test-memory-fixes/planning/ for full optimization roadmap
+  maxWorkers: 1,
 }
