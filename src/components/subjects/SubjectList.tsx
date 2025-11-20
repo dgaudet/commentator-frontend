@@ -171,6 +171,20 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     setSelectedSubjectId(isNaN(subjectId) ? null : subjectId)
   }, [])
 
+  // Focus handlers for select dropdown styling
+  const handleSelectFocus = (e: React.FocusEvent<HTMLSelectElement>) => {
+    const focusColor = themeColors.primary.main
+    const focusShadowColor = 'rgba(0, 102, 255, 0.1)'
+
+    e.currentTarget.style.borderColor = focusColor
+    e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`
+  }
+
+  const handleSelectBlur = (e: React.FocusEvent<HTMLSelectElement>) => {
+    e.currentTarget.style.borderColor = themeColors.border.default
+    e.currentTarget.style.boxShadow = shadows.sm
+  }
+
   const handleAddSubject = useCallback(() => {
     onAddSubject?.()
   }, [onAddSubject])
@@ -390,6 +404,8 @@ export const SubjectList: React.FC<SubjectListProps> = ({
           id="subject-selector"
           value={selectedSubjectId ?? ''}
           onChange={handleSelectSubject}
+          onFocus={handleSelectFocus}
+          onBlur={handleSelectBlur}
           disabled={isLoading}
           aria-label="Select a subject to view"
           style={{
@@ -398,11 +414,12 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             padding: spacing.md,
             fontSize: typography.fontSize.base,
             color: themeColors.text.primary,
-            border: `${borders.width.thick} solid ${themeColors.border.default}`,
+            border: `${borders.width.thin} solid ${themeColors.border.default}`,
             borderRadius: borders.radius.md,
-            backgroundColor: themeColors.background.secondary,
-            boxShadow: shadows.sm,
+            backgroundColor: themeColors.background.primary,
             cursor: 'pointer',
+            outline: 'none',
+            transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
           }}
         >
           <option value="">
