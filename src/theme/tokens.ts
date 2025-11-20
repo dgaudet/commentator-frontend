@@ -231,6 +231,26 @@ export const darkFocusShadowColors = {
 } as const
 
 /**
+ * Focus Ring Shadows
+ *
+ * Pre-constructed box-shadow values for focus rings with proper opacity.
+ * Used for components like Tabs that need a visible focus ring.
+ * Format: inner solid ring + outer translucent ring
+ */
+export const focusRings = {
+  primary: '0 0 0 2px #0066FF, 0 0 0 4px rgba(61, 139, 255, 0.2)', // Light theme: blue ring + light blue halo
+} as const
+
+/**
+ * Dark Theme Focus Ring Shadows
+ *
+ * Adjusted for dark mode with enhanced contrast and visibility.
+ */
+export const darkFocusRings = {
+  primary: '0 0 0 2px #3D8BFF, 0 0 0 4px rgba(107, 165, 255, 0.25)', // Dark theme: brighter blue ring + lighter halo
+} as const
+
+/**
  * TypeScript Types
  *
  * Export types for better IDE autocomplete and type safety.
@@ -243,3 +263,5 @@ export type Borders = typeof borders
 export type Shadows = typeof shadows
 export type FocusShadowColors = typeof focusShadowColors
 export type DarkFocusShadowColors = typeof darkFocusShadowColors
+export type FocusRings = typeof focusRings
+export type DarkFocusRings = typeof darkFocusRings

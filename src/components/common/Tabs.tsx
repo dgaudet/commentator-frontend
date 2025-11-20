@@ -24,6 +24,7 @@
  */
 import React, { useState, useId, useRef, KeyboardEvent, useCallback, useEffect } from 'react'
 import { useThemeColors } from '../../hooks/useThemeColors'
+import { useThemeFocusRings } from '../../hooks/useThemeFocusRings'
 import { spacing, typography, borders } from '../../theme/tokens'
 
 /**
@@ -66,6 +67,7 @@ export const Tabs: React.FC<TabsProps> = ({
   variant = 'default',
 }) => {
   const themeColors = useThemeColors()
+  const focusRings = useThemeFocusRings()
   const baseId = useId()
   const [selectedTab, setSelectedTab] = useState<string>(defaultTab || tabs[0]?.id)
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map())
@@ -264,7 +266,8 @@ export const Tabs: React.FC<TabsProps> = ({
               onFocus={(e) => {
                 if (!isDisabled && !isSelected) {
                   // Focus ring: only visible on inactive tabs (selected tab has blue underline as indicator)
-                  e.currentTarget.style.boxShadow = `0 0 0 2px ${themeColors.primary.main}, 0 0 0 4px ${themeColors.primary.light}33`
+                  // Uses theme-aware focus ring with proper rgba formatting
+                  e.currentTarget.style.boxShadow = focusRings.primary
                 }
               }}
               onBlur={(e) => {
