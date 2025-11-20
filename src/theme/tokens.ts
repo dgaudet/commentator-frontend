@@ -50,6 +50,9 @@ export const colors = {
     errorDark: '#B91C1C',
     errorLight: '#FEE2E2',
     success: '#10B981',
+    warning: '#F59E0B',
+    warningDark: '#92400E',
+    warningLight: '#FEF3C7',
   },
   background: {
     primary: '#FFFFFF',
@@ -106,6 +109,9 @@ export const darkColors = {
     errorDark: '#DC2626', // Same as light theme error
     errorLight: '#7F1D1D', // Dark red background
     success: '#34D399', // Lighter green for visibility
+    warning: '#FBBF24', // Lighter amber for dark backgrounds
+    warningDark: '#FCD34D', // Light yellow text for dark backgrounds
+    warningLight: '#78350F', // Very dark brown for dark background surface
   },
   background: {
     primary: '#1A1A1A', // Main background (dark gray, not pure black)

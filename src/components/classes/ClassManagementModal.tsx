@@ -586,10 +586,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
             style={{
               padding: spacing.md,
               marginTop: spacing.md,
-              backgroundColor: '#FEF3C7',
-              borderLeft: '4px solid #F59E0B',
+              backgroundColor: themeColors.semantic.warningLight,
+              borderLeft: `4px solid ${themeColors.semantic.warning}`,
               borderRadius: borders.radius.sm,
-              color: '#92400E',
+              color: themeColors.semantic.warningDark,
             }}
           >
             <p style={{ margin: 0 }}>
@@ -604,10 +604,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
             style={{
               padding: spacing.md,
               marginTop: spacing.md,
-              backgroundColor: '#FEED7D',
-              borderLeft: '4px solid #F59E0B',
+              backgroundColor: themeColors.semantic.warningLight,
+              borderLeft: `4px solid ${themeColors.semantic.warning}`,
               borderRadius: borders.radius.sm,
-              color: '#92400E',
+              color: themeColors.semantic.warningDark,
             }}
           >
             <p style={{ margin: 0 }}>

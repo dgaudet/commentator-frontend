@@ -216,6 +216,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <button
               ref={cancelButtonRef}
               type="button"
+              data-testid="confirmation-modal-cancel"
               style={cancelButtonStyle}
               onClick={onCancel}
               disabled={isLoading}
