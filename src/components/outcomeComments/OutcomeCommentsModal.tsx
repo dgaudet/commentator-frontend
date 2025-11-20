@@ -24,6 +24,7 @@
 
 import { useState } from 'react'
 import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from '../../types'
+import { sortOutcomeCommentsByRange } from '../../utils/sortOutcomeComments'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
@@ -418,7 +419,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                       gap: spacing.lg,
                     }}
                   >
-                    {outcomeComments.map((comment) => (
+                    {sortOutcomeCommentsByRange(outcomeComments).map((comment) => (
                       <div
                         key={comment.id}
                         style={{

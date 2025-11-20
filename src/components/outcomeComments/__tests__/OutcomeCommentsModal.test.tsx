@@ -602,4 +602,176 @@ describe('OutcomeCommentsModal', () => {
       expect(saveButton).not.toBeDisabled()
     })
   })
+
+  describe('US-001: Sort Comments by Upper Range', () => {
+    it('should display comments sorted by upperRange in descending order (highest first)', () => {
+      const unsortedComments: OutcomeComment[] = [
+        {
+          id: 1,
+          subjectId: 1,
+          comment: 'Lower range comment',
+          upperRange: 70,
+          lowerRange: 60,
+          createdAt: '2024-01-01T10:00:00Z',
+          updatedAt: '2024-01-01T10:00:00Z',
+        },
+        {
+          id: 2,
+          subjectId: 1,
+          comment: 'Highest range comment',
+          upperRange: 100,
+          lowerRange: 90,
+          createdAt: '2024-01-02T10:00:00Z',
+          updatedAt: '2024-01-02T10:00:00Z',
+        },
+        {
+          id: 3,
+          subjectId: 1,
+          comment: 'Middle range comment',
+          upperRange: 80,
+          lowerRange: 70,
+          createdAt: '2024-01-03T10:00:00Z',
+          updatedAt: '2024-01-03T10:00:00Z',
+        },
+      ]
+
+      render(
+        <OutcomeCommentsModal
+          {...defaultProps}
+          outcomeComments={unsortedComments}
+        />,
+      )
+
+      // Get all comment text - verify sort order by finding comments in correct sequence
+      const comments = screen.getAllByText(/range comment/)
+
+      // Verify order: id=2 (100), id=3 (80), id=1 (70)
+      expect(comments[0]).toHaveTextContent('Highest range comment')
+      expect(comments[1]).toHaveTextContent('Middle range comment')
+      expect(comments[2]).toHaveTextContent('Lower range comment')
+    })
+
+    it('should maintain sorted order after comment props change', () => {
+      const initialComments: OutcomeComment[] = [
+        {
+          id: 1,
+          subjectId: 1,
+          comment: 'Lower range',
+          upperRange: 70,
+          lowerRange: 60,
+          createdAt: '2024-01-01T10:00:00Z',
+          updatedAt: '2024-01-01T10:00:00Z',
+        },
+        {
+          id: 2,
+          subjectId: 1,
+          comment: 'Higher range',
+          upperRange: 90,
+          lowerRange: 80,
+          createdAt: '2024-01-02T10:00:00Z',
+          updatedAt: '2024-01-02T10:00:00Z',
+        },
+      ]
+
+      const { rerender } = render(
+        <OutcomeCommentsModal
+          {...defaultProps}
+          outcomeComments={initialComments}
+        />,
+      )
+
+      // Verify initial sort: 90 (id=2), 70 (id=1)
+      let comments = screen.getAllByText(/range/)
+      expect(comments[0]).toHaveTextContent('Higher range')
+
+      // Simulate updating comment 2 to have a lower range
+      const updatedComments: OutcomeComment[] = [
+        {
+          id: 1,
+          subjectId: 1,
+          comment: 'Lower range',
+          upperRange: 70,
+          lowerRange: 60,
+          createdAt: '2024-01-01T10:00:00Z',
+          updatedAt: '2024-01-01T10:00:00Z',
+        },
+        {
+          id: 2,
+          subjectId: 1,
+          comment: 'Updated to lower range',
+          upperRange: 60,
+          lowerRange: 50,
+          createdAt: '2024-01-02T10:00:00Z',
+          updatedAt: '2024-01-02T10:00:00Z',
+        },
+      ]
+
+      rerender(
+        <OutcomeCommentsModal
+          {...defaultProps}
+          outcomeComments={updatedComments}
+        />,
+      )
+
+      // Verify the order is re-sorted (id=1 with 70 should now be first)
+      comments = screen.getAllByText(/range/)
+      expect(comments[0]).toHaveTextContent('Lower range')
+      expect(comments[1]).toHaveTextContent('Updated to lower range')
+    })
+
+    it('should display multiple unsorted comments in sorted order', () => {
+      const unsortedComments: OutcomeComment[] = [
+        {
+          id: 1,
+          subjectId: 1,
+          comment: 'Lowest range 40-50',
+          upperRange: 50,
+          lowerRange: 40,
+          createdAt: '2024-01-01T10:00:00Z',
+          updatedAt: '2024-01-01T10:00:00Z',
+        },
+        {
+          id: 2,
+          subjectId: 1,
+          comment: 'Highest range 90-100',
+          upperRange: 100,
+          lowerRange: 90,
+          createdAt: '2024-01-02T10:00:00Z',
+          updatedAt: '2024-01-02T10:00:00Z',
+        },
+        {
+          id: 3,
+          subjectId: 1,
+          comment: 'Mid range 60-70',
+          upperRange: 70,
+          lowerRange: 60,
+          createdAt: '2024-01-03T10:00:00Z',
+          updatedAt: '2024-01-03T10:00:00Z',
+        },
+        {
+          id: 4,
+          subjectId: 1,
+          comment: 'Another high range 75-85',
+          upperRange: 85,
+          lowerRange: 75,
+          createdAt: '2024-01-04T10:00:00Z',
+          updatedAt: '2024-01-04T10:00:00Z',
+        },
+      ]
+
+      render(
+        <OutcomeCommentsModal
+          {...defaultProps}
+          outcomeComments={unsortedComments}
+        />,
+      )
+
+      // Verify correct sort order: 100, 85, 70, 50
+      const comments = screen.getAllByText(/range/)
+      expect(comments[0]).toHaveTextContent('Highest range 90-100')
+      expect(comments[1]).toHaveTextContent('Another high range 75-85')
+      expect(comments[2]).toHaveTextContent('Mid range 60-70')
+      expect(comments[3]).toHaveTextContent('Lowest range 40-50')
+    })
+  })
 })
