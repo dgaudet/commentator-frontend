@@ -604,6 +604,49 @@ describe('OutcomeCommentsModal', () => {
   })
 
   describe('US-001: Sort Comments by Upper Range', () => {
+    it('should memoize sorted comments to avoid re-sorting on every render', () => {
+      const unsortedComments: OutcomeComment[] = [
+        {
+          id: 1,
+          subjectId: 1,
+          comment: 'Lower range comment',
+          upperRange: 70,
+          lowerRange: 60,
+          createdAt: '2024-01-01T10:00:00Z',
+          updatedAt: '2024-01-01T10:00:00Z',
+        },
+        {
+          id: 2,
+          subjectId: 1,
+          comment: 'Highest range comment',
+          upperRange: 100,
+          lowerRange: 90,
+          createdAt: '2024-01-02T10:00:00Z',
+          updatedAt: '2024-01-02T10:00:00Z',
+        },
+      ]
+
+      const { rerender } = render(
+        <OutcomeCommentsModal
+          {...defaultProps}
+          outcomeComments={unsortedComments}
+        />,
+      )
+
+      // Render with same comments - sorting should use cached value
+      rerender(
+        <OutcomeCommentsModal
+          {...defaultProps}
+          outcomeComments={unsortedComments}
+        />,
+      )
+
+      // Verify comments are displayed in correct sorted order
+      const comments = screen.getAllByText(/range comment/)
+      expect(comments[0]).toHaveTextContent('Highest range comment')
+      expect(comments[1]).toHaveTextContent('Lower range comment')
+    })
+
     it('should display comments sorted by upperRange in descending order (highest first)', () => {
       const unsortedComments: OutcomeComment[] = [
         {

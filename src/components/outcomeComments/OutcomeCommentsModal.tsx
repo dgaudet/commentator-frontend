@@ -22,7 +22,7 @@
  * UI Consistency: Migrated to design tokens (US-UI-002)
  */
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from '../../types'
 import { sortOutcomeCommentsByRange } from '../../utils/sortOutcomeComments'
 import { LoadingSpinner } from '../common/LoadingSpinner'
@@ -75,6 +75,12 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
     commentText: '',
   })
   const [validationError, setValidationError] = useState('')
+
+  // Memoize sorted comments to avoid re-sorting on every render (Performance optimization)
+  const sortedComments = useMemo(
+    () => sortOutcomeCommentsByRange(outcomeComments),
+    [outcomeComments],
+  )
 
   if (!isOpen) return null
 
@@ -419,7 +425,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
                       gap: spacing.lg,
                     }}
                   >
-                    {sortOutcomeCommentsByRange(outcomeComments).map((comment) => (
+                    {sortedComments.map((comment) => (
                       <div
                         key={comment.id}
                         style={{
