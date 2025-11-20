@@ -26,8 +26,9 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Subject } from '../../types/Subject'
 import { getSelectedSubjectId, saveSelectedSubjectId, clearSelectedSubjectId } from '../../utils/subjectStorageUtils'
-import { spacing, typography, borders, shadows } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
+import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import type { Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
 interface SubjectListProps {
@@ -55,6 +56,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
 }) => {
   const { subjects, isLoading, error, clearError, deleteSubject, fetchSubjects } = useSubjects()
   const themeColors = useThemeColors()
+  const focusShadows = useThemeFocusShadows()
 
   // Hooks for managing tab panel data
   const {
@@ -174,7 +176,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   // Focus handlers for select dropdown styling
   const handleSelectFocus = (e: React.FocusEvent<HTMLSelectElement>) => {
     const focusColor = themeColors.primary.main
-    const focusShadowColor = 'rgba(0, 102, 255, 0.1)'
+    const focusShadowColor = focusShadows.primary
 
     e.currentTarget.style.borderColor = focusColor
     e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`
@@ -182,7 +184,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
 
   const handleSelectBlur = (e: React.FocusEvent<HTMLSelectElement>) => {
     e.currentTarget.style.borderColor = themeColors.border.default
-    e.currentTarget.style.boxShadow = shadows.sm
+    e.currentTarget.style.boxShadow = 'none'
   }
 
   const handleAddSubject = useCallback(() => {

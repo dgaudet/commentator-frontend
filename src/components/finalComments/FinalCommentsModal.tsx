@@ -65,6 +65,7 @@ import { SelectedCommentsList } from './SelectedCommentsList'
 import { CopyButton } from '../common/CopyButton'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
+import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
 import { getRatingEmoji, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
@@ -92,6 +93,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   embedded = false, // US-CLASS-TABS-003: Default to false for backward compatibility
 }: FinalCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
+  const focusShadows = useThemeFocusShadows()
 
   // US-FC-REFACTOR-001: Shared hook state management
   const [submitting, setSubmitting] = useState(false)
@@ -210,7 +212,7 @@ export const FinalCommentsModal = <T extends { id: number; name: string }>({
   // Focus/Blur handlers for comment textarea - match Input component styling
   const handleCommentFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     const focusColor = themeColors.primary.main
-    const focusShadowColor = 'rgba(0, 102, 255, 0.1)'
+    const focusShadowColor = focusShadows.primary
 
     e.currentTarget.style.borderColor = focusColor
     e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`

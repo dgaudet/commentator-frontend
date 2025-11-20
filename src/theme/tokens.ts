@@ -204,6 +204,27 @@ export const shadows = {
 } as const
 
 /**
+ * Focus Shadow Colors
+ *
+ * Semantic shadow colors used for focus states on form elements.
+ * These colors should be applied with 0.1 opacity for subtle focus rings.
+ */
+export const focusShadowColors = {
+  primary: 'rgba(0, 102, 255, 0.1)', // Light theme primary focus shadow
+  error: 'rgba(220, 38, 38, 0.1)', // Light theme error focus shadow
+} as const
+
+/**
+ * Dark Theme Focus Shadow Colors
+ *
+ * Adjusted for dark mode with proper contrast and visibility.
+ */
+export const darkFocusShadowColors = {
+  primary: 'rgba(61, 139, 255, 0.15)', // Dark theme primary focus shadow (brighter for visibility)
+  error: 'rgba(248, 113, 113, 0.15)', // Dark theme error focus shadow (brighter for visibility)
+} as const
+
+/**
  * TypeScript Types
  *
  * Export types for better IDE autocomplete and type safety.
@@ -214,3 +235,5 @@ export type Spacing = typeof spacing
 export type Typography = typeof typography
 export type Borders = typeof borders
 export type Shadows = typeof shadows
+export type FocusShadowColors = typeof focusShadowColors
+export type DarkFocusShadowColors = typeof darkFocusShadowColors

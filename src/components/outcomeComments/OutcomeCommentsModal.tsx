@@ -31,6 +31,7 @@ import { ConfirmationModal } from '../common/ConfirmationModal'
 import { CommentTextField } from '../common/CommentTextField'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
+import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
@@ -55,6 +56,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   error,
 }: OutcomeCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
+  const focusShadows = useThemeFocusShadows()
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newUpperRange, setNewUpperRange] = useState<number | ''>('')
   const [newLowerRange, setNewLowerRange] = useState<number | ''>('')
@@ -206,7 +208,7 @@ export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
   // Focus/Blur handlers for range inputs - match Input component styling
   const handleRangeFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     const focusColor = themeColors.primary.main
-    const focusShadowColor = 'rgba(0, 102, 255, 0.1)'
+    const focusShadowColor = focusShadows.primary
 
     e.currentTarget.style.borderColor = focusColor
     e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`

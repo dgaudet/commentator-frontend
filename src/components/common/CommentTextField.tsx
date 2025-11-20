@@ -13,6 +13,7 @@ import { PlaceholderWarningsBox } from './PlaceholderWarningsBox'
 import { validatePlaceholders } from '../../utils/placeholders'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
+import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface CommentTextFieldProps {
@@ -54,6 +55,7 @@ export const CommentTextField = ({
   disabled = false,
 }: CommentTextFieldProps) => {
   const themeColors = useThemeColors()
+  const focusShadows = useThemeFocusShadows()
   const [warnings, setWarnings] = useState<string[]>([])
 
   // Use ref to store callback to avoid unnecessary re-renders
@@ -79,7 +81,7 @@ export const CommentTextField = ({
 
   const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     const focusColor = themeColors.primary.main
-    const focusShadowColor = 'rgba(0, 102, 255, 0.1)'
+    const focusShadowColor = focusShadows.primary
 
     e.currentTarget.style.borderColor = focusColor
     e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`

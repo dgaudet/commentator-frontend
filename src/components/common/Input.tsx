@@ -9,6 +9,7 @@
 import React, { useRef } from 'react'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
+import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -29,14 +30,13 @@ export const Input: React.FC<InputProps> = ({
   const hasError = Boolean(error)
   const errorMessage = typeof error === 'string' ? error : undefined
   const themeColors = useThemeColors()
+  const focusShadows = useThemeFocusShadows()
   const inputRef = useRef<HTMLInputElement>(null)
 
   // US-TOKEN-008: Focus state handlers for theme-aware focus ring styling
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     const focusColor = hasError ? themeColors.semantic.error : themeColors.primary.main
-    const focusShadowColor = hasError
-      ? 'rgba(220, 38, 38, 0.1)'
-      : 'rgba(0, 102, 255, 0.1)'
+    const focusShadowColor = hasError ? focusShadows.error : focusShadows.primary
 
     e.currentTarget.style.borderColor = focusColor
     e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`
