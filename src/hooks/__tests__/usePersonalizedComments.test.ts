@@ -7,20 +7,19 @@
 import { renderHook, act } from '@testing-library/react'
 import { usePersonalizedComments } from '../usePersonalizedComments'
 import { personalizedCommentService } from '../../services/api/personalizedCommentService'
-import type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from '../../types'
+import { createMockPersonalizedComment } from '../../test-utils'
+import type { CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from '../../types'
 
 // Mock the service
 jest.mock('../../services/api/personalizedCommentService')
 const mockPersonalizedCommentService = personalizedCommentService as jest.Mocked<typeof personalizedCommentService>
 
 describe('usePersonalizedComments', () => {
-  const mockComment: PersonalizedComment = {
+  const mockComment = createMockPersonalizedComment({
     id: 1,
     subjectId: 1,
     comment: 'Test personalized comment',
-    createdAt: '2023-01-01T00:00:00Z',
-    updatedAt: '2023-01-01T00:00:00Z',
-  }
+  })
 
   const mockCreateRequest: CreatePersonalizedCommentRequest = {
     subjectId: 1,

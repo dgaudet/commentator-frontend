@@ -64,3 +64,6 @@ export {
 
 // Export our custom renders
 export { customRender as render, renderMinimal }
+
+// Export all fixture factories (Story 5 - lightweight mocking)
+export * from './test-utils/fixtures'

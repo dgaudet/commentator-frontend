@@ -1,27 +1,27 @@
 /**
  * Tests for useOutcomeComments hook
  * Follows TDD principles and tests all CRUD operations
+ *
+ * Story 5 Optimization: Uses fixture factories instead of inline mock data
  */
 
 import { renderHook, act } from '@testing-library/react'
 import { useOutcomeComments } from '../useOutcomeComments'
 import { outcomeCommentService } from '../../services/api/outcomeCommentService'
-import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from '../../types'
+import { createMockOutcomeComment } from '../../test-utils'
+import type { CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from '../../types'
 
 // Mock the service
 jest.mock('../../services/api/outcomeCommentService')
 const mockOutcomeCommentService = outcomeCommentService as jest.Mocked<typeof outcomeCommentService>
 
 describe('useOutcomeComments', () => {
-  const mockComment: OutcomeComment = {
+  const mockComment = createMockOutcomeComment({
     id: 1,
-    subjectId: 1,
     upperRange: 85,
     lowerRange: 75,
     comment: 'Test comment',
-    createdAt: '2023-01-01T00:00:00Z',
-    updatedAt: '2023-01-01T00:00:00Z',
-  }
+  })
 
   const mockCreateRequest: CreateOutcomeCommentRequest = {
     subjectId: 1,

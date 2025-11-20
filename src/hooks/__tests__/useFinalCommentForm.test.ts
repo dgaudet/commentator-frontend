@@ -9,40 +9,33 @@
  * - Form reset/clear
  * - Outcome comment matching
  * - Personalized comment search state
+ *
+ * Story 5 Optimization: Uses fixture factories instead of inline mock data
  */
 
 import { renderHook, act } from '@testing-library/react'
 import { useFinalCommentForm } from '../useFinalCommentForm'
-import type { OutcomeComment } from '../../types'
+import { createMockOutcomeComments } from '../../test-utils'
 
-const mockOutcomeComments: OutcomeComment[] = [
-  {
+const mockOutcomeComments = [
+  createMockOutcomeComments(1, {
     id: 1,
-    subjectId: 1,
-    lowerRange: 90,
     upperRange: 100,
+    lowerRange: 90,
     comment: 'Excellent achievement',
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-  },
-  {
+  })[0],
+  createMockOutcomeComments(1, {
     id: 2,
-    subjectId: 1,
-    lowerRange: 80,
     upperRange: 89,
+    lowerRange: 80,
     comment: 'Very good work',
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-  },
-  {
+  })[0],
+  createMockOutcomeComments(1, {
     id: 3,
-    subjectId: 1,
-    lowerRange: 70,
     upperRange: 79,
+    lowerRange: 70,
     comment: 'Good effort',
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-  },
+  })[0],
 ]
 
 describe('useFinalCommentForm', () => {
