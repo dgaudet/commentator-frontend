@@ -34,8 +34,8 @@ import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Tabs, Tab } from '../common/Tabs'
 import { TabPanel } from '../common/TabPanel'
 import { FinalCommentsModal } from '../finalComments/FinalCommentsModal'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
-import styles from '../common/ConfirmationModal.module.css'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 
 interface ClassManagementModalProps<T extends { id: number; name: string }> {
   isOpen: boolean
@@ -95,6 +95,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
     checkFailed: false,
   })
   const [validationError, setValidationError] = useState('')
+  const themeColors = useThemeColors()
 
   // US-CLASS-TABS-001: Tab group state management (TDD GREEN phase)
   // Track active tab state - default to 'edit-class'
@@ -287,7 +288,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
         aria-label="Class Management"
         style={{
           padding: spacing.xl,
-          backgroundColor: colors.background.primary,
+          backgroundColor: themeColors.background.primary,
         }}
       >
           {loading && (
@@ -308,7 +309,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                   style={{
                     fontSize: typography.fontSize.lg,
                     fontWeight: typography.fontWeight.semibold,
-                    color: colors.text.primary,
+                    color: themeColors.text.primary,
                     marginBottom: spacing.lg,
                   }}
                 >
@@ -320,16 +321,16 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                         style={{
                           textAlign: 'center',
                           padding: spacing['2xl'],
-                          backgroundColor: colors.background.secondary,
+                          backgroundColor: themeColors.background.secondary,
                           borderRadius: borders.radius.md,
-                          border: `${borders.width.thin} dashed ${colors.border.default}`,
+                          border: `${borders.width.thin} dashed ${themeColors.border.default}`,
                         }}
                       >
                         <p
                           style={{
                             margin: 0,
                             fontSize: typography.fontSize.base,
-                            color: colors.text.tertiary,
+                            color: themeColors.text.tertiary,
                           }}
                         >
                           No classes yet
@@ -338,7 +339,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                           style={{
                             margin: `${spacing.sm} 0 0`,
                             fontSize: typography.fontSize.sm,
-                            color: colors.text.disabled,
+                            color: themeColors.text.disabled,
                           }}
                         >
                           Add your first class below.
@@ -354,7 +355,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                             marginBottom: spacing.sm,
                             fontSize: typography.fontSize.sm,
                             fontWeight: typography.fontWeight.medium,
-                            color: colors.text.secondary,
+                            color: themeColors.text.secondary,
                           }}
                         >
                           Select a class to edit or delete:
@@ -368,9 +369,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                             width: '100%',
                             padding: spacing.md,
                             fontSize: typography.fontSize.base,
-                            border: `${borders.width.thin} solid ${colors.border.default}`,
+                            color: themeColors.text.primary,
+                            border: `${borders.width.thin} solid ${themeColors.border.default}`,
                             borderRadius: borders.radius.md,
-                            backgroundColor: colors.background.primary,
+                            backgroundColor: themeColors.background.primary,
                             cursor: 'pointer',
                           }}
                         >
@@ -429,10 +431,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                               style={{
                                 padding: spacing.md,
                                 marginBottom: spacing.lg,
-                                backgroundColor: colors.semantic.errorLight,
-                                border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                                backgroundColor: themeColors.semantic.errorLight,
+                                border: `${borders.width.thin} solid ${themeColors.semantic.error}`,
                                 borderRadius: borders.radius.md,
-                                color: colors.semantic.error,
+                                color: themeColors.semantic.error,
                                 fontSize: typography.fontSize.sm,
                               }}
                             >
@@ -494,7 +496,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                         style={{
                           fontSize: typography.fontSize.lg,
                           fontWeight: typography.fontWeight.semibold,
-                          color: colors.text.primary,
+                          color: themeColors.text.primary,
                           marginBottom: spacing.lg,
                         }}
                       >
@@ -530,10 +532,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                           style={{
                             padding: spacing.md,
                             marginBottom: spacing.lg,
-                            backgroundColor: colors.semantic.errorLight,
-                            border: `${borders.width.thin} solid ${colors.semantic.error}`,
+                            backgroundColor: themeColors.semantic.errorLight,
+                            border: `${borders.width.thin} solid ${themeColors.semantic.error}`,
                             borderRadius: borders.radius.md,
-                            color: colors.semantic.error,
+                            color: themeColors.semantic.error,
                             fontSize: typography.fontSize.sm,
                           }}
                         >
@@ -563,23 +565,52 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
         confirmButtonText="Delete"
         cancelButtonText="Cancel"
       >
-        <p className={styles['preview-text']}>
+        {/* US-TOKEN-011: Class name preview (migrated from styles['preview-text']) */}
+        <p
+          style={{
+            fontSize: typography.fontSize.base,
+            fontWeight: typography.fontWeight.medium,
+            color: themeColors.text.primary,
+            marginBottom: spacing.md,
+            padding: spacing.md,
+            backgroundColor: themeColors.background.secondary,
+            borderRadius: borders.radius.sm,
+          }}
+        >
           {deleteConfirmation.className}
         </p>
 
-        {/* Cascading Delete Warning (US-DELETE-CONFIRM-003 AC5) */}
+        {/* Cascading Delete Warning (US-DELETE-CONFIRM-003 AC5) - migrated from styles['warning-banner'] + styles['warning-banner-yellow'] */}
         {deleteConfirmation.hasFinalComments && (
-          <div className={`${styles['warning-banner']} ${styles['warning-banner-yellow']}`}>
-            <p>
+          <div
+            style={{
+              padding: spacing.md,
+              marginTop: spacing.md,
+              backgroundColor: themeColors.semantic.warningLight,
+              borderLeft: `4px solid ${themeColors.semantic.warning}`,
+              borderRadius: borders.radius.sm,
+              color: themeColors.semantic.warningDark,
+            }}
+          >
+            <p style={{ margin: 0 }}>
               ⚠️ This class has {deleteConfirmation.finalCommentsCount} final comment(s) that will also be deleted.
             </p>
           </div>
         )}
 
-        {/* Error checking final comments - show warning */}
+        {/* Error checking final comments - show warning - migrated from styles['warning-banner'] + styles['warning-banner-orange'] */}
         {deleteConfirmation.checkFailed && (
-          <div className={`${styles['warning-banner']} ${styles['warning-banner-orange']}`}>
-            <p>
+          <div
+            style={{
+              padding: spacing.md,
+              marginTop: spacing.md,
+              backgroundColor: themeColors.semantic.warningLight,
+              borderLeft: `4px solid ${themeColors.semantic.warning}`,
+              borderRadius: borders.radius.sm,
+              color: themeColors.semantic.warningDark,
+            }}
+          >
+            <p style={{ margin: 0 }}>
               ⚠️ Unable to verify if this class has final comments. Deleting this class may also delete associated final comments.
             </p>
           </div>

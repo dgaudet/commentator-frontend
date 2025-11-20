@@ -26,7 +26,9 @@ import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { Subject } from '../../types/Subject'
 import { getSelectedSubjectId, saveSelectedSubjectId, clearSelectedSubjectId } from '../../utils/subjectStorageUtils'
-import { colors, spacing, typography, borders, shadows } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
+import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import type { Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
 interface SubjectListProps {
@@ -53,6 +55,8 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   onViewFinalComments,
 }) => {
   const { subjects, isLoading, error, clearError, deleteSubject, fetchSubjects } = useSubjects()
+  const themeColors = useThemeColors()
+  const focusShadows = useThemeFocusShadows()
 
   // Hooks for managing tab panel data
   const {
@@ -168,6 +172,20 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     const subjectId = parseInt(event.target.value, 10)
     setSelectedSubjectId(isNaN(subjectId) ? null : subjectId)
   }, [])
+
+  // Focus handlers for select dropdown styling
+  const handleSelectFocus = (e: React.FocusEvent<HTMLSelectElement>) => {
+    const focusColor = themeColors.primary.main
+    const focusShadowColor = focusShadows.primary
+
+    e.currentTarget.style.borderColor = focusColor
+    e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`
+  }
+
+  const handleSelectBlur = (e: React.FocusEvent<HTMLSelectElement>) => {
+    e.currentTarget.style.borderColor = themeColors.border.default
+    e.currentTarget.style.boxShadow = 'none'
+  }
 
   const handleAddSubject = useCallback(() => {
     onAddSubject?.()
@@ -351,7 +369,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
           style={{
             fontSize: typography.fontSize.xl,
             fontWeight: typography.fontWeight.bold,
-            color: colors.text.primary,
+            color: themeColors.text.primary,
             margin: 0,
           }}
         >
@@ -378,7 +396,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             display: 'block',
             fontSize: typography.fontSize.lg,
             fontWeight: typography.fontWeight.medium,
-            color: colors.text.secondary,
+            color: themeColors.text.secondary,
             marginBottom: spacing.md,
           }}
         >
@@ -388,6 +406,8 @@ export const SubjectList: React.FC<SubjectListProps> = ({
           id="subject-selector"
           value={selectedSubjectId ?? ''}
           onChange={handleSelectSubject}
+          onFocus={handleSelectFocus}
+          onBlur={handleSelectBlur}
           disabled={isLoading}
           aria-label="Select a subject to view"
           style={{
@@ -395,11 +415,13 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             width: '100%',
             padding: spacing.md,
             fontSize: typography.fontSize.base,
-            border: `${borders.width.thick} solid ${colors.border.default}`,
+            color: themeColors.text.primary,
+            border: `${borders.width.thin} solid ${themeColors.border.default}`,
             borderRadius: borders.radius.md,
-            backgroundColor: colors.background.secondary,
-            boxShadow: shadows.sm,
+            backgroundColor: themeColors.background.primary,
             cursor: 'pointer',
+            outline: 'none',
+            transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
           }}
         >
           <option value="">

@@ -10,7 +10,7 @@
  * - Accessibility (ARIA attributes, keyboard navigation)
  */
 
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent } from '../../../test-utils'
 import { SelectedCommentsList } from '../SelectedCommentsList'
 import type { PersonalizedComment } from '../../../types'
 

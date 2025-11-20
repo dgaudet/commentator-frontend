@@ -1,12 +1,13 @@
 /**
  * Tabs Component Tests
  * TDD Phase: RED - Writing failing tests first
- * Reference: US-TAB-001
+ * Reference: US-TAB-001, US-TOKEN-004
  *
  * Testing reusable tab component with accessibility and keyboard navigation
  */
 import { render, screen, fireEvent } from '../../../test-utils'
 import { Tabs } from '../Tabs'
+import { ThemeProvider } from '../../../contexts/ThemeContext'
 
 describe('Tabs Component (US-TAB-001)', () => {
   const mockOnChange = jest.fn()
@@ -91,10 +92,14 @@ describe('Tabs Component (US-TAB-001)', () => {
 
       const editTab = screen.getByRole('tab', { name: 'Edit' })
 
-      // Active tab should have aria-selected="true" and CSS module class
+      // Active tab should have aria-selected="true" and inline styling
       expect(editTab).toHaveAttribute('aria-selected', 'true')
-      // CSS Modules provide the 'tab' class which has styling for [aria-selected='true']
-      expect(editTab.className).toContain('tab')
+      // Should have inline styles with design tokens
+      expect(editTab.getAttribute('style')).toBeTruthy()
+
+      // Active tab should have primary color
+      const computedStyle = window.getComputedStyle(editTab)
+      expect(computedStyle.color).toBeTruthy()
     })
   })
 
@@ -359,6 +364,64 @@ describe('Tabs Component (US-TAB-001)', () => {
 
       // Should remain selected (idempotent operation)
       expect(outcomeTab).toHaveAttribute('aria-selected', 'true')
+    })
+  })
+
+  describe('US-TOKEN-004: Theme Adaptation', () => {
+    it('should render correctly in light theme', () => {
+      render(<Tabs tabs={defaultTabs} onChange={mockOnChange} />)
+
+      const tablist = screen.getByRole('tablist')
+      expect(tablist).toBeInTheDocument()
+
+      // Should have inline styles
+      expect(tablist.getAttribute('style')).toBeTruthy()
+
+      const activeTab = screen.getByRole('tab', { name: 'Edit' })
+      const computedStyle = window.getComputedStyle(activeTab)
+      expect(computedStyle.color).toBeTruthy()
+    })
+
+    it('should render correctly in dark theme', () => {
+      render(
+        <ThemeProvider>
+          <Tabs tabs={defaultTabs} onChange={mockOnChange} />
+        </ThemeProvider>,
+      )
+
+      const tablist = screen.getByRole('tablist')
+      expect(tablist).toBeInTheDocument()
+
+      const activeTab = screen.getByRole('tab', { name: 'Edit' })
+      const computedStyle = window.getComputedStyle(activeTab)
+      expect(computedStyle.color).toBeTruthy()
+    })
+
+    it('should use design tokens for tab colors', () => {
+      render(<Tabs tabs={defaultTabs} onChange={mockOnChange} />)
+
+      const activeTab = screen.getByRole('tab', { name: 'Edit' })
+      const inactiveTab = screen.getByRole('tab', { name: 'Outcome Comments' })
+
+      // Both tabs should have inline styles
+      const activeStyle = window.getComputedStyle(activeTab)
+      const inactiveStyle = window.getComputedStyle(inactiveTab)
+
+      expect(activeStyle.color).toBeTruthy()
+      expect(inactiveStyle.color).toBeTruthy()
+
+      // Colors should be different for active vs inactive
+      expect(activeStyle.color).not.toBe(inactiveStyle.color)
+    })
+
+    it('should adapt hover state to theme', () => {
+      render(<Tabs tabs={defaultTabs} onChange={mockOnChange} />)
+
+      const inactiveTab = screen.getByRole('tab', { name: 'Outcome Comments' })
+      fireEvent.mouseEnter(inactiveTab)
+
+      const computedStyle = window.getComputedStyle(inactiveTab)
+      expect(computedStyle.color).toBeTruthy()
     })
   })
 })

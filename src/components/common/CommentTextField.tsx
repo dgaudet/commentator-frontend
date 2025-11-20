@@ -11,7 +11,9 @@ import { ChangeEvent, useEffect, useState, useRef } from 'react'
 import { PlaceholderTipsBox } from './PlaceholderTipsBox'
 import { PlaceholderWarningsBox } from './PlaceholderWarningsBox'
 import { validatePlaceholders } from '../../utils/placeholders'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
+import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
 interface CommentTextFieldProps {
@@ -52,6 +54,8 @@ export const CommentTextField = ({
   ariaLabel,
   disabled = false,
 }: CommentTextFieldProps) => {
+  const themeColors = useThemeColors()
+  const focusShadows = useThemeFocusShadows()
   const [warnings, setWarnings] = useState<string[]>([])
 
   // Use ref to store callback to avoid unnecessary re-renders
@@ -75,6 +79,19 @@ export const CommentTextField = ({
     onChange(e.target.value)
   }
 
+  const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const focusColor = themeColors.primary.main
+    const focusShadowColor = focusShadows.primary
+
+    e.currentTarget.style.borderColor = focusColor
+    e.currentTarget.style.boxShadow = `0 0 0 3px ${focusShadowColor}`
+  }
+
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    e.currentTarget.style.borderColor = themeColors.border.default
+    e.currentTarget.style.boxShadow = 'none'
+  }
+
   // Use trimmed length to match parent validation logic (e.g., OutcomeCommentsModal line 198)
   const charCount = value.trim().length
   const isValid = charCount >= minLength
@@ -89,6 +106,8 @@ export const CommentTextField = ({
       <textarea
         value={value}
         onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholder={placeholder}
         rows={rows}
         maxLength={maxLength}
@@ -98,10 +117,14 @@ export const CommentTextField = ({
           width: '100%',
           padding: spacing.md,
           fontSize: typography.fontSize.base,
-          border: `${borders.width.thin} solid ${colors.border.default}`,
+          color: themeColors.text.primary,
+          backgroundColor: themeColors.background.primary,
+          border: `${borders.width.thin} solid ${themeColors.border.default}`,
           borderRadius: borders.radius.md,
+          outline: 'none',
           resize: 'vertical' as const,
           fontFamily: 'inherit',
+          transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
         }}
       />
 
@@ -116,13 +139,13 @@ export const CommentTextField = ({
         >
           <span
             style={{
-              color: isValid ? colors.semantic.success : colors.semantic.error,
+              color: isValid ? themeColors.semantic.success : themeColors.semantic.error,
             }}
           >
             {charCount} / {maxLength} characters
           </span>
           {showMinHint && (
-            <span style={{ color: colors.text.tertiary }}>
+            <span style={{ color: themeColors.text.tertiary }}>
               {' '}(minimum {minLength})
             </span>
           )}

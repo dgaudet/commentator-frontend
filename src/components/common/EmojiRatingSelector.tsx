@@ -11,7 +11,8 @@
  * - Error handling and validation
  */
 import React from 'react'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 import { getRatingEmoji, getRatingLabel } from '../../utils/personalizedCommentRating'
 
 interface EmojiRatingSelectorProps {
@@ -55,6 +56,7 @@ export const EmojiRatingSelector: React.FC<EmojiRatingSelectorProps> = ({
   error,
   disabled = false,
 }) => {
+  const themeColors = useThemeColors()
   const hasError = Boolean(error)
   const errorMessage = typeof error === 'string' ? error : undefined
 
@@ -105,13 +107,13 @@ export const EmojiRatingSelector: React.FC<EmojiRatingSelectorProps> = ({
             display: 'block',
             fontSize: typography.fontSize.sm,
             fontWeight: typography.fontWeight.medium,
-            color: colors.text.secondary,
+            color: themeColors.text.secondary,
             marginBottom: spacing.sm,
           }}
         >
           {label}
           {required && (
-            <span style={{ color: colors.semantic.error, marginLeft: spacing.xs }}>*</span>
+            <span style={{ color: themeColors.semantic.error, marginLeft: spacing.xs }}>*</span>
           )}
         </label>
       )}
@@ -128,9 +130,9 @@ export const EmojiRatingSelector: React.FC<EmojiRatingSelectorProps> = ({
           gap: spacing.sm,
           ...(hasError && {
             padding: spacing.sm,
-            border: `${borders.width.thin} solid ${colors.semantic.error}`,
+            border: `${borders.width.thin} solid ${themeColors.semantic.error}`,
             borderRadius: borders.radius.md,
-            backgroundColor: colors.semantic.errorLight,
+            backgroundColor: themeColors.semantic.errorLight,
           }),
         }}
       >
@@ -189,7 +191,7 @@ export const EmojiRatingSelector: React.FC<EmojiRatingSelectorProps> = ({
             style={{
               marginTop: spacing.sm,
               fontSize: typography.fontSize.sm,
-              color: colors.semantic.error,
+              color: themeColors.semantic.error,
             }}
           >
             {errorMessage}

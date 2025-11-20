@@ -377,13 +377,13 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
       const editPopulateButton = populateButtons[1]
       fireEvent.click(editPopulateButton)
 
-      // Cancel the overwrite - Get all Cancel buttons, dialog one is second (has class "button-cancel")
+      // Cancel the overwrite - confirmation dialog appears, click Cancel
       await waitFor(() => {
         expect(screen.getByText(/This will replace your current comment/i)).toBeInTheDocument()
       })
-      const cancelButtons = screen.getAllByRole('button', { name: /Cancel/i })
-      const dialogCancelButton = cancelButtons.find(btn => btn.className.includes('button-cancel'))
-      fireEvent.click(dialogCancelButton!)
+      // Use data-testid for robust selector that won't break if other cancel buttons are added
+      const dialogCancelButton = screen.getByTestId('confirmation-modal-cancel')
+      fireEvent.click(dialogCancelButton)
 
       // Verify original comment is preserved
       const commentTextareas = screen.getAllByLabelText(/^Comment$/i) as HTMLTextAreaElement[]

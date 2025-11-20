@@ -5,7 +5,7 @@
  * US-SHARED-001: Create Shared CommentTextField Component
  */
 
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent } from '../../../test-utils'
 import { CommentTextField } from '../CommentTextField'
 
 describe('CommentTextField - Basic Rendering', () => {

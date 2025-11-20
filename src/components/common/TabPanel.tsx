@@ -1,13 +1,14 @@
 /**
  * TabPanel Component
  * Shows/hides content based on active tab selection
- * Reference: US-TABPANEL-001
+ * Reference: US-TABPANEL-001, US-TOKEN-005
  *
  * Features:
  * - Conditional rendering based on activeTabId
  * - Components unmount when hidden (no preservation)
  * - WCAG 2.1 AA compliant with proper ARIA attributes
  * - Memoized to prevent unnecessary re-renders
+ * - Theme-adaptive styling with design tokens
  *
  * @example
  * ```tsx
@@ -25,6 +26,7 @@
  * ```
  */
 import React from 'react'
+import { spacing } from '../../theme/tokens'
 
 /**
  * Props for the TabPanel component
@@ -68,13 +70,18 @@ export const TabPanel = React.memo<TabPanelProps>(({
     return null
   }
 
+  const panelStyle: React.CSSProperties = {
+    marginTop: spacing.lg,
+  }
+
   // Render panel with proper ARIA attributes for accessibility
   return (
     <div
       role="tabpanel"
       id={`tabpanel-${id}`}
       aria-labelledby={`tab-${tabId}`}
-      className={`mt-4 ${className}`}
+      style={panelStyle}
+      className={className}
     >
       {children}
     </div>

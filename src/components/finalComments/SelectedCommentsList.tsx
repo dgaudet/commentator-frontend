@@ -32,7 +32,8 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { colors, spacing, typography, borders } from '../../theme/tokens'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 import { getRatingEmoji, getNormalizedRating } from '../../utils/personalizedCommentRating'
 import type { PersonalizedComment } from '../../types'
 
@@ -64,6 +65,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
   onRemove,
   isDragging = false,
 }) => {
+  const themeColors = useThemeColors()
   const {
     attributes,
     listeners,
@@ -89,9 +91,9 @@ const SortableItem: React.FC<SortableItemProps> = ({
         padding: spacing.md,
         borderBottom:
           index < totalCount - 1
-            ? `${borders.width.thin} solid ${colors.border.default}`
+            ? `${borders.width.thin} solid ${themeColors.border.default}`
             : 'none',
-        backgroundColor: isDragging ? colors.primary[50] : colors.background.primary,
+        backgroundColor: isDragging ? themeColors.background.secondary : themeColors.background.primary,
         cursor: isDragging ? 'grabbing' : 'grab',
       }}
     >
@@ -99,7 +101,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
       <span
         style={{
           marginRight: spacing.sm,
-          color: colors.text.disabled,
+          color: themeColors.text.disabled,
           fontSize: typography.fontSize.lg,
           cursor: 'grab',
         }}
@@ -114,7 +116,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
           minWidth: '24px',
           fontWeight: typography.fontWeight.semibold,
           fontSize: typography.fontSize.sm,
-          color: colors.text.secondary,
+          color: themeColors.text.secondary,
           marginRight: spacing.sm,
         }}
         aria-label={`Position ${index + 1} of ${totalCount}`}
@@ -137,7 +139,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
         style={{
           flex: 1,
           fontSize: typography.fontSize.sm,
-          color: colors.text.primary,
+          color: themeColors.text.primary,
         }}
       >
         {comment.comment}
@@ -153,10 +155,10 @@ const SortableItem: React.FC<SortableItemProps> = ({
         aria-label={`Remove: ${comment.comment}`}
         style={{
           padding: spacing.xs,
-          border: `${borders.width.thin} solid ${colors.semantic.error}`,
+          border: `${borders.width.thin} solid ${themeColors.semantic.error}`,
           borderRadius: borders.radius.sm,
-          backgroundColor: colors.background.primary,
-          color: colors.semantic.error,
+          backgroundColor: themeColors.background.primary,
+          color: themeColors.semantic.error,
           cursor: 'pointer',
           fontSize: typography.fontSize.xs,
         }}
@@ -189,6 +191,7 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
   onReorder,
   onRemove,
 }) => {
+  const themeColors = useThemeColors()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [announcement, setAnnouncement] = useState<string>('')
 
@@ -211,10 +214,10 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
         style={{
           padding: spacing.xl,
           textAlign: 'center' as const,
-          backgroundColor: colors.neutral[50],
-          border: `${borders.width.thin} dashed ${colors.border.default}`,
+          backgroundColor: themeColors.neutral[50],
+          border: `${borders.width.thin} dashed ${themeColors.border.default}`,
           borderRadius: borders.radius.md,
-          color: colors.text.tertiary,
+          color: themeColors.text.tertiary,
         }}
       >
         No comments selected
@@ -270,7 +273,7 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
           marginBottom: spacing.sm,
           fontSize: typography.fontSize.sm,
           fontWeight: typography.fontWeight.medium,
-          color: colors.text.secondary,
+          color: themeColors.text.secondary,
         }}
       >
         Selected Comments (drag to reorder)
@@ -304,9 +307,9 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
             role="list"
             aria-label="Selected personalized comments"
             style={{
-              border: `${borders.width.thin} solid ${colors.border.default}`,
+              border: `${borders.width.thin} solid ${themeColors.border.default}`,
               borderRadius: borders.radius.md,
-              backgroundColor: colors.background.primary,
+              backgroundColor: themeColors.background.primary,
             }}
           >
             {selectedComments.map((comment, index) => (
@@ -330,8 +333,8 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     padding: spacing.md,
-                    backgroundColor: colors.background.primary,
-                    border: `2px solid ${colors.primary[500]}`,
+                    backgroundColor: themeColors.background.primary,
+                    border: `2px solid ${themeColors.primary[500]}`,
                     borderRadius: borders.radius.md,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
                     cursor: 'grabbing',
@@ -340,7 +343,7 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
                   <span
                     style={{
                       marginRight: spacing.sm,
-                      color: colors.text.disabled,
+                      color: themeColors.text.disabled,
                       fontSize: typography.fontSize.lg,
                     }}
                   >
@@ -351,7 +354,7 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
                       minWidth: '24px',
                       fontWeight: typography.fontWeight.semibold,
                       fontSize: typography.fontSize.sm,
-                      color: colors.text.secondary,
+                      color: themeColors.text.secondary,
                       marginRight: spacing.sm,
                     }}
                   >
@@ -369,7 +372,7 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
                     style={{
                       flex: 1,
                       fontSize: typography.fontSize.sm,
-                      color: colors.text.primary,
+                      color: themeColors.text.primary,
                     }}
                   >
                     {activeComment.comment}

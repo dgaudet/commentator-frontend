@@ -15,7 +15,8 @@ import { validateSubjectForm } from '../../services/validation/subjectValidation
 import { Input } from '../common/Input'
 import { Button } from '../common/Button'
 import { ErrorMessage } from '../common/ErrorMessage'
-import { colors, spacing, typography, borders, shadows } from '../../theme/tokens'
+import { spacing, typography, borders, shadows } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 import type { Subject } from '../../types/Subject'
 
 interface SubjectFormProps {
@@ -44,6 +45,7 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
   onSuccess,
   onCancel,
 }) => {
+  const themeColors = useThemeColors()
   const { subjects, createSubject, updateSubject } = useSubjects()
   const [formData, setFormData] = useState<FormData>({
     name: existingSubject?.name || '',
@@ -159,7 +161,7 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
             }
           : {
               // Create mode: Centered card with styling
-              backgroundColor: colors.background.primary,
+              backgroundColor: themeColors.background.primary,
               borderRadius: borders.radius.md,
               boxShadow: shadows.md,
               padding: spacing['2xl'],
@@ -172,7 +174,7 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
         style={{
           fontSize: typography.fontSize.xl,
           fontWeight: typography.fontWeight.bold,
-          color: colors.text.primary,
+          color: themeColors.text.primary,
           marginBottom: spacing['2xl'],
         }}
       >

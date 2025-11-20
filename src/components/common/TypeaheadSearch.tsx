@@ -13,7 +13,8 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { colors, spacing, typography, borders, shadows } from '../../theme/tokens'
+import { spacing, typography, borders, shadows } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
 
 // Generate unique ID for each TypeaheadSearch instance
 let typeaheadIdCounter = 0
@@ -202,6 +203,7 @@ export const TypeaheadSearch = <T, >({
   disabled = false,
   error = null,
 }: TypeaheadSearchProps<T>) => {
+  const themeColors = useThemeColors()
   const [isOpen, setIsOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -291,7 +293,7 @@ export const TypeaheadSearch = <T, >({
           marginBottom: spacing.sm,
           fontSize: typography.fontSize.sm,
           fontWeight: typography.fontWeight.medium,
-          color: colors.text.secondary,
+          color: themeColors.text.secondary,
         }}
       >
         {label}
@@ -319,10 +321,10 @@ export const TypeaheadSearch = <T, >({
           width: '100%',
           padding: spacing.md,
           fontSize: typography.fontSize.base,
-          border: `${borders.width.thin} solid ${colors.border.default}`,
+          border: `${borders.width.thin} solid ${themeColors.border.default}`,
           borderRadius: borders.radius.md,
-          backgroundColor: disabled ? colors.background.secondary : colors.background.primary,
-          color: colors.text.primary,
+          backgroundColor: disabled ? themeColors.background.secondary : themeColors.background.primary,
+          color: themeColors.text.primary,
         }}
       />
 
@@ -332,7 +334,7 @@ export const TypeaheadSearch = <T, >({
           style={{
             marginTop: spacing.sm,
             fontSize: typography.fontSize.sm,
-            color: colors.semantic.error,
+            color: themeColors.semantic.error,
           }}
         >
           {error}
@@ -345,7 +347,7 @@ export const TypeaheadSearch = <T, >({
           style={{
             marginTop: spacing.sm,
             fontSize: typography.fontSize.sm,
-            color: colors.text.disabled,
+            color: themeColors.text.disabled,
           }}
         >
           Loading...
@@ -364,8 +366,8 @@ export const TypeaheadSearch = <T, >({
             maxHeight: '200px',
             overflowY: 'auto' as const,
             marginTop: spacing.sm,
-            backgroundColor: colors.background.primary,
-            border: `${borders.width.thin} solid ${colors.border.default}`,
+            backgroundColor: themeColors.background.primary,
+            border: `${borders.width.thin} solid ${themeColors.border.default}`,
             borderRadius: borders.radius.md,
             boxShadow: shadows.md,
           }}
@@ -376,7 +378,7 @@ export const TypeaheadSearch = <T, >({
               style={{
                 padding: spacing.md,
                 fontSize: typography.fontSize.sm,
-                color: colors.text.disabled,
+                color: themeColors.text.disabled,
                 textAlign: 'center' as const,
               }}
             >
@@ -398,13 +400,13 @@ export const TypeaheadSearch = <T, >({
                       style={{
                         padding: spacing.md,
                         fontSize: typography.fontSize.sm,
-                        color: colors.text.primary,
+                        color: themeColors.text.primary,
                         backgroundColor:
-                          highlightedIndex === index ? colors.neutral[100] : 'transparent',
+                          highlightedIndex === index ? themeColors.neutral[100] : 'transparent',
                         cursor: 'pointer',
                         borderBottom:
                           index < filteredItems.length - 1
-                            ? `${borders.width.thin} solid ${colors.border.default}`
+                            ? `${borders.width.thin} solid ${themeColors.border.default}`
                             : 'none',
                       }}
                     >
