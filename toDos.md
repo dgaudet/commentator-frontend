@@ -1,5 +1,24 @@
 # To Do Items
 
+## ⚠️ CRITICAL: Unit Test Memory Issues (In Progress)
+
+### Investigation Complete ✅
+- [x] Diagnosed memory issue root causes
+- [x] Created comprehensive 10-story backlog
+- [x] Implemented Jest configuration (Story 7)
+- [ ] **NEXT: Implement Phase 2 (Stories 2, 5, 9)** - 3-4 days work
+  - Story 2: Optimize test setup/teardown
+  - Story 5: Implement lightweight mocking
+  - Story 9: Fix React cleanup patterns
+- [ ] **THEN: Implement Phase 3 (Stories 3, 4)** - 3-5 days work
+  - Story 4: Consolidate FinalCommentsModal tests (13 files → 3-4)
+  - Story 3: Reduce wrapper complexity
+
+**Status**: Story 7 complete, tests still crash (expected). Phase 2 must be prioritized.
+**Documentation**: See `pdd-workspace/unit-test-memory-fixes/planning/`
+
+---
+
 ## 🎯 High Priority Features
 
 ### Final Comments Enhancements
