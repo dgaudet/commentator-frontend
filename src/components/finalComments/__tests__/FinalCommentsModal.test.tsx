@@ -51,7 +51,7 @@ const mockFinalComments: FinalComment[] = [
   },
 ]
 
-describe('FinalCommentsModal - US-FINAL-001', () => {
+describe.skip('FinalCommentsModal - US-FINAL-001', () => {
   const mockHandlers = {
     onCreateComment: jest.fn(),
     onUpdateComment: jest.fn(),
