@@ -170,16 +170,18 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
             }
       }
     >
-      <h2
-        style={{
-          fontSize: typography.fontSize.xl,
-          fontWeight: typography.fontWeight.bold,
-          color: themeColors.text.primary,
-          marginBottom: spacing['2xl'],
-        }}
-      >
-        {isEditMode ? 'Edit Subject' : 'Add New Subject'}
-      </h2>
+      {!isEditMode && (
+        <h2
+          style={{
+            fontSize: typography.fontSize.xl,
+            fontWeight: typography.fontWeight.bold,
+            color: themeColors.text.primary,
+            marginBottom: spacing['2xl'],
+          }}
+        >
+          Add New Subject
+        </h2>
+      )}
 
       {errors.submit && (
         <div style={{ marginBottom: spacing.lg }}>
@@ -222,7 +224,7 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
                     variant="primary"
                     disabled={isSubmitting}
                   >
-                    Save Changes
+                    Update Subject
                   </Button>
                 </div>
               )

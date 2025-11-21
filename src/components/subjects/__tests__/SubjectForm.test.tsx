@@ -167,14 +167,15 @@ describe('SubjectForm', () => {
     })
   })
   describe('edit mode', () => {
-    it('should render form title "Edit Subject"', () => {
+    it('should NOT render form title in edit mode', () => {
       render(
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
         />,
       )
-      expect(screen.getByText('Edit Subject')).toBeInTheDocument()
+      expect(screen.queryByText('Edit Subject')).not.toBeInTheDocument()
+      expect(screen.queryByRole('heading', { name: 'Edit Subject' })).not.toBeInTheDocument()
     })
 
     it('should pre-fill form with existing subject data (name only)', () => {
@@ -190,27 +191,27 @@ describe('SubjectForm', () => {
     })
 
     // US-EDIT-SUBJ-001: Cancel button should NOT be displayed in edit mode
-    it('should render Save button but NOT Cancel button in edit mode', () => {
+    it('should render Update Subject button but NOT Cancel button in edit mode', () => {
       render(
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
         />,
       )
-      expect(screen.getByRole('button', { name: /save changes/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /update subject/i })).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument()
     })
 
-    // US-EDIT-SUBJ-001: Save button should use full width in edit mode
-    it('should display save button with full width styling in edit mode', () => {
+    // US-EDIT-SUBJ-001: Update Subject button should use full width in edit mode
+    it('should display Update Subject button with full width styling in edit mode', () => {
       render(
         <SubjectForm
           existingSubject={mockExistingSubject}
           onSuccess={mockOnSuccess}
         />,
       )
-      const saveButton = screen.getByRole('button', { name: /save changes/i })
-      expect(saveButton).toBeInTheDocument()
+      const updateButton = screen.getByRole('button', { name: /update subject/i })
+      expect(updateButton).toBeInTheDocument()
     })
 
     it('should call updateSubject with valid data', async () => {
@@ -229,7 +230,7 @@ describe('SubjectForm', () => {
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Updated Mathematics' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -256,7 +257,7 @@ describe('SubjectForm', () => {
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Updated Mathematics' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -275,7 +276,7 @@ describe('SubjectForm', () => {
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: '' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -297,7 +298,7 @@ describe('SubjectForm', () => {
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Updated Mathematics' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -348,7 +349,7 @@ describe('SubjectForm', () => {
         />,
       )
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -386,7 +387,7 @@ describe('SubjectForm', () => {
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'English 201' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {

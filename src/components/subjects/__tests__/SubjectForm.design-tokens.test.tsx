@@ -243,10 +243,10 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
         />,
       )
 
-      const saveButton = screen.getByRole('button', { name: /save changes/i })
+      const updateButton = screen.getByRole('button', { name: /update subject/i })
       // In edit mode: <div marginTop><div width="100%"><Button/></div></div>
       // So button.parentElement.parentElement gets the outer div with marginTop
-      const buttonContainer = saveButton.parentElement?.parentElement
+      const buttonContainer = updateButton.parentElement?.parentElement
 
       expect(buttonContainer).toHaveStyle({
         marginTop: spacing.xl,
@@ -316,7 +316,8 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
         />,
       )
 
-      expect(screen.getByText('Edit Subject')).toBeInTheDocument()
+      // Edit mode should not show a form title
+      expect(screen.queryByRole('heading')).not.toBeInTheDocument()
       expect(screen.getByLabelText(/subject name/i)).toHaveValue('Mathematics 101')
     })
   })

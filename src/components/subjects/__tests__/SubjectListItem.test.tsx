@@ -75,7 +75,8 @@ describe('SubjectListItem', () => {
 
     // Edit panel should be visible with inline form
     expect(screen.getByTestId('edit-panel-content')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: /edit subject/i })).toBeInTheDocument()
+    // Form should be visible (no heading in edit mode as of AC1)
+    expect(screen.getByLabelText(/subject name/i)).toBeInTheDocument()
 
     // onEdit callback should NOT be called (no navigation)
     expect(handleEdit).not.toHaveBeenCalled()
