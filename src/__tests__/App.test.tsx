@@ -405,7 +405,8 @@ describe('App', () => {
 
       // Edit form should be shown inline within the tab panel
       await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /edit subject/i })).toBeInTheDocument()
+        // Form should be visible (no heading in edit mode as of AC1)
+        expect(screen.getByLabelText(/subject name/i)).toBeInTheDocument()
         // The SubjectListItem stays visible with inline edit form
         expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
         // Edit panel content should be visible

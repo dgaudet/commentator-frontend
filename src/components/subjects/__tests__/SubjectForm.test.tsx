@@ -93,9 +93,7 @@ describe('SubjectForm', () => {
       const submitButton = screen.getByRole('button', { name: /create subject/i })
       fireEvent.click(submitButton)
       await waitFor(() => {
-        expect(
-          screen.getByText(/subject name must be between 1 and 100 characters/i)
-        ).toBeInTheDocument()
+        expect(screen.getByText(/subject name must be between 1 and 100 characters/i)).toBeInTheDocument()
       })
       expect(mockCreateSubject).not.toHaveBeenCalled()
     })
@@ -141,7 +139,9 @@ describe('SubjectForm', () => {
     })
     // Cancel button removed - users can cancel by navigating away or switching tabs
     it('should disable submit button while submitting', async () => {
-      mockCreateSubject.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)))
+      mockCreateSubject.mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      )
       render(<SubjectForm onSuccess={mockOnSuccess} />)
 
       const nameInput = screen.getByLabelText(/subject name/i)
@@ -167,30 +167,51 @@ describe('SubjectForm', () => {
     })
   })
   describe('edit mode', () => {
-    it('should render form title "Edit Subject"', () => {
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
-      expect(screen.getByText('Add New Subject')).toBeInTheDocument()
+    it('should NOT render form title in edit mode', () => {
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
+      expect(screen.queryByText('Edit Subject')).not.toBeInTheDocument()
+      expect(screen.queryByRole('heading', { name: 'Edit Subject' })).not.toBeInTheDocument()
     })
 
     it('should pre-fill form with existing subject data (name only)', () => {
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
 
       const nameInput = screen.getByLabelText(/subject name/i)
       expect(nameInput).toHaveValue('Mathematics 101')
     })
 
     // US-EDIT-SUBJ-001: Cancel button should NOT be displayed in edit mode
-    it('should render Save button but NOT Cancel button in edit mode', () => {
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
-      expect(screen.getByRole('button', { name: /save changes/i })).toBeInTheDocument()
+    it('should render Update Subject button but NOT Cancel button in edit mode', () => {
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
+      expect(screen.getByRole('button', { name: /update subject/i })).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument()
     })
 
-    // US-EDIT-SUBJ-001: Save button should use full width in edit mode
-    it('should display save button with full width styling in edit mode', () => {
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
-      const saveButton = screen.getByRole('button', { name: /save changes/i })
-      expect(saveButton).toBeInTheDocument()
+    // US-EDIT-SUBJ-001: Update Subject button should use full width in edit mode
+    it('should display Update Subject button with full width styling in edit mode', () => {
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
+      const updateButton = screen.getByRole('button', { name: /update subject/i })
+      expect(updateButton).toBeInTheDocument()
     })
 
     it('should call updateSubject with valid data', async () => {
@@ -199,12 +220,17 @@ describe('SubjectForm', () => {
         name: 'Updated Mathematics',
       })
 
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Updated Mathematics' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -221,12 +247,17 @@ describe('SubjectForm', () => {
       }
       mockUpdateSubject.mockResolvedValue(updatedSubject)
 
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Updated Mathematics' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -235,12 +266,17 @@ describe('SubjectForm', () => {
     })
 
     it('should show validation errors in edit mode', async () => {
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: '' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -252,12 +288,17 @@ describe('SubjectForm', () => {
     it('should show error message on update failure', async () => {
       mockUpdateSubject.mockRejectedValue(new Error('Network error'))
 
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'Updated Mathematics' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -301,9 +342,14 @@ describe('SubjectForm', () => {
         clearError: jest.fn(),
       })
       mockUpdateSubject.mockResolvedValue(mockExistingSubject)
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -331,12 +377,17 @@ describe('SubjectForm', () => {
         clearError: jest.fn(),
       })
 
-      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
+      render(
+        <SubjectForm
+          existingSubject={mockExistingSubject}
+          onSuccess={mockOnSuccess}
+        />,
+      )
 
       const nameInput = screen.getByLabelText(/subject name/i)
       fireEvent.change(nameInput, { target: { value: 'English 201' } })
 
-      const submitButton = screen.getByRole('button', { name: /save changes/i })
+      const submitButton = screen.getByRole('button', { name: /update subject/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
@@ -456,7 +507,7 @@ describe('SubjectForm', () => {
           existingSubject={existingSubject}
           onSuccess={mockOnSuccess}
           onCancel={mockOnCancel}
-        />
+        />,
       )
 
       expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument()
@@ -476,7 +527,9 @@ describe('SubjectForm', () => {
     it('should disable Cancel button while form is submitting', async () => {
       const mockOnCancel = jest.fn()
 
-      mockCreateSubject.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)))
+      mockCreateSubject.mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      )
 
       render(<SubjectForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />)
 
