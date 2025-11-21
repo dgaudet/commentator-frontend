@@ -76,6 +76,11 @@ export function useSubjects(): UseSubjectsReturn {
 
   /**
    * Auto-fetch subjects on mount
+   *
+   * Dependency on fetchSubjects is intentional:
+   * - fetchSubjects is memoized with useCallback (empty deps)
+   * - Effect runs once on mount, never re-runs
+   * - fetchSubjects dependency ensures code clarity even if hook evolves
    */
   useEffect(() => {
     fetchSubjects()

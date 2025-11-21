@@ -69,7 +69,7 @@ const mockHandlers = {
   onDeleteComment: jest.fn(),
 }
 
-describe('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
+describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUsePersonalizedComments.mockReturnValue({

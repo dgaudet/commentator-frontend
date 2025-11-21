@@ -3,12 +3,15 @@
  * TDD Phase: RED - Tests written before implementation
  *
  * Tests verify custom hook for Class state management and CRUD operations
+ *
+ * Story 5 Optimization: Uses fixture factories instead of inline mock data
  */
 
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useClasses } from '../useClasses'
 import { classService } from '../../services/api/classService'
-import type { Class, CreateClassRequest, UpdateClassRequest } from '../../types'
+import { createMockClass } from '../../test-utils'
+import type { CreateClassRequest, UpdateClassRequest } from '../../types'
 
 // Mock the classService
 jest.mock('../../services/api/classService')
@@ -31,23 +34,9 @@ describe('useClasses', () => {
 
   describe('loadClasses', () => {
     it('should load classes for a subject successfully', async () => {
-      const mockClasses: Class[] = [
-        {
-          id: 1,
-          subjectId: 5,
-          name: 'Advanced Section',
-          year: 2024,
-          createdAt: '2024-01-15T10:00:00Z',
-          updatedAt: '2024-01-15T10:00:00Z',
-        },
-        {
-          id: 2,
-          subjectId: 5,
-          name: 'Honors Class',
-          year: 2024,
-          createdAt: '2024-01-15T11:00:00Z',
-          updatedAt: '2024-01-15T11:00:00Z',
-        },
+      const mockClasses = [
+        createMockClass({ id: 1, subjectId: 5, name: 'Advanced Section' }),
+        createMockClass({ id: 2, subjectId: 5, name: 'Honors Class' }),
       ]
 
       mockedClassService.getBySubjectId.mockResolvedValueOnce(mockClasses)
@@ -104,14 +93,11 @@ describe('useClasses', () => {
         year: 2024,
       }
 
-      const newClass: Class = {
+      const newClass = createMockClass({
         id: 10,
         subjectId: 5,
         name: 'New Class',
-        year: 2024,
-        createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-01-15T10:00:00Z',
-      }
+      })
 
       mockedClassService.create.mockResolvedValueOnce(newClass)
 
@@ -154,25 +140,21 @@ describe('useClasses', () => {
 
   describe('updateClass', () => {
     it('should update an existing class successfully', async () => {
-      const existingClass: Class = {
+      const existingClass = createMockClass({
         id: 1,
         subjectId: 5,
         name: 'Old Name',
-        year: 2024,
-        createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-01-15T10:00:00Z',
-      }
+      })
 
       const request: UpdateClassRequest = {
         name: 'Updated Name',
         year: 2025,
       }
 
-      const updatedClass: Class = {
+      const updatedClass = createMockClass({
         ...existingClass,
         ...request,
-        updatedAt: '2024-01-16T14:30:00Z',
-      }
+      })
 
       mockedClassService.update.mockResolvedValueOnce(updatedClass)
 
@@ -221,14 +203,11 @@ describe('useClasses', () => {
 
   describe('deleteClass', () => {
     it('should delete a class successfully', async () => {
-      const classToDelete: Class = {
+      const classToDelete = createMockClass({
         id: 1,
         subjectId: 5,
         name: 'Class to Delete',
-        year: 2024,
-        createdAt: '2024-01-15T10:00:00Z',
-        updatedAt: '2024-01-15T10:00:00Z',
-      }
+      })
 
       mockedClassService.delete.mockResolvedValueOnce()
       mockedClassService.getBySubjectId.mockResolvedValueOnce([classToDelete])

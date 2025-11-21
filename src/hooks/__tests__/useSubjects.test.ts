@@ -12,6 +12,7 @@
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { useSubjects } from '../useSubjects'
 import { subjectService } from '../../services/api/subjectService'
+import { createMockSubject } from '../../test-utils'
 import type { Subject } from '../../types'
 
 // Mock the subjectService
@@ -20,24 +21,9 @@ jest.mock('../../services/api/subjectService')
 const mockSubjectService = subjectService as jest.Mocked<typeof subjectService>
 
 const mockSubjects = [
-  {
-    id: 1,
-    name: 'Mathematics 101',
-    createdAt: '2024-01-15T10:30:00Z',
-    updatedAt: '2024-01-15T10:30:00Z',
-  },
-  {
-    id: 2,
-    name: 'English 201',
-    createdAt: '2024-01-15T10:30:00Z',
-    updatedAt: '2024-01-15T10:30:00Z',
-  },
-  {
-    id: 3,
-    name: 'Science 301',
-    createdAt: '2024-02-20T14:15:00Z',
-    updatedAt: '2024-02-20T14:15:00Z',
-  },
+  createMockSubject({ id: 1, name: 'Mathematics 101' }),
+  createMockSubject({ id: 2, name: 'English 201' }),
+  createMockSubject({ id: 3, name: 'Science 301' }),
 ]
 
 describe('useSubjects', () => {
@@ -81,8 +67,10 @@ describe('useSubjects', () => {
 
   describe('initial state', () => {
     it('should start with empty subjects array', () => {
+      // Mock that never resolves to test initial loading state before data arrives
+      // This verifies the hook properly initializes with empty subjects and loading=true
       mockSubjectService.getAll.mockImplementation(
-        () => new Promise(() => {}), // Never resolves
+        () => new Promise(() => {}), // Never resolves - intentional for this test
       )
 
       const { result } = renderHook(() => useSubjects())
@@ -107,9 +95,9 @@ describe('useSubjects', () => {
 
     it('should sort subjects by name (ascending)', async () => {
       const unsortedSubjects = [
-        { id: 3, name: 'Zebra Studies', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-        { id: 1, name: 'Art 101', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-        { id: 2, name: 'Biology 201', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+        createMockSubject({ id: 3, name: 'Zebra Studies' }),
+        createMockSubject({ id: 1, name: 'Art 101' }),
+        createMockSubject({ id: 2, name: 'Biology 201' }),
       ]
       mockSubjectService.getAll.mockResolvedValue(unsortedSubjects)
 
@@ -165,12 +153,7 @@ describe('useSubjects', () => {
 
   describe('createSubject', () => {
     it('should create subject and add to list', async () => {
-      const newSubject = {
-        id: 4,
-        name: 'History 401',
-        createdAt: '2024-03-01T00:00:00Z',
-        updatedAt: '2024-03-01T00:00:00Z',
-      }
+      const newSubject = createMockSubject({ id: 4, name: 'History 401' })
       mockSubjectService.create.mockResolvedValue(newSubject)
 
       const { result } = renderHook(() => useSubjects())
@@ -190,12 +173,7 @@ describe('useSubjects', () => {
     })
 
     it('should maintain sort order after creation', async () => {
-      const newSubject = {
-        id: 4,
-        name: 'Art 401',
-        createdAt: '2024-03-01T00:00:00Z',
-        updatedAt: '2024-03-01T00:00:00Z',
-      }
+      const newSubject = createMockSubject({ id: 4, name: 'Art 401' })
       mockSubjectService.create.mockResolvedValue(newSubject)
 
       const { result } = renderHook(() => useSubjects())
@@ -239,10 +217,7 @@ describe('useSubjects', () => {
 
   describe('updateSubject', () => {
     it('should update subject in list', async () => {
-      const updatedSubject = {
-        ...mockSubjects[0],
-        name: 'Advanced Mathematics',
-      }
+      const updatedSubject = createMockSubject({ ...mockSubjects[0], name: 'Advanced Mathematics' })
       mockSubjectService.update.mockResolvedValue(updatedSubject)
 
       const { result } = renderHook(() => useSubjects())
@@ -261,10 +236,7 @@ describe('useSubjects', () => {
     })
 
     it('should maintain sort order after update', async () => {
-      const updatedSubject = {
-        ...mockSubjects[0],
-        name: 'Zebra Studies',
-      }
+      const updatedSubject = createMockSubject({ ...mockSubjects[0], name: 'Zebra Studies' })
       mockSubjectService.update.mockResolvedValue(updatedSubject)
 
       const { result } = renderHook(() => useSubjects())

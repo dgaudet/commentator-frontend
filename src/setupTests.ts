@@ -5,6 +5,7 @@
  * Configures:
  * - @testing-library/jest-dom matchers
  * - MSW (Mock Service Worker) with polyfills
+ * - Cleanup hooks to prevent memory leaks (Story 2 optimization)
  *
  * Note: MSW setup is currently disabled due to Jest ESM compatibility issues
  * Tests that need API mocking should use jest.mock() for now
@@ -35,3 +36,26 @@ if (typeof global.TransformStream === 'undefined') {
 
 // TODO: Re-enable MSW when Jest ESM issues are resolved
 // For now, tests will use jest.mock() for API mocking
+
+/**
+ * Memory optimization: Cleanup hooks (Story 2)
+ *
+ * Clear all mocks and timers after each test to prevent memory leaks.
+ * This is particularly important for component tests that may leave
+ * listeners, timers, or subscriptions attached.
+ */
+beforeEach(() => {
+  // Clear all mock implementations and call histories
+  jest.clearAllMocks()
+})
+
+afterEach(() => {
+  // Clear all timers (setInterval, setTimeout, etc.)
+  jest.clearAllTimers()
+
+  // Clear all mock implementations and call histories
+  jest.clearAllMocks()
+
+  // Note: React Testing Library's cleanup() is called automatically
+  // after each test due to setupFilesAfterEnv configuration
+})
