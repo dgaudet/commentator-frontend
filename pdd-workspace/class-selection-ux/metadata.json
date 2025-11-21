@@ -1,0 +1,48 @@
+{
+  "feature": {
+    "id": "class-selection-ux",
+    "name": "Class Selection UX Improvements",
+    "description": "Auto-select newly created classes and improve class selection label clarity"
+  },
+  "complexity": {
+    "level": "L0",
+    "reasoning": "Two trivial, single-file localized changes with minimal risk. Changes are isolated to the ClassManagementModal component with no API/schema modifications.",
+    "assessedAt": "2025-11-21T00:00:00Z"
+  },
+  "phases": {
+    "planning": {
+      "status": "COMPLETE",
+      "completedAt": "2025-11-21T00:00:00Z"
+    },
+    "implementation": {
+      "status": "READY",
+      "blockedBy": null
+    }
+  },
+  "stories": [
+    {
+      "id": "US-CLASS-SELECT-001",
+      "title": "Auto-Select Newly Created Classes",
+      "storyPoints": 1,
+      "priority": "HIGH",
+      "complexity": "Trivial"
+    },
+    {
+      "id": "US-CLASS-SELECT-002",
+      "title": "Improve Class Selection Label",
+      "storyPoints": 1,
+      "priority": "MEDIUM",
+      "complexity": "Trivial"
+    }
+  ],
+  "totalStoryPoints": 2,
+  "estimatedEffort": "< 1 day",
+  "risks": [
+    {
+      "risk": "Regression in existing class creation tests",
+      "probability": "LOW",
+      "impact": "MEDIUM",
+      "mitigation": "Run existing test suite after implementation; verify no test failures"
+    }
+  ]
+}
