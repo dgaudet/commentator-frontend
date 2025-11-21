@@ -67,13 +67,14 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
   /**
    * Check for duplicate name (case-insensitive)
    */
-  const checkDuplicate = useCallback((name: string): boolean => {
-    return subjects.some(
-      (s) =>
-        s.name.toLowerCase() === name.toLowerCase() &&
-        s.id !== existingSubject?.id,
-    )
-  }, [subjects, existingSubject?.id])
+  const checkDuplicate = useCallback(
+    (name: string): boolean => {
+      return subjects.some(
+        (s) => s.name.toLowerCase() === name.toLowerCase() && s.id !== existingSubject?.id
+      )
+    },
+    [subjects, existingSubject?.id]
+  )
 
   /**
    * Validate form and check for duplicates
@@ -105,36 +106,39 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
   /**
    * Handle form submission
    */
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
 
-    // Validate form - this sets errors in state
-    const isValid = validateForm()
+      // Validate form - this sets errors in state
+      const isValid = validateForm()
 
-    if (!isValid) {
-      return
-    }
-
-    setIsSubmitting(true)
-
-    try {
-      let result: Subject
-
-      if (isEditMode) {
-        result = await updateSubject(existingSubject.id, formData)
-      } else {
-        result = await createSubject(formData)
+      if (!isValid) {
+        return
       }
 
-      onSuccess(result)
-    } catch (error) {
-      setErrors({
-        submit: isEditMode ? 'Failed to update subject' : 'Failed to create subject',
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [validateForm, isEditMode, updateSubject, existingSubject, formData, createSubject, onSuccess])
+      setIsSubmitting(true)
+
+      try {
+        let result: Subject
+
+        if (isEditMode) {
+          result = await updateSubject(existingSubject.id, formData)
+        } else {
+          result = await createSubject(formData)
+        }
+
+        onSuccess(result)
+      } catch (error) {
+        setErrors({
+          submit: isEditMode ? 'Failed to update subject' : 'Failed to create subject',
+        })
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [validateForm, isEditMode, updateSubject, existingSubject, formData, createSubject, onSuccess]
+  )
 
   /**
    * Handle input changes
@@ -170,16 +174,18 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
             }
       }
     >
-      <h2
-        style={{
-          fontSize: typography.fontSize.xl,
-          fontWeight: typography.fontWeight.bold,
-          color: themeColors.text.primary,
-          marginBottom: spacing['2xl'],
-        }}
-      >
-        {isEditMode ? 'Edit Subject' : 'Add New Subject'}
-      </h2>
+      {!isEditMode && (
+        <h2
+          style={{
+            fontSize: typography.fontSize.xl,
+            fontWeight: typography.fontWeight.bold,
+            color: themeColors.text.primary,
+            marginBottom: spacing['2xl'],
+          }}
+        >
+          Add New Subject
+        </h2>
+      )}
 
       {errors.submit && (
         <div style={{ marginBottom: spacing.lg }}>
@@ -209,44 +215,32 @@ export const SubjectForm: React.FC<SubjectFormProps> = ({
         <div
           style={{
             marginTop: spacing.xl,
-            ...(isEditMode
-              ? {}
-              : { display: 'flex', gap: spacing.lg }),
+            ...(isEditMode ? {} : { display: 'flex', gap: spacing.lg }),
           }}
         >
-          {isEditMode
-            ? (
-                <div style={{ width: '100%' }}>
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    disabled={isSubmitting}
-                  >
-                    Save Changes
-                  </Button>
-                </div>
-              )
-            : (
-                <>
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    disabled={isSubmitting}
-                  >
-                    Create Subject
-                  </Button>
-                  {onCancel && (
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={onCancel}
-                      disabled={isSubmitting}
-                    >
-                      Cancel
-                    </Button>
-                  )}
-                </>
+          {isEditMode ? (
+            <div style={{ width: '100%' }}>
+              <Button type="submit" variant="primary" disabled={isSubmitting}>
+                Save Changes
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Button type="submit" variant="primary" disabled={isSubmitting}>
+                Create Subject
+              </Button>
+              {onCancel && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={onCancel}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
               )}
+            </>
+          )}
         </div>
       </form>
     </div>

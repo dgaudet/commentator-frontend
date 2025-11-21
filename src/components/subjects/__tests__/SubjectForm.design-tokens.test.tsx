@@ -143,7 +143,7 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
       nameInput.focus()
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
-        'value',
+        'value'
       )?.set
       if (nativeInputValueSetter) {
         nativeInputValueSetter.call(nameInput, 'Test Subject')
@@ -158,7 +158,9 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
       // ErrorMessage renders: <div><ErrorMessage/></div> where outer div has marginBottom
       // ErrorMessage has role="alert", so we get alert's parent
       const alerts = screen.getAllByRole('alert')
-      const submitErrorAlert = alerts.find(alert => alert.textContent?.includes('Failed to create'))
+      const submitErrorAlert = alerts.find((alert) =>
+        alert.textContent?.includes('Failed to create')
+      )
       const errorContainer = submitErrorAlert?.parentElement
 
       expect(errorContainer).toHaveStyle({
@@ -187,7 +189,7 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
       nameInput.focus()
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
-        'value',
+        'value'
       )?.set
       if (nativeInputValueSetter) {
         nativeInputValueSetter.call(nameInput, 'Mathematics 101')
@@ -202,7 +204,9 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
       // ErrorMessage renders: <div><ErrorMessage/></div> where outer div has marginBottom
       // ErrorMessage has role="alert", so we get alert's parent
       const alerts = screen.getAllByRole('alert')
-      const duplicateErrorAlert = alerts.find(alert => alert.textContent?.includes('already exists'))
+      const duplicateErrorAlert = alerts.find((alert) =>
+        alert.textContent?.includes('already exists')
+      )
       const errorContainer = duplicateErrorAlert?.parentElement
 
       expect(errorContainer).toHaveStyle({
@@ -236,12 +240,7 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
     })
 
     it('should use design token margin top for button container in edit mode', () => {
-      render(
-        <SubjectForm
-          existingSubject={mockExistingSubject}
-          onSuccess={mockOnSuccess}
-        />,
-      )
+      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
 
       const saveButton = screen.getByRole('button', { name: /save changes/i })
       // In edit mode: <div marginTop><div width="100%"><Button/></div></div>
@@ -282,7 +281,7 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
       nameInput.focus()
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
-        'value',
+        'value'
       )?.set
       if (nativeInputValueSetter) {
         nativeInputValueSetter.call(nameInput, 'Test Subject')
@@ -309,14 +308,9 @@ describe('US-UI-001: SubjectForm Component Design Tokens', () => {
     })
 
     it('should preserve existingSubject prop behavior', () => {
-      render(
-        <SubjectForm
-          existingSubject={mockExistingSubject}
-          onSuccess={mockOnSuccess}
-        />,
-      )
+      render(<SubjectForm existingSubject={mockExistingSubject} onSuccess={mockOnSuccess} />)
 
-      expect(screen.getByText('Edit Subject')).toBeInTheDocument()
+      expect(screen.getByText('Add New Subject')).toBeInTheDocument()
       expect(screen.getByLabelText(/subject name/i)).toHaveValue('Mathematics 101')
     })
   })
