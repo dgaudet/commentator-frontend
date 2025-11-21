@@ -20,6 +20,11 @@ describe('useThemePersistence', () => {
     jest.clearAllMocks()
   })
 
+  afterEach(() => {
+    // Restore all mocks after each test
+    jest.restoreAllMocks()
+  })
+
   describe('AC1: Save theme preference to localStorage', () => {
     it('should save theme preference when setTheme is called', () => {
       const { result } = renderHook(() => useThemePersistence())
@@ -112,9 +117,6 @@ describe('useThemePersistence', () => {
       const { result } = renderHook(() => useThemePersistence())
 
       expect(result.current.theme).toBe('system')
-
-      // Restore mock
-      jest.restoreAllMocks()
     })
 
     it('should handle localStorage.setItem errors gracefully', () => {
@@ -129,9 +131,6 @@ describe('useThemePersistence', () => {
       act(() => {
         expect(() => result.current.setTheme('dark')).not.toThrow()
       })
-
-      // Restore mock
-      jest.restoreAllMocks()
     })
   })
 

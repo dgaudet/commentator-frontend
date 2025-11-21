@@ -67,8 +67,10 @@ describe('useSubjects', () => {
 
   describe('initial state', () => {
     it('should start with empty subjects array', () => {
+      // Mock that never resolves to test initial loading state before data arrives
+      // This verifies the hook properly initializes with empty subjects and loading=true
       mockSubjectService.getAll.mockImplementation(
-        () => new Promise(() => {}), // Never resolves
+        () => new Promise(() => {}), // Never resolves - intentional for this test
       )
 
       const { result } = renderHook(() => useSubjects())
