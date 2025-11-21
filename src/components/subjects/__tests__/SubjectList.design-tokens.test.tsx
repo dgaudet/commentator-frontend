@@ -181,10 +181,7 @@ describe('SubjectList Component Design Tokens', () => {
         width: '100%',
         padding: spacing.md,
         fontSize: typography.fontSize.base,
-        border: `${borders.width.thick} solid ${colors.border.default}`,
         borderRadius: borders.radius.md,
-        backgroundColor: colors.background.secondary,
-        boxShadow: shadows.sm,
         cursor: 'pointer',
       })
     })
