@@ -97,6 +97,9 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
   const [validationError, setValidationError] = useState('')
   const themeColors = useThemeColors()
 
+  // US-CLASS-SELECT-001: Track when a class creation just completed
+  const [justCreatedClass, setJustCreatedClass] = useState(false)
+
   // US-CLASS-TABS-001: Tab group state management (TDD GREEN phase)
   // Track active tab state - default to 'edit-class'
   const [activeClassTab, setActiveClassTab] = useState<string>('edit-class')
@@ -152,6 +155,19 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
     }
   }, [selectedClassId])
 
+  // US-CLASS-SELECT-001: Auto-select newly created class
+  useEffect(() => {
+    // Only auto-select when a class was just created
+    if (justCreatedClass && !selectedClassId && classes.length > 0) {
+      // Find the most recent class (highest ID)
+      const newestClass = classes.reduce((newest, current) => {
+        return current.id > newest.id ? current : newest
+      })
+      setSelectedClassId(newestClass.id)
+      setJustCreatedClass(false)
+    }
+  }, [classes, justCreatedClass, selectedClassId])
+
   if (!isOpen) return null
 
   const validateClass = (name: string, year: number): string | null => {
@@ -182,9 +198,10 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
         name: className.trim(),
         year: classYear,
       })
+      // US-CLASS-SELECT-001: Mark that class creation just completed
+      setJustCreatedClass(true)
       setClassName('')
       setClassYear(new Date().getFullYear())
-      setSelectedClassId(null)
     } catch (err) {
       // Error handled by parent component
     }
@@ -358,7 +375,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
                             color: themeColors.text.secondary,
                           }}
                         >
-                          Select a class to edit or delete:
+                          Select a Class to work with
                         </label>
                         <select
                           id="class-dropdown"

@@ -654,6 +654,187 @@ describe('ClassManagementModal', () => {
     })
   })
 
+  describe('US-CLASS-SELECT-001: Auto-Select Newly Created Classes', () => {
+    // TDD RED PHASE: Test written BEFORE implementation
+
+    it('should automatically select newly created class (AC1)', async () => {
+      const newClass: Class = {
+        id: 3,
+        subjectId: 1,
+        name: 'New Class',
+        year: 2024,
+        createdAt: '2024-01-15T12:00:00Z',
+        updatedAt: '2024-01-15T12:00:00Z',
+      }
+
+      // Mock onCreateClass to simulate success and re-render with updated classes
+      mockOnCreateClass.mockResolvedValueOnce(undefined)
+
+      const { rerender } = render(
+        <ClassManagementModal
+          isOpen={true}
+          entityData={mockSubject}
+          classes={[]}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          onViewFinalComments={mockOnViewFinalComments}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Fill in create form
+      const nameInput = screen.getByLabelText(/Class Name/i)
+      const yearInput = screen.getByLabelText(/Year/i)
+      const addButton = screen.getByRole('button', { name: /Add Class/i })
+
+      fireEvent.change(nameInput, { target: { value: 'New Class' } })
+      fireEvent.change(yearInput, { target: { value: '2024' } })
+      fireEvent.click(addButton)
+
+      await waitFor(() => {
+        expect(mockOnCreateClass).toHaveBeenCalled()
+      })
+
+      // Parent component would re-render with updated classes array
+      rerender(
+        <ClassManagementModal
+          isOpen={true}
+          entityData={mockSubject}
+          classes={[newClass]}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          onViewFinalComments={mockOnViewFinalComments}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Verify new class is automatically selected (tab group appears)
+      await waitFor(() => {
+        expect(screen.getByRole('tablist')).toBeInTheDocument()
+        expect(screen.getByRole('tab', { name: /Edit Class/i })).toBeInTheDocument()
+      })
+
+      // Verify dropdown shows the selected class
+      const dropdown = screen.getByLabelText(/Select a class/i) as HTMLSelectElement
+      expect(dropdown.value).toBe('3')
+    })
+
+    it('should clear form fields after class creation while maintaining selection (AC2)', async () => {
+      const newClass: Class = {
+        id: 3,
+        subjectId: 1,
+        name: 'New Class',
+        year: 2024,
+        createdAt: '2024-01-15T12:00:00Z',
+        updatedAt: '2024-01-15T12:00:00Z',
+      }
+
+      mockOnCreateClass.mockResolvedValueOnce(undefined)
+
+      const { rerender } = render(
+        <ClassManagementModal
+          isOpen={true}
+          entityData={mockSubject}
+          classes={[]}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          onViewFinalComments={mockOnViewFinalComments}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Create a class
+      const nameInput = screen.getByLabelText(/Class Name/i)
+      const yearInput = screen.getByLabelText(/Year/i)
+      const addButton = screen.getByRole('button', { name: /Add Class/i })
+
+      fireEvent.change(nameInput, { target: { value: 'New Class' } })
+      fireEvent.change(yearInput, { target: { value: '2024' } })
+      fireEvent.click(addButton)
+
+      await waitFor(() => {
+        expect(mockOnCreateClass).toHaveBeenCalled()
+      })
+
+      // Parent re-renders with updated classes
+      rerender(
+        <ClassManagementModal
+          isOpen={true}
+          entityData={mockSubject}
+          classes={[newClass]}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          onViewFinalComments={mockOnViewFinalComments}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // The form should now show the edit form (tab group visible)
+      await waitFor(() => {
+        expect(screen.getByRole('tablist')).toBeInTheDocument()
+      })
+
+      // The edit form displays the selected class data (not blank)
+      const editNameInput = screen.getByDisplayValue('New Class')
+      expect(editNameInput).toBeInTheDocument()
+    })
+  })
+
+  describe('US-CLASS-SELECT-002: Improve Class Selection Label', () => {
+    // TDD RED PHASE: Test written BEFORE implementation
+
+    it('should display updated label text "Select a Class to work with" (AC1)', () => {
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Check for new label text
+      expect(screen.getByText(/Select a Class to work with/i)).toBeInTheDocument()
+      // Ensure old text is NOT present
+      expect(screen.queryByText(/Select a class to edit or delete:/i)).not.toBeInTheDocument()
+    })
+
+    it('should maintain label association with dropdown for accessibility (AC2)', () => {
+      render(
+        <ClassManagementModal
+          isOpen={true}
+          entityData={mockSubject}
+          classes={mockClasses}
+          onCreateClass={mockOnCreateClass}
+          onUpdateClass={mockOnUpdateClass}
+          onDeleteClass={mockOnDeleteClass}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Verify label is properly associated with dropdown
+      const dropdown = screen.getByLabelText(/Select a class/i)
+      expect(dropdown).toHaveAttribute('id', 'class-dropdown')
+
+      // Verify the label element has proper htmlFor attribute
+      const labelElement = screen.getByText(/Select a Class to work with/i)
+      expect(labelElement).toHaveAttribute('for', 'class-dropdown')
+    })
+  })
+
   describe('US-CLASS-TABS-001: Tab Group Display', () => {
     // TDD RED PHASE: These tests should FAIL before implementation
 
