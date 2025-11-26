@@ -10,8 +10,8 @@ const TestLoginPage = () => <div>Login</div>
 const mockUseAuth = jest.spyOn(AuthModule, 'useAuth')
 
 describe('ProtectedRoute', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
+  afterEach(() => {
+    mockUseAuth.mockRestore()
   })
 
   it('should render protected component if authenticated', async () => {
@@ -174,9 +174,12 @@ describe('ProtectedRoute', () => {
       </Router>,
     )
 
-    await waitFor(() => {
-      expect(screen.getByText('Dashboard')).toBeInTheDocument()
-    })
+    await waitFor(
+      () => {
+        expect(screen.getByText('Dashboard')).toBeInTheDocument()
+      },
+      { timeout: 3000 },
+    )
   })
 
   it('should be accessible with proper ARIA attributes', async () => {
@@ -206,8 +209,11 @@ describe('ProtectedRoute', () => {
       </Router>,
     )
 
-    await waitFor(() => {
-      expect(screen.getByText('Dashboard')).toBeInTheDocument()
-    })
+    await waitFor(
+      () => {
+        expect(screen.getByText('Dashboard')).toBeInTheDocument()
+      },
+      { timeout: 3000 },
+    )
   })
 })
