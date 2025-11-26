@@ -1,0 +1,152 @@
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { Auth0Client } from '@auth0/auth0-spa-js';
+
+interface User {
+  sub: string;
+  email: string;
+  name: string;
+  [key: string]: any;
+}
+
+interface AuthContextType {
+  isAuthenticated: boolean;
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  accessToken: string | null;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
+  getAccessToken: () => Promise<string | null>;
+}
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [auth0Client, setAuth0Client] = useState<Auth0Client | null>(null);
+
+  // Initialize Auth0 client
+  useEffect(() => {
+    const initializeAuth0 = async () => {
+      try {
+        // Get config from environment (works with both Vite and Jest)
+        const domain = process.env.VITE_AUTH0_DOMAIN;
+        const clientId = process.env.VITE_AUTH0_CLIENT_ID;
+        const redirectUri = process.env.VITE_AUTH0_REDIRECT_URI;
+        const audience = process.env.VITE_AUTH0_AUDIENCE;
+
+        if (!domain || !clientId || !redirectUri || !audience) {
+          throw new Error('Missing required Auth0 configuration');
+        }
+
+        const client = new Auth0Client({
+          domain,
+          clientId,
+          authorizationParams: {
+            redirect_uri: redirectUri,
+            audience,
+            scope: 'openid profile email',
+          },
+        });
+
+        setAuth0Client(client);
+
+        // Check if user is authenticated
+        const isAuth = await client.isAuthenticated();
+        setIsAuthenticated(isAuth);
+
+        if (isAuth) {
+          const userData = await client.getUser();
+          if (userData) {
+            setUser(userData as User);
+          }
+
+          // Get access token
+          const token = await client.getTokenSilently();
+          if (token) {
+            setAccessToken(token);
+          }
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to initialize Auth0';
+        setError(errorMessage);
+        console.error('Auth0 initialization error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth0();
+  }, []);
+
+  const login = useCallback(async () => {
+    if (!auth0Client) return;
+    try {
+      await auth0Client.loginWithRedirect();
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      setError(errorMessage);
+      console.error('Login error:', err);
+    }
+  }, [auth0Client]);
+
+  const logout = useCallback(async () => {
+    if (!auth0Client) return;
+    try {
+      setIsAuthenticated(false);
+      setUser(null);
+      setAccessToken(null);
+      await auth0Client.logout({
+        logoutParams: {
+          returnTo: `${window.location.origin}/login`,
+        },
+      });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Logout failed';
+      setError(errorMessage);
+      console.error('Logout error:', err);
+    }
+  }, [auth0Client]);
+
+  const getAccessToken = useCallback(async (): Promise<string | null> => {
+    if (!auth0Client) return null;
+    try {
+      const token = await auth0Client.getTokenSilently();
+      return token;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to get access token';
+      setError(errorMessage);
+      console.error('Get token error:', err);
+      return null;
+    }
+  }, [auth0Client]);
+
+  const value: AuthContextType = {
+    isAuthenticated,
+    user,
+    loading,
+    error,
+    accessToken,
+    login,
+    logout,
+    getAccessToken,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
