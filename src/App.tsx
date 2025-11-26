@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
 import { SubjectList } from './components/subjects/SubjectList'
 import { SubjectForm } from './components/subjects/SubjectForm'
@@ -9,6 +10,11 @@ import { ThemeToggle } from './components/common/ThemeToggle'
 import { ThemeStyles } from './components/common/ThemeStyles'
 import { useThemeColors } from './hooks/useThemeColors'
 import { spacing } from './theme/tokens'
+import { AuthProvider } from './contexts/AuthContext'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { LoginPage } from './pages/LoginPage'
+import { CallbackPage } from './pages/CallbackPage'
+import { Header } from './components/Header'
 
 /**
  * Inner application layout component
@@ -78,6 +84,7 @@ function AppContent({
 
   return (
     <div style={appStyle}>
+      <Header />
       <header style={headerStyle} data-app-header>
         <div style={headerContentStyle}>
           <div style={headerTextStyle}>
@@ -158,17 +165,32 @@ function App() {
   }
 
   return (
-    <ThemeProvider>
-      <ThemeStyles />
-      <AppContent
-        showForm={showForm}
-        editingSubject={editingSubject}
-        onAddSubject={handleAddSubject}
-        onEditSubject={handleEditSubject}
-        onFormSuccess={handleFormSuccess}
-        onFormCancel={handleFormCancel}
-      />
-    </ThemeProvider>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/callback" element={<CallbackPage />} />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <ThemeProvider>
+                  <ThemeStyles />
+                  <AppContent
+                    showForm={showForm}
+                    editingSubject={editingSubject}
+                    onAddSubject={handleAddSubject}
+                    onEditSubject={handleEditSubject}
+                    onFormSuccess={handleFormSuccess}
+                    onFormCancel={handleFormCancel}
+                  />
+                </ThemeProvider>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   )
 }
 

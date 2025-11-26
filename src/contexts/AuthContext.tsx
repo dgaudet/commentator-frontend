@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
 import { Auth0Client } from '@auth0/auth0-spa-js'
 import { setGetAccessToken } from '../services/apiClient'
+import { parseAuthError } from '../utils/authErrorHandler'
 
 interface User {
   sub: string
@@ -76,9 +77,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to initialize Auth0'
-        setError(errorMessage)
-        console.error('Auth0 initialization error:', err)
+        const authError = parseAuthError(err)
+        setError(authError.message)
+        console.error('Auth0 initialization error:', authError)
       } finally {
         setLoading(false)
       }
@@ -92,9 +93,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await auth0Client.loginWithRedirect()
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Login failed'
-      setError(errorMessage)
-      console.error('Login error:', err)
+      const authError = parseAuthError(err)
+      setError(authError.message)
+      console.error('Login error:', authError)
     }
   }, [auth0Client])
 
@@ -110,9 +111,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         },
       })
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Logout failed'
-      setError(errorMessage)
-      console.error('Logout error:', err)
+      const authError = parseAuthError(err)
+      setError(authError.message)
+      console.error('Logout error:', authError)
     }
   }, [auth0Client])
 
@@ -122,9 +123,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const token = await auth0Client.getTokenSilently()
       return token
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to get access token'
-      setError(errorMessage)
-      console.error('Get token error:', err)
+      const authError = parseAuthError(err)
+      setError(authError.message)
+      console.error('Get token error:', authError)
       return null
     }
   }, [auth0Client])
