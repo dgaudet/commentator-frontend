@@ -38,10 +38,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initializeAuth0 = async () => {
       try {
-        const domain = process.env.VITE_AUTH0_DOMAIN
-        const clientId = process.env.VITE_AUTH0_CLIENT_ID
-        const redirectUri = process.env.VITE_AUTH0_REDIRECT_URI
-        const audience = process.env.VITE_AUTH0_AUDIENCE
+        const domain = import.meta.env.VITE_AUTH0_DOMAIN
+        const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID
+        const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI
+        const audience = import.meta.env.VITE_AUTH0_AUDIENCE
 
         if (!domain || !clientId || !redirectUri || !audience) {
           throw new Error('Missing required Auth0 configuration')

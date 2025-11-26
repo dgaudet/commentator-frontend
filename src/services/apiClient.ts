@@ -6,7 +6,7 @@ export const setGetAccessToken = (fn: () => Promise<string | null>) => {
   authContextGetToken = fn
 }
 
-const BASE_URL = process.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
