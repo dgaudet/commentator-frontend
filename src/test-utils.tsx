@@ -66,4 +66,5 @@ export {
 export { customRender as render, renderMinimal }
 
 // Export all fixture factories (Story 5 - lightweight mocking)
+// eslint-disable-next-line react-refresh/only-export-components
 export * from './test-utils/fixtures'

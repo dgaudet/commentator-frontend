@@ -1,27 +1,30 @@
-import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ProtectedRoute } from '../ProtectedRoute';
+import React from 'react'
+import { render, screen, waitFor } from '@testing-library/react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import * as AuthModule from '../../contexts/AuthContext'
+import { ProtectedRoute } from '../ProtectedRoute'
 
-const TestDashboard = () => <div>Dashboard</div>;
-const TestLoginPage = () => <div>Login</div>;
+const TestDashboard = () => <div>Dashboard</div>
+const TestLoginPage = () => <div>Login</div>
 
-jest.mock('../../contexts/AuthContext', () => ({
-  useAuth: jest.fn(),
-}));
+const mockUseAuth = jest.spyOn(AuthModule, 'useAuth')
 
 describe('ProtectedRoute', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+  })
 
   it('should render protected component if authenticated', async () => {
-    const { useAuth } = require('../../contexts/AuthContext');
-    useAuth.mockReturnValue({
+    mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       loading: false,
       error: null,
-    });
+      user: null,
+      accessToken: null,
+      login: jest.fn(),
+      logout: jest.fn(),
+      getAccessToken: jest.fn(),
+    })
 
     render(
       <Router>
@@ -36,21 +39,25 @@ describe('ProtectedRoute', () => {
           />
           <Route path="/login" element={<TestLoginPage />} />
         </Routes>
-      </Router>
-    );
+      </Router>,
+    )
 
     await waitFor(() => {
-      expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText('Dashboard')).toBeInTheDocument()
+    })
+  })
 
   it('should redirect to login if not authenticated', async () => {
-    const { useAuth } = require('../../contexts/AuthContext');
-    useAuth.mockReturnValue({
+    mockUseAuth.mockReturnValue({
       isAuthenticated: false,
       loading: false,
       error: null,
-    });
+      user: null,
+      accessToken: null,
+      login: jest.fn(),
+      logout: jest.fn(),
+      getAccessToken: jest.fn(),
+    })
 
     render(
       <Router>
@@ -65,21 +72,25 @@ describe('ProtectedRoute', () => {
           />
           <Route path="/login" element={<TestLoginPage />} />
         </Routes>
-      </Router>
-    );
+      </Router>,
+    )
 
     await waitFor(() => {
-      expect(screen.getByText('Login')).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText('Login')).toBeInTheDocument()
+    })
+  })
 
   it('should show loading state while checking auth', () => {
-    const { useAuth } = require('../../contexts/AuthContext');
-    useAuth.mockReturnValue({
+    mockUseAuth.mockReturnValue({
       isAuthenticated: false,
       loading: true,
       error: null,
-    });
+      user: null,
+      accessToken: null,
+      login: jest.fn(),
+      logout: jest.fn(),
+      getAccessToken: jest.fn(),
+    })
 
     render(
       <Router>
@@ -94,22 +105,25 @@ describe('ProtectedRoute', () => {
           />
           <Route path="/login" element={<TestLoginPage />} />
         </Routes>
-      </Router>
-    );
+      </Router>,
+    )
 
-    // Should show loading
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
-  });
+    expect(screen.getByText('Loading...')).toBeInTheDocument()
+  })
 
   it('should pass through all props to children', async () => {
-    const { useAuth } = require('../../contexts/AuthContext');
-    useAuth.mockReturnValue({
+    mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       loading: false,
       error: null,
-    });
+      user: null,
+      accessToken: null,
+      login: jest.fn(),
+      logout: jest.fn(),
+      getAccessToken: jest.fn(),
+    })
 
-    const TestComponent = ({ testProp }: { testProp: string }) => <div>{testProp}</div>;
+    const TestComponent = ({ testProp }: { testProp: string }) => <div>{testProp}</div>
 
     render(
       <Router>
@@ -123,23 +137,27 @@ describe('ProtectedRoute', () => {
             }
           />
         </Routes>
-      </Router>
-    );
+      </Router>,
+    )
 
     await waitFor(() => {
-      expect(screen.getByText('value')).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText('value')).toBeInTheDocument()
+    })
+  })
 
   it('should support nested routes', async () => {
-    const { useAuth } = require('../../contexts/AuthContext');
-    useAuth.mockReturnValue({
+    mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       loading: false,
       error: null,
-    });
+      user: null,
+      accessToken: null,
+      login: jest.fn(),
+      logout: jest.fn(),
+      getAccessToken: jest.fn(),
+    })
 
-    const NestedComponent = () => <TestDashboard />;
+    const NestedComponent = () => <TestDashboard />
 
     render(
       <Router>
@@ -153,21 +171,25 @@ describe('ProtectedRoute', () => {
             }
           />
         </Routes>
-      </Router>
-    );
+      </Router>,
+    )
 
     await waitFor(() => {
-      expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText('Dashboard')).toBeInTheDocument()
+    })
+  })
 
   it('should be accessible with proper ARIA attributes', async () => {
-    const { useAuth } = require('../../contexts/AuthContext');
-    useAuth.mockReturnValue({
+    mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       loading: false,
       error: null,
-    });
+      user: null,
+      accessToken: null,
+      login: jest.fn(),
+      logout: jest.fn(),
+      getAccessToken: jest.fn(),
+    })
 
     render(
       <Router>
@@ -181,11 +203,11 @@ describe('ProtectedRoute', () => {
             }
           />
         </Routes>
-      </Router>
-    );
+      </Router>,
+    )
 
     await waitFor(() => {
-      expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    });
-  });
-});
+      expect(screen.getByText('Dashboard')).toBeInTheDocument()
+    })
+  })
+})

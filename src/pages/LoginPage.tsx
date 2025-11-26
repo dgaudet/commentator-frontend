@@ -1,20 +1,20 @@
-import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import styles from './LoginPage.module.css';
+import React from 'react'
+import { useAuth } from '../contexts/AuthContext'
+import styles from './LoginPage.module.css'
 
 export const LoginPage: React.FC = () => {
-  const { login, loading, error, isAuthenticated } = useAuth();
+  const { login, loading, error, isAuthenticated } = useAuth()
 
   const handleLoginClick = async () => {
-    await login();
-  };
+    await login()
+  }
 
   if (isAuthenticated) {
     return (
       <main className={styles.container}>
         <div>Already authenticated</div>
       </main>
-    );
+    )
   }
 
   return (
@@ -40,7 +40,8 @@ export const LoginPage: React.FC = () => {
 
         <div className={styles.signupPrompt}>
           <p>
-            Don't have an account?{' '}
+            Don't have an account?
+            {' '}
             <a href="https://auth0.com" target="_blank" rel="noopener noreferrer">
               Sign up
             </a>
@@ -48,5 +49,5 @@ export const LoginPage: React.FC = () => {
         </div>
       </div>
     </main>
-  );
-};
+  )
+}

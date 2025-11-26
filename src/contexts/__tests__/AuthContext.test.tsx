@@ -1,13 +1,13 @@
-import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { AuthContext, AuthProvider, useAuth } from '../AuthContext';
+import React from 'react'
+import { render, screen, waitFor, act } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { AuthProvider, useAuth } from '../AuthContext'
 
 // Set environment variables for tests
-process.env.VITE_AUTH0_DOMAIN = 'test.auth0.com';
-process.env.VITE_AUTH0_CLIENT_ID = 'test-client-id';
-process.env.VITE_AUTH0_REDIRECT_URI = 'http://localhost:3000/callback';
-process.env.VITE_AUTH0_AUDIENCE = 'https://api.test.com';
+process.env.VITE_AUTH0_DOMAIN = 'test.auth0.com'
+process.env.VITE_AUTH0_CLIENT_ID = 'test-client-id'
+process.env.VITE_AUTH0_REDIRECT_URI = 'http://localhost:3000/callback'
+process.env.VITE_AUTH0_AUDIENCE = 'https://api.test.com'
 
 // Mock Auth0 SDK
 jest.mock('@auth0/auth0-spa-js', () => ({
@@ -26,57 +26,57 @@ jest.mock('@auth0/auth0-spa-js', () => ({
     logout: jest.fn().mockResolvedValue(undefined),
     loginWithRedirect: jest.fn().mockResolvedValue(undefined),
   })),
-}));
+}))
 
 // Mock window.location
-delete (window as any).location;
-window.location = { assign: jest.fn(), origin: 'http://localhost:3000' } as any;
+delete (window as unknown).location
+window.location = { assign: jest.fn(), origin: 'http://localhost:3000' } as unknown
 
 describe('AuthContext', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    delete (window as any).location;
-    window.location = { assign: jest.fn() } as any;
-  });
+    jest.clearAllMocks()
+    delete (window as unknown).location
+    window.location = { assign: jest.fn() } as unknown
+  })
 
   describe('AuthProvider', () => {
     it('should render children', () => {
       render(
         <AuthProvider>
           <div>Test Content</div>
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
-      expect(screen.getByText('Test Content')).toBeInTheDocument();
-    });
+      expect(screen.getByText('Test Content')).toBeInTheDocument()
+    })
 
     it('should initialize Auth0 with config from environment', async () => {
-      const originalEnv = process.env;
+      const originalEnv = process.env
       process.env = {
         ...originalEnv,
         VITE_AUTH0_DOMAIN: 'test.auth0.com',
         VITE_AUTH0_CLIENT_ID: 'test-client-id',
         VITE_AUTH0_REDIRECT_URI: 'http://localhost:3000/callback',
         VITE_AUTH0_AUDIENCE: 'https://api.test.com',
-      };
+      }
 
       render(
         <AuthProvider>
           <div>Test</div>
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
       await waitFor(() => {
-        expect(screen.getByText('Test')).toBeInTheDocument();
-      });
+        expect(screen.getByText('Test')).toBeInTheDocument()
+      })
 
-      process.env = originalEnv;
-    });
-  });
+      process.env = originalEnv
+    })
+  })
 
   describe('useAuth hook', () => {
     const TestComponent = () => {
-      const { isAuthenticated, user, loading, error, accessToken, login, logout, getAccessToken } = useAuth();
+      const { isAuthenticated, user, loading, error, accessToken, login, logout, getAccessToken } = useAuth()
 
       return (
         <div>
@@ -90,163 +90,164 @@ describe('AuthContext', () => {
           <button onClick={logout}>Logout</button>
           <button
             onClick={async () => {
-              await getAccessToken();
+              await getAccessToken()
             }}
           >
             Get Token
           </button>
         </div>
-      );
-    };
+      )
+    }
 
     it('should provide auth context values', async () => {
       render(
         <AuthProvider>
           <TestComponent />
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
       await waitFor(() => {
-        expect(screen.getByTestId('loading')).toHaveTextContent('ready');
-      });
-    });
+        expect(screen.getByTestId('loading')).toHaveTextContent('ready')
+      })
+    })
 
     it('should expose isAuthenticated state', async () => {
       render(
         <AuthProvider>
           <TestComponent />
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
       await waitFor(() => {
-        expect(screen.getByTestId('authenticated')).toHaveTextContent('authenticated');
-      });
-    });
+        expect(screen.getByTestId('authenticated')).toHaveTextContent('authenticated')
+      })
+    })
 
     it('should expose user data (email and name)', async () => {
       render(
         <AuthProvider>
           <TestComponent />
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
       await waitFor(() => {
-        expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com');
-        expect(screen.getByTestId('user-name')).toHaveTextContent('Test User');
-      });
-    });
+        expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com')
+        expect(screen.getByTestId('user-name')).toHaveTextContent('Test User')
+      })
+    })
 
     it('should expose accessToken', async () => {
       render(
         <AuthProvider>
           <TestComponent />
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
       await waitFor(() => {
-        expect(screen.getByTestId('token')).toHaveTextContent('test-token-123');
-      });
-    });
+        expect(screen.getByTestId('token')).toHaveTextContent('test-token-123')
+      })
+    })
 
     it('should provide loading state', async () => {
       render(
         <AuthProvider>
           <TestComponent />
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
-      const loadingElement = screen.getByTestId('loading');
+      const loadingElement = screen.getByTestId('loading')
       await waitFor(() => {
-        expect(loadingElement).toHaveTextContent('ready');
-      });
-    });
+        expect(loadingElement).toHaveTextContent('ready')
+      })
+    })
 
     it('should provide login method that redirects to Auth0', async () => {
       render(
         <AuthProvider>
           <TestComponent />
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
-      const loginButton = screen.getByRole('button', { name: /login/i });
+      const loginButton = screen.getByRole('button', { name: /login/i })
 
       await waitFor(() => {
-        expect(screen.getByTestId('authenticated')).toHaveTextContent('authenticated');
-      });
+        expect(screen.getByTestId('authenticated')).toHaveTextContent('authenticated')
+      })
 
       await act(async () => {
-        await userEvent.click(loginButton);
-      });
-    });
+        await userEvent.click(loginButton)
+      })
+    })
 
     it('should provide logout method', async () => {
       render(
         <AuthProvider>
           <TestComponent />
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
       await waitFor(() => {
-        expect(screen.getByTestId('authenticated')).toHaveTextContent('authenticated');
-      });
+        expect(screen.getByTestId('authenticated')).toHaveTextContent('authenticated')
+      })
 
-      const logoutButton = screen.getByRole('button', { name: /logout/i });
+      const logoutButton = screen.getByRole('button', { name: /logout/i })
 
       await act(async () => {
-        await userEvent.click(logoutButton);
-      });
-    });
+        await userEvent.click(logoutButton)
+      })
+    })
 
     it('should provide getAccessToken method', async () => {
       render(
         <AuthProvider>
           <TestComponent />
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
-      const getTokenButton = screen.getByRole('button', { name: /get token/i });
+      const getTokenButton = screen.getByRole('button', { name: /get token/i })
 
       await act(async () => {
-        await userEvent.click(getTokenButton);
-      });
-    });
-  });
+        await userEvent.click(getTokenButton)
+      })
+    })
+  })
 
   describe('Error handling', () => {
     it('should handle Auth0 initialization errors', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
       render(
         <AuthProvider>
           <div>Test</div>
-        </AuthProvider>
-      );
+        </AuthProvider>,
+      )
 
       await waitFor(() => {
-        expect(screen.getByText('Test')).toBeInTheDocument();
-      });
+        expect(screen.getByText('Test')).toBeInTheDocument()
+      })
 
-      consoleErrorSpy.mockRestore();
-    });
-  });
+      consoleErrorSpy.mockRestore()
+    })
+  })
 
   describe('Context API', () => {
-    it('should expose AuthContext for direct access if needed', () => {
-      expect(AuthContext).toBeDefined();
-    });
+    it('should provide useAuth hook for accessing context', () => {
+      // The hook is available for accessing the context
+      expect(useAuth).toBeDefined()
+    })
 
     it('should throw error when useAuth is used outside AuthProvider', () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
       expect(() => {
         render(
           <div>
             <TestComponent />
-          </div>
-        );
-      }).toThrow();
+          </div>,
+        )
+      }).toThrow()
 
-      consoleErrorSpy.mockRestore();
-    });
-  });
-});
+      consoleErrorSpy.mockRestore()
+    })
+  })
+})
