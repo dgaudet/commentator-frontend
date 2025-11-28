@@ -62,6 +62,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Register the getAccessToken function with the API client
         setGetAccessToken(() => client.getTokenSilently())
 
+        // Process the redirect if returning from Auth0 callback
+        try {
+          await client.handleRedirectCallback()
+        } catch (err) {
+          // handleRedirectCallback throws if not in callback flow - this is expected
+          console.debug('Not in callback flow or already processed')
+        }
+
         const isAuth = await client.isAuthenticated()
         setIsAuthenticated(isAuth)
 

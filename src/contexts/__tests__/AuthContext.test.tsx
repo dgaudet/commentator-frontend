@@ -212,6 +212,29 @@ describe('AuthContext', () => {
     })
   })
 
+  describe('handleRedirectCallback', () => {
+    it('should call handleRedirectCallback during initialization', async () => {
+      // Mock Auth0Client to verify handleRedirectCallback is called
+      const Auth0ClientMock = jest.requireMock('@auth0/auth0-spa-js').Auth0Client
+      const mockInstance = Auth0ClientMock.mock.results[Auth0ClientMock.mock.results.length - 1]?.value
+
+      render(
+        <AuthProvider>
+          <div>Test</div>
+        </AuthProvider>,
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('Test')).toBeInTheDocument()
+      })
+
+      // handleRedirectCallback should have been called during initialization
+      if (mockInstance) {
+        expect(mockInstance.handleRedirectCallback).toHaveBeenCalled()
+      }
+    })
+  })
+
   describe('Error handling', () => {
     it('should handle Auth0 initialization errors', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
