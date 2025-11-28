@@ -1,5 +1,5 @@
 /**
- * Base API Client for Backend Communication
+ * Base API Client for Backend Communication - Story 3.7: API Integration
  * Connects to existing API at http://localhost:3000
  * API Documentation: http://localhost:3000/api-docs/ui
  *
@@ -8,6 +8,16 @@
  * - Global error handling
  * - Configurable base URL from environment
  * - Type-safe request/response handling
+ * - Automatic JWT token attachment to requests (Story 3.7)
+ *
+ * Authentication Flow:
+ * 1. AuthContext calls setGetAccessToken() with Auth0's token getter
+ * 2. Request interceptor automatically calls token getter for each request
+ * 3. If token is available, adds "Authorization: Bearer <token>" header
+ * 4. If token fetch fails, request proceeds without token (backend returns 401)
+ * 5. Error interceptor formats responses consistently
+ *
+ * All API requests automatically include the JWT token without component code changes.
  */
 import axios, { AxiosInstance, AxiosError } from 'axios'
 
@@ -21,6 +31,17 @@ function getBaseUrl(): string {
 }
 
 const BASE_URL = getBaseUrl()
+
+// Callback to get access token from Auth context
+let getAccessTokenFn: (() => Promise<string | null>) | null = null
+
+/**
+ * Register the function to retrieve access tokens from Auth context
+ * Called by AuthContext after Auth0 is initialized
+ */
+export const setGetAccessToken = (fn: () => Promise<string | null>) => {
+  getAccessTokenFn = fn
+}
 
 /**
  * Base API client class for backend communication
@@ -36,6 +57,24 @@ class ApiClient {
       },
       timeout: 10000, // 10 seconds
     })
+
+    // Request interceptor: Attach JWT token to all requests
+    this.client.interceptors.request.use(
+      async (config) => {
+        if (getAccessTokenFn) {
+          try {
+            const token = await getAccessTokenFn()
+            if (token) {
+              config.headers.Authorization = `Bearer ${token}`
+            }
+          } catch (err) {
+            console.error('Failed to get access token:', err)
+          }
+        }
+        return config
+      },
+      (error) => Promise.reject(error),
+    )
 
     // Response interceptor: Handle global errors
     this.client.interceptors.response.use(
