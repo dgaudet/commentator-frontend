@@ -59,7 +59,8 @@ describe('authErrorHandler', () => {
       const result = parseAuthError(error)
 
       expect(result.code).toBe('invalid_grant')
-      expect(result.message).toBe('Invalid grant')
+      // Story 3.9: Maps to user-friendly message for invalid_grant
+      expect(result.message).toContain('Invalid credentials')
     })
 
     it('should handle unknown object errors', () => {
@@ -129,6 +130,69 @@ describe('authErrorHandler', () => {
 
     it('should not identify unauthorized as fatal', () => {
       expect(isFatalError('UNAUTHORIZED')).toBe(false)
+    })
+
+    it('should identify unauthorized_client as fatal (Story 3.9)', () => {
+      expect(isFatalError('unauthorized_client')).toBe(true)
+    })
+
+    it('should identify unsupported_response_type as fatal (Story 3.9)', () => {
+      expect(isFatalError('unsupported_response_type')).toBe(true)
+    })
+  })
+
+  describe('Story 3.9: Additional Error Scenarios', () => {
+    it('should handle token expired errors', () => {
+      const error = new Error('Token expired')
+      const result = parseAuthError(error)
+      expect(result.code).toBe('TOKEN_EXPIRED')
+      expect(result.message).toContain('session has expired')
+    })
+
+    it('should handle CORS errors', () => {
+      const error = new Error('CORS policy violation')
+      const result = parseAuthError(error)
+      expect(result.code).toBe('CORS_ERROR')
+      expect(result.message).toContain('unavailable')
+    })
+
+    it('should handle cancelled login', () => {
+      const error = new Error('Login cancelled by user')
+      const result = parseAuthError(error)
+      expect(result.code).toBe('LOGIN_CANCELLED')
+      expect(result.message).toContain('cancelled')
+    })
+
+    it('should handle access_denied Auth0 error', () => {
+      const error = {
+        error: 'access_denied',
+        error_description: 'Access denied by policy',
+      }
+      const result = parseAuthError(error)
+      expect(result.code).toBe('access_denied')
+      expect(result.message).toContain('access denied')
+    })
+
+    it('should handle invalid_grant Auth0 error', () => {
+      const error = {
+        error: 'invalid_grant',
+        error_description: 'Invalid grant',
+      }
+      const result = parseAuthError(error)
+      expect(result.code).toBe('invalid_grant')
+      expect(result.message).toContain('Invalid credentials')
+    })
+
+    it('should identify TOKEN_EXPIRED as recoverable', () => {
+      expect(isRecoverableError('TOKEN_EXPIRED')).toBe(true)
+    })
+
+    it('should identify CORS_ERROR as recoverable', () => {
+      expect(isRecoverableError('CORS_ERROR')).toBe(true)
+    })
+
+    it('should identify LOGIN_CANCELLED as recoverable', () => {
+      expect(isRecoverableError('LOGIN_CANCELLED')).toBe(true)
     })
   })
 })
