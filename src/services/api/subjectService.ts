@@ -9,7 +9,7 @@
  * All endpoints return direct responses (not wrapped in ApiResponse<T>)
  */
 import { Subject, CreateSubjectRequest, UpdateSubjectRequest } from '../../types/Subject'
-import { apiClient } from './apiClient'
+import { apiClient } from '../apiClient'
 
 /**
  * Service for subject-related API operations

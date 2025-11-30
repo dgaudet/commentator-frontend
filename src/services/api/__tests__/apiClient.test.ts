@@ -5,7 +5,7 @@
  * TDD Cycle: RED → GREEN → REFACTOR
  * Ensures automatic Authorization header attachment and token management
  */
-import { apiClient, setGetAccessToken } from '../apiClient'
+import { apiClient, setGetAccessToken } from '../../apiClient'
 
 describe('ApiClient - Story 3.7: API Authentication', () => {
   describe('Basic API Methods', () => {
