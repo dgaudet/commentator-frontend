@@ -8,28 +8,45 @@
  * - Comprehensive error handling and retry logic
  * - Type-safe request/response handling
  * - 401 unauthorized retry with token refresh
+ * - Token caching optimization to avoid unnecessary getTokenSilently() calls
+ *
+ * Token Caching Optimization:
+ * 1. AuthContext stores accessToken in state
+ * 2. AuthContext syncs token state to apiClient cache via setCachedToken()
+ * 3. Request interceptor uses cached token first (synchronous, fastest)
+ * 4. Falls back to getTokenSilently() only if cache is invalid/expired
+ * 5. Reduces async calls on every request, improving performance
  *
  * Authentication Flow:
- * 1. AuthContext calls setGetAccessToken() with Auth0's token getter
- * 2. Request interceptor automatically calls token getter for each request
- * 3. If token is available, adds "Authorization: Bearer <token>" header
- * 4. Response interceptor handles 401 errors with retry logic
- * 5. All API requests automatically include JWT without component code changes
+ * 1. User logs in via Auth0
+ * 2. AuthContext calls setGetAccessToken() with Auth0's token getter
+ * 3. AuthContext syncs token to apiClient cache via setCachedToken()
+ * 4. Request interceptor uses cached token for fastest performance
+ * 5. Response interceptor handles 401 errors with refresh + retry
+ * 6. All API requests automatically include JWT without component changes
  *
  * Usage:
- * import { apiClient, setGetAccessToken } from './services/apiClient'
+ * import { apiClient, setGetAccessToken, setCachedToken } from './services/apiClient'
  *
  * // In AuthContext:
  * setGetAccessToken(() => auth0Client.getTokenSilently())
+ * setCachedToken(token) // Called whenever accessToken state changes
  *
  * // In components:
- * const response = await apiClient.get('/classes')
+ * const response = await apiClient.get('/classes') // Token attached automatically
  */
 
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios'
 
 // Callback to get access token from Auth context
 let authContextGetToken: (() => Promise<string | null>) | null = null
+
+// Token cache to avoid unnecessary getTokenSilently() calls
+interface CachedToken {
+  token: string
+  expiresAt: number
+}
+let cachedToken: CachedToken | null = null
 
 /**
  * Register the function to retrieve access tokens from Auth context
@@ -39,6 +56,42 @@ let authContextGetToken: (() => Promise<string | null>) | null = null
  */
 export const setGetAccessToken = (fn: (() => Promise<string | null>) | null) => {
   authContextGetToken = fn
+}
+
+/**
+ * Update the cached token directly from AuthContext
+ * Called when AuthContext's accessToken state changes to use cached token instead of calling getTokenSilently()
+ *
+ * Optimization: Allows apiClient to use the token directly on each request instead of making async calls
+ *
+ * @param token - The JWT token string
+ * @param expiresIn - Token expiration time in seconds (default: 3600 = 1 hour)
+ */
+export const setCachedToken = (token: string | null, expiresIn: number = 3600) => {
+  if (token) {
+    cachedToken = {
+      token,
+      expiresAt: Date.now() + expiresIn * 1000,
+    }
+  } else {
+    cachedToken = null
+  }
+}
+
+/**
+ * Get the cached token if it's still valid, otherwise return null
+ * Returns null if cache is expired or not set
+ *
+ * @returns Valid cached token or null
+ */
+function getCachedTokenIfValid(): string | null {
+  if (!cachedToken) return null
+  // Check if token is still valid (with 30 second buffer before actual expiration)
+  if (Date.now() > cachedToken.expiresAt - 30000) {
+    cachedToken = null
+    return null
+  }
+  return cachedToken.token
 }
 
 /**
@@ -82,19 +135,34 @@ class ApiClient {
     })
 
     // Request interceptor: Attach JWT token to all requests
+    // Optimization: Uses cached token from AuthContext when available, falls back to getTokenSilently()
     this.client.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
-        if (authContextGetToken) {
+        // Strategy: Try cached token first (fastest), then fall back to getTokenSilently()
+        let token: string | null = null
+
+        // 1. Check if we have a valid cached token (from AuthContext state update)
+        token = getCachedTokenIfValid()
+
+        // 2. If no valid cached token, call getTokenSilently() to refresh
+        if (!token && authContextGetToken) {
           try {
-            const token = await authContextGetToken()
+            token = await authContextGetToken()
+            // Cache the refreshed token for subsequent requests to use
             if (token) {
-              config.headers.Authorization = `Bearer ${token}`
+              setCachedToken(token)
             }
           } catch (err) {
             console.error('Failed to get access token:', err)
             // Continue without token - backend will return 401
           }
         }
+
+        // 3. Attach token if available
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
+
         return config
       },
       (error) => Promise.reject(error),
@@ -115,6 +183,8 @@ class ApiClient {
             try {
               const newToken = await authContextGetToken()
               if (newToken) {
+                // Cache the refreshed token for subsequent requests
+                setCachedToken(newToken)
                 originalRequest.headers.Authorization = `Bearer ${newToken}`
                 return this.client(originalRequest)
               }

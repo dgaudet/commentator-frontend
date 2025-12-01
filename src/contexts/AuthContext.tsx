@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
 import { Auth0Client } from '@auth0/auth0-spa-js'
-import { setGetAccessToken } from '../services/apiClient'
+import { setGetAccessToken, setCachedToken } from '../services/apiClient'
 import { parseAuthError } from '../utils/authErrorHandler'
 
 interface User {
@@ -95,6 +95,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     initializeAuth0()
   }, [])
+
+  // Sync access token changes with apiClient cache for optimization
+  // This allows apiClient to use cached token instead of calling getTokenSilently() on every request
+  useEffect(() => {
+    if (accessToken) {
+      // Token was updated - cache it for direct use in apiClient
+      setCachedToken(accessToken)
+    } else {
+      // Token was cleared (logout)
+      setCachedToken(null)
+    }
+  }, [accessToken])
 
   const login = useCallback(async () => {
     if (!auth0Client) return
