@@ -12,7 +12,7 @@
  * - DELETE /final-comment/{id} - Delete final comment
  */
 
-import { apiClient } from './apiClient'
+import { apiClient } from '../apiClient'
 import type {
   FinalComment,
   CreateFinalCommentRequest,

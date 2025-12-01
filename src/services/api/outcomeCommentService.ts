@@ -12,7 +12,7 @@
  * - DELETE /outcome-comment/{id} - Delete outcome comment
  */
 
-import { apiClient } from './apiClient'
+import { apiClient } from '../apiClient'
 import type {
   OutcomeComment,
   CreateOutcomeCommentRequest,

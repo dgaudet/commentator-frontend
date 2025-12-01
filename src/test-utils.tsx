@@ -13,13 +13,18 @@
 import { ReactElement } from 'react'
 import { render as rtlRender, RenderOptions } from '@testing-library/react'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { AuthProvider } from './contexts/AuthContext'
+import { createTestAuthConfig } from './config/authConfig'
+
+// Create test auth config for use in test wrapper
+const testAuthConfig = createTestAuthConfig()
 
 /**
  * Custom render function that wraps components with providers
- * Includes ThemeProvider to support components using useThemeColors()
+ * Includes AuthProvider and ThemeProvider to support auth and theme-dependent components
  *
- * This is the standard wrapper for all component tests that need theme support.
- * For simpler unit tests that don't use theme, use renderMinimal() instead.
+ * This is the standard wrapper for all component tests that need auth and/or theme support.
+ * For simpler unit tests that don't use auth or theme, use renderMinimal() instead.
  *
  * @param ui - React component to render
  * @param options - Render options
@@ -30,7 +35,11 @@ function customRender(
   options?: Omit<RenderOptions, 'wrapper'>,
 ) {
   return rtlRender(ui, {
-    wrapper: ({ children }) => <ThemeProvider>{children}</ThemeProvider>,
+    wrapper: ({ children }) => (
+      <AuthProvider authConfig={testAuthConfig}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </AuthProvider>
+    ),
     ...options,
   })
 }
@@ -66,4 +75,5 @@ export {
 export { customRender as render, renderMinimal }
 
 // Export all fixture factories (Story 5 - lightweight mocking)
+// eslint-disable-next-line react-refresh/only-export-components
 export * from './test-utils/fixtures'

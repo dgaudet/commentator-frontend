@@ -86,3 +86,12 @@ the error labels aren't standardized, the add subject is different from the rest
 When adding a new class, it should be selected by default after creation.
 
 The final comments error text doesn't use the standardized error label component.
+
+Login
+* The header, should be modified to be the one we already have
+* The "pages" should be refactored to be components
+* Need to figure out how to get the JWT, and how to pass it to the backend
+** looks like I should be able to import { useAuth } like in other places, and call the getAccessToken on it
+** I should be able to ask claude to send the token on api rquests automatically
+* Need to style the login form
+* THe header with they dark/light styles should be used for the login as well

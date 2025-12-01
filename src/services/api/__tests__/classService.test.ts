@@ -6,11 +6,11 @@
  */
 
 import { classService } from '../classService'
-import { apiClient } from '../apiClient'
+import { apiClient } from '../../apiClient'
 import type { Class, CreateClassRequest, UpdateClassRequest } from '../../../types'
 
 // Mock the apiClient
-jest.mock('../apiClient')
+jest.mock('../../apiClient')
 const mockedApiClient = apiClient as jest.Mocked<typeof apiClient>
 
 describe('classService', () => {

@@ -11,7 +11,7 @@
  * - DELETE /personalized-comment/{id} - Delete personalized comment
  */
 
-import { apiClient } from './apiClient'
+import { apiClient } from '../apiClient'
 import type {
   PersonalizedComment,
   CreatePersonalizedCommentRequest,

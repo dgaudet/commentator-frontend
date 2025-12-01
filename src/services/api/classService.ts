@@ -9,7 +9,7 @@
  * - DELETE /class/{id} - Delete class
  */
 
-import { apiClient } from './apiClient'
+import { apiClient } from '../apiClient'
 import type { Class, CreateClassRequest, UpdateClassRequest } from '../../types'
 
 export const classService = {

@@ -57,24 +57,29 @@ describe('App', () => {
     // Mock API to prevent network errors during component mounting
     mockSubjectService.getAll.mockResolvedValue([])
 
-    act(() => {
-      render(<App />)
-    })
-    await waitFor(() => {
-      expect(screen.getByText(/commentator/i)).toBeInTheDocument()
-    })
+    render(<App />)
+
+    await waitFor(
+      () => {
+        expect(screen.getAllByText(/commentator/i).length).toBeGreaterThan(0)
+      },
+      { timeout: 3000 },
+    )
   })
 
   it('displays the application title', async () => {
     // Mock API to prevent network errors during component mounting
     mockSubjectService.getAll.mockResolvedValue([])
 
-    act(() => {
-      render(<App />)
-    })
-    await waitFor(() => {
-      expect(screen.getByText('Commentator')).toBeInTheDocument()
-    })
+    render(<App />)
+
+    await waitFor(
+      () => {
+        const titles = screen.getAllByText('Commentator')
+        expect(titles.length).toBeGreaterThan(0)
+      },
+      { timeout: 3000 },
+    )
   })
 
   it('displays the subtitle', async () => {

@@ -14,7 +14,9 @@ export default {
         jsx: 'react-jsx',
         esModuleInterop: true,
         allowSyntheticDefaultImports: true,
+        module: 'esnext',
       },
+      useESM: true,
     }],
   },
   // Transform MSW ESM modules

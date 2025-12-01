@@ -7,11 +7,11 @@
  * This avoids MSW v2 + Jest ESM compatibility issues when testing services in isolation
  */
 import { personalizedCommentService } from '../personalizedCommentService'
-import { apiClient } from '../apiClient'
+import { apiClient } from '../../apiClient'
 import type { InternalAxiosRequestConfig } from 'axios'
 
 // Mock the API client to prevent actual HTTP requests
-jest.mock('../apiClient', () => ({
+jest.mock('../../apiClient', () => ({
   apiClient: {
     get: jest.fn(),
     post: jest.fn(),
