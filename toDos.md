@@ -95,5 +95,3 @@ Login
 ** I should be able to ask claude to send the token on api rquests automatically
 * Need to style the login form
 * THe header with they dark/light styles should be used for the login as well
-
-need to fix anything attempting to use environment variables in the frontend, either they will work in browser or tests, but not both so far
