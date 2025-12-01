@@ -1,16 +1,46 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 5173,
-    strictPort: true,
-    allowedHosts: true,
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: true,
-  },
+// export default defineConfig({
+//   plugins: [react()],
+//   server: {
+//     port: 5173,
+//     strictPort: true,
+//     allowedHosts: true,
+//   },
+//   build: {
+//     outDir: 'dist',
+//     sourcemap: true,
+//   },
+// })
+
+export default defineConfig(({ mode }) => {
+  // Load environment variables that start with VITE_
+  const env = loadEnv(mode, process.cwd())
+
+  // Map the VITE_* variables to keys without the prefix.
+  // this allows us to use process.env.VARIABLE_NAME in the code eventhough vite doesn't support process.env directly.
+  const processEnv = Object.keys(env)
+    .filter((key) => key.startsWith('VITE_'))
+    .reduce((acc, key) => {
+      // Remove the "VITE_" prefix and expose the variable
+      const newKey = key.replace(/^VITE_/, '')
+      acc[`process.env.${newKey}`] = JSON.stringify(env[key])
+      return acc
+    }, {} as Record<string, string>)
+
+  return {
+    plugins: [react()],
+    server: {
+      port: 5173,
+      strictPort: true,
+      allowedHosts: true,
+    },
+    build: {
+      outDir: 'dist',
+      sourcemap: true,
+    },
+    define: processEnv,
+  }
 })

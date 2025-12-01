@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback, Rea
 import { Auth0Client } from '@auth0/auth0-spa-js'
 import { setGetAccessToken, setCachedToken } from '../services/apiClient'
 import { parseAuthError } from '../utils/authErrorHandler'
+import { getDefaultAuthConfig, type AuthConfig } from '../config/authConfig'
 
 interface User {
   sub: string
@@ -25,9 +26,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 interface AuthProviderProps {
   children: ReactNode
+  /**
+   * Optional Auth0 configuration for dependency injection
+   * If not provided, uses getDefaultAuthConfig() which reads from environment variables
+   *
+   * Useful for:
+   * - Tests: Inject test configuration
+   * - Development: Override configuration at runtime
+   * - Multi-environment: Switch configs based on context
+   */
+  authConfig?: AuthConfig
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
@@ -38,21 +49,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initializeAuth0 = async () => {
       try {
-        const domain = import.meta.env.VITE_AUTH0_DOMAIN
-        const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID
-        const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI
-        const audience = import.meta.env.VITE_AUTH0_AUDIENCE
-
-        if (!domain || !clientId || !redirectUri || !audience) {
-          throw new Error('Missing required Auth0 configuration')
-        }
+        // Use injected config or get default from environment variables
+        const config = authConfig || getDefaultAuthConfig()
 
         const client = new Auth0Client({
-          domain,
-          clientId,
+          domain: config.domain,
+          clientId: config.clientId,
           authorizationParams: {
-            redirect_uri: redirectUri,
-            audience,
+            redirect_uri: config.redirectUri,
+            audience: config.audience,
             scope: 'openid profile email',
           },
         })
@@ -94,7 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     initializeAuth0()
-  }, [])
+  }, [authConfig])
 
   // Sync access token changes with apiClient cache for optimization
   // This allows apiClient to use cached token instead of calling getTokenSilently() on every request

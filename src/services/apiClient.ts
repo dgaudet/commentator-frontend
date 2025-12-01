@@ -37,6 +37,7 @@
  */
 
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios'
+import { env } from '../config/env'
 
 // Callback to get access token from Auth context
 let authContextGetToken: (() => Promise<string | null>) | null = null
@@ -98,21 +99,9 @@ function getCachedTokenIfValid(): string | null {
  * Get the base API URL from environment or use default
  */
 function getBaseUrl(): string {
-  // Try Vite environment variable first (during runtime in browser/Vite)
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const meta = (globalThis as any).import?.meta
-    if (meta?.env?.VITE_API_BASE_URL) {
-      return meta.env.VITE_API_BASE_URL
-    }
-  } catch {
-    // Ignore errors in Jest/Node environment
+  if (env.baseUrl) {
+    return env.baseUrl
   }
-
-  // Check process.env as fallback (Jest/Node)
-  // if (process?.env?.VITE_API_BASE_URL) {
-  //   return process.env.VITE_API_BASE_URL
-  // }
 
   // Default to localhost for development
   return 'http://localhost:3000'

@@ -1,17 +1,38 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import * as AuthModule from '../../contexts/AuthContext'
+import { render as rtlRender, screen, waitFor, cleanup } from '@testing-library/react'
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom'
 import { ProtectedRoute } from '../ProtectedRoute'
+
+// Mock the entire AuthContext module to override useAuth for this test
+jest.mock('../../contexts/AuthContext', () => ({
+  useAuth: jest.fn(),
+  AuthProvider: ({ children }: { children: React.ReactNode }) => children,
+}))
+
+// Import useAuth after mocking the module
+// eslint-disable-next-line import/first
+import { useAuth } from '../../contexts/AuthContext'
 
 const TestDashboard = () => <div>Dashboard</div>
 const TestLoginPage = () => <div>Login</div>
 
-const mockUseAuth = jest.spyOn(AuthModule, 'useAuth')
+const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>
+
+/**
+ * Custom render that doesn't wrap with AuthProvider
+ * Allows us to test ProtectedRoute with mocked useAuth
+ */
+function render(ui: React.ReactElement) {
+  return rtlRender(ui)
+}
 
 describe('ProtectedRoute', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   afterEach(() => {
-    mockUseAuth.mockRestore()
+    cleanup()
   })
 
   it('should render protected component if authenticated', async () => {

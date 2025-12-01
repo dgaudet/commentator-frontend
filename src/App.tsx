@@ -10,7 +10,6 @@ import { ThemeToggle } from './components/common/ThemeToggle'
 import { ThemeStyles } from './components/common/ThemeStyles'
 import { useThemeColors } from './hooks/useThemeColors'
 import { spacing } from './theme/tokens'
-import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { LoginPage } from './pages/LoginPage'
 import { CallbackPage } from './pages/CallbackPage'
@@ -165,32 +164,30 @@ function App() {
   }
 
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/callback" element={<CallbackPage />} />
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <ThemeProvider>
-                  <ThemeStyles />
-                  <AppContent
-                    showForm={showForm}
-                    editingSubject={editingSubject}
-                    onAddSubject={handleAddSubject}
-                    onEditSubject={handleEditSubject}
-                    onFormSuccess={handleFormSuccess}
-                    onFormCancel={handleFormCancel}
-                  />
-                </ThemeProvider>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/callback" element={<CallbackPage />} />
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <ThemeProvider>
+                <ThemeStyles />
+                <AppContent
+                  showForm={showForm}
+                  editingSubject={editingSubject}
+                  onAddSubject={handleAddSubject}
+                  onEditSubject={handleEditSubject}
+                  onFormSuccess={handleFormSuccess}
+                  onFormCancel={handleFormCancel}
+                />
+              </ThemeProvider>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
   )
 }
 

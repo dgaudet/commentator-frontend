@@ -2,12 +2,10 @@ import React from 'react'
 import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AuthProvider, useAuth } from '../AuthContext'
+import { createTestAuthConfig } from '../../config/authConfig'
 
-// Set environment variables for tests
-process.env.VITE_AUTH0_DOMAIN = 'test.auth0.com'
-process.env.VITE_AUTH0_CLIENT_ID = 'test-client-id'
-process.env.VITE_AUTH0_REDIRECT_URI = 'http://localhost:3000/callback'
-process.env.VITE_AUTH0_AUDIENCE = 'https://api.test.com'
+// Create test configuration using dependency injection
+const testAuthConfig = createTestAuthConfig()
 
 // Mock Auth0 SDK
 jest.mock('@auth0/auth0-spa-js', () => ({
@@ -42,7 +40,7 @@ describe('AuthContext', () => {
   describe('AuthProvider', () => {
     it('should render children', () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <div>Test Content</div>
         </AuthProvider>,
       )
@@ -50,18 +48,9 @@ describe('AuthContext', () => {
       expect(screen.getByText('Test Content')).toBeInTheDocument()
     })
 
-    it('should initialize Auth0 with config from environment', async () => {
-      const originalEnv = process.env
-      process.env = {
-        ...originalEnv,
-        VITE_AUTH0_DOMAIN: 'test.auth0.com',
-        VITE_AUTH0_CLIENT_ID: 'test-client-id',
-        VITE_AUTH0_REDIRECT_URI: 'http://localhost:3000/callback',
-        VITE_AUTH0_AUDIENCE: 'https://api.test.com',
-      }
-
+    it('should initialize Auth0 with injected config', async () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <div>Test</div>
         </AuthProvider>,
       )
@@ -69,8 +58,6 @@ describe('AuthContext', () => {
       await waitFor(() => {
         expect(screen.getByText('Test')).toBeInTheDocument()
       })
-
-      process.env = originalEnv
     })
   })
 
@@ -101,7 +88,7 @@ describe('AuthContext', () => {
 
     it('should provide auth context values', async () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <TestComponent />
         </AuthProvider>,
       )
@@ -113,7 +100,7 @@ describe('AuthContext', () => {
 
     it('should expose isAuthenticated state', async () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <TestComponent />
         </AuthProvider>,
       )
@@ -125,7 +112,7 @@ describe('AuthContext', () => {
 
     it('should expose user data (email and name)', async () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <TestComponent />
         </AuthProvider>,
       )
@@ -138,7 +125,7 @@ describe('AuthContext', () => {
 
     it('should expose accessToken', async () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <TestComponent />
         </AuthProvider>,
       )
@@ -150,7 +137,7 @@ describe('AuthContext', () => {
 
     it('should provide loading state', async () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <TestComponent />
         </AuthProvider>,
       )
@@ -163,7 +150,7 @@ describe('AuthContext', () => {
 
     it('should provide login method that redirects to Auth0', async () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <TestComponent />
         </AuthProvider>,
       )
@@ -181,7 +168,7 @@ describe('AuthContext', () => {
 
     it('should provide logout method', async () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <TestComponent />
         </AuthProvider>,
       )
@@ -199,7 +186,7 @@ describe('AuthContext', () => {
 
     it('should provide getAccessToken method', async () => {
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <TestComponent />
         </AuthProvider>,
       )
@@ -219,7 +206,7 @@ describe('AuthContext', () => {
       const mockInstance = Auth0ClientMock.mock.results[Auth0ClientMock.mock.results.length - 1]?.value
 
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <div>Test</div>
         </AuthProvider>,
       )
@@ -240,7 +227,7 @@ describe('AuthContext', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
       render(
-        <AuthProvider>
+        <AuthProvider authConfig={testAuthConfig}>
           <div>Test</div>
         </AuthProvider>,
       )
