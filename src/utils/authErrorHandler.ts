@@ -65,8 +65,8 @@ export const parseAuthError = (err: unknown): AuthError => {
       }
     }
 
-    // Story 3.9: Handle user cancelled login
-    if (err.message.includes('cancelled') || err.message.includes('cancelled')) {
+    // Story 3.9: Handle user cancelled login (supports both British and American spellings)
+    if (err.message.includes('cancelled') || err.message.includes('canceled')) {
       return {
         code: 'LOGIN_CANCELLED',
         message: 'Login was cancelled. Please try again.',
