@@ -12,10 +12,10 @@ import { FinalCommentsModal } from '../FinalCommentsModal'
 import type { Class } from '../../../types'
 
 const mockClass: Class = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   year: 2024,
-  subjectId: 1,
+  subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 }

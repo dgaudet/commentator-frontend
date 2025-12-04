@@ -29,7 +29,7 @@ const mockUseOutcomeComments = useOutcomeComments as jest.MockedFunction<
 >
 
 const mockClass: Class = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   year: 2024,
   subjectId: 5,
@@ -39,14 +39,14 @@ const mockClass: Class = {
 
 const mockPersonalizedComments: PersonalizedComment[] = [
   {
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'Excellent work this semester',
     subjectId: 5,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
-    id: 2,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
     comment: 'Good participation in class discussions',
     subjectId: 5,
     createdAt: '2024-01-02T00:00:00Z',
@@ -56,7 +56,7 @@ const mockPersonalizedComments: PersonalizedComment[] = [
 
 const mockOutcomeComments: OutcomeComment[] = [
   {
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
     subjectId: 5,
     lowerRange: 90,
     upperRange: 100,
@@ -65,7 +65,7 @@ const mockOutcomeComments: OutcomeComment[] = [
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
-    id: 2,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
     subjectId: 5,
     lowerRange: 80,
     upperRange: 89,
@@ -263,12 +263,12 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
 
   describe('I2: Complete Edit workflow with populate button', () => {
     const existingFinalComment: FinalComment = {
-      id: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k1',
       firstName: 'Alice',
       lastName: 'Smith',
       grade: 88,
       comment: 'Original comment text',
-      classId: 1,
+      classId: '75a1b2c3d4e5f6g7h8i9j0k1',
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
     }

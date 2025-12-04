@@ -30,7 +30,7 @@ const mockUseOutcomeComments = useOutcomeComments as jest.MockedFunction<
 >
 
 const mockClass: Class = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   year: 2024,
   subjectId: 5,
@@ -71,7 +71,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
     it('should handle combined comments that exceed 1000 character limit', () => {
       // Create very long outcome and personal comments
       const longOutcomeComment: OutcomeComment = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         subjectId: 5,
         lowerRange: 90,
         upperRange: 100,
@@ -81,7 +81,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
       }
 
       const longPersonalComment: PersonalizedComment = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'B'.repeat(500), // 500 chars
         subjectId: 5,
         createdAt: '2024-01-01T00:00:00Z',
@@ -143,7 +143,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
 
     it('should handle outcome comment exactly at 1000 character limit', () => {
       const maxLengthComment: OutcomeComment = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         subjectId: 5,
         lowerRange: 90,
         upperRange: 100,
@@ -186,7 +186,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
   describe('EC2: Special characters preservation', () => {
     it('should preserve special characters in outcome comments', () => {
       const specialCharsComment: OutcomeComment = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         subjectId: 5,
         lowerRange: 90,
         upperRange: 100,
@@ -228,7 +228,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
 
     it('should preserve unicode characters and emojis', () => {
       const unicodeComment: PersonalizedComment = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Excellent work this semester! 🎉 Keep it up! 你好',
         subjectId: 5,
         createdAt: '2024-01-01T00:00:00Z',
@@ -276,7 +276,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
     it('should handle grade outside outcome comment ranges gracefully', () => {
       const limitedOutcomeComments: OutcomeComment[] = [
         {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           subjectId: 5,
           lowerRange: 80,
           upperRange: 100,
@@ -294,7 +294,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
       })
 
       const personalComment: PersonalizedComment = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Good effort this semester',
         subjectId: 5,
         createdAt: '2024-01-01T00:00:00Z',
@@ -350,7 +350,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
   describe('EC4: Empty/whitespace handling', () => {
     it('should handle whitespace-only outcome comments', () => {
       const whitespaceComment: OutcomeComment = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         subjectId: 5,
         lowerRange: 90,
         upperRange: 100,
@@ -389,7 +389,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
 
     it('should trim leading/trailing whitespace when populating', () => {
       const whitespaceComment: OutcomeComment = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         subjectId: 5,
         lowerRange: 90,
         upperRange: 100,

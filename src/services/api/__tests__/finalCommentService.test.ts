@@ -64,14 +64,14 @@ describe('FinalCommentService', () => {
         config: {} as InternalAxiosRequestConfig,
       })
       mockApiClient.post.mockResolvedValue({
-        data: { data: { id: 1, firstName: 'John', lastName: 'Doe', grade: 85, classId: 1 }, success: true },
+        data: { data: { id: '65a1b2c3d4e5f6g7h8i9j0k1', firstName: 'John', lastName: 'Doe', grade: 85, classId: 1 }, success: true },
         status: 201,
         statusText: 'Created',
         headers: {},
         config: {} as InternalAxiosRequestConfig,
       })
       mockApiClient.put.mockResolvedValue({
-        data: { data: { id: 1, firstName: 'Jane', lastName: 'Smith', grade: 90, classId: 1 }, success: true },
+        data: { data: { id: '65a1b2c3d4e5f6g7h8i9j0k1', firstName: 'Jane', lastName: 'Smith', grade: 90, classId: 1 }, success: true },
         status: 200,
         statusText: 'OK',
         headers: {},
@@ -94,7 +94,7 @@ describe('FinalCommentService', () => {
 
     it('create should accept request object with all required fields', async () => {
       const request = {
-        classId: 1,
+        classId: '75a1b2c3d4e5f6g7h8i9j0k1',
         firstName: 'John',
         lastName: 'Doe',
         grade: 85,
@@ -107,7 +107,7 @@ describe('FinalCommentService', () => {
 
     it('create should accept request object with optional lastName omitted', async () => {
       const request = {
-        classId: 1,
+        classId: '75a1b2c3d4e5f6g7h8i9j0k1',
         firstName: 'John',
         grade: 85,
       }
@@ -118,7 +118,7 @@ describe('FinalCommentService', () => {
 
     it('create should accept request object with optional comment omitted', async () => {
       const request = {
-        classId: 1,
+        classId: '75a1b2c3d4e5f6g7h8i9j0k1',
         firstName: 'John',
         lastName: 'Doe',
         grade: 85,
@@ -130,7 +130,7 @@ describe('FinalCommentService', () => {
 
     it('update should accept id and request object', async () => {
       const request = {
-        classId: 1,
+        classId: '75a1b2c3d4e5f6g7h8i9j0k1',
         firstName: 'Jane',
         lastName: 'Smith',
         grade: 90,

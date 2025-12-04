@@ -24,7 +24,7 @@ const mockUseOutcomeComments = useOutcomeComments as jest.MockedFunction<typeof 
 
 // Mock data
 const mockClass: Class = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Grade 10 Math',
   year: 2024,
   subjectId: 5,
@@ -34,7 +34,7 @@ const mockClass: Class = {
 
 const mockOutcomeComments: OutcomeComment[] = [
   {
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
     subjectId: 5,
     comment: 'Demonstrates strong understanding of algebraic concepts',
     upperRange: 100,
@@ -43,7 +43,7 @@ const mockOutcomeComments: OutcomeComment[] = [
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
-    id: 2,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
     subjectId: 5,
     comment: 'Shows adequate comprehension of mathematical principles',
     upperRange: 79,
@@ -52,7 +52,7 @@ const mockOutcomeComments: OutcomeComment[] = [
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
-    id: 3,
+    id: '65a1b2c3d4e5f6g7h8i9j0k3',
     subjectId: 5,
     comment: 'Needs additional support to meet learning outcomes',
     upperRange: 59,
@@ -129,7 +129,7 @@ describe('FinalCommentsModal - Outcome Comment Integration', () => {
 
       // Create entityData without subjectId (edge case)
       const entityDataWithoutSubjectId = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         name: 'Test Class',
       }
 
@@ -621,8 +621,8 @@ describe('FinalCommentsModal - Outcome Comment Integration', () => {
 
   describe('EDIT MODE: Outcome comment integration in edit form', () => {
     const mockExistingFinalComment = {
-      id: 1,
-      classId: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k1',
+      classId: '75a1b2c3d4e5f6g7h8i9j0k1',
       firstName: 'John',
       lastName: 'Doe',
       grade: 85,
