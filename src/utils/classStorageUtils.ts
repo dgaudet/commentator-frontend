@@ -8,7 +8,7 @@
  * Use subjectStorageUtils instead for new code.
  *
  * Business Rules:
- * - Store class ID as number
+ * - Store class ID as string (MongoDB ObjectId format)
  * - Return null if key missing or invalid
  * - Clear stale selections gracefully
  * - Handle localStorage unavailable (private browsing, quota exceeded)
@@ -18,7 +18,7 @@ import { STORAGE_KEYS, getStorageItem, setStorageItem, removeStorageItem } from 
 
 /**
  * Get selected class ID from localStorage
- * @returns {number | null} Class ID or null if not found/invalid
+ * @returns {string | null} Class ID or null if not found/invalid
  * @deprecated Use getSelectedSubjectId from subjectStorageUtils instead
  *
  * @example
@@ -27,13 +27,12 @@ import { STORAGE_KEYS, getStorageItem, setStorageItem, removeStorageItem } from 
  *   // Use the stored class ID
  * }
  */
-export function getSelectedClassId(): number | null {
+export function getSelectedClassId(): string | null {
   try {
     const stored = getStorageItem(STORAGE_KEYS.SELECTED_CLASS_ID)
-    if (stored === null) return null
+    if (stored === null || stored === '') return null
 
-    const parsed = parseInt(stored, 10)
-    return isNaN(parsed) ? null : parsed
+    return stored
   } catch (error) {
     // Handle localStorage unavailable (private browsing, etc.)
     console.warn('Failed to read from localStorage:', error)
@@ -43,15 +42,15 @@ export function getSelectedClassId(): number | null {
 
 /**
  * Save selected class ID to localStorage
- * @param {number} classId - ID of selected class
+ * @param {string} classId - ID of selected class
  * @deprecated Use saveSelectedSubjectId from subjectStorageUtils instead
  *
  * @example
  * saveSelectedClassId(42)
  */
-export function saveSelectedClassId(classId: number): void {
+export function saveSelectedClassId(classId: string): void {
   try {
-    setStorageItem(STORAGE_KEYS.SELECTED_CLASS_ID, classId.toString())
+    setStorageItem(STORAGE_KEYS.SELECTED_CLASS_ID, classId)
   } catch (error) {
     // Handle localStorage unavailable or quota exceeded
     console.warn('Failed to write to localStorage:', error)

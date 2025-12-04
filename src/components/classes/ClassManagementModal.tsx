@@ -5,7 +5,7 @@
  * Uses a dropdown selector to choose which class to edit/delete.
  *
  * Generic Type Parameter:
- * - T extends { id: number; name: string } - Supports Subject type
+ * - T extends { id: string; name: string } - Supports Subject type
  *
  * User Stories:
  * - US-CLASS-001: Navigate to Class Management
@@ -37,27 +37,27 @@ import { FinalCommentsModal } from '../finalComments/FinalCommentsModal'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 
-interface ClassManagementModalProps<T extends { id: number; name: string }> {
+interface ClassManagementModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
   entityData: T
   classes: Class[]
   onCreateClass: (request: CreateClassRequest) => Promise<void>
-  onUpdateClass: (id: number, request: UpdateClassRequest) => Promise<void>
-  onDeleteClass: (id: number) => Promise<void>
+  onUpdateClass: (id: string, request: UpdateClassRequest) => Promise<void>
+  onDeleteClass: (id: string) => Promise<void>
   onViewFinalComments?: (classData: Class) => void
-  checkFinalCommentsCount?: (classId: number) => Promise<number>
+  checkFinalCommentsCount?: (classId: string) => Promise<number>
   loading: boolean
   error: string | null
   // US-CLASS-TABS-003: Final Comments tab props
   finalComments?: FinalComment[]
   onCreateFinalComment?: (request: CreateFinalCommentRequest) => Promise<void>
-  onUpdateFinalComment?: (id: number, request: UpdateFinalCommentRequest) => Promise<void>
-  onDeleteFinalComment?: (id: number) => Promise<void>
+  onUpdateFinalComment?: (id: string, request: UpdateFinalCommentRequest) => Promise<void>
+  onDeleteFinalComment?: (id: string) => Promise<void>
   finalCommentsLoading?: boolean
   finalCommentsError?: string | null
 }
 
-export const ClassManagementModal = <T extends { id: number; name: string }>({
+export const ClassManagementModal = <T extends { id: string; name: string }>({
   isOpen,
   entityData,
   classes,
@@ -76,12 +76,12 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
   finalCommentsLoading = false,
   finalCommentsError = null,
 }: ClassManagementModalProps<T>) => {
-  const [selectedClassId, setSelectedClassId] = useState<number | null>(null)
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(null)
   const [className, setClassName] = useState('')
   const [classYear, setClassYear] = useState(new Date().getFullYear())
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
-    classId: number | null
+    classId: string | null
     className: string
     hasFinalComments: boolean
     finalCommentsCount: number
@@ -293,7 +293,7 @@ export const ClassManagementModal = <T extends { id: number; name: string }>({
     if (value === '') {
       setSelectedClassId(null)
     } else {
-      setSelectedClassId(Number(value))
+      setSelectedClassId(value)
     }
   }
 

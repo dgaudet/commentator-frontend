@@ -8,24 +8,26 @@
 import { render, screen, fireEvent, waitFor } from '../../../test-utils'
 import { ClassManagementModal } from '../ClassManagementModal'
 import type { Class } from '../../../types'
+import { MOCK_SUBJECT_ID_MATH } from '../../../mocks/data/subjects'
+import { MOCK_CLASS_ID_MATH_ADVANCED, MOCK_CLASS_ID_MATH_HONORS } from '../../../mocks/data/classes'
 
 const mockSubject = {
-  id: 1,
+  id: MOCK_SUBJECT_ID_MATH,
   name: 'Mathematics 101',
 }
 
 const mockClasses: Class[] = [
   {
-    id: 1,
-    subjectId: 1,
+    id: MOCK_CLASS_ID_MATH_ADVANCED,
+    subjectId: MOCK_SUBJECT_ID_MATH,
     name: 'Advanced Section',
     year: 2024,
     createdAt: '2024-01-15T10:00:00Z',
     updatedAt: '2024-01-15T10:00:00Z',
   },
   {
-    id: 2,
-    subjectId: 1,
+    id: MOCK_CLASS_ID_MATH_HONORS,
+    subjectId: MOCK_SUBJECT_ID_MATH,
     name: 'Honors Class',
     year: 2024,
     createdAt: '2024-01-15T11:00:00Z',
@@ -199,7 +201,7 @@ describe('ClassManagementModal', () => {
 
       await waitFor(() => {
         expect(mockOnCreateClass).toHaveBeenCalledWith({
-          subjectId: 1,
+          subjectId: MOCK_SUBJECT_ID_MATH,
           name: 'New Class',
           year: 2024,
         })
@@ -659,8 +661,8 @@ describe('ClassManagementModal', () => {
 
     it('should automatically select newly created class (AC1)', async () => {
       const newClass: Class = {
-        id: 3,
-        subjectId: 1,
+        id: '75a1b2c3d4e5f6g7h8i9j0k3',
+        subjectId: MOCK_SUBJECT_ID_MATH,
         name: 'New Class',
         year: 2024,
         createdAt: '2024-01-15T12:00:00Z',
@@ -720,13 +722,13 @@ describe('ClassManagementModal', () => {
 
       // Verify dropdown shows the selected class
       const dropdown = screen.getByLabelText(/Select a class/i) as HTMLSelectElement
-      expect(dropdown.value).toBe('3')
+      expect(dropdown.value).toBe('75a1b2c3d4e5f6g7h8i9j0k3')
     })
 
     it('should clear form fields after class creation while maintaining selection (AC2)', async () => {
       const newClass: Class = {
-        id: 3,
-        subjectId: 1,
+        id: '75a1b2c3d4e5f6g7h8i9j0k3',
+        subjectId: MOCK_SUBJECT_ID_MATH,
         name: 'New Class',
         year: 2024,
         createdAt: '2024-01-15T12:00:00Z',
