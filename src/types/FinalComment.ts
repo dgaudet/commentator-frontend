@@ -6,7 +6,9 @@
  * User Story: US-FINAL-001, US-FINAL-002, US-FINAL-003
  *
  * IMPORTANT NOTES:
- * - id is number (integer), not string UUID
+ * - id is string (MongoDB ObjectId format), not number
+ * - classId references Class.id (string), not Subject.id
+ * - grade is numeric score (0-100), NOT an ID
  * - Field names are camelCase (firstName, createdAt), not snake_case (first_name, created_at)
  * - Timestamps are ISO 8601 strings
  * - lastName is optional (may be undefined or omitted)
@@ -18,15 +20,15 @@
  * Returned by: GET /final-comment, GET /final-comment/:id, POST /final-comment, PUT /final-comment/:id
  */
 export interface FinalComment {
-  /** Unique identifier (auto-generated integer from backend) */
-  id: number
-  /** Associated class ID - Required */
-  classId: number
+  /** Unique identifier (MongoDB ObjectId string) */
+  id: string
+  /** Associated class ID (references Class.id) - Required */
+  classId: string
   /** Student first name - Required */
   firstName: string
   /** Student last name - Optional */
   lastName?: string
-  /** Student grade (0-100) - Required */
+  /** Student grade (0-100 numeric score) - Required */
   grade: number
   /** Optional qualitative feedback comment (max 1000 chars) */
   comment?: string
@@ -41,13 +43,13 @@ export interface FinalComment {
  * Used by: POST /final-comment
  */
 export interface CreateFinalCommentRequest {
-  /** Associated class ID - Required */
-  classId: number
+  /** Associated class ID (string) - Required */
+  classId: string
   /** Student first name - Required, min 1 char after trim */
   firstName: string
   /** Student last name - Optional, min 1 char if provided after trim */
   lastName?: string
-  /** Student grade (0-100 inclusive) - Required */
+  /** Student grade (0-100 inclusive numeric score) - Required */
   grade: number
   /** Optional qualitative feedback comment - Max 1000 chars */
   comment?: string
@@ -58,13 +60,13 @@ export interface CreateFinalCommentRequest {
  * Used by: PUT /final-comment/:id
  */
 export interface UpdateFinalCommentRequest {
-  /** Associated class ID - Required */
-  classId: number
+  /** Associated class ID (string) - Required */
+  classId: string
   /** Student first name - Required, min 1 char after trim */
   firstName: string
   /** Student last name - Optional, min 1 char if provided after trim */
   lastName?: string
-  /** Student grade (0-100 inclusive) - Required */
+  /** Student grade (0-100 inclusive numeric score) - Required */
   grade: number
   /** Optional qualitative feedback comment - Max 1000 chars */
   comment?: string
