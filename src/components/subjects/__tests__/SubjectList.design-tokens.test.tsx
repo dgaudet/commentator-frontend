@@ -29,13 +29,13 @@ const mockUseFinalComments = useFinalComments as jest.MockedFunction<typeof useF
 
 const mockSubjects: Subject[] = [
   {
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
     name: 'Mathematics',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
-    id: 2,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
     name: 'English',
     createdAt: '2024-01-16T11:00:00Z',
     updatedAt: '2024-01-16T11:00:00Z',

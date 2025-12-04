@@ -17,7 +17,7 @@ jest.mock('../../../hooks/useSubjects')
 const mockUseSubjects = useSubjects as jest.MockedFunction<typeof useSubjects>
 
 const mockExistingSubject: Subject = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   createdAt: '2024-01-15T10:30:00Z',
   updatedAt: '2024-01-15T10:30:00Z',
@@ -99,7 +99,7 @@ describe('SubjectForm', () => {
     })
     it('should call createSubject with valid data (name only)', async () => {
       mockCreateSubject.mockResolvedValue({
-        id: 2,
+        id: '65a1b2c3d4e5f6g7h8i9j0k2',
         name: 'English 201',
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-15T10:30:00Z',
@@ -121,7 +121,7 @@ describe('SubjectForm', () => {
 
     it('should call onSuccess after successful creation', async () => {
       const createdSubject = {
-        id: 2,
+        id: '65a1b2c3d4e5f6g7h8i9j0k2',
         name: 'English 201',
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-15T10:30:00Z',
@@ -360,7 +360,7 @@ describe('SubjectForm', () => {
 
     it('should show error when editing to match another subject in edit mode', async () => {
       const anotherSubject: Subject = {
-        id: 2,
+        id: '65a1b2c3d4e5f6g7h8i9j0k2',
         name: 'English 201',
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-15T10:30:00Z',
@@ -496,7 +496,7 @@ describe('SubjectForm', () => {
     it('should NOT display Cancel button in edit mode', () => {
       const mockOnCancel = jest.fn()
       const existingSubject = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         name: 'Mathematics 101',
         createdAt: '2024-01-01T10:30:00Z',
         updatedAt: '2024-01-01T10:30:00Z',

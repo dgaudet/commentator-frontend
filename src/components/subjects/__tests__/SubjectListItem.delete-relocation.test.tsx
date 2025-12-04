@@ -10,7 +10,7 @@ import { SubjectListItem } from '../SubjectListItem'
 import { Subject } from '../../../types/Subject'
 
 const mockSubject: Subject = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   createdAt: '2024-01-15T10:30:00Z',
   updatedAt: '2024-02-20T14:15:00Z',
