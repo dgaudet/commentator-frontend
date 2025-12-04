@@ -6,7 +6,7 @@
  * Key Change: classId → subjectId, storage key renamed
  *
  * Business Rules:
- * - Store subject ID as number
+ * - Store subject ID as string (MongoDB ObjectId format)
  * - Return null if key missing or invalid
  * - Clear stale selections gracefully
  * - Handle localStorage unavailable (private browsing, quota exceeded)
@@ -16,7 +16,7 @@ import { STORAGE_KEYS, getStorageItem, setStorageItem, removeStorageItem } from 
 
 /**
  * Get selected subject ID from localStorage
- * @returns {number | null} Subject ID or null if not found/invalid
+ * @returns {string | null} Subject ID or null if not found/invalid
  *
  * @example
  * const subjectId = getSelectedSubjectId()
@@ -24,13 +24,12 @@ import { STORAGE_KEYS, getStorageItem, setStorageItem, removeStorageItem } from 
  *   // Use the stored subject ID
  * }
  */
-export function getSelectedSubjectId(): number | null {
+export function getSelectedSubjectId(): string | null {
   try {
     const stored = getStorageItem(STORAGE_KEYS.SELECTED_SUBJECT_ID)
-    if (stored === null) return null
+    if (stored === null || stored === '') return null
 
-    const parsed = parseInt(stored, 10)
-    return isNaN(parsed) ? null : parsed
+    return stored
   } catch (error) {
     // Handle localStorage unavailable (private browsing, etc.)
     console.warn('Failed to read from localStorage:', error)
@@ -40,14 +39,14 @@ export function getSelectedSubjectId(): number | null {
 
 /**
  * Save selected subject ID to localStorage
- * @param {number} subjectId - ID of selected subject
+ * @param {string} subjectId - ID of selected subject
  *
  * @example
- * saveSelectedSubjectId(42)
+ * saveSelectedSubjectId('65a1b2c3d4e5f6g7h8i9j0k1')
  */
-export function saveSelectedSubjectId(subjectId: number): void {
+export function saveSelectedSubjectId(subjectId: string): void {
   try {
-    setStorageItem(STORAGE_KEYS.SELECTED_SUBJECT_ID, subjectId.toString())
+    setStorageItem(STORAGE_KEYS.SELECTED_SUBJECT_ID, subjectId)
   } catch (error) {
     // Handle localStorage unavailable or quota exceeded
     console.warn('Failed to write to localStorage:', error)
