@@ -13,14 +13,14 @@ describe('Subject Type Definitions', () => {
   describe('Subject interface', () => {
     it('should accept a valid subject object with all required fields', () => {
       const validSubject: Subject = {
-        id: 1,
+        id: '65a1b2c3d4e5f6a7b8c9d0e1',
         name: 'Mathematics 101',
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-15T10:30:00Z',
       }
 
       // Type validation - if this compiles, types are correct
-      expect(validSubject.id).toBe(1)
+      expect(validSubject.id).toBe('65a1b2c3d4e5f6a7b8c9d0e1')
       expect(validSubject.name).toBe('Mathematics 101')
       expect(validSubject.createdAt).toBe('2024-01-15T10:30:00Z')
       expect(validSubject.updatedAt).toBe('2024-01-15T10:30:00Z')
@@ -28,7 +28,7 @@ describe('Subject Type Definitions', () => {
 
     it('should NOT have year field (removed in Subject entity)', () => {
       const subject: Subject = {
-        id: 1,
+        id: '65a1b2c3d4e5f6a7b8c9d0e2',
         name: 'Test',
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-15T10:30:00Z',
@@ -38,20 +38,22 @@ describe('Subject Type Definitions', () => {
       expect(subject).not.toHaveProperty('year')
     })
 
-    it('should have id as number type (not string)', () => {
+    it('should have id as string type (MongoDB ObjectId format)', () => {
       const subject: Subject = {
-        id: 123, // Must be number, not string UUID
+        id: '65a1b2c3d4e5f6a7b8c9d0e3', // MongoDB ObjectId string (24 hex characters)
         name: 'Test',
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-15T10:30:00Z',
       }
 
-      expect(typeof subject.id).toBe('number')
+      expect(typeof subject.id).toBe('string')
+      // Verify it matches MongoDB ObjectId format (24 hex characters)
+      expect(subject.id).toMatch(/^[0-9a-fA-F]{24}$/)
     })
 
     it('should use camelCase field names (createdAt, not created_at)', () => {
       const subject: Subject = {
-        id: 1,
+        id: '65a1b2c3d4e5f6a7b8c9d0e4',
         name: 'Test',
         createdAt: '2024-01-15T10:30:00Z', // camelCase
         updatedAt: '2024-01-15T10:30:00Z', // camelCase
@@ -66,7 +68,7 @@ describe('Subject Type Definitions', () => {
 
     it('should have ISO 8601 timestamp strings for dates', () => {
       const subject: Subject = {
-        id: 1,
+        id: '65a1b2c3d4e5f6a7b8c9d0e5',
         name: 'Test',
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-16T11:45:00Z',

@@ -4,7 +4,7 @@
  * Backend API Reference: http://localhost:3000/api-docs/ui
  *
  * IMPORTANT NOTES:
- * - id is number (integer), not string UUID
+ * - id is string (MongoDB ObjectId format - 24 hexadecimal characters)
  * - Field names are camelCase (createdAt), not snake_case (created_at)
  * - Timestamps are ISO 8601 strings
  * - Subject entity does NOT have year field (removed in API refactoring)
@@ -15,8 +15,8 @@
  * Returned by: GET /subject, GET /subject/:id, POST /subject, PUT /subject/:id
  */
 export interface Subject {
-  /** Unique identifier (auto-generated integer from backend) */
-  id: number
+  /** Unique identifier (MongoDB ObjectId string - 24 hex characters, e.g., "65a1b2c3d4e5f6a7b8c9d0e1") */
+  id: string
   /** Subject name (e.g., "Mathematics 101") - Required, 1-100 characters */
   name: string
   /** Creation timestamp (ISO 8601) - Auto-generated, immutable */
