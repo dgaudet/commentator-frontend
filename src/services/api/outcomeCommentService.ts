@@ -22,9 +22,9 @@ import type {
 export const outcomeCommentService = {
   /**
    * Get all outcome comments for a specific subject
-   * @param subjectId - The ID of the subject to fetch comments for
+   * @param subjectId - The string ID of the subject to fetch comments for
    */
-  async getBySubjectId(subjectId: number): Promise<OutcomeComment[]> {
+  async getBySubjectId(subjectId: string): Promise<OutcomeComment[]> {
     try {
       const response = await apiClient.get<OutcomeComment[]>(
         `/outcome-comment?subjectId=${subjectId}`,
@@ -59,8 +59,9 @@ export const outcomeCommentService = {
 
   /**
    * Update an existing outcome comment
+   * @param id - The string ID of the outcome comment to update
    */
-  async update(id: number, request: UpdateOutcomeCommentRequest): Promise<OutcomeComment> {
+  async update(id: string, request: UpdateOutcomeCommentRequest): Promise<OutcomeComment> {
     try {
       const response = await apiClient.put<OutcomeComment>(
         `/outcome-comment/${id}`,
@@ -75,8 +76,9 @@ export const outcomeCommentService = {
 
   /**
    * Delete an outcome comment
+   * @param id - The string ID of the outcome comment to delete
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
       await apiClient.delete(`/outcome-comment/${id}`)
     } catch (error) {
