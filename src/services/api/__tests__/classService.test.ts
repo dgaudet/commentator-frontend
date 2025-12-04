@@ -22,16 +22,16 @@ describe('classService', () => {
     it('should fetch classes for a subject successfully', async () => {
       const mockClasses: Class[] = [
         {
-          id: 1,
-          subjectId: 5,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '55b1a2c3d4e5f6g7h8i9j0k1',
           name: 'Advanced Section',
           year: 2024,
           createdAt: '2024-01-15T10:00:00Z',
           updatedAt: '2024-01-15T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 5,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '55b1a2c3d4e5f6g7h8i9j0k1',
           name: 'Honors Class',
           year: 2024,
           createdAt: '2024-01-15T11:00:00Z',
@@ -41,16 +41,16 @@ describe('classService', () => {
 
       mockedApiClient.get.mockResolvedValueOnce({ data: mockClasses })
 
-      const result = await classService.getBySubjectId(5)
+      const result = await classService.getBySubjectId('55b1a2c3d4e5f6g7h8i9j0k1')
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/class?subjectId=5')
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/class?subjectId=55b1a2c3d4e5f6g7h8i9j0k1')
       expect(result).toEqual(mockClasses)
     })
 
     it('should throw error when fetch fails', async () => {
       mockedApiClient.get.mockRejectedValueOnce(new Error('Network error'))
 
-      await expect(classService.getBySubjectId(5)).rejects.toThrow(
+      await expect(classService.getBySubjectId('55b1a2c3d4e5f6g7h8i9j0k1')).rejects.toThrow(
         'Failed to fetch classes for subject',
       )
     })
@@ -58,7 +58,7 @@ describe('classService', () => {
     it('should return empty array when no classes exist', async () => {
       mockedApiClient.get.mockResolvedValueOnce({ data: [] })
 
-      const result = await classService.getBySubjectId(5)
+      const result = await classService.getBySubjectId('55b1a2c3d4e5f6g7h8i9j0k1')
 
       expect(result).toEqual([])
     })
@@ -67,14 +67,14 @@ describe('classService', () => {
   describe('create', () => {
     it('should create a new class successfully', async () => {
       const request: CreateClassRequest = {
-        subjectId: 5,
+        subjectId: '55b1a2c3d4e5f6g7h8i9j0k1',
         name: 'New Class',
         year: 2024,
       }
 
       const mockCreatedClass: Class = {
-        id: 10,
-        subjectId: 5,
+        id: '65a1b2c3d4e5f6g7h8i9j0k3',
+        subjectId: '55b1a2c3d4e5f6g7h8i9j0k1',
         name: 'New Class',
         year: 2024,
         createdAt: '2024-01-15T10:00:00Z',
@@ -91,7 +91,7 @@ describe('classService', () => {
 
     it('should throw error when create fails', async () => {
       const request: CreateClassRequest = {
-        subjectId: 5,
+        subjectId: '55b1a2c3d4e5f6g7h8i9j0k1',
         name: 'New Class',
         year: 2024,
       }
@@ -103,7 +103,7 @@ describe('classService', () => {
 
     it('should handle duplicate class error', async () => {
       const request: CreateClassRequest = {
-        subjectId: 5,
+        subjectId: '55b1a2c3d4e5f6g7h8i9j0k1',
         name: 'Duplicate Class',
         year: 2024,
       }
@@ -122,8 +122,8 @@ describe('classService', () => {
       }
 
       const mockUpdatedClass: Class = {
-        id: 1,
-        subjectId: 5,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '55b1a2c3d4e5f6g7h8i9j0k1',
         name: 'Updated Class Name',
         year: 2025,
         createdAt: '2024-01-15T10:00:00Z',
@@ -132,9 +132,9 @@ describe('classService', () => {
 
       mockedApiClient.put.mockResolvedValueOnce({ data: mockUpdatedClass })
 
-      const result = await classService.update(1, request)
+      const result = await classService.update('65a1b2c3d4e5f6g7h8i9j0k1', request)
 
-      expect(mockedApiClient.put).toHaveBeenCalledWith('/class/1', request)
+      expect(mockedApiClient.put).toHaveBeenCalledWith('/class/65a1b2c3d4e5f6g7h8i9j0k1', request)
       expect(result).toEqual(mockUpdatedClass)
     })
 
@@ -146,7 +146,7 @@ describe('classService', () => {
 
       mockedApiClient.put.mockRejectedValueOnce(new Error('Not found'))
 
-      await expect(classService.update(1, request)).rejects.toThrow('Failed to update class')
+      await expect(classService.update('65a1b2c3d4e5f6g7h8i9j0k1', request)).rejects.toThrow('Failed to update class')
     })
 
     it('should handle duplicate error on update', async () => {
@@ -157,7 +157,7 @@ describe('classService', () => {
 
       mockedApiClient.put.mockRejectedValueOnce(new Error('Duplicate class'))
 
-      await expect(classService.update(1, request)).rejects.toThrow('Failed to update class')
+      await expect(classService.update('65a1b2c3d4e5f6g7h8i9j0k1', request)).rejects.toThrow('Failed to update class')
     })
   })
 
@@ -165,15 +165,15 @@ describe('classService', () => {
     it('should delete a class successfully', async () => {
       mockedApiClient.delete.mockResolvedValueOnce({ data: null })
 
-      await classService.delete(1)
+      await classService.delete('65a1b2c3d4e5f6g7h8i9j0k1')
 
-      expect(mockedApiClient.delete).toHaveBeenCalledWith('/class/1')
+      expect(mockedApiClient.delete).toHaveBeenCalledWith('/class/65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should throw error when delete fails', async () => {
       mockedApiClient.delete.mockRejectedValueOnce(new Error('Not found'))
 
-      await expect(classService.delete(1)).rejects.toThrow('Failed to delete class')
+      await expect(classService.delete('65a1b2c3d4e5f6g7h8i9j0k1')).rejects.toThrow('Failed to delete class')
     })
 
     it('should throw error when trying to delete class with associated data', async () => {
@@ -181,7 +181,7 @@ describe('classService', () => {
         new Error('Cannot delete class with associated data'),
       )
 
-      await expect(classService.delete(1)).rejects.toThrow('Failed to delete class')
+      await expect(classService.delete('65a1b2c3d4e5f6g7h8i9j0k1')).rejects.toThrow('Failed to delete class')
     })
   })
 })

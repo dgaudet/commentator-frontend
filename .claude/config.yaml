@@ -1,0 +1,18 @@
+hooks:
+  enabled: false
+  git:
+    enabled: false
+
+  automation:
+    enabled: false
+    git:
+      enabled: false
+
+  git:
+    enabled: false
+    autoCommit: false
+    autoPush: false
+
+  shell:
+    hooks:
+      enabled: false
