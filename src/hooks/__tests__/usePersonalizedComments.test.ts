@@ -16,13 +16,13 @@ const mockPersonalizedCommentService = personalizedCommentService as jest.Mocked
 
 describe('usePersonalizedComments', () => {
   const mockComment = createMockPersonalizedComment({
-    id: 1,
-    subjectId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'Test personalized comment',
   })
 
   const mockCreateRequest: CreatePersonalizedCommentRequest = {
-    subjectId: 1,
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'New personalized comment',
   }
 
@@ -107,7 +107,7 @@ describe('usePersonalizedComments', () => {
 
   describe('createComment', () => {
     it('should create a new comment successfully', async () => {
-      const newComment = { ...mockComment, id: 2, comment: 'New personalized comment' }
+      const newComment = { ...mockComment, id: '65a1b2c3d4e5f6g7h8i9j0k2', comment: 'New personalized comment' }
       mockPersonalizedCommentService.create.mockResolvedValue(newComment)
 
       const { result } = renderHook(() => usePersonalizedComments())

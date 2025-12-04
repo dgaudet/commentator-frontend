@@ -19,19 +19,19 @@ import { createMockOutcomeComments } from '../../test-utils'
 
 const mockOutcomeComments = [
   createMockOutcomeComments(1, {
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
     upperRange: 100,
     lowerRange: 90,
     comment: 'Excellent achievement',
   })[0],
   createMockOutcomeComments(1, {
-    id: 2,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
     upperRange: 89,
     lowerRange: 80,
     comment: 'Very good work',
   })[0],
   createMockOutcomeComments(1, {
-    id: 3,
+    id: '65a1b2c3d4e5f6g7h8i9j0k3',
     upperRange: 79,
     lowerRange: 70,
     comment: 'Good effort',

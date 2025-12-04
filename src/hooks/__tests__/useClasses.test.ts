@@ -35,8 +35,8 @@ describe('useClasses', () => {
   describe('loadClasses', () => {
     it('should load classes for a subject successfully', async () => {
       const mockClasses = [
-        createMockClass({ id: 1, subjectId: 5, name: 'Advanced Section' }),
-        createMockClass({ id: 2, subjectId: 5, name: 'Honors Class' }),
+        createMockClass({ id: '65a1b2c3d4e5f6g7h8i9j0k1', subjectId: 5, name: 'Advanced Section' }),
+        createMockClass({ id: '65a1b2c3d4e5f6g7h8i9j0k2', subjectId: 5, name: 'Honors Class' }),
       ]
 
       mockedClassService.getBySubjectId.mockResolvedValueOnce(mockClasses)
@@ -141,7 +141,7 @@ describe('useClasses', () => {
   describe('updateClass', () => {
     it('should update an existing class successfully', async () => {
       const existingClass = createMockClass({
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         subjectId: 5,
         name: 'Old Name',
       })
@@ -204,7 +204,7 @@ describe('useClasses', () => {
   describe('deleteClass', () => {
     it('should delete a class successfully', async () => {
       const classToDelete = createMockClass({
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         subjectId: 5,
         name: 'Class to Delete',
       })

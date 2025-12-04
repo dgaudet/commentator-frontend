@@ -17,14 +17,14 @@ const mockOutcomeCommentService = outcomeCommentService as jest.Mocked<typeof ou
 
 describe('useOutcomeComments', () => {
   const mockComment = createMockOutcomeComment({
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
     upperRange: 85,
     lowerRange: 75,
     comment: 'Test comment',
   })
 
   const mockCreateRequest: CreateOutcomeCommentRequest = {
-    subjectId: 1,
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     upperRange: 85,
     lowerRange: 75,
     comment: 'New comment',
