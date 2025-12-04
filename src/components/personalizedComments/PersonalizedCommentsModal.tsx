@@ -7,7 +7,7 @@
  * Simpler than OutcomeCommentsModal - no upperRange/lowerRange fields
  *
  * Generic Type Parameter:
- * - T extends { id: number; name: string } - Supports Subject type
+ * - T extends { id: string; name: string } - Supports Subject type
  *
  * User Stories:
  * - US-PERS-001: View all personalized comments for a subject
@@ -38,7 +38,7 @@ import { useThemeColors } from '../../hooks/useThemeColors'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
-interface PersonalizedCommentsModalProps<T extends { id: number; name: string }> {
+interface PersonalizedCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
   entityData: T
   personalizedComments: PersonalizedComment[]
@@ -49,7 +49,7 @@ interface PersonalizedCommentsModalProps<T extends { id: number; name: string }>
   error: string | null
 }
 
-export const PersonalizedCommentsModal = <T extends { id: number; name: string }>({
+export const PersonalizedCommentsModal = <T extends { id: string; name: string }>({
   isOpen,
   entityData,
   personalizedComments,

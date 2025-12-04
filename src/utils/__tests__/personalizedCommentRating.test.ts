@@ -21,9 +21,9 @@ import type { PersonalizedComment } from '../../types/PersonalizedComment'
 describe('getNormalizedRating', () => {
   it('returns the rating when defined', () => {
     const comment: PersonalizedComment = {
-      id: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k1',
       comment: 'Great work',
-      subjectId: 1,
+      subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
       rating: 5,
       createdAt: '2024-01-15T10:00:00Z',
       updatedAt: '2024-01-15T10:00:00Z',
@@ -34,9 +34,9 @@ describe('getNormalizedRating', () => {
 
   it('defaults to 3 when rating is null', () => {
     const comment: PersonalizedComment = {
-      id: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k1',
       comment: 'Okay work',
-      subjectId: 1,
+      subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
       rating: null,
       createdAt: '2024-01-15T10:00:00Z',
       updatedAt: '2024-01-15T10:00:00Z',
@@ -47,9 +47,9 @@ describe('getNormalizedRating', () => {
 
   it('defaults to 3 when rating is undefined', () => {
     const comment: PersonalizedComment = {
-      id: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k1',
       comment: 'No rating yet',
-      subjectId: 1,
+      subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
       createdAt: '2024-01-15T10:00:00Z',
       updatedAt: '2024-01-15T10:00:00Z',
     }
@@ -59,9 +59,9 @@ describe('getNormalizedRating', () => {
 
   it('returns 0 when rating is 0 (valid edge case)', () => {
     const comment: PersonalizedComment = {
-      id: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k1',
       comment: 'Zero rating',
-      subjectId: 1,
+      subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
       rating: 0,
       createdAt: '2024-01-15T10:00:00Z',
       updatedAt: '2024-01-15T10:00:00Z',
@@ -163,7 +163,7 @@ describe('sortPersonalizedCommentsByRating', () => {
   ): PersonalizedComment => ({
     id,
     comment,
-    subjectId: 1,
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     rating: rating === undefined ? undefined : rating,
     createdAt: '2024-01-15T10:00:00Z',
     updatedAt: '2024-01-15T10:00:00Z',
@@ -238,9 +238,9 @@ describe('sortPersonalizedCommentsByRating', () => {
     // Expected order:
     // 1. Rating 5 (id: 3)
     // 2-4. Rating 3 group (null, undefined, explicit 3) sorted alphabetically:
-    //      - "A comment" (id: 2, undefined rating = 3)
-    //      - "B comment" (id: 1, null rating = 3)
-    //      - "C comment" (id: 5, rating = 3)
+    //      - "A comment" (id: '65a1b2c3d4e5f6g7h8i9j0k2', undefined rating = 3)
+    //      - "B comment" (id: '65a1b2c3d4e5f6g7h8i9j0k1', null rating = 3)
+    //      - "C comment" (id: '65a1b2c3d4e5f6g7h8i9j0k5', rating = 3)
     // 5. Rating 1 (id: 4)
     expect(sorted.map((c) => c.id)).toEqual([3, 2, 1, 5, 4])
   })

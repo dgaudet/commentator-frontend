@@ -14,7 +14,7 @@ import { PersonalizedCommentsModal } from '../PersonalizedCommentsModal'
 import type { PersonalizedComment } from '../../../types'
 
 describe('PersonalizedCommentsModal - Rating Display', () => {
-  const mockSubject = { id: 1, name: 'Mathematics', createdAt: '', updatedAt: '' }
+  const mockSubject = { id: '65a1b2c3d4e5f6g7h8i9j0k1', name: 'Mathematics', createdAt: '', updatedAt: '' }
 
   const defaultProps = {
     isOpen: true,
@@ -30,8 +30,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
   describe('Rating Display in List', () => {
     it('displays rating emoji next to comment in list view', () => {
       const commentWithRating: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Great progress this term',
         rating: 5,
         createdAt: '2024-01-15T10:00:00Z',
@@ -54,8 +54,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
 
     it('displays correct emoji for rating 1 (Very Negative)', () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Needs significant improvement',
         rating: 1,
         createdAt: '2024-01-15T10:00:00Z',
@@ -75,8 +75,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
 
     it('displays correct emoji for rating 2 (Negative)', () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Below expectations',
         rating: 2,
         createdAt: '2024-01-15T10:00:00Z',
@@ -96,8 +96,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
 
     it('displays correct emoji for rating 3 (Neutral)', () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Meeting expectations',
         rating: 3,
         createdAt: '2024-01-15T10:00:00Z',
@@ -117,8 +117,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
 
     it('displays correct emoji for rating 4 (Positive)', () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Good work this term',
         rating: 4,
         createdAt: '2024-01-15T10:00:00Z',
@@ -138,8 +138,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
 
     it('displays correct emoji for rating 5 (Very Positive)', () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Excellent work!',
         rating: 5,
         createdAt: '2024-01-15T10:00:00Z',
@@ -159,8 +159,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
 
     it('displays default rating (3-Neutral) when rating is null', () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Legacy comment without rating',
         rating: null,
         createdAt: '2024-01-15T10:00:00Z',
@@ -181,8 +181,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
 
     it('displays default rating (3-Neutral) when rating is undefined', () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Legacy comment without rating',
         createdAt: '2024-01-15T10:00:00Z',
         updatedAt: '2024-01-15T10:00:00Z',
@@ -203,24 +203,24 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
     it('displays ratings for multiple comments correctly', () => {
       const comments: PersonalizedComment[] = [
         {
-          id: 1,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Excellent work',
           rating: 5,
           createdAt: '2024-01-15T10:00:00Z',
           updatedAt: '2024-01-15T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Good progress',
           rating: 4,
           createdAt: '2024-01-15T10:00:00Z',
           updatedAt: '2024-01-15T10:00:00Z',
         },
         {
-          id: 3,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k3',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Needs improvement',
           rating: 2,
           createdAt: '2024-01-15T10:00:00Z',
@@ -250,8 +250,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
   describe('Rating Position and Layout', () => {
     it('displays rating before comment text (visual hierarchy)', () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Test comment',
         rating: 5,
         createdAt: '2024-01-15T10:00:00Z',
@@ -278,8 +278,8 @@ describe('PersonalizedCommentsModal - Rating Display', () => {
   describe('Accessibility', () => {
     it('has semantic HTML for rating display', () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Test comment',
         rating: 4,
         createdAt: '2024-01-15T10:00:00Z',

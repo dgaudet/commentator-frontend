@@ -8,10 +8,10 @@ import { PersonalizedCommentsModal } from '../PersonalizedCommentsModal'
 import type { PersonalizedComment } from '../../../types'
 
 describe('PersonalizedCommentsModal', () => {
-  const mockSubject = { id: 1, name: 'Mathematics', createdAt: '', updatedAt: '' }
+  const mockSubject = { id: '65a1b2c3d4e5f6g7h8i9j0k1', name: 'Mathematics', createdAt: '', updatedAt: '' }
   const mockComment: PersonalizedComment = {
-    id: 1,
-    subjectId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'Shows great improvement in problem-solving skills',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
@@ -108,7 +108,7 @@ describe('PersonalizedCommentsModal', () => {
 
       await waitFor(() => {
         expect(onCreateComment).toHaveBeenCalledWith({
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'This is a valid comment',
           rating: 3, // Default rating
         })
@@ -153,7 +153,7 @@ describe('PersonalizedCommentsModal', () => {
 
       await waitFor(() => {
         expect(onUpdateComment).toHaveBeenCalledWith(1, {
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Updated comment text that is long enough',
           rating: 3, // Default rating (mockComment has undefined rating → normalized to 3)
         })
@@ -212,8 +212,8 @@ describe('PersonalizedCommentsModal', () => {
 
     it('should truncate comment preview to 100 characters with ellipsis (AC3)', () => {
       const longComment = {
-        id: 2,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k2',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'A'.repeat(150), // 150 character comment
         createdAt: '2024-01-03T10:00:00Z',
         updatedAt: '2024-01-03T10:00:00Z',
@@ -236,8 +236,8 @@ describe('PersonalizedCommentsModal', () => {
 
     it('should not truncate comment preview if under 100 characters (AC3)', () => {
       const shortComment = {
-        id: 3,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k3',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Short comment text',
         createdAt: '2024-01-04T10:00:00Z',
         updatedAt: '2024-01-04T10:00:00Z',
@@ -307,24 +307,24 @@ describe('PersonalizedCommentsModal', () => {
     it('should sort comments by rating descending (highest first)', () => {
       const comments: PersonalizedComment[] = [
         {
-          id: 1,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Comment with rating 3',
           rating: 3,
           createdAt: '2024-01-01T10:00:00Z',
           updatedAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Comment with rating 5',
           rating: 5,
           createdAt: '2024-01-02T10:00:00Z',
           updatedAt: '2024-01-02T10:00:00Z',
         },
         {
-          id: 3,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k3',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Comment with rating 1',
           rating: 1,
           createdAt: '2024-01-03T10:00:00Z',
@@ -349,24 +349,24 @@ describe('PersonalizedCommentsModal', () => {
     it('should sort alphabetically when ratings are equal', () => {
       const comments: PersonalizedComment[] = [
         {
-          id: 1,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Zebra comment',
           rating: 4,
           createdAt: '2024-01-01T10:00:00Z',
           updatedAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Alpha comment',
           rating: 4,
           createdAt: '2024-01-02T10:00:00Z',
           updatedAt: '2024-01-02T10:00:00Z',
         },
         {
-          id: 3,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k3',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Beta comment',
           rating: 4,
           createdAt: '2024-01-03T10:00:00Z',
@@ -403,24 +403,24 @@ describe('PersonalizedCommentsModal', () => {
     it('should handle null/undefined ratings (default to 3)', () => {
       const comments: PersonalizedComment[] = [
         {
-          id: 1,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Comment C-null',
           rating: null,
           createdAt: '2024-01-01T10:00:00Z',
           updatedAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Comment A-five',
           rating: 5,
           createdAt: '2024-01-02T10:00:00Z',
           updatedAt: '2024-01-02T10:00:00Z',
         },
         {
-          id: 3,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k3',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Comment B-one',
           rating: 1,
           createdAt: '2024-01-03T10:00:00Z',
