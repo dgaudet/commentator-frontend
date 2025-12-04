@@ -15,7 +15,7 @@ describe('API Response Type Definitions', () => {
 
       const response: ApiResponse<TestData> = {
         data: {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           value: 'test',
         },
       }
@@ -131,10 +131,10 @@ describe('API Response Type Definitions', () => {
 
       const response: ApiResponse<ComplexData> = {
         data: {
-          user: { id: 1, name: 'Teacher' },
+          user: { id: '65a1b2c3d4e5f6g7h8i9j0k1', name: 'Teacher' },
           classes: [
-            { id: 1, name: 'Math' },
-            { id: 2, name: 'Science' },
+            { id: '65a1b2c3d4e5f6g7h8i9j0k1', name: 'Math' },
+            { id: '65a1b2c3d4e5f6g7h8i9j0k2', name: 'Science' },
           ],
         },
       }

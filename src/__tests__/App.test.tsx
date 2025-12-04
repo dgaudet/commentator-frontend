@@ -21,13 +21,13 @@ jest.mock('../services/api/subjectService', () => ({
 
 const mockSubjects = [
   {
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
     name: 'Mathematics 101',
     createdAt: '2024-01-15T10:00:00.000Z',
     updatedAt: '2024-01-15T10:00:00.000Z',
   },
   {
-    id: 2,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
     name: 'English 201',
     createdAt: '2024-01-16T10:00:00.000Z',
     updatedAt: '2024-01-16T10:00:00.000Z',
@@ -162,12 +162,12 @@ describe('App', () => {
       // Select Mathematics 101 from dropdown to display the SubjectListItem
       const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
       act(() => {
-        fireEvent.change(dropdown, { target: { value: '1' } })
+        fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k1' } })
       })
 
       // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
       })
 
       // Click delete button for Mathematics 101
@@ -198,7 +198,7 @@ describe('App', () => {
       })
 
       // Verify deleteSubject API was called
-      expect(mockSubjectService.delete).toHaveBeenCalledWith(1)
+      expect(mockSubjectService.delete).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(mockSubjectService.delete).toHaveBeenCalledTimes(1)
 
       // CRITICAL: Verify the subjectwas removed from the dropdown options
@@ -233,12 +233,12 @@ describe('App', () => {
       // Select Mathematics 101 from dropdown
       const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
       act(() => {
-        fireEvent.change(dropdown, { target: { value: '1' } })
+        fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k1' } })
       })
 
       // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
       })
 
       // Click delete button
@@ -275,7 +275,7 @@ describe('App', () => {
       expect(mockSubjectService.delete).not.toHaveBeenCalled()
 
       // Verify subject is still in the SubjectListItem
-      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
     })
 
     it('should handle delete errors gracefully', async () => {
@@ -297,12 +297,12 @@ describe('App', () => {
       // Select Mathematics 101 from dropdown
       const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
       act(() => {
-        fireEvent.change(dropdown, { target: { value: '1' } })
+        fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k1' } })
       })
 
       // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
       })
 
       // Click delete button
@@ -331,7 +331,7 @@ describe('App', () => {
       expect(screen.getByRole('dialog')).toBeInTheDocument()
 
       // Subject should still be in SubjectListItem (delete failed)
-      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
 
       // Error message should be displayed
       await waitFor(() => {
@@ -354,11 +354,11 @@ describe('App', () => {
       })
 
       const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
-      fireEvent.change(dropdown, { target: { value: '1' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k1' } })
 
       // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
       })
 
       // Find and click the outcome comments tab (US-TAB-002)
@@ -388,11 +388,11 @@ describe('App', () => {
 
       // Select Mathematics 101 from dropdown
       const dropdown = screen.getByRole('combobox', { name: /select a subject to view/i })
-      fireEvent.change(dropdown, { target: { value: '1' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k1' } })
 
       // Wait for SubjectListItem to render
       await waitFor(() => {
-        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
       })
 
       // Click outcome comments tab first
@@ -413,7 +413,7 @@ describe('App', () => {
         // Form should be visible (no heading in edit mode as of AC1)
         expect(screen.getByLabelText(/subject name/i)).toBeInTheDocument()
         // The SubjectListItem stays visible with inline edit form
-        expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+        expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
         // Edit panel content should be visible
         expect(screen.getByTestId('edit-panel-content')).toBeInTheDocument()
       })
