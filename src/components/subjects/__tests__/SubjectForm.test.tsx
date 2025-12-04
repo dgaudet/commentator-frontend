@@ -234,7 +234,7 @@ describe('SubjectForm', () => {
       fireEvent.click(submitButton)
 
       await waitFor(() => {
-        expect(mockUpdateSubject).toHaveBeenCalledWith(1, {
+        expect(mockUpdateSubject).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', {
           name: 'Updated Mathematics',
         })
       })

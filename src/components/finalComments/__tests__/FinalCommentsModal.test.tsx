@@ -676,7 +676,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
 
       await waitFor(() => {
         expect(mockHandlers.onCreateComment).toHaveBeenCalledWith({
-          classId: '75a1b2c3d4e5f6g7h8i9j0k1',
+          classId: '65a1b2c3d4e5f6g7h8i9j0k1',
           firstName: 'John',
           lastName: 'Doe',
           grade: 85,
@@ -710,7 +710,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
 
       await waitFor(() => {
         expect(mockHandlers.onCreateComment).toHaveBeenCalledWith({
-          classId: '75a1b2c3d4e5f6g7h8i9j0k1',
+          classId: '65a1b2c3d4e5f6g7h8i9j0k1',
           firstName: 'Bob',
           grade: 78,
         })
@@ -1045,7 +1045,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       })
 
       await waitFor(() => {
-        expect(mockHandlers.onDeleteComment).toHaveBeenCalledWith(1)
+        expect(mockHandlers.onDeleteComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
       })
     })
 
@@ -1325,8 +1325,8 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         fireEvent.click(saveButton)
 
         await waitFor(() => {
-          expect(mockHandlers.onUpdateComment).toHaveBeenCalledWith(1, {
-            classId: '75a1b2c3d4e5f6g7h8i9j0k1',
+          expect(mockHandlers.onUpdateComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', {
+            classId: '65a1b2c3d4e5f6g7h8i9j0k1',
             firstName: 'Jane',
             lastName: 'Doe',
             grade: 85,

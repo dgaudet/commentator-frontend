@@ -168,13 +168,13 @@ describe('useClasses', () => {
 
       // Now update
       await act(async () => {
-        await result.current.updateClass(1, request)
+        await result.current.updateClass('65a1b2c3d4e5f6g7h8i9j0k1', request)
       })
 
       expect(result.current.classes).toContainEqual(updatedClass)
       expect(result.current.classes).not.toContainEqual(existingClass)
       expect(result.current.error).toBeNull()
-      expect(mockedClassService.update).toHaveBeenCalledWith(1, request)
+      expect(mockedClassService.update).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', request)
     })
 
     it('should handle update errors and re-throw', async () => {
@@ -190,7 +190,7 @@ describe('useClasses', () => {
 
       await act(async () => {
         try {
-          await result.current.updateClass(1, request)
+          await result.current.updateClass('65a1b2c3d4e5f6g7h8i9j0k1', request)
         } catch (e) {
           // Expected to throw
         }
@@ -223,13 +223,13 @@ describe('useClasses', () => {
 
       // Delete the class
       await act(async () => {
-        await result.current.deleteClass(1)
+        await result.current.deleteClass('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       expect(result.current.classes).not.toContainEqual(classToDelete)
       expect(result.current.classes).toHaveLength(0)
       expect(result.current.error).toBeNull()
-      expect(mockedClassService.delete).toHaveBeenCalledWith(1)
+      expect(mockedClassService.delete).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should handle delete errors and re-throw', async () => {
@@ -240,7 +240,7 @@ describe('useClasses', () => {
 
       await act(async () => {
         try {
-          await result.current.deleteClass(1)
+          await result.current.deleteClass('65a1b2c3d4e5f6g7h8i9j0k1')
         } catch (e) {
           // Expected to throw
         }

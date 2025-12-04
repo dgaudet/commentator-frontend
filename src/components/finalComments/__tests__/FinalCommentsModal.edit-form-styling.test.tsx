@@ -248,7 +248,7 @@ describe('US-FINAL-STYLE-004: Edit Form Styling', () => {
       fireEvent.click(screen.getByRole('button', { name: /Edit/i }))
 
       // Get the edit form's first name input using the unique ID
-      const editInput = container.querySelector('#edit-first-name-1') as HTMLInputElement
+      const editInput = container.querySelector('#edit-first-name-65a1b2c3d4e5f6g7h8i9j0k1') as HTMLInputElement
 
       // Clear the input
       fireEvent.change(editInput, { target: { value: '' } })

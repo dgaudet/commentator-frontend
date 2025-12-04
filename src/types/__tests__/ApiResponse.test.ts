@@ -9,7 +9,7 @@ describe('API Response Type Definitions', () => {
   describe('ApiResponse interface', () => {
     it('should wrap data with generic type', () => {
       interface TestData {
-        id: number
+        id: string
         value: string
       }
 
@@ -20,7 +20,7 @@ describe('API Response Type Definitions', () => {
         },
       }
 
-      expect(response.data.id).toBe(1)
+      expect(response.data.id).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(response.data.value).toBe('test')
     })
 
@@ -123,10 +123,10 @@ describe('API Response Type Definitions', () => {
     it('should support ApiResponse with nested objects', () => {
       interface ComplexData {
         user: {
-          id: number
+          id: string
           name: string
         }
-        classes: Array<{ id: number; name: string }>
+        classes: Array<{ id: string; name: string }>
       }
 
       const response: ApiResponse<ComplexData> = {

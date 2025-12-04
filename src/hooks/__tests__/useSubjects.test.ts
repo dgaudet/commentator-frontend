@@ -227,11 +227,11 @@ describe('useSubjects', () => {
       })
 
       await act(async () => {
-        await result.current.updateSubject(1, { name: 'Advanced Mathematics' })
+        await result.current.updateSubject('65a1b2c3d4e5f6g7h8i9j0k1', { name: 'Advanced Mathematics' })
       })
 
-      expect(mockSubjectService.update).toHaveBeenCalledWith(1, { name: 'Advanced Mathematics' })
-      const updated = result.current.subjects.find((s) => s.id === 1)
+      expect(mockSubjectService.update).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', { name: 'Advanced Mathematics' })
+      const updated = result.current.subjects.find((s) => s.id === '65a1b2c3d4e5f6g7h8i9j0k1')
       expect(updated?.name).toBe('Advanced Mathematics')
     })
 
@@ -246,7 +246,7 @@ describe('useSubjects', () => {
       })
 
       await act(async () => {
-        await result.current.updateSubject(1, { name: 'Zebra Studies' })
+        await result.current.updateSubject('65a1b2c3d4e5f6g7h8i9j0k1', { name: 'Zebra Studies' })
       })
 
       // Should move to end after sorting
@@ -268,12 +268,12 @@ describe('useSubjects', () => {
       })
 
       await act(async () => {
-        await result.current.deleteSubject(1)
+        await result.current.deleteSubject('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
-      expect(mockSubjectService.delete).toHaveBeenCalledWith(1)
+      expect(mockSubjectService.delete).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(result.current.subjects).toHaveLength(2)
-      expect(result.current.subjects.find((s) => s.id === 1)).toBeUndefined()
+      expect(result.current.subjects.find((s) => s.id === '65a1b2c3d4e5f6g7h8i9j0k1')).toBeUndefined()
     })
   })
 

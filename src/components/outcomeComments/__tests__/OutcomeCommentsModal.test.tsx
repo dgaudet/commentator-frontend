@@ -234,7 +234,7 @@ describe('OutcomeCommentsModal', () => {
         await user.click(saveButton)
       })
 
-      expect(defaultProps.onUpdateComment).toHaveBeenCalledWith(1, {
+      expect(defaultProps.onUpdateComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', {
         comment: 'Updated comment content',
         upperRange: 90,
         lowerRange: 75,
@@ -297,7 +297,7 @@ describe('OutcomeCommentsModal', () => {
         await user.click(confirmButton)
       })
 
-      expect(defaultProps.onDeleteComment).toHaveBeenCalledWith(1)
+      expect(defaultProps.onDeleteComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should close confirmation dialog when cancel is clicked', async () => {

@@ -157,10 +157,10 @@ describe('usePersonalizedComments', () => {
 
       // Then update it
       await act(async () => {
-        await result.current.updateComment(1, mockUpdateRequest)
+        await result.current.updateComment('65a1b2c3d4e5f6g7h8i9j0k1', mockUpdateRequest)
       })
 
-      expect(mockPersonalizedCommentService.update).toHaveBeenCalledWith(1, mockUpdateRequest)
+      expect(mockPersonalizedCommentService.update).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', mockUpdateRequest)
       expect(result.current.personalizedComments).toEqual([updatedComment])
       expect(result.current.loading).toBe(false)
       expect(result.current.error).toBeNull()
@@ -208,10 +208,10 @@ describe('usePersonalizedComments', () => {
 
       // Then delete it
       await act(async () => {
-        await result.current.deleteComment(1)
+        await result.current.deleteComment('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
-      expect(mockPersonalizedCommentService.delete).toHaveBeenCalledWith(1)
+      expect(mockPersonalizedCommentService.delete).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(result.current.personalizedComments).toEqual([])
       expect(result.current.loading).toBe(false)
       expect(result.current.error).toBeNull()

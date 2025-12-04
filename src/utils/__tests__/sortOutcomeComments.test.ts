@@ -39,9 +39,9 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // 100 - highest
-      expect(sorted[1].id).toBe(3) // 80
-      expect(sorted[2].id).toBe(1) // 70 - lowest
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // 100 - highest
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k3') // 80
+      expect(sorted[2].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1') // 70 - lowest
     })
 
     it('should handle a single comment', () => {
@@ -61,7 +61,7 @@ describe('sortOutcomeCommentsByRange', () => {
       const sorted = sortOutcomeCommentsByRange(comments)
 
       expect(sorted).toHaveLength(1)
-      expect(sorted[0].id).toBe(1)
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should handle an empty array', () => {
@@ -100,8 +100,8 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // lowerRange 75 comes first (higher)
-      expect(sorted[1].id).toBe(1) // lowerRange 70 comes second (lower)
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // lowerRange 75 comes first (higher)
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1') // lowerRange 70 comes second (lower)
     })
   })
 
@@ -132,8 +132,8 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // More recent created date comes first
-      expect(sorted[1].id).toBe(1) // Older created date comes second
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // More recent created date comes first
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1') // Older created date comes second
     })
   })
 
@@ -195,8 +195,8 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // 50 is higher than 0
-      expect(sorted[1].id).toBe(1)
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // 50 is higher than 0
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should handle comments with negative ranges', () => {
@@ -225,13 +225,13 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // 50 is higher than -10
-      expect(sorted[1].id).toBe(1)
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // 50 is higher than -10
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should handle large datasets (50+ comments) efficiently', () => {
       const comments: OutcomeComment[] = Array.from({ length: 50 }, (_, i) => ({
-        id: i + 1,
+        id: `65a1b2c3d4e5f6g7h8i9j${String(i).padStart(4, '0')}`,
         upperRange: Math.floor(Math.random() * 100),
         lowerRange: Math.floor(Math.random() * 100),
         comment: `Comment ${i + 1}`,

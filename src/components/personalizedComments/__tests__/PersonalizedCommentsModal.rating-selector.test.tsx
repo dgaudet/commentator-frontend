@@ -267,7 +267,7 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
 
       await waitFor(() => {
         expect(onUpdateComment).toHaveBeenCalledTimes(1)
-        expect(onUpdateComment).toHaveBeenCalledWith(1, {
+        expect(onUpdateComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', {
           subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Existing comment',
           rating: 5,
