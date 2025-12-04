@@ -1,0 +1,309 @@
+{
+  "feature": "api-id-migration-frontend",
+  "display_name": "API ID Type Migration (Number → MongoDB ObjectId String)",
+  "version": "1.0",
+  "status": "APPROVED_FOR_IMPLEMENTATION",
+  "created_at": "2025-12-04T00:00:00Z",
+  "updated_at": "2025-12-04T00:00:00Z",
+  "complexity": "L2",
+  "priority": "HIGH",
+  "owner": "Frontend Team",
+  "phases": {
+    "planning": {
+      "status": "COMPLETE",
+      "artifacts": [
+        "prd.md",
+        "design.md",
+        "tasks.md"
+      ]
+    },
+    "implementation": {
+      "status": "PENDING",
+      "estimated_hours": 5.5
+    }
+  },
+  "effort_estimate": {
+    "total_hours": 5.5,
+    "per_phase": {
+      "types": 0.5,
+      "services": 0.75,
+      "mocks": 1.0,
+      "components": 1.25,
+      "tests": 1.5,
+      "verification": 0.25
+    }
+  },
+  "scope": {
+    "entities_affected": 5,
+    "id_fields_migrating": 10,
+    "files_affected": 50,
+    "type_definitions": 5,
+    "service_files": 5,
+    "component_files": 8,
+    "hook_files": 5,
+    "test_files": 313
+  },
+  "complexity_assessment": {
+    "scope_level": "Focused (5 entities, 50 files)",
+    "technical_complexity": "Low - type-system only",
+    "risk_level": "LOW",
+    "team_size": 1,
+    "requires_architecture_review": false
+  },
+  "success_criteria": {
+    "functional": {
+      "all_crud_operations_work": true,
+      "foreign_keys_preserved": true,
+      "filtering_works": true,
+      "api_calls_with_strings": true
+    },
+    "technical": {
+      "typescript_errors": 0,
+      "eslint_errors": 0,
+      "tests_passing": 313,
+      "code_coverage": 90
+    },
+    "operational": {
+      "dev_server_starts": true,
+      "manual_testing_passed": true,
+      "code_review_approved": true
+    }
+  },
+  "quality_gates": [
+    {
+      "name": "TypeScript Compilation",
+      "command": "npx tsc --noEmit",
+      "expected": "0 errors",
+      "required": true,
+      "status": "PENDING"
+    },
+    {
+      "name": "ESLint Linting",
+      "command": "npm run lint",
+      "expected": "0 errors",
+      "required": true,
+      "status": "PENDING"
+    },
+    {
+      "name": "Test Suite",
+      "command": "npm test",
+      "expected": "313/313 passing",
+      "required": true,
+      "status": "PENDING"
+    },
+    {
+      "name": "Dev Server",
+      "command": "npm run dev",
+      "expected": "Starts without errors",
+      "required": true,
+      "status": "PENDING"
+    }
+  ],
+  "task_breakdown": {
+    "phase_1_types": {
+      "name": "Type Definitions",
+      "tasks": 5,
+      "estimated_minutes": 30,
+      "risk_tier": "TRIVIAL"
+    },
+    "phase_2_services": {
+      "name": "API Services",
+      "tasks": 5,
+      "estimated_minutes": 45,
+      "risk_tier": "LOW"
+    },
+    "phase_3_mocks": {
+      "name": "Mock Data & Handlers",
+      "tasks": 5,
+      "estimated_minutes": 60,
+      "risk_tier": "MEDIUM"
+    },
+    "phase_4_components": {
+      "name": "Components & Hooks",
+      "tasks": 10,
+      "estimated_minutes": 75,
+      "risk_tier": "LOW"
+    },
+    "phase_5_tests": {
+      "name": "Test Suite",
+      "tasks": 4,
+      "estimated_minutes": 90,
+      "risk_tier": "MEDIUM"
+    },
+    "phase_6_verification": {
+      "name": "Verification",
+      "tasks": 3,
+      "estimated_minutes": 15,
+      "risk_tier": "TRIVIAL"
+    }
+  },
+  "user_stories": {
+    "total": 32,
+    "by_category": {
+      "Type Definitions": 5,
+      "API Services": 5,
+      "Mock Data": 5,
+      "Hooks": 5,
+      "Components": 5,
+      "Tests": 4,
+      "Verification": 3
+    }
+  },
+  "dependencies": {
+    "external": [],
+    "internal_preconditions": [
+      "Backend MongoDB migration (COMPLETE)"
+    ],
+    "blocked_by": []
+  },
+  "risk_assessment": {
+    "overall_risk": "LOW",
+    "type_safety_risk": "VERY_LOW",
+    "test_coverage_risk": "VERY_LOW",
+    "architectural_impact": "NONE",
+    "breaking_changes": "NONE",
+    "rollback_difficulty": "VERY_EASY"
+  },
+  "risks": [
+    {
+      "id": "R1",
+      "title": "Missed ID reference",
+      "likelihood": "LOW",
+      "impact": "MEDIUM",
+      "mitigation": "TypeScript compiler + comprehensive test suite"
+    },
+    {
+      "id": "R2",
+      "title": "Mock data consistency",
+      "likelihood": "MEDIUM",
+      "impact": "LOW",
+      "mitigation": "Systematic update with test validation"
+    },
+    {
+      "id": "R3",
+      "title": "Foreign key reference breakage",
+      "likelihood": "LOW",
+      "impact": "MEDIUM",
+      "mitigation": "Verify referential integrity in tests"
+    }
+  ],
+  "rollback_plan": {
+    "risk_level": "VERY_LOW",
+    "strategy": "Git revert",
+    "estimated_time_minutes": 5,
+    "steps": [
+      "git revert <commit-hash>",
+      "npm install",
+      "npm test"
+    ]
+  },
+  "timeline": {
+    "kickoff": "Immediately",
+    "phase_1_completion": "+30 minutes",
+    "phase_2_completion": "+1 hour 15 minutes",
+    "phase_3_completion": "+2 hours 15 minutes",
+    "phase_4_completion": "+3 hours 30 minutes",
+    "phase_5_completion": "+5 hours",
+    "verification_completion": "+5 hours 15 minutes",
+    "code_review": "+6 hours",
+    "merge_to_main": "+7 hours",
+    "total_calendar_days": "1-2"
+  },
+  "team_assignments": {
+    "frontend_developer": {
+      "role": "Implementation Lead",
+      "effort_hours": 5.5,
+      "tasks": "All phases (TDD + implementation)"
+    },
+    "tech_lead": {
+      "role": "Code Review",
+      "effort_hours": 1.5,
+      "tasks": [
+        "Design review",
+        "Code review",
+        "Approval"
+      ]
+    },
+    "product_owner": {
+      "role": "Approval",
+      "effort_hours": 0.5,
+      "tasks": [
+        "Timeline approval",
+        "Resource allocation"
+      ]
+    }
+  },
+  "artifacts": {
+    "planning": {
+      "prd": {
+        "file": "prd.md",
+        "status": "COMPLETE",
+        "last_updated": "2025-12-04"
+      },
+      "design": {
+        "file": "design.md",
+        "status": "COMPLETE",
+        "last_updated": "2025-12-04"
+      },
+      "tasks": {
+        "file": "tasks.md",
+        "status": "COMPLETE",
+        "last_updated": "2025-12-04"
+      }
+    }
+  },
+  "approvals": {
+    "design_approval": {
+      "required_from": "Tech Lead",
+      "status": "PENDING",
+      "due_date": "2025-12-04"
+    },
+    "implementation_approval": {
+      "required_from": "Product Owner",
+      "status": "PENDING",
+      "due_date": "2025-12-04"
+    },
+    "code_review_approval": {
+      "required_from": "Tech Lead",
+      "status": "PENDING",
+      "due_date": "2025-12-05"
+    }
+  },
+  "metrics": {
+    "test_coverage_before": 90,
+    "test_coverage_target": 90,
+    "performance_impact": "NONE",
+    "bundle_size_impact": "NEGLIGIBLE",
+    "breaking_changes": 0
+  },
+  "related_features": [
+    "MongoDB Integration (Backend) - COMPLETE",
+    "API Integration (Frontend) - IN_PROGRESS"
+  ],
+  "next_steps": [
+    "1. Review PRD and design documents",
+    "2. Get tech lead design approval",
+    "3. Get product owner implementation approval",
+    "4. Create feature branch: feat/api-id-migration-frontend",
+    "5. Begin Phase 1: Type Definitions",
+    "6. Follow TDD cycle for each task",
+    "7. Complete all phases incrementally",
+    "8. Create pull request",
+    "9. Code review and merge"
+  ],
+  "notes": [
+    "Backend MongoDB migration already complete",
+    "No database migrations needed (frontend only)",
+    "Comprehensive test coverage (313 tests) ensures safety",
+    "Type system guides implementation",
+    "No architectural changes required",
+    "Estimated 5-6 hours for single developer"
+  ],
+  "tags": [
+    "type-system-migration",
+    "mongodb",
+    "typescript",
+    "frontend",
+    "refactor"
+  ]
+}
