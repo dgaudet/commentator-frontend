@@ -22,8 +22,8 @@ interface UseSubjectsReturn {
   error: string | null
   fetchSubjects: () => Promise<void>
   createSubject: (data: CreateSubjectRequest) => Promise<Subject>
-  updateSubject: (id: number, data: UpdateSubjectRequest) => Promise<Subject>
-  deleteSubject: (id: number) => Promise<void>
+  updateSubject: (id: string, data: UpdateSubjectRequest) => Promise<Subject>
+  deleteSubject: (id: string) => Promise<void>
   clearError: () => void
 }
 
@@ -111,7 +111,7 @@ export function useSubjects(): UseSubjectsReturn {
    * Updates local state and re-sorts
    */
   const updateSubject = useCallback(
-    async (id: number, data: UpdateSubjectRequest): Promise<Subject> => {
+    async (id: string, data: UpdateSubjectRequest): Promise<Subject> => {
       setIsLoading(true)
       setError(null)
       try {
@@ -136,7 +136,7 @@ export function useSubjects(): UseSubjectsReturn {
    * Delete subject
    * Removes from local state
    */
-  const deleteSubject = useCallback(async (id: number): Promise<void> => {
+  const deleteSubject = useCallback(async (id: string): Promise<void> => {
     setIsLoading(true)
     setError(null)
     try {

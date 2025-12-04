@@ -35,8 +35,8 @@ describe('useClasses', () => {
   describe('loadClasses', () => {
     it('should load classes for a subject successfully', async () => {
       const mockClasses = [
-        createMockClass({ id: '65a1b2c3d4e5f6g7h8i9j0k1', subjectId: 5, name: 'Advanced Section' }),
-        createMockClass({ id: '65a1b2c3d4e5f6g7h8i9j0k2', subjectId: 5, name: 'Honors Class' }),
+        createMockClass({ id: '65a1b2c3d4e5f6g7h8i9j0k1', subjectId: '65a1b2c3d4e5f6g7h8i9j0k0', name: 'Advanced Section' }),
+        createMockClass({ id: '65a1b2c3d4e5f6g7h8i9j0k2', subjectId: '65a1b2c3d4e5f6g7h8i9j0k0', name: 'Honors Class' }),
       ]
 
       mockedClassService.getBySubjectId.mockResolvedValueOnce(mockClasses)
@@ -49,7 +49,7 @@ describe('useClasses', () => {
       // Trigger load
       act(() => {
         // eslint-disable-next-line no-void
-        void result.current.loadClasses(5)
+        void result.current.loadClasses('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       // Should be loading now
@@ -62,7 +62,7 @@ describe('useClasses', () => {
 
       expect(result.current.classes).toEqual(mockClasses)
       expect(result.current.error).toBeNull()
-      expect(mockedClassService.getBySubjectId).toHaveBeenCalledWith(5)
+      expect(mockedClassService.getBySubjectId).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k0')
     })
 
     it('should handle load errors', async () => {
@@ -73,7 +73,7 @@ describe('useClasses', () => {
 
       act(() => {
         // eslint-disable-next-line no-void
-        void result.current.loadClasses(5)
+        void result.current.loadClasses('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       await waitFor(() => {
@@ -88,14 +88,14 @@ describe('useClasses', () => {
   describe('createClass', () => {
     it('should create a new class successfully', async () => {
       const request: CreateClassRequest = {
-        subjectId: 5,
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         name: 'New Class',
         year: 2024,
       }
 
       const newClass = createMockClass({
-        id: 10,
-        subjectId: 5,
+        id: '65a1b2c3d4e5f6g7h8i9j0k5',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         name: 'New Class',
       })
 
@@ -114,7 +114,7 @@ describe('useClasses', () => {
 
     it('should handle create errors and re-throw', async () => {
       const request: CreateClassRequest = {
-        subjectId: 5,
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         name: 'Duplicate Class',
         year: 2024,
       }
@@ -142,7 +142,7 @@ describe('useClasses', () => {
     it('should update an existing class successfully', async () => {
       const existingClass = createMockClass({
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
-        subjectId: 5,
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k0',
         name: 'Old Name',
       })
 
@@ -163,7 +163,7 @@ describe('useClasses', () => {
       // Manually set the initial state by simulating a load
       mockedClassService.getBySubjectId.mockResolvedValueOnce([existingClass])
       await act(async () => {
-        await result.current.loadClasses(5)
+        await result.current.loadClasses('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       // Now update
@@ -205,7 +205,7 @@ describe('useClasses', () => {
     it('should delete a class successfully', async () => {
       const classToDelete = createMockClass({
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
-        subjectId: 5,
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k0',
         name: 'Class to Delete',
       })
 
@@ -216,7 +216,7 @@ describe('useClasses', () => {
 
       // Load initial classes
       await act(async () => {
-        await result.current.loadClasses(5)
+        await result.current.loadClasses('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       expect(result.current.classes).toContainEqual(classToDelete)
@@ -261,7 +261,7 @@ describe('useClasses', () => {
       // Trigger an error
       act(() => {
         // eslint-disable-next-line no-void
-        void result.current.loadClasses(5)
+        void result.current.loadClasses('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       await waitFor(() => {

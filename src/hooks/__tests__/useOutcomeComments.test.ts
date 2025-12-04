@@ -9,7 +9,7 @@ import { renderHook, act } from '@testing-library/react'
 import { useOutcomeComments } from '../useOutcomeComments'
 import { outcomeCommentService } from '../../services/api/outcomeCommentService'
 import { createMockOutcomeComment } from '../../test-utils'
-import type { CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from '../../types'
+import type { CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, OutcomeComment } from '../../types'
 
 // Mock the service
 jest.mock('../../services/api/outcomeCommentService')
@@ -64,10 +64,10 @@ describe('useOutcomeComments', () => {
       const { result } = renderHook(() => useOutcomeComments())
 
       await act(async () => {
-        await result.current.loadOutcomeComments(1)
+        await result.current.loadOutcomeComments('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
-      expect(mockOutcomeCommentService.getBySubjectId).toHaveBeenCalledWith(1)
+      expect(mockOutcomeCommentService.getBySubjectId).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k0')
       expect(result.current.outcomeComments).toEqual(comments)
       expect(result.current.loading).toBe(false)
       expect(result.current.error).toBeNull()
@@ -83,7 +83,7 @@ describe('useOutcomeComments', () => {
       const { result } = renderHook(() => useOutcomeComments())
 
       act(() => {
-        result.current.loadOutcomeComments(1)
+        result.current.loadOutcomeComments('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       expect(result.current.loading).toBe(true)
@@ -102,7 +102,7 @@ describe('useOutcomeComments', () => {
       const { result } = renderHook(() => useOutcomeComments())
 
       await act(async () => {
-        await result.current.loadOutcomeComments(1)
+        await result.current.loadOutcomeComments('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       expect(result.current.outcomeComments).toEqual([])
@@ -158,7 +158,7 @@ describe('useOutcomeComments', () => {
 
       // Load initial comments first
       await act(async () => {
-        await result.current.loadOutcomeComments(1)
+        await result.current.loadOutcomeComments('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       await act(async () => {
@@ -179,11 +179,11 @@ describe('useOutcomeComments', () => {
 
       // Load initial comments first
       await act(async () => {
-        await result.current.loadOutcomeComments(1)
+        await result.current.loadOutcomeComments('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       await act(async () => {
-        await expect(result.current.updateComment(1, mockUpdateRequest)).rejects.toThrow(error)
+        await expect(result.current.updateComment('65a1b2c3d4e5f6g7h8i9j0k1', mockUpdateRequest)).rejects.toThrow(error)
       })
 
       expect(result.current.outcomeComments).toEqual([mockComment]) // Unchanged
@@ -204,7 +204,7 @@ describe('useOutcomeComments', () => {
 
       // Load initial comments first
       await act(async () => {
-        await result.current.loadOutcomeComments(1)
+        await result.current.loadOutcomeComments('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       await act(async () => {
@@ -225,11 +225,11 @@ describe('useOutcomeComments', () => {
 
       // Load initial comments first
       await act(async () => {
-        await result.current.loadOutcomeComments(1)
+        await result.current.loadOutcomeComments('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       await act(async () => {
-        await expect(result.current.deleteComment(1)).rejects.toThrow(error)
+        await expect(result.current.deleteComment('65a1b2c3d4e5f6g7h8i9j0k1')).rejects.toThrow(error)
       })
 
       expect(result.current.outcomeComments).toEqual([mockComment]) // Unchanged
@@ -247,7 +247,7 @@ describe('useOutcomeComments', () => {
 
       // Trigger an error
       await act(async () => {
-        await result.current.loadOutcomeComments(1)
+        await result.current.loadOutcomeComments('65a1b2c3d4e5f6g7h8i9j0k0')
       })
 
       expect(result.current.error).toBe('Test error')
