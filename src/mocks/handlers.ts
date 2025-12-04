@@ -8,7 +8,7 @@
  * Related: TD-003 (Class infrastructure removed)
  */
 import { http, HttpResponse } from 'msw'
-import { mockSubjects } from './data/subjects'
+import { mockSubjects, MOCK_SUBJECT_ID_MATH } from './data/subjects'
 import { mockPersonalizedComments } from './data/personalizedComments'
 import { mockClasses } from './data/classes'
 import { Subject } from '../types/Subject'
@@ -20,28 +20,27 @@ const BASE_URL = 'http://localhost:3000'
 
 // In-memory storage for test data (resets between test runs)
 const subjects: Subject[] = [...mockSubjects]
-let nextSubjectId = 4
 
 const classes: Class[] = [...mockClasses]
-let nextClassId = 7
 
 // Reset function for test isolation
 export function resetMockData() {
   subjects.length = 0
   subjects.push(...mockSubjects)
-  nextSubjectId = 4
 
   classes.length = 0
   classes.push(...mockClasses)
-  nextClassId = 7
 }
 
 // Mock outcome comments storage
 // Related: TD-002 (OutcomeComment classId → subjectId Migration)
+// ID Migration: Using string IDs (MongoDB ObjectId format)
+const MOCK_USER_ID = 'auth0|mock-user-123'
 const outcomeComments: OutcomeComment[] = [
   {
-    id: 1,
-    subjectId: 1,
+    id: '95a1b2c3d4e5f6g7h8i9j0k1',
+    subjectId: MOCK_SUBJECT_ID_MATH,
+    userId: MOCK_USER_ID,
     comment: 'Students demonstrated excellent problem-solving skills',
     upperRange: 85,
     lowerRange: 70,
@@ -49,8 +48,9 @@ const outcomeComments: OutcomeComment[] = [
     updatedAt: '2024-01-15T10:30:00.000Z',
   },
   {
-    id: 2,
-    subjectId: 1,
+    id: '95a1b2c3d4e5f6g7h8i9j0k2',
+    subjectId: MOCK_SUBJECT_ID_MATH,
+    userId: MOCK_USER_ID,
     comment: 'Strong collaboration and teamwork observed',
     upperRange: 90,
     lowerRange: 75,
@@ -58,11 +58,17 @@ const outcomeComments: OutcomeComment[] = [
     updatedAt: '2024-01-16T14:20:00.000Z',
   },
 ]
-let nextCommentId = 3
 
 // Mock personalized comments storage
 const personalizedComments: PersonalizedComment[] = [...mockPersonalizedComments]
-let nextPersonalizedCommentId = 4
+
+// Helper to generate mock IDs (MongoDB ObjectId-like format)
+let mockIdCounter = 1000
+function generateMockId(): string {
+  mockIdCounter++
+  const hex = mockIdCounter.toString(16).padStart(8, '0')
+  return `99${hex}d4e5f6g7h8i9j0k1`
+}
 
 interface ValidationResult {
   valid: boolean
@@ -75,11 +81,11 @@ interface ValidationResult {
 }
 
 /**
- * Validation helper: Check if ID is valid number
+ * Validation helper: Check if ID is valid string
+ * ID Migration: Validates string IDs (no longer numeric)
  */
 function validateId(id: string): ValidationResult {
-  const numId = Number(id)
-  if (isNaN(numId) || !Number.isInteger(numId)) {
+  if (!id || typeof id !== 'string' || id.trim() === '') {
     return {
       valid: false,
       error: {
@@ -149,7 +155,7 @@ function validateClassRequest(body: Record<string, unknown>): ValidationResult {
   }
 
   // Validate subjectId (only for create requests)
-  if (subjectId !== undefined && (typeof subjectId !== 'number' || !Number.isInteger(subjectId))) {
+  if (subjectId !== undefined && (typeof subjectId !== 'string' || subjectId.trim() === '')) {
     return {
       valid: false,
       error: {
@@ -251,7 +257,7 @@ function validateOutcomeCommentRequest(body: Record<string, unknown>): Validatio
     }
   }
 
-  if (subjectId !== undefined && (typeof subjectId !== 'number' || !Number.isInteger(subjectId))) {
+  if (subjectId !== undefined && (typeof subjectId !== 'string' || subjectId.trim() === '')) {
     return {
       valid: false,
       error: {
@@ -317,7 +323,7 @@ function validateOutcomeCommentUpdateRequest(body: Record<string, unknown>): Val
     }
   }
 
-  if (subjectId !== undefined && (typeof subjectId !== 'number' || !Number.isInteger(subjectId))) {
+  if (subjectId !== undefined && (typeof subjectId !== 'string' || subjectId.trim() === '')) {
     return {
       valid: false,
       error: {
@@ -358,13 +364,13 @@ export const handlers = [
     }
 
     // Filter classes for this subject
-    const subjectClasses = classes.filter(c => c.subjectId === Number(subjectId))
+    const subjectClasses = classes.filter(c => c.subjectId === subjectId)
     return HttpResponse.json(subjectClasses)
   }),
 
   // POST /class - Create new class
   http.post(`${BASE_URL}/class`, async ({ request }) => {
-    const body = await request.json() as { subjectId: number; name: string; year: number }
+    const body = await request.json() as { subjectId: string; name: string; year: number }
 
     // Validate request body
     const validation = validateClassRequest(body)
@@ -390,7 +396,7 @@ export const handlers = [
 
     // Create new class
     const newClass: Class = {
-      id: nextClassId++,
+      id: generateMockId(),
       subjectId: body.subjectId,
       name: body.name.trim(),
       year: body.year,
@@ -414,7 +420,7 @@ export const handlers = [
     }
 
     // Find class
-    const classIndex = classes.findIndex(c => c.id === Number(id))
+    const classIndex = classes.findIndex(c => c.id === id)
     if (classIndex === -1) {
       return HttpResponse.json(
         {
@@ -474,7 +480,7 @@ export const handlers = [
     }
 
     // Find class
-    const classIndex = classes.findIndex(c => c.id === Number(id))
+    const classIndex = classes.findIndex(c => c.id === id)
     if (classIndex === -1) {
       return HttpResponse.json(
         {
@@ -519,13 +525,13 @@ export const handlers = [
     }
 
     // Filter comments for this subject
-    const subjectComments = outcomeComments.filter(comment => comment.subjectId === Number(subjectId))
+    const subjectComments = outcomeComments.filter(comment => comment.subjectId === subjectId)
     return HttpResponse.json(subjectComments)
   }),
 
   // POST /outcome-comment - Create new outcome comment
   http.post(`${BASE_URL}/outcome-comment`, async ({ request }) => {
-    const body = await request.json() as { subjectId: number; comment: string; upperRange: number; lowerRange: number }
+    const body = await request.json() as { subjectId: string; comment: string; upperRange: number; lowerRange: number }
 
     // Validate request body
     const validation = validateOutcomeCommentRequest(body)
@@ -534,15 +540,16 @@ export const handlers = [
     }
 
     // Validate subject ID
-    const subjectValidation = validateId(String(body.subjectId))
+    const subjectValidation = validateId(body.subjectId)
     if (!subjectValidation.valid) {
       return HttpResponse.json(subjectValidation.error, { status: 400 })
     }
 
     // Create new comment
     const newComment: OutcomeComment = {
-      id: nextCommentId++,
+      id: generateMockId(),
       subjectId: body.subjectId,
+      userId: MOCK_USER_ID,
       comment: body.comment,
       upperRange: body.upperRange,
       lowerRange: body.lowerRange,
@@ -566,7 +573,7 @@ export const handlers = [
     }
 
     // Find comment
-    const commentIndex = outcomeComments.findIndex((c) => c.id === Number(id))
+    const commentIndex = outcomeComments.findIndex((c) => c.id === id)
     if (commentIndex === -1) {
       return HttpResponse.json(
         {
@@ -608,7 +615,7 @@ export const handlers = [
     }
 
     // Find comment
-    const commentIndex = outcomeComments.findIndex((c) => c.id === Number(id))
+    const commentIndex = outcomeComments.findIndex((c) => c.id === id)
     if (commentIndex === -1) {
       return HttpResponse.json(
         {
@@ -650,7 +657,7 @@ export const handlers = [
 
     // Create new subject
     const newSubject: Subject = {
-      id: nextSubjectId++,
+      id: generateMockId(),
       name: body.name,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -671,7 +678,7 @@ export const handlers = [
     }
 
     // Find subject
-    const subject = subjects.find((s) => s.id === Number(id))
+    const subject = subjects.find((s) => s.id === id)
     if (!subject) {
       return HttpResponse.json(
         {
@@ -704,7 +711,7 @@ export const handlers = [
     }
 
     // Find subject
-    const subjectIndex = subjects.findIndex((s) => s.id === Number(id))
+    const subjectIndex = subjects.findIndex((s) => s.id === id)
     if (subjectIndex === -1) {
       return HttpResponse.json(
         {
@@ -738,7 +745,7 @@ export const handlers = [
     }
 
     // Find subject
-    const subjectIndex = subjects.findIndex((s) => s.id === Number(id))
+    const subjectIndex = subjects.findIndex((s) => s.id === id)
     if (subjectIndex === -1) {
       return HttpResponse.json(
         {
@@ -776,23 +783,19 @@ export const handlers = [
     }
 
     // Validate subject ID
-    const numId = Number(subjectId)
-    if (isNaN(numId) || !Number.isInteger(numId)) {
-      return HttpResponse.json({
-        error: 'Bad Request',
-        message: 'Invalid ID format',
-        statusCode: 400,
-      }, { status: 400 })
+    const validation = validateId(subjectId)
+    if (!validation.valid) {
+      return HttpResponse.json(validation.error, { status: 400 })
     }
 
     // Filter comments for this subject
-    const subjectComments = personalizedComments.filter(comment => comment.subjectId === numId)
+    const subjectComments = personalizedComments.filter(comment => comment.subjectId === subjectId)
     return HttpResponse.json(subjectComments)
   }),
 
   // POST /personalized-comment - Create new personalized comment
   http.post(`${BASE_URL}/personalized-comment`, async ({ request }) => {
-    const body = await request.json() as { subjectId: number; comment: string }
+    const body = await request.json() as { subjectId: string; comment: string }
 
     // Validate comment text
     if (!body.comment || typeof body.comment !== 'string' || body.comment.trim() === '') {
@@ -825,7 +828,7 @@ export const handlers = [
     }
 
     // Validate subject ID
-    if (!body.subjectId || typeof body.subjectId !== 'number' || !Number.isInteger(body.subjectId)) {
+    if (!body.subjectId || typeof body.subjectId !== 'string' || body.subjectId.trim() === '') {
       return HttpResponse.json({
         error: 'Bad Request',
         message: 'Valid subject ID is required',
@@ -850,7 +853,7 @@ export const handlers = [
 
     // Create new comment
     const newComment: PersonalizedComment = {
-      id: nextPersonalizedCommentId++,
+      id: generateMockId(),
       comment: trimmedComment,
       subjectId: body.subjectId,
       createdAt: new Date().toISOString(),
@@ -867,17 +870,13 @@ export const handlers = [
     const body = await request.json() as { comment: string }
 
     // Validate ID
-    const numId = Number(id)
-    if (isNaN(numId) || !Number.isInteger(numId)) {
-      return HttpResponse.json({
-        error: 'Bad Request',
-        message: 'Invalid ID format',
-        statusCode: 400,
-      }, { status: 400 })
+    const idValidation = validateId(id as string)
+    if (!idValidation.valid) {
+      return HttpResponse.json(idValidation.error, { status: 400 })
     }
 
     // Find comment
-    const commentIndex = personalizedComments.findIndex((c) => c.id === numId)
+    const commentIndex = personalizedComments.findIndex((c) => c.id === id)
     if (commentIndex === -1) {
       return HttpResponse.json(
         {
@@ -921,7 +920,7 @@ export const handlers = [
 
     // Check for duplicate comment (case-insensitive, excluding current comment)
     const isDuplicate = personalizedComments.some(
-      c => c.id !== numId && c.subjectId === personalizedComments[commentIndex].subjectId &&
+      c => c.id !== id && c.subjectId === personalizedComments[commentIndex].subjectId &&
            c.comment.toLowerCase() === trimmedComment.toLowerCase(),
     )
 
@@ -950,17 +949,13 @@ export const handlers = [
     const { id } = params
 
     // Validate ID
-    const numId = Number(id)
-    if (isNaN(numId) || !Number.isInteger(numId)) {
-      return HttpResponse.json({
-        error: 'Bad Request',
-        message: 'Invalid ID format',
-        statusCode: 400,
-      }, { status: 400 })
+    const validation = validateId(id as string)
+    if (!validation.valid) {
+      return HttpResponse.json(validation.error, { status: 400 })
     }
 
     // Find comment
-    const commentIndex = personalizedComments.findIndex((c) => c.id === numId)
+    const commentIndex = personalizedComments.findIndex((c) => c.id === id)
     if (commentIndex === -1) {
       return HttpResponse.json(
         {
