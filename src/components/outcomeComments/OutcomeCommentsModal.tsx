@@ -40,8 +40,8 @@ interface OutcomeCommentsModalProps<T extends { id: string; name: string }> {
   entityData: T
   outcomeComments: OutcomeComment[]
   onCreateComment: (request: CreateOutcomeCommentRequest) => Promise<void>
-  onUpdateComment: (id: number, request: UpdateOutcomeCommentRequest) => Promise<void>
-  onDeleteComment: (id: number) => Promise<void>
+  onUpdateComment: (id: string, request: UpdateOutcomeCommentRequest) => Promise<void>
+  onDeleteComment: (id: string) => Promise<void>
   loading: boolean
   error: string | null
 }
@@ -61,13 +61,13 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newUpperRange, setNewUpperRange] = useState<number | ''>('')
   const [newLowerRange, setNewLowerRange] = useState<number | ''>('')
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState('')
   const [editUpperRange, setEditUpperRange] = useState<number | ''>('')
   const [editLowerRange, setEditLowerRange] = useState<number | ''>('')
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
-    commentId: number | null
+    commentId: string | null
     commentText: string
   }>({
     isOpen: false,

@@ -14,6 +14,8 @@ client/node_modules/
 server/node_modules/
 
 # Production
+dist/
+build/
 client/dist/
 client/build/
 

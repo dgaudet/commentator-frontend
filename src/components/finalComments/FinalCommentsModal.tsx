@@ -101,7 +101,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   // Delete confirmation state (US-DELETE-CONFIRM-004)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
-    commentId: number | null
+    commentId: string | null
     studentName: string
     className: string
     classYear: number
@@ -114,7 +114,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   })
 
   // Edit state
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   // US-FC-REFACTOR-003: Populate button confirmation state
   const [populateConfirmation, setPopulateConfirmation] = useState<{

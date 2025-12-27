@@ -32,7 +32,7 @@ import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import type { Class, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
 interface SubjectListProps {
-  onSubjectClick?: (subjectId: number) => void
+  onSubjectClick?: (subjectId: string) => void
   onAddSubject?: () => void
   onEdit?: (subjectItem: Subject) => void
   onEditSuccess?: (subject: Subject) => void
@@ -101,7 +101,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   } = useFinalComments()
 
   // State for selected subject ID
-  const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null)
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null)
 
   // State for delete confirmation modal (US-SUBJ-DELETE-002)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
@@ -191,11 +191,11 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     onAddSubject?.()
   }, [onAddSubject])
 
-  const handleSubjectClick = useCallback((subjectId: number) => {
+  const handleSubjectClick = useCallback((subjectId: string) => {
     onSubjectClick?.(subjectId)
   }, [onSubjectClick])
 
-  const handleEdit = useCallback((subjectId: number) => {
+  const handleEdit = useCallback((subjectId: string) => {
     const subjectItem = subjects.find(s => s.id === subjectId)
     if (subjectItem && onEdit) {
       onEdit(subjectItem)
@@ -212,15 +212,15 @@ export const SubjectList: React.FC<SubjectListProps> = ({
   }, [onEditSuccess, fetchSubjects])
 
   // Tab panel data loading handlers
-  const handleViewOutcomeComments = useCallback(async (subjectId: number) => {
+  const handleViewOutcomeComments = useCallback(async (subjectId: string) => {
     await loadOutcomeComments(subjectId)
   }, [loadOutcomeComments])
 
-  const handleViewPersonalizedComments = useCallback(async (subjectId: number) => {
+  const handleViewPersonalizedComments = useCallback(async (subjectId: string) => {
     await loadPersonalizedComments(subjectId)
   }, [loadPersonalizedComments])
 
-  const handleViewClasses = useCallback(async (subjectId: number) => {
+  const handleViewClasses = useCallback(async (subjectId: string) => {
     await loadClasses(subjectId)
   }, [loadClasses])
 
@@ -229,11 +229,11 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     await createOutcomeComment(request)
   }, [createOutcomeComment])
 
-  const handleUpdateOutcomeComment = useCallback(async (id: number, request: UpdateOutcomeCommentRequest) => {
+  const handleUpdateOutcomeComment = useCallback(async (id: string, request: UpdateOutcomeCommentRequest) => {
     await updateOutcomeComment(id, request)
   }, [updateOutcomeComment])
 
-  const handleDeleteOutcomeComment = useCallback(async (id: number) => {
+  const handleDeleteOutcomeComment = useCallback(async (id: string) => {
     await deleteOutcomeComment(id)
   }, [deleteOutcomeComment])
 
@@ -242,11 +242,11 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     await createPersonalizedComment(request)
   }, [createPersonalizedComment])
 
-  const handleUpdatePersonalizedComment = useCallback(async (id: number, request: UpdatePersonalizedCommentRequest) => {
+  const handleUpdatePersonalizedComment = useCallback(async (id: string, request: UpdatePersonalizedCommentRequest) => {
     await updatePersonalizedComment(id, request)
   }, [updatePersonalizedComment])
 
-  const handleDeletePersonalizedComment = useCallback(async (id: number) => {
+  const handleDeletePersonalizedComment = useCallback(async (id: string) => {
     await deletePersonalizedComment(id)
   }, [deletePersonalizedComment])
 
@@ -255,17 +255,17 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     await createClass(request)
   }, [createClass])
 
-  const handleUpdateClass = useCallback(async (id: number, request: UpdateClassRequest) => {
+  const handleUpdateClass = useCallback(async (id: string, request: UpdateClassRequest) => {
     await updateClass(id, request)
   }, [updateClass])
 
-  const handleDeleteClass = useCallback(async (id: number) => {
+  const handleDeleteClass = useCallback(async (id: string) => {
     await deleteClass(id)
   }, [deleteClass])
 
   // Check final comments count for cascading delete warning (US-DELETE-CONFIRM-003)
   // Throws error if check fails - handled by ClassManagementModal
-  const handleCheckFinalCommentsCount = useCallback(async (classId: number): Promise<number> => {
+  const handleCheckFinalCommentsCount = useCallback(async (classId: string): Promise<number> => {
     const comments = await finalCommentService.getByClassId(classId)
     return comments.length
   }, [])
@@ -282,16 +282,16 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     await createFinalComment(request)
   }, [createFinalComment])
 
-  const handleUpdateFinalComment = useCallback(async (id: number, request: UpdateFinalCommentRequest) => {
+  const handleUpdateFinalComment = useCallback(async (id: string, request: UpdateFinalCommentRequest) => {
     await updateFinalComment(id, request)
   }, [updateFinalComment])
 
-  const handleDeleteFinalComment = useCallback(async (id: number) => {
+  const handleDeleteFinalComment = useCallback(async (id: string) => {
     await deleteFinalComment(id)
   }, [deleteFinalComment])
 
   // Handle delete button click - show confirmation modal (US-SUBJ-DELETE-002 AC1)
-  const handleDelete = useCallback((subjectId: number) => {
+  const handleDelete = useCallback((subjectId: string) => {
     const subjectItem = subjects.find(s => s.id === subjectId)
     if (subjectItem) {
       setSubjectToDelete(subjectItem)

@@ -56,9 +56,7 @@ jest.mock('@auth0/auth0-spa-js', () => ({
 
 // Polyfill for MSW v2 in Jest/jsdom environment
 // IMPORTANT: Must be set BEFORE importing MSW
-// @ts-expect-error - TextEncoder type mismatch between util and lib.dom
 global.TextEncoder = TextEncoder
-// @ts-expect-error - TextDecoder type mismatch between util and lib.dom
 global.TextDecoder = TextDecoder
 
 // Polyfill ReadableStream for MSW v2

@@ -43,8 +43,8 @@ interface PersonalizedCommentsModalProps<T extends { id: string; name: string }>
   entityData: T
   personalizedComments: PersonalizedComment[]
   onCreateComment: (request: CreatePersonalizedCommentRequest) => Promise<void>
-  onUpdateComment: (id: number, request: UpdatePersonalizedCommentRequest) => Promise<void>
-  onDeleteComment: (id: number) => Promise<void>
+  onUpdateComment: (id: string, request: UpdatePersonalizedCommentRequest) => Promise<void>
+  onDeleteComment: (id: string) => Promise<void>
   loading: boolean
   error: string | null
 }
@@ -62,12 +62,12 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
   const themeColors = useThemeColors()
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newCommentRating, setNewCommentRating] = useState(3) // Default rating: 3 (Neutral)
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState('')
   const [editRating, setEditRating] = useState(3)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean
-    commentId: number | null
+    commentId: string | null
     commentText: string
   }>({
     isOpen: false,
