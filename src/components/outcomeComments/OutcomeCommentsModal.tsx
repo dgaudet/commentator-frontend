@@ -5,7 +5,7 @@
  * Implements CRUD operations with proper form validation and accessibility.
  *
  * Generic Type Parameter:
- * - T extends { id: number; name: string } - Supports both Class and Subject types
+ * - T extends { id: string; name: string } - Supports both Class and Subject types
  *
  * User Stories:
  * 1. View all outcome comments for an entity (class/subject)
@@ -35,7 +35,7 @@ import { useThemeColors } from '../../hooks/useThemeColors'
 import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 
-interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
+interface OutcomeCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
   entityData: T
   outcomeComments: OutcomeComment[]
@@ -46,7 +46,7 @@ interface OutcomeCommentsModalProps<T extends { id: number; name: string }> {
   error: string | null
 }
 
-export const OutcomeCommentsModal = <T extends { id: number; name: string }>({
+export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
   isOpen,
   entityData,
   outcomeComments,

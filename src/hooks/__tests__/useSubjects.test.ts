@@ -21,9 +21,9 @@ jest.mock('../../services/api/subjectService')
 const mockSubjectService = subjectService as jest.Mocked<typeof subjectService>
 
 const mockSubjects = [
-  createMockSubject({ id: 1, name: 'Mathematics 101' }),
-  createMockSubject({ id: 2, name: 'English 201' }),
-  createMockSubject({ id: 3, name: 'Science 301' }),
+  createMockSubject({ id: '65a1b2c3d4e5f6g7h8i9j0k1', name: 'Mathematics 101' }),
+  createMockSubject({ id: '65a1b2c3d4e5f6g7h8i9j0k2', name: 'English 201' }),
+  createMockSubject({ id: '65a1b2c3d4e5f6g7h8i9j0k3', name: 'Science 301' }),
 ]
 
 describe('useSubjects', () => {
@@ -95,9 +95,9 @@ describe('useSubjects', () => {
 
     it('should sort subjects by name (ascending)', async () => {
       const unsortedSubjects = [
-        createMockSubject({ id: 3, name: 'Zebra Studies' }),
-        createMockSubject({ id: 1, name: 'Art 101' }),
-        createMockSubject({ id: 2, name: 'Biology 201' }),
+        createMockSubject({ id: '65a1b2c3d4e5f6g7h8i9j0k3', name: 'Zebra Studies' }),
+        createMockSubject({ id: '65a1b2c3d4e5f6g7h8i9j0k1', name: 'Art 101' }),
+        createMockSubject({ id: '65a1b2c3d4e5f6g7h8i9j0k2', name: 'Biology 201' }),
       ]
       mockSubjectService.getAll.mockResolvedValue(unsortedSubjects)
 
@@ -153,7 +153,7 @@ describe('useSubjects', () => {
 
   describe('createSubject', () => {
     it('should create subject and add to list', async () => {
-      const newSubject = createMockSubject({ id: 4, name: 'History 401' })
+      const newSubject = createMockSubject({ id: '65a1b2c3d4e5f6g7h8i9j0k4', name: 'History 401' })
       mockSubjectService.create.mockResolvedValue(newSubject)
 
       const { result } = renderHook(() => useSubjects())
@@ -169,11 +169,11 @@ describe('useSubjects', () => {
 
       expect(mockSubjectService.create).toHaveBeenCalledWith({ name: 'History 401' })
       expect(result.current.subjects).toHaveLength(4)
-      expect(result.current.subjects.some((s) => s.id === 4)).toBe(true)
+      expect(result.current.subjects.some((s) => s.id === '65a1b2c3d4e5f6g7h8i9j0k4')).toBe(true)
     })
 
     it('should maintain sort order after creation', async () => {
-      const newSubject = createMockSubject({ id: 4, name: 'Art 401' })
+      const newSubject = createMockSubject({ id: '65a1b2c3d4e5f6g7h8i9j0k4', name: 'Art 401' })
       mockSubjectService.create.mockResolvedValue(newSubject)
 
       const { result } = renderHook(() => useSubjects())
@@ -227,11 +227,11 @@ describe('useSubjects', () => {
       })
 
       await act(async () => {
-        await result.current.updateSubject(1, { name: 'Advanced Mathematics' })
+        await result.current.updateSubject('65a1b2c3d4e5f6g7h8i9j0k1', { name: 'Advanced Mathematics' })
       })
 
-      expect(mockSubjectService.update).toHaveBeenCalledWith(1, { name: 'Advanced Mathematics' })
-      const updated = result.current.subjects.find((s) => s.id === 1)
+      expect(mockSubjectService.update).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', { name: 'Advanced Mathematics' })
+      const updated = result.current.subjects.find((s) => s.id === '65a1b2c3d4e5f6g7h8i9j0k1')
       expect(updated?.name).toBe('Advanced Mathematics')
     })
 
@@ -246,7 +246,7 @@ describe('useSubjects', () => {
       })
 
       await act(async () => {
-        await result.current.updateSubject(1, { name: 'Zebra Studies' })
+        await result.current.updateSubject('65a1b2c3d4e5f6g7h8i9j0k1', { name: 'Zebra Studies' })
       })
 
       // Should move to end after sorting
@@ -268,12 +268,12 @@ describe('useSubjects', () => {
       })
 
       await act(async () => {
-        await result.current.deleteSubject(1)
+        await result.current.deleteSubject('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
-      expect(mockSubjectService.delete).toHaveBeenCalledWith(1)
+      expect(mockSubjectService.delete).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(result.current.subjects).toHaveLength(2)
-      expect(result.current.subjects.find((s) => s.id === 1)).toBeUndefined()
+      expect(result.current.subjects.find((s) => s.id === '65a1b2c3d4e5f6g7h8i9j0k1')).toBeUndefined()
     })
   })
 

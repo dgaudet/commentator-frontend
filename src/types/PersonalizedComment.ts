@@ -11,12 +11,12 @@
  * Returned by: GET /personalized-comment, POST /personalized-comment, PUT /personalized-comment/:id
  */
 export interface PersonalizedComment {
-  /** Unique identifier (auto-generated integer from backend) */
-  id: number
+  /** Unique identifier (MongoDB ObjectId string) */
+  id: string
   /** Comment text */
   comment: string
-  /** Associated subject ID */
-  subjectId: number
+  /** Associated subject ID (MongoDB ObjectId string) - References Subject entity */
+  subjectId: string
   /**
    * Comment rating (1-5 scale)
    * - 1: Very Negative (😢)
@@ -42,8 +42,8 @@ export interface PersonalizedComment {
 export interface CreatePersonalizedCommentRequest {
   /** Comment text - Required (10-500 characters) */
   comment: string
-  /** Associated subject ID - Required */
-  subjectId: number
+  /** Associated subject ID (MongoDB ObjectId string) - Required */
+  subjectId: string
   /** Comment rating (1-5) - Required, must be > 0 */
   rating: number
 }
@@ -53,8 +53,8 @@ export interface CreatePersonalizedCommentRequest {
  * Used by: PUT /personalized-comment/:id
  */
 export interface UpdatePersonalizedCommentRequest {
-  /** Associated subject ID - Required (immutable, but needed for backend validation) */
-  subjectId: number
+  /** Associated subject ID (MongoDB ObjectId string) - Required (immutable, but needed for backend validation) */
+  subjectId: string
   /** Comment text - Required (10-500 characters) */
   comment: string
   /** Comment rating (1-5) - Required, must be > 0 */

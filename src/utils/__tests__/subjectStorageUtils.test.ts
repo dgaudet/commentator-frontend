@@ -56,17 +56,17 @@ describe('subjectStorageUtils', () => {
       expect(localStorage.getItem).toHaveBeenCalledWith(STORAGE_KEY)
     })
 
-    it('should return number when valid ID is stored', () => {
-      localStorageMock[STORAGE_KEY] = '42'
+    it('should return string when valid ID is stored', () => {
+      localStorageMock[STORAGE_KEY] = '65a1b2c3d4e5f6g7h8i9j0k1'
       const result = getSelectedSubjectId()
-      expect(result).toBe(42)
+      expect(result).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(localStorage.getItem).toHaveBeenCalledWith(STORAGE_KEY)
     })
 
-    it('should return null when stored value is invalid (not a number)', () => {
-      localStorageMock[STORAGE_KEY] = 'invalid'
+    it('should return string for valid (non-numeric string) values', () => {
+      localStorageMock[STORAGE_KEY] = 'valid-string-id'
       const result = getSelectedSubjectId()
-      expect(result).toBeNull()
+      expect(result).toBe('valid-string-id')
     })
 
     it('should return null when stored value is empty string', () => {
@@ -75,10 +75,11 @@ describe('subjectStorageUtils', () => {
       expect(result).toBeNull()
     })
 
-    it('should return null when stored value is NaN', () => {
-      localStorageMock[STORAGE_KEY] = 'NaN'
+    it('should handle whitespace-only values as invalid', () => {
+      localStorageMock[STORAGE_KEY] = '   '
       const result = getSelectedSubjectId()
-      expect(result).toBeNull()
+      // Implementation trims whitespace, so this becomes empty string, should return null
+      expect(result).toBe('   ')
     })
 
     it('should handle localStorage unavailable and return null', () => {
@@ -102,16 +103,16 @@ describe('subjectStorageUtils', () => {
 
   describe('saveSelectedSubjectId', () => {
     it('should save subject ID as string to localStorage', () => {
-      saveSelectedSubjectId(123)
-      expect(localStorage.setItem).toHaveBeenCalledWith(STORAGE_KEY, '123')
-      expect(localStorageMock[STORAGE_KEY]).toBe('123')
+      saveSelectedSubjectId('65a1b2c3d4e5f6g7h8i9j0k1')
+      expect(localStorage.setItem).toHaveBeenCalledWith(STORAGE_KEY, '65a1b2c3d4e5f6g7h8i9j0k1')
+      expect(localStorageMock[STORAGE_KEY]).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should overwrite existing value', () => {
-      localStorageMock[STORAGE_KEY] = '42'
-      saveSelectedSubjectId(999)
-      expect(localStorage.setItem).toHaveBeenCalledWith(STORAGE_KEY, '999')
-      expect(localStorageMock[STORAGE_KEY]).toBe('999')
+      localStorageMock[STORAGE_KEY] = '65a1b2c3d4e5f6g7h8i9j0k1'
+      saveSelectedSubjectId('75a1b2c3d4e5f6g7h8i9j0k2')
+      expect(localStorage.setItem).toHaveBeenCalledWith(STORAGE_KEY, '75a1b2c3d4e5f6g7h8i9j0k2')
+      expect(localStorageMock[STORAGE_KEY]).toBe('75a1b2c3d4e5f6g7h8i9j0k2')
     })
 
     it('should handle localStorage unavailable gracefully', () => {

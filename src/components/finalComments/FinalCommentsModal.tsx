@@ -5,7 +5,7 @@
  * Implements CRUD operations with proper form validation and accessibility.
  *
  * Generic Type Parameter:
- * - T extends { id: number; name: string } - Supports Class type
+ * - T extends { id: string; name: string } - Supports Class type
  *
  * User Stories:
  * - US-FINAL-001: Access Final Comments Management ✅
@@ -69,19 +69,19 @@ import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
 import { getRatingEmoji, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
-interface FinalCommentsModalProps<T extends { id: number; name: string }> {
+interface FinalCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
   entityData: T
   finalComments: FinalComment[]
   onCreateComment: (request: CreateFinalCommentRequest) => Promise<void>
-  onUpdateComment: (id: number, request: UpdateFinalCommentRequest) => Promise<void>
-  onDeleteComment: (id: number) => Promise<void>
+  onUpdateComment: (id: string, request: UpdateFinalCommentRequest) => Promise<void>
+  onDeleteComment: (id: string) => Promise<void>
   loading: boolean
   error: string | null
   embedded?: boolean // US-CLASS-TABS-003: Support embedded mode (no modal chrome)
 }
 
-export const FinalCommentsModal = <T extends { id: number; name: string }>({
+export const FinalCommentsModal = <T extends { id: string; name: string }>({
   isOpen,
   entityData,
   finalComments,

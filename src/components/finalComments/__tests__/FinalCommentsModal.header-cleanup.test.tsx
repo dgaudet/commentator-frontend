@@ -11,17 +11,17 @@ import { FinalCommentsModal } from '../FinalCommentsModal'
 import type { Class, FinalComment } from '../../../types'
 
 const mockClass: Class = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   year: 2024,
-  subjectId: 1,
+  subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 }
 
 const mockFinalComment: FinalComment = {
-  id: 1,
-  classId: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
+  classId: '75a1b2c3d4e5f6g7h8i9j0k1',
   firstName: 'John',
   lastName: 'Doe',
   grade: 85,
@@ -103,10 +103,10 @@ describe('US-FINAL-STYLE-002: Remove Redundant Header', () => {
   describe('AC2: Class name shown in tab context', () => {
     it('should display class context from parent (via entityData)', () => {
       const testClass: Class = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         name: 'Mathematics 101',
         year: 2024,
-        subjectId: 1,
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
       }

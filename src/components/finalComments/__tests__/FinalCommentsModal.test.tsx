@@ -12,7 +12,7 @@ import { FinalCommentsModal } from '../FinalCommentsModal'
 import type { Class, FinalComment } from '../../../types'
 
 const mockClass: Class = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Grade 10 Math',
   year: 2024,
   subjectId: 5,
@@ -22,8 +22,8 @@ const mockClass: Class = {
 
 const mockFinalComments: FinalComment[] = [
   {
-    id: 1,
-    classId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    classId: '75a1b2c3d4e5f6g7h8i9j0k1',
     firstName: 'John',
     lastName: 'Doe',
     grade: 85,
@@ -32,8 +32,8 @@ const mockFinalComments: FinalComment[] = [
     updatedAt: '2024-01-15T10:00:00Z',
   },
   {
-    id: 2,
-    classId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
+    classId: '75a1b2c3d4e5f6g7h8i9j0k1',
     firstName: 'Alice',
     lastName: 'Smith',
     grade: 92,
@@ -42,8 +42,8 @@ const mockFinalComments: FinalComment[] = [
     updatedAt: '2024-01-16T11:00:00Z',
   },
   {
-    id: 3,
-    classId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k3',
+    classId: '75a1b2c3d4e5f6g7h8i9j0k1',
     firstName: 'Bob',
     grade: 78,
     createdAt: '2024-01-17T12:00:00Z',
@@ -676,7 +676,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
 
       await waitFor(() => {
         expect(mockHandlers.onCreateComment).toHaveBeenCalledWith({
-          classId: 1,
+          classId: '65a1b2c3d4e5f6g7h8i9j0k1',
           firstName: 'John',
           lastName: 'Doe',
           grade: 85,
@@ -710,7 +710,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
 
       await waitFor(() => {
         expect(mockHandlers.onCreateComment).toHaveBeenCalledWith({
-          classId: 1,
+          classId: '65a1b2c3d4e5f6g7h8i9j0k1',
           firstName: 'Bob',
           grade: 78,
         })
@@ -1045,7 +1045,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
       })
 
       await waitFor(() => {
-        expect(mockHandlers.onDeleteComment).toHaveBeenCalledWith(1)
+        expect(mockHandlers.onDeleteComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
       })
     })
 
@@ -1325,8 +1325,8 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
         fireEvent.click(saveButton)
 
         await waitFor(() => {
-          expect(mockHandlers.onUpdateComment).toHaveBeenCalledWith(1, {
-            classId: 1,
+          expect(mockHandlers.onUpdateComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', {
+            classId: '65a1b2c3d4e5f6g7h8i9j0k1',
             firstName: 'Jane',
             lastName: 'Doe',
             grade: 85,

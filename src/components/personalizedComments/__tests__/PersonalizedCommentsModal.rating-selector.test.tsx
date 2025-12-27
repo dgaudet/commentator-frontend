@@ -14,7 +14,7 @@ import { PersonalizedCommentsModal } from '../PersonalizedCommentsModal'
 import type { PersonalizedComment } from '../../../types'
 
 describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
-  const mockSubject = { id: 1, name: 'Mathematics', createdAt: '', updatedAt: '' }
+  const mockSubject = { id: '65a1b2c3d4e5f6g7h8i9j0k1', name: 'Mathematics', createdAt: '', updatedAt: '' }
 
   const defaultProps = {
     isOpen: true,
@@ -83,7 +83,7 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
       await waitFor(() => {
         expect(onCreateComment).toHaveBeenCalledTimes(1)
         expect(onCreateComment).toHaveBeenCalledWith({
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'This is a valid comment',
           rating: 4,
         })
@@ -106,7 +106,7 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
 
       await waitFor(() => {
         expect(onCreateComment).toHaveBeenCalledWith({
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Valid comment with default rating',
           rating: 3, // Default rating
         })
@@ -145,8 +145,8 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
   describe('Edit Comment Form - Rating Selector', () => {
     it('displays rating selector in edit comment form', async () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Existing comment',
         rating: 4,
         createdAt: '2024-01-15T10:00:00Z',
@@ -173,8 +173,8 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
 
     it('pre-fills existing rating in edit form', async () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Existing comment',
         rating: 4,
         createdAt: '2024-01-15T10:00:00Z',
@@ -203,8 +203,8 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
 
     it('allows changing rating in edit form', async () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Existing comment',
         rating: 3,
         createdAt: '2024-01-15T10:00:00Z',
@@ -235,8 +235,8 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
     it('includes rating in onUpdateComment API call', async () => {
       const onUpdateComment = jest.fn().mockResolvedValue(undefined)
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Existing comment',
         rating: 3,
         createdAt: '2024-01-15T10:00:00Z',
@@ -267,8 +267,8 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
 
       await waitFor(() => {
         expect(onUpdateComment).toHaveBeenCalledTimes(1)
-        expect(onUpdateComment).toHaveBeenCalledWith(1, {
-          subjectId: 1,
+        expect(onUpdateComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', {
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Existing comment',
           rating: 5,
         })
@@ -277,8 +277,8 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
 
     it('defaults to rating 3 when editing comment with null rating', async () => {
       const comment: PersonalizedComment = {
-        id: 1,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Legacy comment',
         rating: null,
         createdAt: '2024-01-15T10:00:00Z',

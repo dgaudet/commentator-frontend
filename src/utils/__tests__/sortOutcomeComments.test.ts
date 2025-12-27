@@ -6,29 +6,32 @@ describe('sortOutcomeCommentsByRange', () => {
     it('should sort comments by upperRange in descending order (highest first)', () => {
       const comments: OutcomeComment[] = [
         {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           upperRange: 70,
           lowerRange: 60,
           comment: 'Needs improvement',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
         {
-          id: 2,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
           upperRange: 100,
           lowerRange: 90,
           comment: 'Excellent work',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-02T00:00:00Z',
           updatedAt: '2025-01-02T00:00:00Z',
         },
         {
-          id: 3,
+          id: '65a1b2c3d4e5f6g7h8i9j0k3',
           upperRange: 80,
           lowerRange: 70,
           comment: 'Good job',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-03T00:00:00Z',
           updatedAt: '2025-01-03T00:00:00Z',
         },
@@ -36,19 +39,20 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // 100 - highest
-      expect(sorted[1].id).toBe(3) // 80
-      expect(sorted[2].id).toBe(1) // 70 - lowest
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // 100 - highest
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k3') // 80
+      expect(sorted[2].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1') // 70 - lowest
     })
 
     it('should handle a single comment', () => {
       const comments: OutcomeComment[] = [
         {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           upperRange: 85,
           lowerRange: 75,
           comment: 'Average performance',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
@@ -57,7 +61,7 @@ describe('sortOutcomeCommentsByRange', () => {
       const sorted = sortOutcomeCommentsByRange(comments)
 
       expect(sorted).toHaveLength(1)
-      expect(sorted[0].id).toBe(1)
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should handle an empty array', () => {
@@ -73,20 +77,22 @@ describe('sortOutcomeCommentsByRange', () => {
     it('should sort by lowerRange descending when upperRange values are equal', () => {
       const comments: OutcomeComment[] = [
         {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           upperRange: 80,
           lowerRange: 70,
           comment: 'First comment in range',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
         {
-          id: 2,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
           upperRange: 80,
           lowerRange: 75,
           comment: 'Second comment in range',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-02T00:00:00Z',
           updatedAt: '2025-01-02T00:00:00Z',
         },
@@ -94,8 +100,8 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // lowerRange 75 comes first (higher)
-      expect(sorted[1].id).toBe(1) // lowerRange 70 comes second (lower)
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // lowerRange 75 comes first (higher)
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1') // lowerRange 70 comes second (lower)
     })
   })
 
@@ -103,20 +109,22 @@ describe('sortOutcomeCommentsByRange', () => {
     it('should sort by createdAt descending when ranges are identical', () => {
       const comments: OutcomeComment[] = [
         {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           upperRange: 80,
           lowerRange: 70,
           comment: 'Created first',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
         {
-          id: 2,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
           upperRange: 80,
           lowerRange: 70,
           comment: 'Created second',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-02T00:00:00Z',
           updatedAt: '2025-01-02T00:00:00Z',
         },
@@ -124,8 +132,8 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // More recent created date comes first
-      expect(sorted[1].id).toBe(1) // Older created date comes second
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // More recent created date comes first
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1') // Older created date comes second
     })
   })
 
@@ -133,20 +141,22 @@ describe('sortOutcomeCommentsByRange', () => {
     it('should not mutate the original array', () => {
       const original: OutcomeComment[] = [
         {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           upperRange: 70,
           lowerRange: 60,
           comment: 'Comment 1',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
         {
-          id: 2,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
           upperRange: 100,
           lowerRange: 90,
           comment: 'Comment 2',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-02T00:00:00Z',
           updatedAt: '2025-01-02T00:00:00Z',
         },
@@ -162,20 +172,22 @@ describe('sortOutcomeCommentsByRange', () => {
     it('should handle comments with zero ranges', () => {
       const comments: OutcomeComment[] = [
         {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           upperRange: 0,
           lowerRange: 0,
           comment: 'Zero range',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
         {
-          id: 2,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
           upperRange: 50,
           lowerRange: 40,
           comment: 'Non-zero range',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-02T00:00:00Z',
           updatedAt: '2025-01-02T00:00:00Z',
         },
@@ -183,27 +195,29 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // 50 is higher than 0
-      expect(sorted[1].id).toBe(1)
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // 50 is higher than 0
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should handle comments with negative ranges', () => {
       const comments: OutcomeComment[] = [
         {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           upperRange: -10,
           lowerRange: -20,
           comment: 'Negative range',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
         {
-          id: 2,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
           upperRange: 50,
           lowerRange: 40,
           comment: 'Positive range',
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           createdAt: '2025-01-02T00:00:00Z',
           updatedAt: '2025-01-02T00:00:00Z',
         },
@@ -211,17 +225,18 @@ describe('sortOutcomeCommentsByRange', () => {
 
       const sorted = sortOutcomeCommentsByRange(comments)
 
-      expect(sorted[0].id).toBe(2) // 50 is higher than -10
-      expect(sorted[1].id).toBe(1)
+      expect(sorted[0].id).toBe('65a1b2c3d4e5f6g7h8i9j0k2') // 50 is higher than -10
+      expect(sorted[1].id).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should handle large datasets (50+ comments) efficiently', () => {
       const comments: OutcomeComment[] = Array.from({ length: 50 }, (_, i) => ({
-        id: i + 1,
+        id: `65a1b2c3d4e5f6g7h8i9j${String(i).padStart(4, '0')}`,
         upperRange: Math.floor(Math.random() * 100),
         lowerRange: Math.floor(Math.random() * 100),
         comment: `Comment ${i + 1}`,
-        subjectId: 1,
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+        userId: 'auth0|mock-user-123',
         createdAt: new Date(2025, 0, i + 1).toISOString(),
         updatedAt: new Date(2025, 0, i + 1).toISOString(),
       }))

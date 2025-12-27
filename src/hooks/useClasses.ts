@@ -14,10 +14,10 @@ interface UseClassesReturn {
   classes: Class[]
   loading: boolean
   error: string | null
-  loadClasses: (subjectId: number) => Promise<void>
+  loadClasses: (subjectId: string) => Promise<void>
   createClass: (request: CreateClassRequest) => Promise<void>
-  updateClass: (id: number, request: UpdateClassRequest) => Promise<void>
-  deleteClass: (id: number) => Promise<void>
+  updateClass: (id: string, request: UpdateClassRequest) => Promise<void>
+  deleteClass: (id: string) => Promise<void>
   clearError: () => void
 }
 
@@ -36,7 +36,7 @@ export const useClasses = (): UseClassesReturn => {
     setError(message)
   }, [])
 
-  const loadClasses = useCallback(async (subjectId: number) => {
+  const loadClasses = useCallback(async (subjectId: string) => {
     setLoading(true)
     setError(null)
     try {
@@ -63,7 +63,7 @@ export const useClasses = (): UseClassesReturn => {
     }
   }, [handleError])
 
-  const updateClass = useCallback(async (id: number, request: UpdateClassRequest) => {
+  const updateClass = useCallback(async (id: string, request: UpdateClassRequest) => {
     setLoading(true)
     setError(null)
     try {
@@ -79,7 +79,7 @@ export const useClasses = (): UseClassesReturn => {
     }
   }, [handleError])
 
-  const deleteClass = useCallback(async (id: number) => {
+  const deleteClass = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
     try {

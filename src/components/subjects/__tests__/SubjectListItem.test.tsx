@@ -13,7 +13,7 @@ import { SubjectListItem } from '../SubjectListItem'
 import { Subject } from '../../../types/Subject'
 
 const mockSubject: Subject = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   createdAt: '2024-01-15T10:30:00Z',
   updatedAt: '2024-02-20T14:15:00Z',
@@ -43,14 +43,14 @@ describe('SubjectListItem', () => {
 
   it('should have correct data-testid', () => {
     render(<SubjectListItem subjectItem={mockSubject} />)
-    expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+    expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
   })
 
   it('should call onView when name clicked', () => {
     const handleView = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onView={handleView} />)
     fireEvent.click(screen.getByText('Mathematics 101'))
-    expect(handleView).toHaveBeenCalledWith(1)
+    expect(handleView).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
   })
 
   it('should render Edit Subject tab when onEdit provided', () => {
@@ -92,7 +92,7 @@ describe('SubjectListItem', () => {
     const handleDelete = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onDelete={handleDelete} />)
     fireEvent.click(screen.getByRole('button', { name: /delete/i }))
-    expect(handleDelete).toHaveBeenCalledWith(1)
+    expect(handleDelete).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
   })
 
   it('should render Outcome Comments tab when onViewOutcomeComments provided', () => {
@@ -105,7 +105,7 @@ describe('SubjectListItem', () => {
     const handleViewOutcomeComments = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onViewOutcomeComments={handleViewOutcomeComments} />)
     fireEvent.click(screen.getByRole('tab', { name: 'Outcome Comments' }))
-    expect(handleViewOutcomeComments).toHaveBeenCalledWith(1)
+    expect(handleViewOutcomeComments).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
   })
 
   it('should render Personalized Comments tab when onViewPersonalizedComments provided', () => {
@@ -118,7 +118,7 @@ describe('SubjectListItem', () => {
     const handleViewPersonalizedComments = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onViewPersonalizedComments={handleViewPersonalizedComments} />)
     fireEvent.click(screen.getByRole('tab', { name: 'Personalized Comments' }))
-    expect(handleViewPersonalizedComments).toHaveBeenCalledWith(1)
+    expect(handleViewPersonalizedComments).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
   })
 
   it('should render Manage Classes tab when onViewClasses provided', () => {
@@ -131,7 +131,7 @@ describe('SubjectListItem', () => {
     const handleViewClasses = jest.fn()
     render(<SubjectListItem subjectItem={mockSubject} onViewClasses={handleViewClasses} />)
     fireEvent.click(screen.getByRole('tab', { name: 'Manage Classes' }))
-    expect(handleViewClasses).toHaveBeenCalledWith(1)
+    expect(handleViewClasses).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
   })
 
   it('should not render tabs when no tab handlers provided', () => {
@@ -346,7 +346,7 @@ describe('SubjectListItem', () => {
 
         // Check that subject ID is passed (shown in panel)
         const outcomePanel = screen.getByTestId('outcome-comments-panel-content')
-        expect(outcomePanel).toHaveTextContent('Subject ID: 1')
+        expect(outcomePanel).toHaveTextContent('Subject ID: 65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       it('should pass subject ID to Personalized Comments panel', () => {
@@ -362,7 +362,7 @@ describe('SubjectListItem', () => {
         fireEvent.click(screen.getByRole('tab', { name: 'Personalized Comments' }))
 
         const personalizedPanel = screen.getByTestId('personalized-comments-panel-content')
-        expect(personalizedPanel).toHaveTextContent('Subject ID: 1')
+        expect(personalizedPanel).toHaveTextContent('Subject ID: 65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       it('should pass subject ID to Manage Classes panel', () => {
@@ -378,7 +378,7 @@ describe('SubjectListItem', () => {
         fireEvent.click(screen.getByRole('tab', { name: 'Manage Classes' }))
 
         const classesPanel = screen.getByTestId('classes-panel-content')
-        expect(classesPanel).toHaveTextContent('Subject ID: 1')
+        expect(classesPanel).toHaveTextContent('Subject ID: 65a1b2c3d4e5f6g7h8i9j0k1')
       })
     })
 
@@ -436,7 +436,7 @@ describe('SubjectListItem', () => {
    */
   describe('US-TABPANEL-003: Subject Context Switching', () => {
     const mockSubject2: Subject = {
-      id: 2,
+      id: '65a1b2c3d4e5f6g7h8i9j0k2',
       name: 'Science 201',
       createdAt: '2024-03-10T10:30:00Z',
       updatedAt: '2024-03-15T14:15:00Z',
@@ -472,7 +472,7 @@ describe('SubjectListItem', () => {
         fireEvent.click(screen.getByRole('tab', { name: 'Outcome Comments' }))
 
         // Initial subject ID
-        expect(screen.getByText('Subject ID: 1')).toBeInTheDocument()
+        expect(screen.getByText('Subject ID: 65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
 
         // Change to different subject
         rerender(
@@ -484,8 +484,8 @@ describe('SubjectListItem', () => {
         )
 
         // Panel should show new subject ID
-        expect(screen.queryByText('Subject ID: 1')).not.toBeInTheDocument()
-        expect(screen.getByText('Subject ID: 2')).toBeInTheDocument()
+        expect(screen.queryByText('Subject ID: 65a1b2c3d4e5f6g7h8i9j0k1')).not.toBeInTheDocument()
+        expect(screen.getByText('Subject ID: 65a1b2c3d4e5f6g7h8i9j0k2')).toBeInTheDocument()
       })
 
       it('should update all panel types when subject changes', () => {
@@ -520,15 +520,15 @@ describe('SubjectListItem', () => {
 
         // Test Outcome Comments panel
         fireEvent.click(screen.getByRole('tab', { name: 'Outcome Comments' }))
-        expect(screen.getByTestId('outcome-comments-panel-content')).toHaveTextContent('Subject ID: 2')
+        expect(screen.getByTestId('outcome-comments-panel-content')).toHaveTextContent('Subject ID: 65a1b2c3d4e5f6g7h8i9j0k2')
 
         // Test Personalized Comments panel
         fireEvent.click(screen.getByRole('tab', { name: 'Personalized Comments' }))
-        expect(screen.getByTestId('personalized-comments-panel-content')).toHaveTextContent('Subject ID: 2')
+        expect(screen.getByTestId('personalized-comments-panel-content')).toHaveTextContent('Subject ID: 65a1b2c3d4e5f6g7h8i9j0k2')
 
         // Test Manage Classes panel
         fireEvent.click(screen.getByRole('tab', { name: 'Manage Classes' }))
-        expect(screen.getByTestId('classes-panel-content')).toHaveTextContent('Subject ID: 2')
+        expect(screen.getByTestId('classes-panel-content')).toHaveTextContent('Subject ID: 65a1b2c3d4e5f6g7h8i9j0k2')
       })
     })
 

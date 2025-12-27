@@ -18,10 +18,10 @@ interface UseFinalCommentsReturn {
   finalComments: FinalComment[]
   loading: boolean
   error: string | null
-  loadFinalComments: (classId: number) => Promise<void>
+  loadFinalComments: (classId: string) => Promise<void>
   createComment: (request: CreateFinalCommentRequest) => Promise<void>
-  updateComment: (id: number, request: UpdateFinalCommentRequest) => Promise<void>
-  deleteComment: (id: number) => Promise<void>
+  updateComment: (id: string, request: UpdateFinalCommentRequest) => Promise<void>
+  deleteComment: (id: string) => Promise<void>
   clearError: () => void
 }
 
@@ -40,7 +40,7 @@ export const useFinalComments = (): UseFinalCommentsReturn => {
     setError(message)
   }, [])
 
-  const loadFinalComments = useCallback(async (classId: number) => {
+  const loadFinalComments = useCallback(async (classId: string) => {
     setLoading(true)
     setError(null)
     try {
@@ -67,7 +67,7 @@ export const useFinalComments = (): UseFinalCommentsReturn => {
     }
   }, [handleError])
 
-  const updateComment = useCallback(async (id: number, request: UpdateFinalCommentRequest) => {
+  const updateComment = useCallback(async (id: string, request: UpdateFinalCommentRequest) => {
     setLoading(true)
     setError(null)
     try {
@@ -83,7 +83,7 @@ export const useFinalComments = (): UseFinalCommentsReturn => {
     }
   }, [handleError])
 
-  const deleteComment = useCallback(async (id: number) => {
+  const deleteComment = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
     try {

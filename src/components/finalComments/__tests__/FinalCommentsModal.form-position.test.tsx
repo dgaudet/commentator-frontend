@@ -11,18 +11,18 @@ import { FinalCommentsModal } from '../FinalCommentsModal'
 import type { Class, FinalComment } from '../../../types'
 
 const mockClass: Class = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   year: 2024,
-  subjectId: 1,
+  subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 }
 
 const mockFinalComments: FinalComment[] = [
   {
-    id: 1,
-    classId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    classId: '75a1b2c3d4e5f6g7h8i9j0k1',
     firstName: 'John',
     lastName: 'Doe',
     grade: 85,
@@ -31,8 +31,8 @@ const mockFinalComments: FinalComment[] = [
     updatedAt: '2024-01-15T10:00:00Z',
   },
   {
-    id: 2,
-    classId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
+    classId: '75a1b2c3d4e5f6g7h8i9j0k1',
     firstName: 'Alice',
     lastName: 'Smith',
     grade: 92,

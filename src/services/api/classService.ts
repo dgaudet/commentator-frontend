@@ -15,9 +15,9 @@ import type { Class, CreateClassRequest, UpdateClassRequest } from '../../types'
 export const classService = {
   /**
    * Get all classes for a specific subject
-   * @param subjectId - The ID of the subject to fetch classes for
+   * @param subjectId - The string ID of the subject to fetch classes for
    */
-  async getBySubjectId(subjectId: number): Promise<Class[]> {
+  async getBySubjectId(subjectId: string): Promise<Class[]> {
     try {
       const response = await apiClient.get<Class[]>(`/class?subjectId=${subjectId}`)
       return response.data
@@ -42,8 +42,9 @@ export const classService = {
 
   /**
    * Update an existing class
+   * @param id - The string ID of the class to update
    */
-  async update(id: number, request: UpdateClassRequest): Promise<Class> {
+  async update(id: string, request: UpdateClassRequest): Promise<Class> {
     try {
       const response = await apiClient.put<Class>(`/class/${id}`, request)
       return response.data
@@ -55,8 +56,9 @@ export const classService = {
 
   /**
    * Delete a class
+   * @param id - The string ID of the class to delete
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
       await apiClient.delete(`/class/${id}`)
     } catch (error) {

@@ -19,7 +19,7 @@ import type { Subject, OutcomeComment } from '../../../types'
 
 // Mock data
 const mockSubject: Subject = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
@@ -27,8 +27,9 @@ const mockSubject: Subject = {
 
 const mockOutcomeComments: OutcomeComment[] = [
   {
-    id: 1,
-    subjectId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+    userId: 'auth0|mock-user-123',
     comment: 'Students demonstrated excellent problem-solving skills',
     upperRange: 85,
     lowerRange: 70,
@@ -36,8 +37,9 @@ const mockOutcomeComments: OutcomeComment[] = [
     updatedAt: '2024-01-01T10:00:00Z',
   },
   {
-    id: 2,
-    subjectId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+    userId: 'auth0|mock-user-123',
     comment: 'Need to focus more on algebra concepts',
     upperRange: 65,
     lowerRange: 50,
@@ -131,7 +133,7 @@ describe('OutcomeCommentsModal', () => {
       })
 
       expect(defaultProps.onCreateComment).toHaveBeenCalledWith({
-        subjectId: 1,
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'New outcome comment content',
         upperRange: 85,
         lowerRange: 70,
@@ -232,7 +234,7 @@ describe('OutcomeCommentsModal', () => {
         await user.click(saveButton)
       })
 
-      expect(defaultProps.onUpdateComment).toHaveBeenCalledWith(1, {
+      expect(defaultProps.onUpdateComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', {
         comment: 'Updated comment content',
         upperRange: 90,
         lowerRange: 75,
@@ -295,7 +297,7 @@ describe('OutcomeCommentsModal', () => {
         await user.click(confirmButton)
       })
 
-      expect(defaultProps.onDeleteComment).toHaveBeenCalledWith(1)
+      expect(defaultProps.onDeleteComment).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should close confirmation dialog when cancel is clicked', async () => {
@@ -331,8 +333,9 @@ describe('OutcomeCommentsModal', () => {
 
     it('should truncate comment preview to 100 characters with ellipsis (AC3)', async () => {
       const longComment: OutcomeComment = {
-        id: 3,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k3',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+        userId: 'auth0|mock-user-123',
         comment: 'A'.repeat(150), // 150 character comment
         upperRange: 80,
         lowerRange: 60,
@@ -360,8 +363,9 @@ describe('OutcomeCommentsModal', () => {
 
     it('should not truncate comment preview if under 100 characters (AC3)', async () => {
       const shortComment: OutcomeComment = {
-        id: 4,
-        subjectId: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k4',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+        userId: 'auth0|mock-user-123',
         comment: 'Short comment',
         upperRange: 80,
         lowerRange: 60,
@@ -607,8 +611,9 @@ describe('OutcomeCommentsModal', () => {
     it('should memoize sorted comments to avoid re-sorting on every render', () => {
       const unsortedComments: OutcomeComment[] = [
         {
-          id: 1,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Lower range comment',
           upperRange: 70,
           lowerRange: 60,
@@ -616,8 +621,9 @@ describe('OutcomeCommentsModal', () => {
           updatedAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Highest range comment',
           upperRange: 100,
           lowerRange: 90,
@@ -650,8 +656,9 @@ describe('OutcomeCommentsModal', () => {
     it('should display comments sorted by upperRange in descending order (highest first)', () => {
       const unsortedComments: OutcomeComment[] = [
         {
-          id: 1,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Lower range comment',
           upperRange: 70,
           lowerRange: 60,
@@ -659,8 +666,9 @@ describe('OutcomeCommentsModal', () => {
           updatedAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Highest range comment',
           upperRange: 100,
           lowerRange: 90,
@@ -668,8 +676,9 @@ describe('OutcomeCommentsModal', () => {
           updatedAt: '2024-01-02T10:00:00Z',
         },
         {
-          id: 3,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k3',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Middle range comment',
           upperRange: 80,
           lowerRange: 70,
@@ -697,8 +706,9 @@ describe('OutcomeCommentsModal', () => {
     it('should maintain sorted order after comment props change', () => {
       const initialComments: OutcomeComment[] = [
         {
-          id: 1,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Lower range',
           upperRange: 70,
           lowerRange: 60,
@@ -706,8 +716,9 @@ describe('OutcomeCommentsModal', () => {
           updatedAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Higher range',
           upperRange: 90,
           lowerRange: 80,
@@ -730,8 +741,9 @@ describe('OutcomeCommentsModal', () => {
       // Simulate updating comment 2 to have a lower range
       const updatedComments: OutcomeComment[] = [
         {
-          id: 1,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Lower range',
           upperRange: 70,
           lowerRange: 60,
@@ -739,8 +751,9 @@ describe('OutcomeCommentsModal', () => {
           updatedAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Updated to lower range',
           upperRange: 60,
           lowerRange: 50,
@@ -765,8 +778,9 @@ describe('OutcomeCommentsModal', () => {
     it('should display multiple unsorted comments in sorted order', () => {
       const unsortedComments: OutcomeComment[] = [
         {
-          id: 1,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Lowest range 40-50',
           upperRange: 50,
           lowerRange: 40,
@@ -774,8 +788,9 @@ describe('OutcomeCommentsModal', () => {
           updatedAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 2,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k2',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Highest range 90-100',
           upperRange: 100,
           lowerRange: 90,
@@ -783,8 +798,9 @@ describe('OutcomeCommentsModal', () => {
           updatedAt: '2024-01-02T10:00:00Z',
         },
         {
-          id: 3,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k3',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Mid range 60-70',
           upperRange: 70,
           lowerRange: 60,
@@ -792,8 +808,9 @@ describe('OutcomeCommentsModal', () => {
           updatedAt: '2024-01-03T10:00:00Z',
         },
         {
-          id: 4,
-          subjectId: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k4',
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+          userId: 'auth0|mock-user-123',
           comment: 'Another high range 75-85',
           upperRange: 85,
           lowerRange: 75,

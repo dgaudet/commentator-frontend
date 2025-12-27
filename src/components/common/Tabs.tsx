@@ -53,8 +53,8 @@ interface TabsProps {
   onChange: (tabId: string) => void
   /** Orientation of the tabs */
   orientation?: 'horizontal' | 'vertical'
-  /** Visual style variant */
-  variant?: 'default' | 'pills'
+  /** Visual style variant - reserved for future use */
+  _variant?: 'default' | 'pills'
 }
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -63,8 +63,7 @@ export const Tabs: React.FC<TabsProps> = ({
   onChange,
   orientation = 'horizontal',
   // variant is reserved for future styling variants
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  variant = 'default',
+  _variant = 'default',
 }) => {
   const themeColors = useThemeColors()
   const focusRings = useThemeFocusRings()

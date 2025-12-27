@@ -29,7 +29,7 @@ const mockUseOutcomeComments = useOutcomeComments as jest.MockedFunction<
 >
 
 const mockClass: Class = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   year: 2024,
   subjectId: 5,
@@ -39,8 +39,8 @@ const mockClass: Class = {
 
 const mockFinalComments: FinalComment[] = [
   {
-    id: 1,
-    classId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    classId: '75a1b2c3d4e5f6g7h8i9j0k1',
     firstName: 'John',
     lastName: 'Doe',
     grade: 85,
@@ -52,21 +52,21 @@ const mockFinalComments: FinalComment[] = [
 
 const mockPersonalizedComments: PersonalizedComment[] = [
   {
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'Excellent work this semester',
     subjectId: 5,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
-    id: 2,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
     comment: 'Good effort on assignments',
     subjectId: 5,
     createdAt: '2024-01-02T00:00:00Z',
     updatedAt: '2024-01-02T00:00:00Z',
   },
   {
-    id: 3,
+    id: '65a1b2c3d4e5f6g7h8i9j0k3',
     comment: 'Needs improvement in participation',
     subjectId: 5,
     createdAt: '2024-01-03T00:00:00Z',

@@ -24,18 +24,18 @@ const mockUseOutcomeComments = useOutcomeComments as jest.MockedFunction<typeof 
 
 // Mock data
 const mockClass: Class = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Grade 10 Math',
   year: 2024,
-  subjectId: 5,
+  subjectId: '65a1b2c3d4e5f6g7h8i9j0k5',
   createdAt: '2024-01-15T10:30:00Z',
   updatedAt: '2024-02-20T14:15:00Z',
 }
 
 const mockOutcomeComments: OutcomeComment[] = [
   {
-    id: 1,
-    subjectId: 5,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k5',
     comment: 'Demonstrates strong understanding of algebraic concepts',
     upperRange: 100,
     lowerRange: 80,
@@ -43,8 +43,8 @@ const mockOutcomeComments: OutcomeComment[] = [
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
-    id: 2,
-    subjectId: 5,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k5',
     comment: 'Shows adequate comprehension of mathematical principles',
     upperRange: 79,
     lowerRange: 60,
@@ -52,8 +52,8 @@ const mockOutcomeComments: OutcomeComment[] = [
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
-    id: 3,
-    subjectId: 5,
+    id: '65a1b2c3d4e5f6g7h8i9j0k3',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k5',
     comment: 'Needs additional support to meet learning outcomes',
     upperRange: 59,
     lowerRange: 0,
@@ -129,7 +129,7 @@ describe('FinalCommentsModal - Outcome Comment Integration', () => {
 
       // Create entityData without subjectId (edge case)
       const entityDataWithoutSubjectId = {
-        id: 1,
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
         name: 'Test Class',
       }
 
@@ -621,8 +621,8 @@ describe('FinalCommentsModal - Outcome Comment Integration', () => {
 
   describe('EDIT MODE: Outcome comment integration in edit form', () => {
     const mockExistingFinalComment = {
-      id: 1,
-      classId: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k1',
+      classId: '75a1b2c3d4e5f6g7h8i9j0k1',
       firstName: 'John',
       lastName: 'Doe',
       grade: 85,
@@ -707,7 +707,7 @@ describe('FinalCommentsModal - Outcome Comment Integration', () => {
       })
 
       // Change grade to different range
-      const editGradeInput = document.getElementById('edit-grade-1') as HTMLInputElement
+      const editGradeInput = document.getElementById('edit-grade-65a1b2c3d4e5f6g7h8i9j0k1') as HTMLInputElement
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
         'value',
@@ -759,7 +759,7 @@ describe('FinalCommentsModal - Outcome Comment Integration', () => {
       })
 
       // Clear the grade
-      const editGradeInput = document.getElementById('edit-grade-1') as HTMLInputElement
+      const editGradeInput = document.getElementById('edit-grade-65a1b2c3d4e5f6g7h8i9j0k1') as HTMLInputElement
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
         'value',

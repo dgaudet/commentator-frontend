@@ -19,10 +19,10 @@ interface UseOutcomeCommentsReturn {
   outcomeComments: OutcomeComment[]
   loading: boolean
   error: string | null
-  loadOutcomeComments: (subjectId: number) => Promise<void>
+  loadOutcomeComments: (subjectId: string) => Promise<void>
   createComment: (request: CreateOutcomeCommentRequest) => Promise<void>
-  updateComment: (id: number, request: UpdateOutcomeCommentRequest) => Promise<void>
-  deleteComment: (id: number) => Promise<void>
+  updateComment: (id: string, request: UpdateOutcomeCommentRequest) => Promise<void>
+  deleteComment: (id: string) => Promise<void>
   clearError: () => void
 }
 
@@ -41,7 +41,7 @@ export const useOutcomeComments = (): UseOutcomeCommentsReturn => {
     setError(message)
   }, [])
 
-  const loadOutcomeComments = useCallback(async (subjectId: number) => {
+  const loadOutcomeComments = useCallback(async (subjectId: string) => {
     setLoading(true)
     setError(null)
     try {
@@ -68,7 +68,7 @@ export const useOutcomeComments = (): UseOutcomeCommentsReturn => {
     }
   }, [handleError])
 
-  const updateComment = useCallback(async (id: number, request: UpdateOutcomeCommentRequest) => {
+  const updateComment = useCallback(async (id: string, request: UpdateOutcomeCommentRequest) => {
     setLoading(true)
     setError(null)
     try {
@@ -84,7 +84,7 @@ export const useOutcomeComments = (): UseOutcomeCommentsReturn => {
     }
   }, [handleError])
 
-  const deleteComment = useCallback(async (id: number) => {
+  const deleteComment = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
     try {

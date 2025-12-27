@@ -15,15 +15,15 @@ import { render, screen, fireEvent } from '../../../test-utils'
 import { TypeaheadSearch } from '../TypeaheadSearch'
 
 interface MockItem {
-  id: number
+  id: string
   label: string
 }
 
 const mockItems: MockItem[] = [
-  { id: 1, label: 'Excellent work this semester' },
-  { id: 2, label: 'Good effort on assignments' },
-  { id: 3, label: 'Needs improvement in participation' },
-  { id: 4, label: 'Outstanding performance' },
+  { id: '65a1b2c3d4e5f6g7h8i9j0k1', label: 'Excellent work this semester' },
+  { id: '65a1b2c3d4e5f6g7h8i9j0k2', label: 'Good effort on assignments' },
+  { id: '65a1b2c3d4e5f6g7h8i9j0k3', label: 'Needs improvement in participation' },
+  { id: '65a1b2c3d4e5f6g7h8i9j0k4', label: 'Outstanding performance' },
 ]
 
 describe('TypeaheadSearch Component', () => {
@@ -628,9 +628,9 @@ describe('TypeaheadSearch Component', () => {
     }
 
     const itemsWithRatings: MockItemWithRating[] = [
-      { id: 1, label: 'Excellent work', rating: 5 },
-      { id: 2, label: 'Good effort', rating: 4 },
-      { id: 3, label: 'Satisfactory', rating: 3 },
+      { id: '65a1b2c3d4e5f6g7h8i9j0k1', label: 'Excellent work', rating: 5 },
+      { id: '65a1b2c3d4e5f6g7h8i9j0k2', label: 'Good effort', rating: 4 },
+      { id: '65a1b2c3d4e5f6g7h8i9j0k3', label: 'Satisfactory', rating: 3 },
     ]
 
     const getRatingEmoji = (rating: number): string => {

@@ -28,7 +28,7 @@ import {
 export function createMockSubject(overrides: Partial<Subject> = {}): Subject {
   const now = new Date().toISOString()
   return {
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k0',
     name: 'Test Subject',
     createdAt: now,
     updatedAt: now,
@@ -48,7 +48,7 @@ export function createMockSubjects(
 ): Subject[] {
   return Array.from({ length: count }, (_, i) =>
     createMockSubject({
-      id: i + 1,
+      id: `65a1b2c3d4e5f6g7h8i9j0k${i}`,
       name: `Subject ${i + 1}`,
       ...baseOverrides,
     }),
@@ -63,8 +63,8 @@ export function createMockSubjects(
 export function createMockClass(overrides: Partial<Class> = {}): Class {
   const now = new Date().toISOString()
   return {
-    id: 1,
-    subjectId: 1,
+    id: '75a1b2c3d4e5f6g7h8i9j0k0',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k0',
     name: 'Test Class',
     year: 2024,
     createdAt: now,
@@ -85,7 +85,7 @@ export function createMockClasses(
 ): Class[] {
   return Array.from({ length: count }, (_, i) =>
     createMockClass({
-      id: i + 1,
+      id: `75a1b2c3d4e5f6g7h8i9j0k${i}`,
       name: `Class ${i + 1}`,
       ...baseOverrides,
     }),
@@ -102,11 +102,12 @@ export function createMockOutcomeComment(
 ): OutcomeComment {
   const now = new Date().toISOString()
   return {
-    id: 1,
+    id: '95a1b2c3d4e5f6g7h8i9j0k0',
     upperRange: 100,
     lowerRange: 90,
     comment: 'Excellent performance',
-    subjectId: 1,
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k0',
+    userId: 'auth0|mock-user-123',
     createdAt: now,
     updatedAt: now,
     ...overrides,
@@ -125,7 +126,7 @@ export function createMockOutcomeComments(
 ): OutcomeComment[] {
   return Array.from({ length: count }, (_, i) =>
     createMockOutcomeComment({
-      id: i + 1,
+      id: `95a1b2c3d4e5f6g7h8i9j0k${i}`,
       upperRange: 100 - i * 10,
       lowerRange: 90 - i * 10,
       comment: `Comment ${i + 1}`,
@@ -144,8 +145,8 @@ export function createMockFinalComment(
 ): FinalComment {
   const now = new Date().toISOString()
   return {
-    id: 1,
-    classId: 1,
+    id: 'a5a1b2c3d4e5f6g7h8i9j0k0',
+    classId: '75a1b2c3d4e5f6g7h8i9j0k0',
     firstName: 'John',
     lastName: 'Doe',
     grade: 85,
@@ -168,7 +169,7 @@ export function createMockFinalComments(
 ): FinalComment[] {
   return Array.from({ length: count }, (_, i) =>
     createMockFinalComment({
-      id: i + 1,
+      id: `a5a1b2c3d4e5f6g7h8i9j0k${i}`,
       firstName: `Student${i + 1}`,
       lastName: `Last${i + 1}`,
       grade: Math.floor(Math.random() * 100),
@@ -187,8 +188,8 @@ export function createMockPersonalizedComment(
 ): PersonalizedComment {
   const now = new Date().toISOString()
   return {
-    id: 1,
-    subjectId: 1,
+    id: '85a1b2c3d4e5f6g7h8i9j0k0',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k0',
     comment: 'Test comment',
     rating: 5,
     createdAt: now,
@@ -209,7 +210,7 @@ export function createMockPersonalizedComments(
 ): PersonalizedComment[] {
   return Array.from({ length: count }, (_, i) =>
     createMockPersonalizedComment({
-      id: i + 1,
+      id: `85a1b2c3d4e5f6g7h8i9j0k${i}`,
       comment: `Comment ${i + 1}`,
       rating: Math.floor(Math.random() * 5) + 1,
       ...baseOverrides,

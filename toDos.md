@@ -95,3 +95,8 @@ Login
 ** I should be able to ask claude to send the token on api rquests automatically
 * Need to style the login form
 * THe header with they dark/light styles should be used for the login as well
+
+THere are a lot of render issues when adding/updating an item
+* Outcome Comments, you get a flash
+* Also when switching between tabs
+* Personalized Comments, you get a flash

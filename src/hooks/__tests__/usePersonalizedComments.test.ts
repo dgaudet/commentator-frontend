@@ -8,7 +8,7 @@ import { renderHook, act } from '@testing-library/react'
 import { usePersonalizedComments } from '../usePersonalizedComments'
 import { personalizedCommentService } from '../../services/api/personalizedCommentService'
 import { createMockPersonalizedComment } from '../../test-utils'
-import type { CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from '../../types'
+import type { CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, PersonalizedComment } from '../../types'
 
 // Mock the service
 jest.mock('../../services/api/personalizedCommentService')
@@ -16,18 +16,21 @@ const mockPersonalizedCommentService = personalizedCommentService as jest.Mocked
 
 describe('usePersonalizedComments', () => {
   const mockComment = createMockPersonalizedComment({
-    id: 1,
-    subjectId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'Test personalized comment',
   })
 
   const mockCreateRequest: CreatePersonalizedCommentRequest = {
-    subjectId: 1,
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'New personalized comment',
+    rating: 5,
   }
 
   const mockUpdateRequest: UpdatePersonalizedCommentRequest = {
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'Updated personalized comment',
+    rating: 5,
   }
 
   beforeEach(() => {
@@ -58,10 +61,10 @@ describe('usePersonalizedComments', () => {
       const { result } = renderHook(() => usePersonalizedComments())
 
       await act(async () => {
-        await result.current.loadPersonalizedComments(1)
+        await result.current.loadPersonalizedComments('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
-      expect(mockPersonalizedCommentService.getBySubjectId).toHaveBeenCalledWith(1)
+      expect(mockPersonalizedCommentService.getBySubjectId).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(result.current.personalizedComments).toEqual(comments)
       expect(result.current.loading).toBe(false)
       expect(result.current.error).toBeNull()
@@ -77,7 +80,7 @@ describe('usePersonalizedComments', () => {
       const { result } = renderHook(() => usePersonalizedComments())
 
       act(() => {
-        result.current.loadPersonalizedComments(1)
+        result.current.loadPersonalizedComments('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       expect(result.current.loading).toBe(true)
@@ -96,7 +99,7 @@ describe('usePersonalizedComments', () => {
       const { result } = renderHook(() => usePersonalizedComments())
 
       await act(async () => {
-        await result.current.loadPersonalizedComments(1)
+        await result.current.loadPersonalizedComments('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       expect(result.current.personalizedComments).toEqual([])
@@ -107,7 +110,7 @@ describe('usePersonalizedComments', () => {
 
   describe('createComment', () => {
     it('should create a new comment successfully', async () => {
-      const newComment = { ...mockComment, id: 2, comment: 'New personalized comment' }
+      const newComment = { ...mockComment, id: '65a1b2c3d4e5f6g7h8i9j0k2', comment: 'New personalized comment' }
       mockPersonalizedCommentService.create.mockResolvedValue(newComment)
 
       const { result } = renderHook(() => usePersonalizedComments())
@@ -152,15 +155,15 @@ describe('usePersonalizedComments', () => {
 
       // First load the comment
       await act(async () => {
-        await result.current.loadPersonalizedComments(1)
+        await result.current.loadPersonalizedComments('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       // Then update it
       await act(async () => {
-        await result.current.updateComment(1, mockUpdateRequest)
+        await result.current.updateComment('65a1b2c3d4e5f6g7h8i9j0k1', mockUpdateRequest)
       })
 
-      expect(mockPersonalizedCommentService.update).toHaveBeenCalledWith(1, mockUpdateRequest)
+      expect(mockPersonalizedCommentService.update).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1', mockUpdateRequest)
       expect(result.current.personalizedComments).toEqual([updatedComment])
       expect(result.current.loading).toBe(false)
       expect(result.current.error).toBeNull()
@@ -175,13 +178,13 @@ describe('usePersonalizedComments', () => {
 
       // First load the comment
       await act(async () => {
-        await result.current.loadPersonalizedComments(1)
+        await result.current.loadPersonalizedComments('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       // Then try to update it
       await act(async () => {
         try {
-          await result.current.updateComment(1, mockUpdateRequest)
+          await result.current.updateComment('65a1b2c3d4e5f6g7h8i9j0k1', mockUpdateRequest)
         } catch (e) {
           // Expected to throw
         }
@@ -201,17 +204,17 @@ describe('usePersonalizedComments', () => {
 
       // First load the comment
       await act(async () => {
-        await result.current.loadPersonalizedComments(1)
+        await result.current.loadPersonalizedComments('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       expect(result.current.personalizedComments).toEqual([mockComment])
 
       // Then delete it
       await act(async () => {
-        await result.current.deleteComment(1)
+        await result.current.deleteComment('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
-      expect(mockPersonalizedCommentService.delete).toHaveBeenCalledWith(1)
+      expect(mockPersonalizedCommentService.delete).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(result.current.personalizedComments).toEqual([])
       expect(result.current.loading).toBe(false)
       expect(result.current.error).toBeNull()
@@ -226,13 +229,13 @@ describe('usePersonalizedComments', () => {
 
       // First load the comment
       await act(async () => {
-        await result.current.loadPersonalizedComments(1)
+        await result.current.loadPersonalizedComments('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       // Then try to delete it
       await act(async () => {
         try {
-          await result.current.deleteComment(1)
+          await result.current.deleteComment('65a1b2c3d4e5f6g7h8i9j0k1')
         } catch (e) {
           // Expected to throw
         }
@@ -253,7 +256,7 @@ describe('usePersonalizedComments', () => {
 
       // Cause an error
       await act(async () => {
-        await result.current.loadPersonalizedComments(1)
+        await result.current.loadPersonalizedComments('65a1b2c3d4e5f6g7h8i9j0k1')
       })
 
       expect(result.current.error).toBe('Failed to load')

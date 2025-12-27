@@ -17,24 +17,24 @@ import type { PersonalizedComment } from '../../../types'
 describe('SelectedCommentsList', () => {
   const mockComments: PersonalizedComment[] = [
     {
-      id: 1,
-      subjectId: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k1',
+      subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
       comment: 'Excellent work this semester',
       rating: 5,
       createdAt: '2024-01-01T10:00:00Z',
       updatedAt: '2024-01-01T10:00:00Z',
     },
     {
-      id: 2,
-      subjectId: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k2',
+      subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
       comment: 'Good effort on assignments',
       rating: 4,
       createdAt: '2024-01-02T10:00:00Z',
       updatedAt: '2024-01-02T10:00:00Z',
     },
     {
-      id: 3,
-      subjectId: 1,
+      id: '65a1b2c3d4e5f6g7h8i9j0k3',
+      subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
       comment: 'Satisfactory progress',
       rating: 3,
       createdAt: '2024-01-03T10:00:00Z',

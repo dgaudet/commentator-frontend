@@ -169,8 +169,8 @@ export const SubjectList: React.FC<SubjectListProps> = ({
 
   // Handler for dropdown selection
   const handleSelectSubject = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-    const subjectId = parseInt(event.target.value, 10)
-    setSelectedSubjectId(isNaN(subjectId) ? null : subjectId)
+    const subjectId = event.target.value
+    setSelectedSubjectId(subjectId === '' ? null : subjectId)
   }, [])
 
   // Focus handlers for select dropdown styling

@@ -31,11 +31,11 @@ export const subjectService = {
    * Fetch single subject by ID
    * Maps to: GET /subject/:id
    *
-   * @param id - Subject ID (integer)
+   * @param id - Subject ID (string format)
    * @returns Promise<Subject> Subject details (direct object response)
    * @throws ApiError on failure (400 bad request, 404 not found)
    */
-  async getById(id: number): Promise<Subject> {
+  async getById(id: string): Promise<Subject> {
     const response = await apiClient.get<Subject>(`/subject/${id}`)
     return response.data
   },
@@ -57,12 +57,12 @@ export const subjectService = {
    * Update existing subject
    * Maps to: PUT /subject/:id
    *
-   * @param id - Subject ID (integer)
+   * @param id - Subject ID (string format)
    * @param data - Updated subject data {name} (no year field)
    * @returns Promise<Subject> Updated subject (direct object response)
    * @throws ApiError on failure (400 validation, 404 not found)
    */
-  async update(id: number, data: UpdateSubjectRequest): Promise<Subject> {
+  async update(id: string, data: UpdateSubjectRequest): Promise<Subject> {
     const response = await apiClient.put<Subject>(`/subject/${id}`, data)
     return response.data
   },
@@ -71,11 +71,11 @@ export const subjectService = {
    * Delete subject
    * Maps to: DELETE /subject/:id
    *
-   * @param id - Subject ID (integer)
+   * @param id - Subject ID (string format)
    * @returns Promise<{message: string, deletedSubject: Subject}> Delete confirmation
    * @throws ApiError on failure (400 bad request, 404 not found)
    */
-  async delete(id: number): Promise<{ message: string; deletedSubject: Subject }> {
+  async delete(id: string): Promise<{ message: string; deletedSubject: Subject }> {
     const response = await apiClient.delete<{ message: string; deletedSubject: Subject }>(
       `/subject/${id}`,
     )

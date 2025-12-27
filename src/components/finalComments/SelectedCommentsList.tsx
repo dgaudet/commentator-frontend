@@ -334,7 +334,7 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
                     alignItems: 'center',
                     padding: spacing.md,
                     backgroundColor: themeColors.background.primary,
-                    border: `2px solid ${themeColors.primary[500]}`,
+                    border: `2px solid ${themeColors.primary.main}`,
                     borderRadius: borders.radius.md,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
                     cursor: 'grabbing',

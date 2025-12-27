@@ -11,14 +11,15 @@ import { colors, spacing, typography, borders } from '../../../theme/tokens'
 import type { OutcomeComment } from '../../../types'
 
 const mockEntityData = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics',
 }
 
 const mockOutcomeComments: OutcomeComment[] = [
   {
-    id: 1,
-    subjectId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+    userId: 'auth0|mock-user-123',
     comment: 'Demonstrates strong understanding of algebraic concepts',
     upperRange: 100,
     lowerRange: 80,

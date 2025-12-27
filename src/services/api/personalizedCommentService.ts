@@ -21,9 +21,9 @@ import type {
 export const personalizedCommentService = {
   /**
    * Get all personalized comments for a specific subject
-   * @param subjectId - The ID of the subject to fetch comments for
+   * @param subjectId - The string ID of the subject to fetch comments for
    */
-  async getBySubjectId(subjectId: number): Promise<PersonalizedComment[]> {
+  async getBySubjectId(subjectId: string): Promise<PersonalizedComment[]> {
     try {
       const response = await apiClient.get<PersonalizedComment[]>(
         `/personalized-comment?subjectId=${subjectId}`,
@@ -58,8 +58,9 @@ export const personalizedCommentService = {
   /**
    * Update an existing personalized comment
    * Note: subjectId is immutable and cannot be changed, but backend requires it for validation
+   * @param id - The string ID of the personalized comment to update
    */
-  async update(id: number, request: UpdatePersonalizedCommentRequest): Promise<PersonalizedComment> {
+  async update(id: string, request: UpdatePersonalizedCommentRequest): Promise<PersonalizedComment> {
     try {
       const response = await apiClient.put<PersonalizedComment>(
         `/personalized-comment/${id}`,
@@ -78,8 +79,9 @@ export const personalizedCommentService = {
 
   /**
    * Delete a personalized comment
+   * @param id - The string ID of the personalized comment to delete
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
       await apiClient.delete(`/personalized-comment/${id}`)
     } catch (error) {

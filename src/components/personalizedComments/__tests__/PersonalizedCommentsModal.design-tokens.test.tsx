@@ -11,14 +11,14 @@ import { colors, spacing, typography, borders } from '../../../theme/tokens'
 import type { PersonalizedComment } from '../../../types'
 
 const mockEntityData = {
-  id: 1,
+  id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics',
 }
 
 const mockPersonalizedComments: PersonalizedComment[] = [
   {
-    id: 1,
-    subjectId: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
+    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'Shows exceptional problem-solving skills and mathematical reasoning',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',

@@ -21,19 +21,19 @@ const mockUseSubjects = useSubjects as jest.MockedFunction<typeof useSubjects>
 
 const mockSubjects = [
   {
-    id: 1,
+    id: '65a1b2c3d4e5f6g7h8i9j0k1',
     name: 'Mathematics 101',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
-    id: 2,
+    id: '65a1b2c3d4e5f6g7h8i9j0k2',
     name: 'English 201',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
-    id: 3,
+    id: '65a1b2c3d4e5f6g7h8i9j0k3',
     name: 'Science 301',
     createdAt: '2024-02-20T14:15:00Z',
     updatedAt: '2024-02-20T14:15:00Z',
@@ -258,7 +258,7 @@ describe('SubjectList', () => {
 
       render(<SubjectList onSubjectClick={handleClick} />)
       // With single subject, it should auto-select
-      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
     })
 
     it('should show inline edit form when Edit tab clicked on SubjectListItem', () => {
@@ -444,10 +444,10 @@ describe('SubjectList', () => {
       const dropdown = screen.getByRole('combobox', { name: /select a subject/i }) as HTMLSelectElement
 
       // Select a subject
-      fireEvent.change(dropdown, { target: { value: '2' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k2' } })
 
       // Dropdown should reflect selected value
-      expect(dropdown.value).toBe('2')
+      expect(dropdown.value).toBe('65a1b2c3d4e5f6g7h8i9j0k2')
     })
   })
 
@@ -467,9 +467,9 @@ describe('SubjectList', () => {
       render(<SubjectList />)
 
       // Should not render any SubjectListItem components initially
-      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('subject-item-2')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('subject-item-3')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k2')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k3')).not.toBeInTheDocument()
     })
 
     it('should render single SubjectListItem when subject selected', () => {
@@ -488,12 +488,12 @@ describe('SubjectList', () => {
       const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
 
       // Select a subject
-      fireEvent.change(dropdown, { target: { value: '2' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k2' } })
 
       // Should render only the selected SubjectListItem
-      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
-      expect(screen.getByTestId('subject-item-2')).toBeInTheDocument()
-      expect(screen.queryByTestId('subject-item-3')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).not.toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k2')).toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k3')).not.toBeInTheDocument()
     })
 
     it('should update SubjectListItem when different subject selected', () => {
@@ -512,14 +512,14 @@ describe('SubjectList', () => {
       const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
 
       // Select first subject
-      fireEvent.change(dropdown, { target: { value: '1' } })
-      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
-      expect(screen.queryByTestId('subject-item-3')).not.toBeInTheDocument()
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k1' } })
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k3')).not.toBeInTheDocument()
 
       // Select different subject
-      fireEvent.change(dropdown, { target: { value: '3' } })
-      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
-      expect(screen.getByTestId('subject-item-3')).toBeInTheDocument()
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k3' } })
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).not.toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k3')).toBeInTheDocument()
     })
   })
 
@@ -540,7 +540,7 @@ describe('SubjectList', () => {
     })
 
     it('should load persisted selection on mount if valid', () => {
-      mockGetSelectedSubjectId.mockReturnValue(2)
+      mockGetSelectedSubjectId.mockReturnValue('65a1b2c3d4e5f6g7h8i9j0k2')
       mockUseSubjects.mockReturnValue({
         subjects: mockSubjects,
         isLoading: false,
@@ -556,11 +556,11 @@ describe('SubjectList', () => {
 
       // Should auto-select the persisted subject
       expect(mockGetSelectedSubjectId).toHaveBeenCalled()
-      expect(screen.getByTestId('subject-item-2')).toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k2')).toBeInTheDocument()
     })
 
     it('should not load persisted selection if ID does not exist in subjects', () => {
-      mockGetSelectedSubjectId.mockReturnValue(999) // Non-existent ID
+      mockGetSelectedSubjectId.mockReturnValue('non-existent-id-999') // Non-existent ID
       mockUseSubjects.mockReturnValue({
         subjects: mockSubjects,
         isLoading: false,
@@ -576,9 +576,9 @@ describe('SubjectList', () => {
 
       // Should not render any SubjectListItem
       expect(mockGetSelectedSubjectId).toHaveBeenCalled()
-      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('subject-item-2')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('subject-item-3')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k2')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k3')).not.toBeInTheDocument()
     })
 
     it('should save selection to localStorage when subject selected', () => {
@@ -597,14 +597,14 @@ describe('SubjectList', () => {
       const dropdown = screen.getByRole('combobox', { name: /select a subject/i })
 
       // Select a subject
-      fireEvent.change(dropdown, { target: { value: '3' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k3' } })
 
       // Should save to localStorage
-      expect(mockSaveSelectedSubjectId).toHaveBeenCalledWith(3)
+      expect(mockSaveSelectedSubjectId).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k3')
     })
 
     it('should clear selection from localStorage when deselecting', () => {
-      mockGetSelectedSubjectId.mockReturnValue(2)
+      mockGetSelectedSubjectId.mockReturnValue('65a1b2c3d4e5f6g7h8i9j0k2')
       mockUseSubjects.mockReturnValue({
         subjects: mockSubjects,
         isLoading: false,
@@ -644,7 +644,7 @@ describe('SubjectList', () => {
       // Should render dropdown without selection
       expect(mockGetSelectedSubjectId).toHaveBeenCalled()
       expect(screen.getByRole('combobox', { name: /select a subject/i })).toBeInTheDocument()
-      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).not.toBeInTheDocument()
     })
   })
 
@@ -672,9 +672,9 @@ describe('SubjectList', () => {
       render(<SubjectList />)
 
       // Should auto-select the only subject
-      expect(screen.getByTestId('subject-item-1')).toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).toBeInTheDocument()
       const dropdown = screen.getByRole('combobox', { name: /select a subject/i }) as HTMLSelectElement
-      expect(dropdown.value).toBe('1')
+      expect(dropdown.value).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
     })
 
     it('should not auto-select when multiple subjects exist', () => {
@@ -692,14 +692,14 @@ describe('SubjectList', () => {
       render(<SubjectList />)
 
       // Should not auto-select
-      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('subject-item-2')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k2')).not.toBeInTheDocument()
       const dropdown = screen.getByRole('combobox', { name: /select a subject/i }) as HTMLSelectElement
       expect(dropdown.value).toBe('')
     })
 
     it('should prefer persisted selection over auto-selection', () => {
-      mockGetSelectedSubjectId.mockReturnValue(2)
+      mockGetSelectedSubjectId.mockReturnValue('65a1b2c3d4e5f6g7h8i9j0k2')
       const twoSubjects = [mockSubjects[0], mockSubjects[1]]
       mockUseSubjects.mockReturnValue({
         subjects: twoSubjects,
@@ -715,8 +715,8 @@ describe('SubjectList', () => {
       render(<SubjectList />)
 
       // Should use persisted selection, not auto-select
-      expect(screen.getByTestId('subject-item-2')).toBeInTheDocument()
-      expect(screen.queryByTestId('subject-item-1')).not.toBeInTheDocument()
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k2')).toBeInTheDocument()
+      expect(screen.queryByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k1')).not.toBeInTheDocument()
     })
   })
 
@@ -822,11 +822,11 @@ describe('SubjectList', () => {
       dropdown.focus()
 
       // Simulate selecting with keyboard
-      fireEvent.change(dropdown, { target: { value: '2' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k2' } })
 
       // Should update selection
-      expect(dropdown.value).toBe('2')
-      expect(screen.getByTestId('subject-item-2')).toBeInTheDocument()
+      expect(dropdown.value).toBe('65a1b2c3d4e5f6g7h8i9j0k2')
+      expect(screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k2')).toBeInTheDocument()
     })
 
     it('should announce loading state to screen readers', () => {
@@ -864,7 +864,7 @@ describe('SubjectList', () => {
 
       // Focus and select
       dropdown.focus()
-      fireEvent.change(dropdown, { target: { value: '1' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k1' } })
 
       // Dropdown should still be in the DOM (not removed)
       expect(screen.getByRole('combobox')).toBeInTheDocument()
@@ -897,7 +897,7 @@ describe('SubjectList', () => {
 
       // Select a subject to render SubjectListItem
       const dropdown = screen.getByRole('combobox') as HTMLSelectElement
-      fireEvent.change(dropdown, { target: { value: '1' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k1' } })
 
       // After selecting a subject, SubjectListItem is rendered
       // SubjectListItem receives onEditSuccess prop from SubjectList
@@ -929,7 +929,7 @@ describe('SubjectList', () => {
 
     it('should auto-select newly created subject (US-SUBJECT-CREATE-002)', () => {
       const newSubject = {
-        id: 99,
+        id: '65a1b2c3d4e5f6g7h8i9j0k99',
         name: 'New Subject',
         createdAt: '2024-11-05T10:30:00Z',
         updatedAt: '2024-11-05T10:30:00Z',
@@ -952,15 +952,15 @@ describe('SubjectList', () => {
 
       // Select the new subject via dropdown (simulating App.tsx telling SubjectList to auto-select)
       const dropdown = screen.getByRole('combobox', { name: /select a subject/i }) as HTMLSelectElement
-      fireEvent.change(dropdown, { target: { value: '99' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k99' } })
 
       // Check that saveSelectedSubjectId was called with the new subject ID
-      expect(mockSaveSelectedSubjectId).toHaveBeenCalledWith(99)
+      expect(mockSaveSelectedSubjectId).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k99')
     })
 
     it('should display newly created subject details immediately after auto-select (US-SUBJECT-CREATE-002)', () => {
       const newSubject = {
-        id: 99,
+        id: '65a1b2c3d4e5f6g7h8i9j0k99',
         name: 'New Subject',
         createdAt: '2024-11-05T10:30:00Z',
         updatedAt: '2024-11-05T10:30:00Z',
@@ -979,12 +979,12 @@ describe('SubjectList', () => {
         clearError: jest.fn(),
       })
 
-      mockGetSelectedSubjectId.mockReturnValue(99)
+      mockGetSelectedSubjectId.mockReturnValue('65a1b2c3d4e5f6g7h8i9j0k99')
 
       render(<SubjectList />)
 
       // After auto-selection with ID 99, the new subject should be displayed
-      const subjectItem = screen.getByTestId('subject-item-99')
+      const subjectItem = screen.getByTestId('subject-item-65a1b2c3d4e5f6g7h8i9j0k99')
       expect(subjectItem).toBeInTheDocument()
       // Verify the subject name is displayed within the item
       expect(subjectItem).toHaveTextContent('New Subject')
@@ -992,7 +992,7 @@ describe('SubjectList', () => {
 
     it('should persist auto-selected subject to localStorage (US-SUBJECT-CREATE-002)', () => {
       const newSubject = {
-        id: 99,
+        id: '65a1b2c3d4e5f6g7h8i9j0k99',
         name: 'New Subject',
         createdAt: '2024-11-05T10:30:00Z',
         updatedAt: '2024-11-05T10:30:00Z',
@@ -1015,16 +1015,16 @@ describe('SubjectList', () => {
 
       // Select the new subject via dropdown (simulating manual selection)
       const dropdown = screen.getByRole('combobox') as HTMLSelectElement
-      fireEvent.change(dropdown, { target: { value: '99' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k99' } })
 
       // Verify saveSelectedSubjectId was called with the new ID
-      expect(mockSaveSelectedSubjectId).toHaveBeenCalledWith(99)
+      expect(mockSaveSelectedSubjectId).toHaveBeenCalledWith('65a1b2c3d4e5f6g7h8i9j0k99')
     })
 
     it('should call onAddSubject callback after auto-selecting newly created subject (US-SUBJECT-CREATE-002)', () => {
       const mockOnAddSubject = jest.fn()
       const newSubject = {
-        id: 99,
+        id: '65a1b2c3d4e5f6g7h8i9j0k99',
         name: 'New Subject',
         createdAt: '2024-11-05T10:30:00Z',
         updatedAt: '2024-11-05T10:30:00Z',
@@ -1050,7 +1050,7 @@ describe('SubjectList', () => {
 
       // Select a subject to show the item
       const dropdown = screen.getByRole('combobox') as HTMLSelectElement
-      fireEvent.change(dropdown, { target: { value: '99' } })
+      fireEvent.change(dropdown, { target: { value: '65a1b2c3d4e5f6g7h8i9j0k99' } })
 
       // Verify onAddSubject callback is available and can be called
       expect(mockOnAddSubject).toBeDefined()

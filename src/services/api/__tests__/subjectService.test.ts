@@ -51,8 +51,8 @@ describe('SubjectService', () => {
       result.catch(() => {})
     })
 
-    it('getById should accept number parameter', () => {
-      const result = subjectService.getById(1)
+    it('getById should accept string parameter', () => {
+      const result = subjectService.getById('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(result).toBeInstanceOf(Promise)
       // Clean up promise to avoid unhandled rejection
       result.catch(() => {})
@@ -68,14 +68,14 @@ describe('SubjectService', () => {
 
     it('update should accept id and request object with only name (no year)', () => {
       // Subject only has name field (year removed)
-      const result = subjectService.update(1, { name: 'Updated Subject' })
+      const result = subjectService.update('65a1b2c3d4e5f6g7h8i9j0k1', { name: 'Updated Subject' })
       expect(result).toBeInstanceOf(Promise)
       // Clean up promise to avoid unhandled rejection
       result.catch(() => {})
     })
 
-    it('delete should accept number parameter', () => {
-      const result = subjectService.delete(1)
+    it('delete should accept string parameter', () => {
+      const result = subjectService.delete('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(result).toBeInstanceOf(Promise)
       // Clean up promise to avoid unhandled rejection
       result.catch(() => {})

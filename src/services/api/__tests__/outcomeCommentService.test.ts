@@ -63,14 +63,14 @@ describe('OutcomeCommentService', () => {
         config: {} as InternalAxiosRequestConfig,
       })
       mockApiClient.post.mockResolvedValue({
-        data: { data: { id: 1, comment: 'test' }, success: true },
+        data: { data: { id: '65a1b2c3d4e5f6g7h8i9j0k1', comment: 'test' }, success: true },
         status: 201,
         statusText: 'Created',
         headers: {},
         config: {} as InternalAxiosRequestConfig,
       })
       mockApiClient.put.mockResolvedValue({
-        data: { data: { id: 1, comment: 'updated' }, success: true },
+        data: { data: { id: '65a1b2c3d4e5f6g7h8i9j0k1', comment: 'updated' }, success: true },
         status: 200,
         statusText: 'OK',
         headers: {},
@@ -93,7 +93,7 @@ describe('OutcomeCommentService', () => {
 
     it('create should accept request object', async () => {
       const request = {
-        subjectId: 1,
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Test comment',
         upperRange: 85,
         lowerRange: 70,
@@ -103,7 +103,7 @@ describe('OutcomeCommentService', () => {
       expect(mockApiClient.post).toHaveBeenCalledWith(
         '/outcome-comment',
         {
-          subjectId: 1,
+          subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
           comment: 'Test comment',
           upperRange: 85,
           lowerRange: 70,

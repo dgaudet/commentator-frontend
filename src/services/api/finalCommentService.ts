@@ -22,9 +22,9 @@ import type {
 export const finalCommentService = {
   /**
    * Get all final comments for a specific class
-   * @param classId - The ID of the class to fetch comments for
+   * @param classId - The string ID of the class to fetch comments for
    */
-  async getByClassId(classId: number): Promise<FinalComment[]> {
+  async getByClassId(classId: string): Promise<FinalComment[]> {
     try {
       const response = await apiClient.get<FinalComment[]>(
         `/final-comment?classId=${classId}`,
@@ -54,8 +54,9 @@ export const finalCommentService = {
 
   /**
    * Update an existing final comment
+   * @param id - The string ID of the final comment to update
    */
-  async update(id: number, request: UpdateFinalCommentRequest): Promise<FinalComment> {
+  async update(id: string, request: UpdateFinalCommentRequest): Promise<FinalComment> {
     try {
       const response = await apiClient.put<FinalComment>(
         `/final-comment/${id}`,
@@ -70,8 +71,9 @@ export const finalCommentService = {
 
   /**
    * Delete a final comment
+   * @param id - The string ID of the final comment to delete
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
       await apiClient.delete(`/final-comment/${id}`)
     } catch (error) {

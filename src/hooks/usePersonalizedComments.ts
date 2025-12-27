@@ -18,10 +18,10 @@ interface UsePersonalizedCommentsReturn {
   personalizedComments: PersonalizedComment[]
   loading: boolean
   error: string | null
-  loadPersonalizedComments: (subjectId: number) => Promise<void>
+  loadPersonalizedComments: (subjectId: string) => Promise<void>
   createComment: (request: CreatePersonalizedCommentRequest) => Promise<void>
-  updateComment: (id: number, request: UpdatePersonalizedCommentRequest) => Promise<void>
-  deleteComment: (id: number) => Promise<void>
+  updateComment: (id: string, request: UpdatePersonalizedCommentRequest) => Promise<void>
+  deleteComment: (id: string) => Promise<void>
   clearError: () => void
 }
 
@@ -40,7 +40,7 @@ export const usePersonalizedComments = (): UsePersonalizedCommentsReturn => {
     setError(message)
   }, [])
 
-  const loadPersonalizedComments = useCallback(async (subjectId: number) => {
+  const loadPersonalizedComments = useCallback(async (subjectId: string) => {
     setLoading(true)
     setError(null)
     try {
@@ -67,7 +67,7 @@ export const usePersonalizedComments = (): UsePersonalizedCommentsReturn => {
     }
   }, [handleError])
 
-  const updateComment = useCallback(async (id: number, request: UpdatePersonalizedCommentRequest) => {
+  const updateComment = useCallback(async (id: string, request: UpdatePersonalizedCommentRequest) => {
     setLoading(true)
     setError(null)
     try {
@@ -83,7 +83,7 @@ export const usePersonalizedComments = (): UsePersonalizedCommentsReturn => {
     }
   }, [handleError])
 
-  const deleteComment = useCallback(async (id: number) => {
+  const deleteComment = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
     try {

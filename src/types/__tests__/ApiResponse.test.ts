@@ -9,18 +9,18 @@ describe('API Response Type Definitions', () => {
   describe('ApiResponse interface', () => {
     it('should wrap data with generic type', () => {
       interface TestData {
-        id: number
+        id: string
         value: string
       }
 
       const response: ApiResponse<TestData> = {
         data: {
-          id: 1,
+          id: '65a1b2c3d4e5f6g7h8i9j0k1',
           value: 'test',
         },
       }
 
-      expect(response.data.id).toBe(1)
+      expect(response.data.id).toBe('65a1b2c3d4e5f6g7h8i9j0k1')
       expect(response.data.value).toBe('test')
     })
 
@@ -123,18 +123,18 @@ describe('API Response Type Definitions', () => {
     it('should support ApiResponse with nested objects', () => {
       interface ComplexData {
         user: {
-          id: number
+          id: string
           name: string
         }
-        classes: Array<{ id: number; name: string }>
+        classes: Array<{ id: string; name: string }>
       }
 
       const response: ApiResponse<ComplexData> = {
         data: {
-          user: { id: 1, name: 'Teacher' },
+          user: { id: '65a1b2c3d4e5f6g7h8i9j0k1', name: 'Teacher' },
           classes: [
-            { id: 1, name: 'Math' },
-            { id: 2, name: 'Science' },
+            { id: '65a1b2c3d4e5f6g7h8i9j0k1', name: 'Math' },
+            { id: '65a1b2c3d4e5f6g7h8i9j0k2', name: 'Science' },
           ],
         },
       }
