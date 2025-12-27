@@ -100,3 +100,8 @@ THere are a lot of render issues when adding/updating an item
 * Outcome Comments, you get a flash
 * Also when switching between tabs
 * Personalized Comments, you get a flash
+
+Deployment
+* Need to make the api url in apiClient configurable
+** Similar to the authConfig.ts, make a class for backend API configuration
+* Then need to bundle it and deploy it to the frontend similar to my workout-list app
