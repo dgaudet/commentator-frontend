@@ -17,8 +17,8 @@ export const PlaceholderTipsBox = () => {
       style={{
         padding: spacing.md,
         marginBottom: spacing.md,
-        backgroundColor: themeColors.primary[50],
-        border: `${borders.width.thin} solid ${themeColors.primary[200]}`,
+        backgroundColor: themeColors.primary.light,
+        border: `${borders.width.thin} solid ${themeColors.primary.main}`,
         borderRadius: borders.radius.md,
       }}
     >
@@ -26,7 +26,7 @@ export const PlaceholderTipsBox = () => {
         style={{
           fontSize: typography.fontSize.sm,
           fontWeight: typography.fontWeight.semibold,
-          color: themeColors.primary[700],
+          color: themeColors.primary.dark,
           marginBottom: spacing.xs,
         }}
       >

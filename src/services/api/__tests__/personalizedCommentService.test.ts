@@ -86,7 +86,7 @@ describe('PersonalizedCommentService', () => {
     })
 
     it('getBySubjectId should accept a number parameter', async () => {
-      await personalizedCommentService.getBySubjectId(1)
+      await personalizedCommentService.getBySubjectId("1")
       expect(mockApiClient.get).toHaveBeenCalledWith('/personalized-comment?subjectId=1')
     })
 
@@ -110,7 +110,7 @@ describe('PersonalizedCommentService', () => {
         comment: 'Updated comment',
         rating: 4,
       }
-      await personalizedCommentService.update(1, request)
+      await personalizedCommentService.update("1", request)
       expect(mockApiClient.put).toHaveBeenCalledWith('/personalized-comment/1', {
         subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Updated comment',
@@ -119,7 +119,7 @@ describe('PersonalizedCommentService', () => {
     })
 
     it('delete should accept an id parameter', async () => {
-      await personalizedCommentService.delete(1)
+      await personalizedCommentService.delete("1")
       expect(mockApiClient.delete).toHaveBeenCalledWith('/personalized-comment/1')
     })
   })
@@ -127,7 +127,7 @@ describe('PersonalizedCommentService', () => {
   describe('error handling', () => {
     it('getBySubjectId should throw error on API failure', async () => {
       mockApiClient.get.mockRejectedValue(new Error('API Error'))
-      await expect(personalizedCommentService.getBySubjectId(1)).rejects.toThrow(
+      await expect(personalizedCommentService.getBySubjectId("1")).rejects.toThrow(
         'Failed to fetch personalized comments for subject',
       )
     })
@@ -142,13 +142,13 @@ describe('PersonalizedCommentService', () => {
     it('update should throw error on API failure', async () => {
       mockApiClient.put.mockRejectedValue(new Error('API Error'))
       await expect(
-        personalizedCommentService.update(1, { subjectId: '65a1b2c3d4e5f6g7h8i9j0k1', comment: 'Updated', rating: 4 }),
+        personalizedCommentService.update("1", { subjectId: '65a1b2c3d4e5f6g7h8i9j0k1', comment: 'Updated', rating: 4 }),
       ).rejects.toThrow('Failed to update personalized comment')
     })
 
     it('delete should throw error on API failure', async () => {
       mockApiClient.delete.mockRejectedValue(new Error('API Error'))
-      await expect(personalizedCommentService.delete(1)).rejects.toThrow(
+      await expect(personalizedCommentService.delete("1")).rejects.toThrow(
         'Failed to delete personalized comment',
       )
     })

@@ -62,8 +62,6 @@ export const Tabs: React.FC<TabsProps> = ({
   defaultTab,
   onChange,
   orientation = 'horizontal',
-  // variant is reserved for future styling variants
-  _variant = 'default',
 }) => {
   const themeColors = useThemeColors()
   const focusRings = useThemeFocusRings()

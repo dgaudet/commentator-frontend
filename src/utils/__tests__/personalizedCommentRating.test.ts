@@ -161,7 +161,7 @@ describe('sortPersonalizedCommentsByRating', () => {
     comment: string,
     rating?: number | null,
   ): PersonalizedComment => ({
-    id,
+    id: String(id),
     comment,
     subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     rating: rating === undefined ? undefined : rating,

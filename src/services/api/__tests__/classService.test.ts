@@ -130,7 +130,13 @@ describe('classService', () => {
         updatedAt: '2024-01-16T14:30:00Z',
       }
 
-      mockedApiClient.put.mockResolvedValueOnce({ data: mockUpdatedClass })
+      mockedApiClient.put.mockResolvedValueOnce({
+        data: mockUpdatedClass,
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as InternalAxiosRequestConfig,
+      })
 
       const result = await classService.update('65a1b2c3d4e5f6g7h8i9j0k1', request)
 
@@ -163,7 +169,13 @@ describe('classService', () => {
 
   describe('delete', () => {
     it('should delete a class successfully', async () => {
-      mockedApiClient.delete.mockResolvedValueOnce({ data: null })
+      mockedApiClient.delete.mockResolvedValueOnce({
+        data: null,
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as InternalAxiosRequestConfig,
+      })
 
       await classService.delete('65a1b2c3d4e5f6g7h8i9j0k1')
 
