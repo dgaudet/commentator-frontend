@@ -110,6 +110,7 @@ TTL: Auto
 This points your custom domain to GitHub Pages.
 
 **SSL/TLS Settings**:
+- Encryption Mode: **Full (strict)** ⚠️ CRITICAL - Protects end-to-end encryption
 - Always use HTTPS: ✅ Enabled
 - Minimum TLS version: 1.2
 
@@ -167,7 +168,9 @@ nslookup www.yourdomain.com
 **Solution**:
 1. Make sure Cloudflare "Proxy" is enabled (orange cloud, not gray)
 2. Wait for SSL certificate to be issued (~5 minutes)
-3. In Cloudflare: SSL/TLS → Overview → Ensure "Flexible" or "Full" mode
+3. In Cloudflare: SSL/TLS → Overview → Set to **"Full (strict)"** mode
+   - ⚠️ Never use "Flexible" - it breaks encryption between Cloudflare and GitHub
+   - "Full (strict)" provides end-to-end security
 
 ---
 
@@ -214,9 +217,12 @@ nslookup www.yourdomain.com
 
 ### 5. Enable HTTPS
 1. In Cloudflare: **SSL/TLS** tab
-2. Overview: Make sure mode is "Full" or "Flexible"
+2. Overview: Set encryption mode to **"Full (strict)"**
+   - ⚠️ **IMPORTANT**: Do NOT use "Flexible" mode
+   - "Flexible" connects to GitHub Pages over unencrypted HTTP, allowing attackers to inject malicious code
+   - "Full (strict)" ensures end-to-end encryption and protects asset integrity
 3. Under "Always use HTTPS": Toggle ON
-4. Done! Certificate is auto-managed
+4. Done! Certificate is auto-managed by Cloudflare
 
 ### 6. Test Deployment
 1. Make a small change locally
@@ -319,6 +325,21 @@ curl -w "@curl-format.txt" -o /dev/null -s https://yourdomain.com
 
 ## 🔐 Security Considerations
 
+### HTTPS & End-to-End Encryption (CRITICAL)
+- **Encryption Mode**: Always use **"Full (strict)"** in Cloudflare
+  - Protects the connection from Cloudflare edge to GitHub Pages origin
+  - "Flexible" mode is **INSECURE** - allows man-in-the-middle attacks that can inject malicious code
+  - "Full (strict)" ensures TLS verification end-to-end
+- **Why it matters**:
+  - An attacker between Cloudflare and GitHub could inject malicious JavaScript
+  - This would affect all users visiting your site
+  - "Full (strict)" prevents this by requiring encryption and certificate verification
+- **Certificate Management**:
+  - Cloudflare provides free SSL certificate for your domain
+  - GitHub Pages has its own HTTPS certificate
+  - Both are verified in "Full (strict)" mode
+  - Certificates auto-renew (no action needed)
+
 ### Secrets Management
 - **Never commit secrets** to repository
 - Use `.env.local` for local development (add to `.gitignore`)
@@ -329,11 +350,6 @@ curl -w "@curl-format.txt" -o /dev/null -s https://yourdomain.com
 - Only push to `main` if you have push access
 - Consider branch protection rules (require PR reviews)
 - Use GitHub's token for CI/CD (automatically handled)
-
-### HTTPS
-- Cloudflare provides free SSL certificate
-- Always use HTTPS (Cloudflare forces it)
-- Certificate auto-renews (no action needed)
 
 ---
 
