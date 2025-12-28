@@ -106,3 +106,5 @@ Deployment
 * Should I use vercel to deploy the front end?
 * Killing the locally running app
 ** lsof -i :5173, then kill the process
+
+default url - dgaudet.github.io/commentator-frontend
