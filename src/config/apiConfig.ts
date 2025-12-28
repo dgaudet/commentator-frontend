@@ -17,13 +17,15 @@ export interface ApiConfig {
 
 /**
  * Get API configuration from environment variables
- * Reads VITE_API_BASE_URL from environment with fallback to localhost
- * Vite automatically injects VITE_* variables into process.env during build
+ * Reads API_BASE_URL from environment (vite.config strips VITE_ prefix)
+ * Falls back to localhost:3000 if not configured
  *
  * @returns API configuration with the configured base URL
  */
 export function getDefaultApiConfig(): ApiConfig {
-  const baseUrl = process.env.VITE_API_BASE_URL
+  // Note: vite.config.ts removes the VITE_ prefix when defining variables
+  // So VITE_API_BASE_URL becomes process.env.API_BASE_URL
+  const baseUrl = process.env.API_BASE_URL
 
   return {
     baseUrl: baseUrl || 'http://localhost:3000',
