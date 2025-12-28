@@ -378,10 +378,30 @@ export default {
 
 ## Next Steps
 
+### Critical Discovery: SPA Routing in Production
+
+**Issue Found**: Production build returned 404 for `/callback` route when using `npx serve dist/`
+
+**Root Cause**: The `serve` package in static mode doesn't handle SPA routing. It was looking for a physical `callback` file instead of redirecting to `index.html` for React Router to handle.
+
+**Solution**: Use SPA mode with the `-s` or `--spa` flag:
+```bash
+npx serve -s dist/ -l 5173
+```
+
+**Why This Matters**:
+- Development server (Vite) handles SPA routing automatically
+- Production servers need explicit configuration for SPA routing
+- All non-file routes must redirect to `index.html` so React Router can handle them client-side
+- This affects Auth0 callbacks, nested routes, and any client-side routing
+
+**Testing Confirmed**: ✅ Auth0 login flow now works correctly with `-s` flag
+
 ### Immediate (Next Session)
 1. **Manual Validation** (User to execute):
    - Follow the 8-step validation guide
    - Verify all functionality works in production build
+   - Use correct command: `npx serve -s dist/ -l 5173` (with `-s` flag for SPA routing)
    - Test responsive design on actual devices
    - Verify cross-browser compatibility
 
