@@ -7,6 +7,7 @@
  * - MSW (Mock Service Worker) with polyfills
  * - Auth0Client mock for all tests
  * - import.meta.env polyfill for tests
+ * - Environment variables (API_BASE_URL, etc.)
  * - Cleanup hooks to prevent memory leaks (Story 2 optimization)
  *
  * Note: MSW setup is currently disabled due to Jest ESM compatibility issues
@@ -16,6 +17,12 @@ import '@testing-library/jest-dom'
 import 'whatwg-fetch'
 import { TextDecoder, TextEncoder } from 'util'
 import { ReadableStream, TransformStream } from 'stream/web'
+
+// Set up environment variables for tests
+// vite.config.ts strips VITE_ prefix, so VITE_API_BASE_URL becomes API_BASE_URL
+if (!process.env.API_BASE_URL) {
+  process.env.API_BASE_URL = process.env.VITE_API_BASE_URL || 'http://localhost:3000'
+}
 
 // Polyfill import.meta.env for Jest/Node environment
 // Vite uses static replacement in browser, but Jest needs runtime access

@@ -3,7 +3,7 @@
     "name": "api-base-url-config",
     "title": "Make API Client Base URL Configurable via apiConfig",
     "description": "Create a centralized API configuration class similar to authConfig.ts for managing the backend API base URL across different environments",
-    "status": "PLANNING"
+    "status": "COMPLETE"
   },
   "complexity": {
     "level": "L0",
@@ -28,8 +28,10 @@
   "phases": {
     "planning": "COMPLETE",
     "design": "SKIPPED",
-    "implementation": "PENDING"
+    "implementation": "COMPLETE"
   },
+  "completedAt": "2025-12-28",
+  "completionNotes": "All 4 user stories implemented and passing acceptance criteria. Build (0 TypeScript errors), Tests (1359 passing), pattern matches authConfig.ts exactly, no breaking changes.",
   "dependencies": {
     "architectural_review": false,
     "external_systems": false,

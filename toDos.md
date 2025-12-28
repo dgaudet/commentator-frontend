@@ -102,7 +102,6 @@ THere are a lot of render issues when adding/updating an item
 * Personalized Comments, you get a flash
 
 Deployment
-* remove the config/env.ts file as it's no longer needed
 * Are the secrets in the built deployment
 * Should I use vercel to deploy the front end?
 * Killing the locally running app
