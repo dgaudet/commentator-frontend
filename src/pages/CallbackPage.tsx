@@ -43,8 +43,8 @@ export const CallbackPage: React.FC = () => {
         }
 
         if (isAuthenticated) {
-          // Redirect to dashboard or home page
-          const returnTo = searchParams.get('returnTo') || '/dashboard'
+          // Redirect to home page or return to specified location
+          const returnTo = searchParams.get('returnTo') || '/'
           navigate(returnTo, { replace: true })
         } else {
           setError('Authentication timeout. Please try again.')

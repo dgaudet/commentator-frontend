@@ -180,6 +180,13 @@ npm run build       # Build for production (output: ./dist)
 npm run preview     # Preview production build locally
 ```
 
+#### Run the built app locally
+
+```bash
+npm run build:dev   # Build for dev (output: ./dist)
+npx serve -s dist/ -l 5173
+```
+
 ### Testing
 
 ```bash

@@ -124,7 +124,7 @@ describe('subjectStorageUtils', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
 
       // Should not throw error
-      expect(() => saveSelectedSubjectId(123)).not.toThrow()
+      expect(() => saveSelectedSubjectId("123")).not.toThrow()
       expect(consoleSpy).toHaveBeenCalledWith(
         'Failed to write to localStorage:',
         expect.any(Error),

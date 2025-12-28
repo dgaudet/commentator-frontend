@@ -37,8 +37,8 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   const themeColors = useThemeColors()
   const [copied, setCopied] = useState(false)
   const [announcement, setAnnouncement] = useState('')
-  const timeoutRef = useRef<number | null>(null)
-  const announcementTimeoutRef = useRef<number | null>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const announcementTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const buttonStyle: React.CSSProperties = {
     padding: `${spacing.sm} ${spacing.lg}`,

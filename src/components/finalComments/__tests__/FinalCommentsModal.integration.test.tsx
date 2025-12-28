@@ -58,6 +58,7 @@ const mockOutcomeComments: OutcomeComment[] = [
   {
     id: '65a1b2c3d4e5f6g7h8i9j0k1',
     subjectId: '65a1b2c3d4e5f6g7h8i9j0k5',
+    userId: '65a1b2c3d4e5f6g7h8i9j0k1',
     lowerRange: 90,
     upperRange: 100,
     comment: 'Demonstrates exceptional understanding of mathematical concepts',
@@ -67,6 +68,7 @@ const mockOutcomeComments: OutcomeComment[] = [
   {
     id: '65a1b2c3d4e5f6g7h8i9j0k2',
     subjectId: '65a1b2c3d4e5f6g7h8i9j0k5',
+    userId: '65a1b2c3d4e5f6g7h8i9j0k1',
     lowerRange: 80,
     upperRange: 89,
     comment: 'Shows strong grasp of fundamental principles',
@@ -99,6 +101,10 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
       loading: false,
       error: null,
       loadOutcomeComments: jest.fn(),
+      createComment: jest.fn(),
+      updateComment: jest.fn(),
+      deleteComment: jest.fn(),
+      clearError: jest.fn(),
     })
   })
 

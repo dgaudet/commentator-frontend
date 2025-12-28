@@ -161,7 +161,7 @@ describe('sortPersonalizedCommentsByRating', () => {
     comment: string,
     rating?: number | null,
   ): PersonalizedComment => ({
-    id,
+    id: String(id),
     comment,
     subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     rating: rating === undefined ? undefined : rating,
@@ -181,7 +181,7 @@ describe('sortPersonalizedCommentsByRating', () => {
     const sorted = sortPersonalizedCommentsByRating(comments)
 
     expect(sorted.map((c) => c.rating)).toEqual([5, 4, 3, 2, 1])
-    expect(sorted.map((c) => c.id)).toEqual([2, 4, 3, 5, 1])
+    expect(sorted.map((c) => c.id)).toEqual(['2', '4', '3', '5', '1'])
   })
 
   it('sorts comments with same rating alphabetically by comment text', () => {
@@ -209,7 +209,7 @@ describe('sortPersonalizedCommentsByRating', () => {
 
     const sorted = sortPersonalizedCommentsByRating(comments)
 
-    expect(sorted.map((c) => c.id)).toEqual([2, 1, 3]) // 5, 3 (null), 1
+    expect(sorted.map((c) => c.id)).toEqual(['2', '1', '3']) // 5, 3 (null), 1
   })
 
   it('treats undefined ratings as 3 (Neutral) for sorting', () => {
@@ -221,7 +221,7 @@ describe('sortPersonalizedCommentsByRating', () => {
 
     const sorted = sortPersonalizedCommentsByRating(comments)
 
-    expect(sorted.map((c) => c.id)).toEqual([2, 1, 3]) // 5, 3 (undefined), 1
+    expect(sorted.map((c) => c.id)).toEqual(['2', '1', '3']) // 5, 3 (undefined), 1
   })
 
   it('sorts mixed ratings and null/undefined correctly', () => {
@@ -238,11 +238,11 @@ describe('sortPersonalizedCommentsByRating', () => {
     // Expected order:
     // 1. Rating 5 (id: 3)
     // 2-4. Rating 3 group (null, undefined, explicit 3) sorted alphabetically:
-    //      - "A comment" (id: '65a1b2c3d4e5f6g7h8i9j0k2', undefined rating = 3)
-    //      - "B comment" (id: '65a1b2c3d4e5f6g7h8i9j0k1', null rating = 3)
-    //      - "C comment" (id: '65a1b2c3d4e5f6g7h8i9j0k5', rating = 3)
+    //      - "A comment" (id: '2', undefined rating = 3)
+    //      - "B comment" (id: '1', null rating = 3)
+    //      - "C comment" (id: '5', rating = 3)
     // 5. Rating 1 (id: 4)
-    expect(sorted.map((c) => c.id)).toEqual([3, 2, 1, 5, 4])
+    expect(sorted.map((c) => c.id)).toEqual(['3', '2', '1', '5', '4'])
   })
 
   it('returns empty array for empty input', () => {
@@ -282,6 +282,6 @@ describe('sortPersonalizedCommentsByRating', () => {
     const sorted = sortPersonalizedCommentsByRating(comments)
 
     // Expected order: 4.8 (≈5), 3.5 (≈4), 1.4 (≈1)
-    expect(sorted.map((c) => c.id)).toEqual([2, 3, 1])
+    expect(sorted.map((c) => c.id)).toEqual(['2', '3', '1'])
   })
 })

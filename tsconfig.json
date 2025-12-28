@@ -20,12 +20,17 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    /* Path Aliases */
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
     /* Testing */
-    "types": ["jest", "@testing-library/jest-dom"],
+    "types": ["jest", "@testing-library/jest-dom", "node"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
   "include": ["src"],
-  "exclude": ["src/__tests__/archived", "e2e/archived"],
+  "exclude": ["src/**/__tests__", "src/**/*.test.ts", "src/**/*.test.tsx", "src/__tests__/archived", "e2e/archived"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

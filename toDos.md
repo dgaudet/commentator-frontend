@@ -100,3 +100,11 @@ THere are a lot of render issues when adding/updating an item
 * Outcome Comments, you get a flash
 * Also when switching between tabs
 * Personalized Comments, you get a flash
+
+Deployment
+* Need to make the api url in apiClient configurable
+** Similar to the authConfig.ts, make a class for backend API configuration
+* Are the secrets in the built deployment
+* Should I use vercel to deploy the front end?
+* Killing the locally running app
+** lsof -i :5173, then kill the process
