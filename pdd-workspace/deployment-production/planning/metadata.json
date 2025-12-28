@@ -1,0 +1,52 @@
+{
+  "feature": {
+    "name": "deployment-production",
+    "title": "Deploy Static Website to Production",
+    "description": "Set up automated deployment pipeline for static website to production using GitHub Pages, Cloudflare CDN, and custom domain",
+    "status": "PLANNING"
+  },
+  "complexity": {
+    "level": "L1",
+    "reasoning": "Micro feature with 5-6 stories, 2-3 hours effort. Single developer, straightforward infrastructure setup following established patterns. No architectural changes, no database migrations. GitHub Pages + Cloudflare + GitHub Actions configuration.",
+    "assessedAt": "2025-12-28"
+  },
+  "scope": {
+    "userStories": 6,
+    "affectedFiles": 3,
+    "newFiles": 1,
+    "changes": [
+      "Enable GitHub Pages for repository",
+      "Create GitHub Actions workflow for build/test/deploy",
+      "Configure Cloudflare DNS for custom domain",
+      "Set up HTTPS/SSL with Cloudflare",
+      "Point Google Domains to Cloudflare nameservers",
+      "Document deployment process and troubleshooting"
+    ]
+  },
+  "timeline": {
+    "estimation": "2-3 hours",
+    "priority": "HIGH",
+    "blocks": [],
+    "dependencies": []
+  },
+  "phases": {
+    "planning": "IN_PROGRESS",
+    "design": "SKIPPED",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING"
+  },
+  "infrastructure": {
+    "hosting": "GitHub Pages",
+    "cdn": "Cloudflare",
+    "domain": "Google Domains",
+    "cicd": "GitHub Actions",
+    "cost": "$0/month (domain registration only)"
+  },
+  "pattern": {
+    "basedOn": "GitHub Pages + Cloudflare best practices",
+    "gitWorkflow": "Automatic deployment on push to main",
+    "buildProcess": "npm run build",
+    "testProcess": "npm run test",
+    "deploymentTrigger": "GitHub Actions workflow"
+  }
+}
