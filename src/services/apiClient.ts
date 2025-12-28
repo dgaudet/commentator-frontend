@@ -37,7 +37,7 @@
  */
 
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios'
-import { env } from '../config/env'
+import { getDefaultApiConfig } from '../config/apiConfig'
 
 // Callback to get access token from Auth context
 let authContextGetToken: (() => Promise<string | null>) | null = null
@@ -96,15 +96,10 @@ function getCachedTokenIfValid(): string | null {
 }
 
 /**
- * Get the base API URL from environment or use default
+ * Get the base API URL from configuration
  */
 function getBaseUrl(): string {
-  if (env.baseUrl) {
-    return env.baseUrl
-  }
-
-  // Default to localhost for development
-  return 'http://localhost:3000'
+  return getDefaultApiConfig().baseUrl
 }
 
 /**

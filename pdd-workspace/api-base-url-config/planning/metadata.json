@@ -1,0 +1,48 @@
+{
+  "feature": {
+    "name": "api-base-url-config",
+    "title": "Make API Client Base URL Configurable via apiConfig",
+    "description": "Create a centralized API configuration class similar to authConfig.ts for managing the backend API base URL across different environments",
+    "status": "COMPLETE"
+  },
+  "complexity": {
+    "level": "L0",
+    "reasoning": "Atomic task creating a single configuration file following an existing pattern (authConfig.ts). No architectural changes, no external dependencies. Single developer can complete in <1 hour.",
+    "assessedAt": "2025-12-28"
+  },
+  "scope": {
+    "userStories": 4,
+    "affectedFiles": 2,
+    "newFiles": 1,
+    "changes": [
+      "Create src/config/apiConfig.ts with ApiConfig interface and factory functions",
+      "Update src/config/env.ts to export apiConfig instead of raw baseUrl",
+      "Update apiClient.ts to use apiConfig factory function"
+    ]
+  },
+  "timeline": {
+    "estimation": "<1 hour (30 minutes)",
+    "priority": "MEDIUM",
+    "blocks": []
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "design": "SKIPPED",
+    "implementation": "COMPLETE"
+  },
+  "completedAt": "2025-12-28",
+  "completionNotes": "All 4 user stories implemented and passing acceptance criteria. Build (0 TypeScript errors), Tests (1359 passing), pattern matches authConfig.ts exactly, no breaking changes.",
+  "dependencies": {
+    "architectural_review": false,
+    "external_systems": false,
+    "schema_changes": false,
+    "database_migrations": false
+  },
+  "pattern": {
+    "basedOn": "authConfig.ts",
+    "environmentVariables": [
+      "VITE_API_BASE_URL"
+    ],
+    "fallback": "http://localhost:3000"
+  }
+}
