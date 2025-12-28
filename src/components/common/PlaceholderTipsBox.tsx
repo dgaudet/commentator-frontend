@@ -17,9 +17,6 @@ export const PlaceholderTipsBox = () => {
       style={{
         padding: spacing.md,
         marginBottom: spacing.md,
-        backgroundColor: themeColors.primary.light,
-        border: `${borders.width.thin} solid ${themeColors.primary.main}`,
-        borderRadius: borders.radius.md,
       }}
     >
       <div
