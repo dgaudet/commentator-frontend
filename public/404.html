@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Commentator - Student Report Card Management</title>
+    <script>
+      // Single Page App (SPA) redirect for GitHub Pages
+      // When GitHub Pages gets a 404, it serves this file.
+      // This script stores the original path and redirects to index.html
+      // so React Router can handle the routing properly.
+      (function() {
+        var l = window.location;
+        // Store the full path (minus /commentator-frontend) for the app to process
+        var pathWithoutBase = l.pathname.replace('/commentator-frontend', '');
+        var fullPath = pathWithoutBase + (l.search || '') + (l.hash || '');
+
+        // Store in sessionStorage for index.html to retrieve
+        sessionStorage.redirect = l.protocol + '//' + l.host + '/commentator-frontend/' + fullPath.slice(1);
+
+        // Redirect to index.html which will restore the path
+        l.replace(l.protocol + '//' + l.host + '/commentator-frontend/');
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
