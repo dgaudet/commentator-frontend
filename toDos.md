@@ -101,10 +101,59 @@ THere are a lot of render issues when adding/updating an item
 * Also when switching between tabs
 * Personalized Comments, you get a flash
 
-Deployment
+## 🚀 Production Deployment (IN PROGRESS)
+
+### Completed
+- ✅ **API Configuration Feature** - Centralized environment-aware API base URL configuration
+  - Created `src/config/apiConfig.ts` following authConfig.ts pattern
+  - Updated `src/services/apiClient.ts` to use configuration factory
+  - All 4 user stories (TASK-1.1 through TASK-1.4) implemented
+  - PDD: `pdd-workspace/api-base-url-config/`
+
+- ✅ **Deployment Infrastructure** - Complete CI/CD pipeline setup
+  - Created `.github/workflows/deploy.yml` - GitHub Actions workflow for automated deployment
+  - Created `DEPLOYMENT.md` - Comprehensive 398-line deployment guide
+  - Configured `vite.config.ts` for environment-aware base path:
+    - Production (GitHub Pages): `/commentator-frontend/`
+    - Development (npm start): `/`
+  - All 6 user stories (TASK-1.1 through TASK-1.6) implemented
+  - PDD: `pdd-workspace/deployment-production/`
+
+### Next Steps (MANUAL)
+1. **Commit and push vite.config.ts changes** (user must run manually - no git commands auto-executed)
+   ```bash
+   git add vite.config.ts
+   git commit -m "fix: make vite base path conditional for dev/prod environments"
+   git push origin main
+   ```
+   This triggers GitHub Actions to build and deploy with correct asset paths
+
+2. **Enable GitHub Pages** (TASK-1.1)
+   - Go to: https://github.com/dgaudet/commentator-frontend/settings
+   - Click **Pages** in left sidebar
+   - Select **GitHub Actions** as source
+   - Save
+
+3. **Cloudflare Setup** (TASK-1.3, 1.4, 1.5)
+   - Create free Cloudflare account
+   - Add domain to Cloudflare
+   - Update Google Domains nameservers to Cloudflare (wait 24-48 hours)
+   - Configure Cloudflare DNS CNAME record pointing to dgaudet.github.io
+   - Set SSL/TLS to **Full (strict)** mode (NOT Flexible - security vulnerability)
+
+### Current Build Status
+- TypeScript: ✅ 0 errors
+- Tests: ✅ 1359 passed
+- Production build: ✅ Assets with correct `/commentator-frontend/` paths
+- Development: ✅ Works with `/` base path
+
+---
+
+Older Notes:
 * Are the secrets in the built deployment
 * Should I use vercel to deploy the front end?
 * Killing the locally running app
 ** lsof -i :5173, then kill the process
 
-default url - dgaudet.github.io/commentator-frontend
+default github pages url - https://dgaudet.github.io/commentator-frontend/
+aws url - http://commentator.prod.s3-website-us-west-2.amazonaws.com/
