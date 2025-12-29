@@ -5,6 +5,19 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Commentator - Student Report Card Management</title>
+    <script>
+      // Handle redirect from 404.html for Single Page App routing
+      // GitHub Pages serves 404.html for non-existent files, which redirects
+      // the path as a query parameter. This script restores the original path.
+      (function() {
+        // Check if there's a redirect path in query params (from 404.html)
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect != location.href) {
+          history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
