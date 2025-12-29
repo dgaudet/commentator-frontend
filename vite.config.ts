@@ -17,7 +17,14 @@ export default defineConfig(({ mode }) => {
       return acc
     }, {} as Record<string, string>)
 
+  // Determine base path based on environment
+  // Production (GitHub Pages): /commentator-frontend/
+  // Development (local): /
+  const isProduction = mode === 'production'
+  const base = isProduction ? '/commentator-frontend/' : '/'
+
   return {
+    base,
     plugins: [react()],
     resolve: {
       alias: {
