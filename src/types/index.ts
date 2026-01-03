@@ -23,5 +23,8 @@ export type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePerso
 // Final Comment entity types
 export type { FinalComment, CreateFinalCommentRequest, UpdateFinalCommentRequest } from './FinalComment'
 
+// Pronoun entity types
+export type { Pronoun, CreatePronounRequest, UpdatePronounRequest } from './Pronoun'
+
 // API response types
 export type { ApiResponse, ApiError } from './ApiResponse'

@@ -32,10 +32,14 @@ export interface FinalComment {
   grade: number
   /** Optional qualitative feedback comment (max 1000 chars) */
   comment?: string
+  /** Selected pronoun ID for this student - Optional, for personalization */
+  pronounId?: string
   /** Creation timestamp (ISO 8601) - Auto-generated, immutable */
   createdAt: string
   /** Last update timestamp (ISO 8601) - Auto-updated by backend */
   updatedAt: string
+  /** User ID who owns this comment */
+  userId: string
 }
 
 /**
@@ -53,6 +57,8 @@ export interface CreateFinalCommentRequest {
   grade: number
   /** Optional qualitative feedback comment - Max 1000 chars */
   comment?: string
+  /** Optional pronoun ID for student personalization */
+  pronounId?: string
 }
 
 /**
@@ -70,4 +76,6 @@ export interface UpdateFinalCommentRequest {
   grade: number
   /** Optional qualitative feedback comment - Max 1000 chars */
   comment?: string
+  /** Optional pronoun ID for student personalization */
+  pronounId?: string
 }

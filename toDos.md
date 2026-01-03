@@ -101,59 +101,90 @@ THere are a lot of render issues when adding/updating an item
 * Also when switching between tabs
 * Personalized Comments, you get a flash
 
-## 🚀 Production Deployment (IN PROGRESS)
+## 🚀 Production Deployment (COMPLETE - LIVE ON GITHUB PAGES)
 
-### Completed
+### Phase 1: Infrastructure Setup ✅
 - ✅ **API Configuration Feature** - Centralized environment-aware API base URL configuration
   - Created `src/config/apiConfig.ts` following authConfig.ts pattern
   - Updated `src/services/apiClient.ts` to use configuration factory
-  - All 4 user stories (TASK-1.1 through TASK-1.4) implemented
   - PDD: `pdd-workspace/api-base-url-config/`
 
 - ✅ **Deployment Infrastructure** - Complete CI/CD pipeline setup
   - Created `.github/workflows/deploy.yml` - GitHub Actions workflow for automated deployment
-  - Created `DEPLOYMENT.md` - Comprehensive 398-line deployment guide
-  - Configured `vite.config.ts` for environment-aware base path:
-    - Production (GitHub Pages): `/commentator-frontend/`
-    - Development (npm start): `/`
-  - All 6 user stories (TASK-1.1 through TASK-1.6) implemented
+  - Created `DEPLOYMENT.md` - Comprehensive deployment guide
+  - Configured `vite.config.ts` for environment-aware base path
   - PDD: `pdd-workspace/deployment-production/`
 
-### Next Steps (MANUAL)
-1. **Commit and push vite.config.ts changes** (user must run manually - no git commands auto-executed)
-   ```bash
-   git add vite.config.ts
-   git commit -m "fix: make vite base path conditional for dev/prod environments"
-   git push origin main
-   ```
-   This triggers GitHub Actions to build and deploy with correct asset paths
+### Phase 2: SPA Routing & Static Assets ✅
+- ✅ **GitHub Pages Asset Loading** - Fixed conditional base path for production/dev
+  - `vite.config.ts`: Base path conditional on mode (production: `/commentator-frontend/`, dev: `/`)
+  - All assets now load correctly with proper paths
 
-2. **Enable GitHub Pages** (TASK-1.1)
-   - Go to: https://github.com/dgaudet/commentator-frontend/settings
-   - Click **Pages** in left sidebar
-   - Select **GitHub Actions** as source
-   - Save
+- ✅ **SPA Routing** - Fixed 404s for non-root routes
+  - Created `public/404.html` with redirect to index.html for SPA routing
+  - Updated `index.html` with sessionStorage redirect handling
+  - Fixed Auth0 callback URL 404 errors
 
-3. **Cloudflare Setup** (TASK-1.3, 1.4, 1.5)
-   - Create free Cloudflare account
-   - Add domain to Cloudflare
-   - Update Google Domains nameservers to Cloudflare (wait 24-48 hours)
-   - Configure Cloudflare DNS CNAME record pointing to dgaudet.github.io
-   - Set SSL/TLS to **Full (strict)** mode (NOT Flexible - security vulnerability)
+### Phase 3: Authentication & Security ✅
+- ✅ **Auth0 Configuration** - Production environment settings
+  - Updated `.env.production` with correct redirect URI: `https://dgaudet.github.io/commentator-frontend/callback`
+  - Registered callback URL in Auth0 Application settings
+  - Added GitHub Pages domain to Auth0 Allowed Web Origins
+  - Added CORS Origins for API communication
 
-### Current Build Status
-- TypeScript: ✅ 0 errors
-- Tests: ✅ 1359 passed
-- Production build: ✅ Assets with correct `/commentator-frontend/` paths
-- Development: ✅ Works with `/` base path
+- ✅ **Environment Variables** - Secure production configuration
+  - Created `docs/environment-variables.md` with complete guide
+  - Updated `.github/workflows/deploy.yml` to inject environment variables
+  - Backend API environment set to production for CORS whitelist
+
+- ✅ **CORS Configuration** - Backend API properly configured
+  - Backend API set to production environment
+  - GitHub Pages domain whitelisted in production CORS settings
+  - Successful API communication from frontend to backend
+
+### Current Status
+- **Deployment Location**: https://dgaudet.github.io/commentator-frontend/
+- **Build Status**: ✅ TypeScript 0 errors, 1359 tests passing
+- **Functionality**: ✅ Login, callback, API communication all working
+- **Hosting**: ✅ GitHub Pages with GitHub Actions CI/CD
+- **Environment Variables**: ✅ Injected via GitHub Actions with fallback defaults
+
+### Optional: Custom Domain Setup (TASK-1.3, 1.4, 1.5)
+When ready, configure a custom domain using Cloudflare:
+- Create free Cloudflare account
+- Add domain to Cloudflare
+- Update Google Domains nameservers to Cloudflare (wait 24-48 hours)
+- Configure Cloudflare DNS CNAME record pointing to dgaudet.github.io
+- Set SSL/TLS to **Full (strict)** mode (NOT Flexible - security vulnerability)
+
+**See `DEPLOYMENT.md` for detailed custom domain setup instructions.**
 
 ---
 
 Older Notes:
-* Are the secrets in the built deployment
-* Should I use vercel to deploy the front end?
+* Are the secrets in the built deployment - looks like it, so that's not very good
+* the callback url work is quite odd, and the url in the browser has the full callback url, which isn't very user friendly
+** Should probably just have a callback page that does the work from the 404
+* The app doesn't wait for the backend to startup, it fails then you have to reload the browser to get the app to work
 * Killing the locally running app
 ** lsof -i :5173, then kill the process
 
 default github pages url - https://dgaudet.github.io/commentator-frontend/
 aws url - http://commentator.prod.s3-website-us-west-2.amazonaws.com/
+
+possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
+
+1. He/Her/they type comment options, pronoun option to the student and comments
+he - his/she - her/they - their
+pronoun1 and possessive pronoun
+2. The rating should stay on the last one picked instead of the middle.
+3. filter by the emoji's, should be able to select it and then de-select it as needed
+4. Copy personalized comments from one subject to another
+5. the character limit on the final comment should be 3000
+6. What happens if you have 80-90, and there is also 90-100, show both comments and then you pick one
+
+Need to see an example of a 1000 character comment to see if the text box will be big enough
+
+ensure the timeout isn't an issue
+
+Can you create a pdd and some stories to add 2 new placeholders to the outcome comments and personalized comments, the placeholders will be pronoun, and possessive pronoun. As part of this work we also then need the ability to choose a pronoun object in the Final Comment for a student from the list of pronouns, you can find out the specification for pronouns in the spec http://localhost:3000/api-docs, as well as see how it can be used in the final comments object. The pronoun selection should be a drop-down in the final comment component, where the text of the pronoun drop-down should be `pronoun - possessivePronoun`. 
