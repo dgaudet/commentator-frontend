@@ -55,12 +55,15 @@ import type {
 import { useOutcomeComments } from '../../hooks/useOutcomeComments'
 import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
 import { useFinalCommentForm } from '../../hooks/useFinalCommentForm'
+import { usePronounsQuery } from '../../hooks/usePronounsQuery'
 import { Button } from '../common/Button'
 import { Input } from '../common/Input'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
+import { PronounSelect } from '../common/PronounSelect'
+import { PronounDisplay } from './PronounDisplay'
 import { SelectedCommentsList } from './SelectedCommentsList'
 import { CopyButton } from '../common/CopyButton'
 import { spacing, typography, borders } from '../../theme/tokens'
@@ -94,6 +97,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
 }: FinalCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
   const focusShadows = useThemeFocusShadows()
+  const { pronouns } = usePronounsQuery()
 
   // US-FC-REFACTOR-001: Shared hook state management
   const [submitting, setSubmitting] = useState(false)
@@ -156,6 +160,12 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   // US-FC-REFACTOR-001: Edit form hook (shared logic extraction)
   const editForm = useFinalCommentForm(outcomeComments)
 
+  // TASK-1.3: Pronoun selection state for add form
+  const [addPronounId, setAddPronounId] = useState('')
+
+  // TASK-1.3: Pronoun selection state for edit form
+  const [editPronounId, setEditPronounId] = useState('')
+
   /**
    * FCOI-001: Load outcome comments when component mounts
    * Fetches outcome comments for the selected class's subject
@@ -183,6 +193,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   /**
    * US-FC-REFACTOR-001: Clear form states and editing mode when modal closes
    * US-FC-REFACTOR-003: Also clear selected personal comments
+   * TASK-1.3: Also clear pronoun selections
    * Prevents state from persisting across modal open/close cycles
    * Improves UX by ensuring a clean state each time the modal opens
    */
@@ -191,6 +202,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       addForm.reset()
       editForm.reset()
       setEditingId(null)
+      setAddPronounId('')
+      setEditPronounId('')
       // US-RATING-006: Clear ordered comments state
       setOrderedAddComments([])
       setOrderedEditComments([])
@@ -248,11 +261,16 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       if (addForm.comment.trim()) {
         request.comment = addForm.comment.trim()
       }
+      // TASK-1.3: Add pronoun ID if selected
+      if (addPronounId) {
+        request.pronounId = addPronounId
+      }
 
       await onCreateComment(request)
 
       // Clear form on success
       addForm.reset()
+      setAddPronounId('')
       // US-RATING-006: Clear ordered comments state
       setOrderedAddComments([])
     } catch (err) {
@@ -501,6 +519,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     editForm.setLastName(finalComment.lastName || '')
     editForm.setGrade(finalComment.grade)
     editForm.setComment(finalComment.comment || '')
+    // TASK-1.3: Set selected pronoun ID if it exists
+    setEditPronounId(finalComment.pronounId || '')
     editForm.clearValidationError()
   }
 
@@ -530,12 +550,17 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       if (editForm.comment.trim()) {
         request.comment = editForm.comment.trim()
       }
+      // TASK-1.3: Add pronoun ID if selected
+      if (editPronounId) {
+        request.pronounId = editPronounId
+      }
 
       await onUpdateComment(editingId, request)
 
       // Exit edit mode on success
       setEditingId(null)
       editForm.reset()
+      setEditPronounId('')
       // US-RATING-006: Clear ordered comments state
       setOrderedEditComments([])
     } catch (err) {
@@ -547,6 +572,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   const handleEditCancel = () => {
     setEditingId(null)
     editForm.reset()
+    setEditPronounId('')
     // US-RATING-006: Clear ordered comments state
     setOrderedEditComments([])
   }
@@ -628,6 +654,15 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   max="100"
                   disabled={submitting}
                   error={addForm.validationError && addForm.grade === ''}
+                />
+
+                {/* TASK-1.3: Pronoun selection dropdown */}
+                <PronounSelect
+                  value={addPronounId}
+                  onChange={setAddPronounId}
+                  id="add-pronoun-select"
+                  label="Pronoun"
+                  disabled={submitting}
                 />
 
                 {/* FCOI-001: Outcome Comment Display (READ-ONLY) */}
@@ -916,6 +951,15 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       error={editForm.validationError && editForm.grade === ''}
                                     />
 
+                                    {/* TASK-1.3: Pronoun selection dropdown (Edit Form) */}
+                                    <PronounSelect
+                                      value={editPronounId}
+                                      onChange={setEditPronounId}
+                                      id={`edit-pronoun-select-${comment.id}`}
+                                      label="Pronoun"
+                                      disabled={submitting}
+                                    />
+
                                     {/* FCOI-001: Outcome Comment Display (READ-ONLY) - EDIT MODE */}
                                     <div style={{ marginBottom: spacing.lg }}>
                                       <label
@@ -1154,6 +1198,9 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                     >
                                       Grade: {comment.grade}
                                     </div>
+
+                                    {/* Pronoun Info - Display selected pronoun (TASK-1.4) */}
+                                    <PronounDisplay pronounId={comment.pronounId} pronouns={pronouns} />
 
                                     {/* Optional Comment Text */}
                                     {comment.comment && (
