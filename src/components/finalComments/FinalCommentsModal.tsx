@@ -261,8 +261,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       if (addForm.comment.trim()) {
         request.comment = addForm.comment.trim()
       }
-      // TASK-1.3: Add pronoun ID (or undefined to clear existing selection)
-      request.pronounId = addPronounId || undefined
+      // TASK-1.3: Add pronoun ID (or null to clear existing selection)
+      request.pronounId = addPronounId || null
 
       await onCreateComment(request)
 
@@ -555,8 +555,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       if (editForm.comment.trim()) {
         request.comment = editForm.comment.trim()
       }
-      // TASK-1.3: Add pronoun ID (or undefined to clear existing selection)
-      request.pronounId = editPronounId || undefined
+      // TASK-1.3: Add pronoun ID (or null to clear existing selection)
+      request.pronounId = editPronounId || null
 
       await onUpdateComment(editingId, request)
 

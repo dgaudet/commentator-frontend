@@ -251,12 +251,13 @@ describe('FinalCommentsModal - Pronoun Clearing (Regression Tests)', () => {
     // The actual code change is in FinalCommentsModal.tsx:
     //
     // handleCreateComment (line 265):
-    //   request.pronounId = addPronounId || undefined
+    //   request.pronounId = addPronounId || null
     //
     // handleEditSave (line 559):
-    //   request.pronounId = editPronounId || undefined
+    //   request.pronounId = editPronounId || null
     //
     // This prevents the bug where users could not clear pronoun selections.
+    // Backend requires null (not undefined) to clear the pronounId.
 
     render(
       <FinalCommentsModal
