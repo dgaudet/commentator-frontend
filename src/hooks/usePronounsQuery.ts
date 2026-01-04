@@ -58,7 +58,7 @@ export const usePronounsQuery = (): UsePronounsQueryReturn => {
       setLoading(true)
       setError(null)
 
-      const response = await apiClient.get('/pronouns')
+      const response = await apiClient.get('/pronoun')
       setPronouns(response)
     } catch (err) {
       console.error('Failed to fetch pronouns:', err)
