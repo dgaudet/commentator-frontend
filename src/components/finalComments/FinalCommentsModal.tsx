@@ -437,12 +437,19 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     const textareaRef = targetFormType === 'add' ? addCommentTextareaRef : editCommentTextareaRef
     // US-RATING-006 & US-RATING-008: Use ordered comments array instead of single comment
     const orderedComments = targetFormType === 'add' ? orderedAddComments : orderedEditComments
+    // TASK-1.3 & TASK-1.4: Get the selected pronoun ID
+    const pronounId = targetFormType === 'add' ? addPronounId : editPronounId
+    // TASK-1.3 & TASK-1.4: Look up the pronoun object by ID
+    const selectedPronoun = pronounId ? pronouns.find((p) => p.id === pronounId) : undefined
 
     // US-PLACEHOLDER-004: Prepare student data for placeholder replacement
+    // TASK-1.3 & TASK-1.4: Include pronoun data for placeholder replacement
     const studentData: StudentData = {
       firstName: form.firstName || undefined,
       lastName: form.lastName || undefined,
       grade: form.grade !== '' ? Number(form.grade) : undefined,
+      pronoun: selectedPronoun?.pronoun,
+      possessivePronoun: selectedPronoun?.possessivePronoun,
     }
 
     // Build the populated comment text
