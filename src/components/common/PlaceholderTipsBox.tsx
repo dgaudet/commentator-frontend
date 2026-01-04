@@ -52,8 +52,8 @@ export const PlaceholderTipsBox = () => {
         <code style={codeStyle}>&lt;first name&gt;</code> <code style={codeStyle}>&lt;last name&gt;</code>{' '}
         <code style={codeStyle}>&lt;grade&gt;</code>
         <br />
-        <code style={codeStyle}>{'{{pronoun}}'}</code> (e.g., he, she, they){' '}
-        <code style={codeStyle}>{'{{possessivePronoun}}'}</code> (e.g., his, her, their)
+        <code style={codeStyle}>&lt;pronoun&gt;</code> (e.g., he, she, they){' '}
+        <code style={codeStyle}>&lt;possessive pronoun&gt;</code> (e.g., his, her, their)
         <br />
         <em style={{ color: themeColors.text.tertiary }}>
           Example: &quot;&lt;first name&gt; earned &lt;grade&gt; points&quot; → &quot;Alice earned 95

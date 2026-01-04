@@ -36,21 +36,21 @@ describe('PlaceholderTipsBox - Basic Rendering', () => {
  * RED PHASE - FAILING TEST FOR TASK-1.1
  *
  * This test verifies that the PlaceholderTipsBox displays documentation for
- * the new pronoun placeholders: {{pronoun}} and {{possessivePronoun}}
+ * the new pronoun placeholders: <pronoun> and <possessive pronoun>
  *
  * According to TASK-1.1 AC-1.1.1:
  * "Help text is visible above the comment textarea stating:
- *  'Available placeholders: {{pronoun}} (e.g., he, she, they) and
- *   {{possessivePronoun}} (e.g., his, her, their)'"
+ *  'Available placeholders: <pronoun> (e.g., he, she, they) and
+ *   <possessive pronoun> (e.g., his, her, their)'"
  */
 describe('PlaceholderTipsBox - Pronoun Placeholders (TASK-1.1, TASK-1.2)', () => {
-  it('should display {{pronoun}} placeholder with examples', () => {
+  it('should display <pronoun> placeholder with examples', () => {
     render(<PlaceholderTipsBox />)
 
-    // Verify {{pronoun}} placeholder is shown
-    expect(screen.getByText('{{pronoun}}')).toBeInTheDocument()
+    // Verify <pronoun> placeholder is shown
+    expect(screen.getByText('<pronoun>')).toBeInTheDocument()
     // Verify examples are shown nearby
-    const container = screen.getByText('{{pronoun}}').closest('div')
+    const container = screen.getByText('<pronoun>').closest('div')
     const textContent = container?.textContent || ''
     expect(textContent).toContain('e.g.')
     expect(textContent).toContain('he')
@@ -58,13 +58,13 @@ describe('PlaceholderTipsBox - Pronoun Placeholders (TASK-1.1, TASK-1.2)', () =>
     expect(textContent).toContain('they')
   })
 
-  it('should display {{possessivePronoun}} placeholder with examples', () => {
+  it('should display <possessive pronoun> placeholder with examples', () => {
     render(<PlaceholderTipsBox />)
 
-    // Verify {{possessivePronoun}} placeholder is shown
-    expect(screen.getByText('{{possessivePronoun}}')).toBeInTheDocument()
+    // Verify <possessive pronoun> placeholder is shown
+    expect(screen.getByText('<possessive pronoun>')).toBeInTheDocument()
     // Verify examples are shown nearby
-    const container = screen.getByText('{{possessivePronoun}}').closest('div')
+    const container = screen.getByText('<possessive pronoun>').closest('div')
     const textContent = container?.textContent || ''
     expect(textContent).toContain('e.g.')
     expect(textContent).toContain('his')
@@ -76,7 +76,7 @@ describe('PlaceholderTipsBox - Pronoun Placeholders (TASK-1.1, TASK-1.2)', () =>
     render(<PlaceholderTipsBox />)
 
     // Verify both placeholders are displayed in code elements for visibility
-    const codeElements = screen.getAllByText(/\{\{(?:pronoun|possessivePronoun)\}\}/)
-    expect(codeElements.length).toBeGreaterThanOrEqual(2)
+    expect(screen.getByText('<pronoun>')).toBeInTheDocument()
+    expect(screen.getByText('<possessive pronoun>')).toBeInTheDocument()
   })
 })

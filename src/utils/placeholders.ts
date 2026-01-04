@@ -1,6 +1,7 @@
 /**
  * Placeholder Utility Functions
  * Reference: US-PLACEHOLDER-001, US-PLACEHOLDER-004, US-PLACEHOLDER-005
+ * TASK-1.1, TASK-1.2, TASK-1.3, TASK-1.4: Pronoun support
  *
  * Provides functionality for dynamic placeholder replacement in outcome comments.
  *
@@ -8,6 +9,8 @@
  * - <first name> → Student's firstName
  * - <last name> → Student's lastName
  * - <grade> → Student's numeric grade
+ * - <pronoun> → Student's pronoun (e.g., he, she, they)
+ * - <possessive pronoun> → Student's possessive pronoun (e.g., his, her, their)
  *
  * Features:
  * - Case-insensitive matching
@@ -21,6 +24,8 @@ const PLACEHOLDER_PATTERNS = {
   FIRST_NAME: /<first name>/gi,
   LAST_NAME: /<last name>/gi,
   GRADE: /<grade>/gi,
+  PRONOUN: /<pronoun>/gi,
+  POSSESSIVE_PRONOUN: /<possessive pronoun>/gi,
 } as const
 
 // Validation regex patterns
@@ -33,13 +38,15 @@ const VALIDATION_PATTERNS = {
 // Validation warning messages
 const VALIDATION_MESSAGES = {
   UNCLOSED: '⚠️ Placeholder not closed. Example: <first name>',
-  EMPTY: '⚠️ Empty placeholder detected. Use: <first name>, <last name>, <grade>',
+  EMPTY: '⚠️ Empty placeholder detected. Use: <first name>, <last name>, <grade>, <pronoun>, <possessive pronoun>',
 } as const
 
 export interface StudentData {
   firstName?: string
   lastName?: string
   grade?: number | null
+  pronoun?: string
+  possessivePronoun?: string
 }
 
 /**
@@ -73,6 +80,10 @@ function isValidGrade(grade: number | null | undefined): boolean {
  * @example
  * replacePlaceholders('Hello, <first name>!', { firstName: 'Alice' })
  * // Returns: 'Hello, Alice!'
+ *
+ * @example
+ * replacePlaceholders('<first name> uses <pronoun> pronouns', { firstName: 'Alex', pronoun: 'they' })
+ * // Returns: 'Alex uses they pronouns'
  */
 export function replacePlaceholders(text: string, studentData: StudentData): string {
   let result = text
@@ -90,6 +101,16 @@ export function replacePlaceholders(text: string, studentData: StudentData): str
   // Replace <grade> (case-insensitive)
   if (isValidGrade(studentData.grade)) {
     result = result.replace(PLACEHOLDER_PATTERNS.GRADE, studentData.grade!.toString())
+  }
+
+  // Replace <pronoun> (case-insensitive)
+  if (isValidString(studentData.pronoun)) {
+    result = result.replace(PLACEHOLDER_PATTERNS.PRONOUN, studentData.pronoun!)
+  }
+
+  // Replace <possessive pronoun> (case-insensitive)
+  if (isValidString(studentData.possessivePronoun)) {
+    result = result.replace(PLACEHOLDER_PATTERNS.POSSESSIVE_PRONOUN, studentData.possessivePronoun!)
   }
 
   return result
