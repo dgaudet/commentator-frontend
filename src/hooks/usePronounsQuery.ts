@@ -29,7 +29,7 @@
  * )
  */
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { Pronoun } from '../types'
 import { apiClient } from '../services/apiClient'
 
@@ -53,7 +53,9 @@ export const usePronounsQuery = (): UsePronounsQueryReturn => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchPronouns = async () => {
+  // Wrap fetchPronouns in useCallback with no dependencies
+  // (it only depends on apiClient which is a stable reference)
+  const fetchPronouns = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -67,12 +69,12 @@ export const usePronounsQuery = (): UsePronounsQueryReturn => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   // Fetch pronouns on mount
   useEffect(() => {
     fetchPronouns()
-  }, [])
+  }, [fetchPronouns])
 
   return {
     pronouns,
