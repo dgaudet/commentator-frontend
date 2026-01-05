@@ -135,7 +135,7 @@ export const PronounSelect = ({
             width: '100%',
             padding: spacing.md,
             fontSize: typography.fontSize.base,
-            color: value ? themeColors.text.primary : themeColors.text.tertiary,
+            color: themeColors.text.primary,
             backgroundColor: themeColors.background.primary,
             border: `${borders.width.thin} solid ${themeColors.border.default}`,
             borderRadius: borders.radius.md,
@@ -143,11 +143,6 @@ export const PronounSelect = ({
             cursor: disabled ? 'not-allowed' : 'pointer',
             transition: 'border-color 0.15s ease, background-color 0.15s ease',
             opacity: disabled ? 0.6 : 1,
-            appearance: 'none',
-            paddingRight: spacing.lg,
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M1 4l5 5 5-5'/%3E%3C/svg%3E")`,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: `right ${spacing.md} center`,
           }}
         >
           <option value="">{`Select a pronoun...`}</option>
