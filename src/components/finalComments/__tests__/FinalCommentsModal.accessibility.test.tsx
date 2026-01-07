@@ -33,7 +33,7 @@ const mockClass: Class = {
   id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   year: 2024,
-  subjectId: "5",
+  subjectId: '5',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 }
@@ -42,7 +42,7 @@ const mockPersonalizedComments: PersonalizedComment[] = [
   {
     id: '65a1b2c3d4e5f6g7h8i9j0k1',
     comment: 'Excellent work this semester',
-    subjectId: "5",
+    subjectId: '5',
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
@@ -51,7 +51,7 @@ const mockPersonalizedComments: PersonalizedComment[] = [
 const mockOutcomeComments: OutcomeComment[] = [
   {
     id: '65a1b2c3d4e5f6g7h8i9j0k1',
-    subjectId: "5",
+    subjectId: '5',
     userId: '65a1b2c3d4e5f6g7h8i9j0k1',
     lowerRange: 90,
     upperRange: 100,

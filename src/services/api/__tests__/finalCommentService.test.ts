@@ -87,7 +87,7 @@ describe('FinalCommentService', () => {
     })
 
     it('getByClassId should accept number parameter and call GET with classId query', async () => {
-      const result = await finalCommentService.getByClassId("42")
+      const result = await finalCommentService.getByClassId('42')
       expect(result).toBeDefined()
       expect(mockApiClient.get).toHaveBeenCalledWith('/final-comment?classId=42')
     })
@@ -136,13 +136,13 @@ describe('FinalCommentService', () => {
         grade: 90,
         comment: 'Improved significantly!',
       }
-      const result = await finalCommentService.update("5", request)
+      const result = await finalCommentService.update('5', request)
       expect(result).toBeDefined()
       expect(mockApiClient.put).toHaveBeenCalledWith('/final-comment/5', request)
     })
 
     it('delete should accept number parameter', async () => {
-      await finalCommentService.delete("7")
+      await finalCommentService.delete('7')
       expect(mockApiClient.delete).toHaveBeenCalledWith('/final-comment/7')
     })
   })
