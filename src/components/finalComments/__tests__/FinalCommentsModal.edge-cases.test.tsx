@@ -33,7 +33,7 @@ const mockClass: Class = {
   id: '65a1b2c3d4e5f6g7h8i9j0k1',
   name: 'Mathematics 101',
   year: 2024,
-  subjectId: "5",
+  subjectId: '5',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 }
@@ -72,8 +72,8 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
       // Create very long outcome and personal comments
       const longOutcomeComment: OutcomeComment = {
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
-        subjectId: "5",
-        userId: "65a1b2c3d4e5f6g7h8i9j0k1",
+        subjectId: '5',
+        userId: '65a1b2c3d4e5f6g7h8i9j0k1',
         lowerRange: 90,
         upperRange: 100,
         comment: 'A'.repeat(600), // 600 chars
@@ -84,8 +84,8 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
       const longPersonalComment: PersonalizedComment = {
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'B'.repeat(500), // 500 chars
-        subjectId: "5",
-        userId: "65a1b2c3d4e5f6g7h8i9j0k1",
+        subjectId: '5',
+        userId: '65a1b2c3d4e5f6g7h8i9j0k1',
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
       }
@@ -146,8 +146,8 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
     it('should handle outcome comment exactly at 1000 character limit', () => {
       const maxLengthComment: OutcomeComment = {
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
-        subjectId: "5",
-        userId: "65a1b2c3d4e5f6g7h8i9j0k1",
+        subjectId: '5',
+        userId: '65a1b2c3d4e5f6g7h8i9j0k1',
         lowerRange: 90,
         upperRange: 100,
         comment: 'A'.repeat(1000), // Exactly 1000 chars
@@ -190,8 +190,8 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
     it('should preserve special characters in outcome comments', () => {
       const specialCharsComment: OutcomeComment = {
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
-        subjectId: "5",
-        userId: "65a1b2c3d4e5f6g7h8i9j0k1",
+        subjectId: '5',
+        userId: '65a1b2c3d4e5f6g7h8i9j0k1',
         lowerRange: 90,
         upperRange: 100,
         comment: "Demonstrates strong understanding! Great work @ 95%+ level. It's amazing! <script>alert('xss')</script>",
@@ -234,8 +234,8 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
       const unicodeComment: PersonalizedComment = {
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Excellent work this semester! 🎉 Keep it up! 你好',
-        subjectId: "5",
-        userId: "65a1b2c3d4e5f6g7h8i9j0k1",
+        subjectId: '5',
+        userId: '65a1b2c3d4e5f6g7h8i9j0k1',
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
       }
@@ -282,8 +282,8 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
       const limitedOutcomeComments: OutcomeComment[] = [
         {
           id: '65a1b2c3d4e5f6g7h8i9j0k1',
-          subjectId: "5",
-        userId: "65a1b2c3d4e5f6g7h8i9j0k1",
+          subjectId: '5',
+          userId: '65a1b2c3d4e5f6g7h8i9j0k1',
           lowerRange: 80,
           upperRange: 100,
           comment: 'Excellent work',
@@ -302,8 +302,8 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
       const personalComment: PersonalizedComment = {
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
         comment: 'Good effort this semester',
-        subjectId: "5",
-        userId: "65a1b2c3d4e5f6g7h8i9j0k1",
+        subjectId: '5',
+        userId: '65a1b2c3d4e5f6g7h8i9j0k1',
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
       }
@@ -358,8 +358,8 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
     it('should handle whitespace-only outcome comments', () => {
       const whitespaceComment: OutcomeComment = {
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
-        subjectId: "5",
-        userId: "65a1b2c3d4e5f6g7h8i9j0k1",
+        subjectId: '5',
+        userId: '65a1b2c3d4e5f6g7h8i9j0k1',
         lowerRange: 90,
         upperRange: 100,
         comment: '   ', // Whitespace only
@@ -398,8 +398,8 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
     it('should trim leading/trailing whitespace when populating', () => {
       const whitespaceComment: OutcomeComment = {
         id: '65a1b2c3d4e5f6g7h8i9j0k1',
-        subjectId: "5",
-        userId: "65a1b2c3d4e5f6g7h8i9j0k1",
+        subjectId: '5',
+        userId: '65a1b2c3d4e5f6g7h8i9j0k1',
         lowerRange: 90,
         upperRange: 100,
         comment: '  Excellent work  ', // Leading/trailing whitespace

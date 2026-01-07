@@ -86,7 +86,7 @@ describe('OutcomeCommentService', () => {
     })
 
     it('getBySubjectId should accept number parameter', async () => {
-      const result = await outcomeCommentService.getBySubjectId("1")
+      const result = await outcomeCommentService.getBySubjectId('1')
       expect(result).toBeDefined()
       expect(mockApiClient.get).toHaveBeenCalledWith('/outcome-comment?subjectId=1')
     })
@@ -117,13 +117,13 @@ describe('OutcomeCommentService', () => {
         upperRange: 90,
         lowerRange: 75,
       }
-      const result = await outcomeCommentService.update("1", request)
+      const result = await outcomeCommentService.update('1', request)
       expect(result).toBeDefined()
       expect(mockApiClient.put).toHaveBeenCalledWith('/outcome-comment/1', request)
     })
 
     it('delete should accept number parameter', async () => {
-      await outcomeCommentService.delete("1")
+      await outcomeCommentService.delete('1')
       expect(mockApiClient.delete).toHaveBeenCalledWith('/outcome-comment/1')
     })
   })

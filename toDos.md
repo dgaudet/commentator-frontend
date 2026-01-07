@@ -174,17 +174,11 @@ aws url - http://commentator.prod.s3-website-us-west-2.amazonaws.com/
 
 possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
 
-1. He/Her/they type comment options, pronoun option to the student and comments
-he - his/she - her/they - their
-pronoun1 and possessive pronoun
 2. The rating should stay on the last one picked instead of the middle.
 3. filter by the emoji's, should be able to select it and then de-select it as needed
-4. Copy personalized comments from one subject to another
-5. the character limit on the final comment should be 3000
-6. What happens if you have 80-90, and there is also 90-100, show both comments and then you pick one
-
-Need to see an example of a 1000 character comment to see if the text box will be big enough
+   * this can probably be filtered in the frontend similar to the typeahead stuff
+4. update the frontend to allow sending up to 3000 characters for the final comment as the backend has already been updated
+4. Copy personalized comments from one subject to another, with options to copy and replace, or add to the existing list
+5. What happens if you have 80-90, and there is also 90-100, show both comments and then you pick one
 
 ensure the timeout isn't an issue
-
-Can you create a pdd and some stories to add 2 new placeholders to the outcome comments and personalized comments, the placeholders will be pronoun, and possessive pronoun. As part of this work we also then need the ability to choose a pronoun object in the Final Comment for a student from the list of pronouns, you can find out the specification for pronouns in the spec http://localhost:3000/api-docs, as well as see how it can be used in the final comments object. The pronoun selection should be a drop-down in the final comment component, where the text of the pronoun drop-down should be `pronoun - possessivePronoun`. 

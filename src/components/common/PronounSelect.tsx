@@ -145,7 +145,7 @@ export const PronounSelect = ({
             opacity: disabled ? 0.6 : 1,
           }}
         >
-          <option value="">{`Select a pronoun...`}</option>
+          <option value="">{'Select a pronoun...'}</option>
           {pronouns.map((pronoun: Pronoun) => (
             <option key={pronoun.id} value={pronoun.id}>
               {pronoun.pronoun} - {pronoun.possessivePronoun}
