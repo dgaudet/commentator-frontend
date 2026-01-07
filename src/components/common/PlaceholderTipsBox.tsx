@@ -5,6 +5,8 @@
  * Reusable across OutcomeCommentsModal and PersonalizedCommentsModal.
  *
  * US-PLACEHOLDER-PC-001, US-PLACEHOLDER-PC-002, US-PLACEHOLDER-001
+ * TASK-1.1: Add pronoun placeholder documentation to Outcome Comments
+ * TASK-1.2: Add pronoun placeholder documentation to Personalized Comments
  */
 
 import { spacing, typography, borders } from '../../theme/tokens'
@@ -12,6 +14,15 @@ import { useThemeColors } from '../../hooks/useThemeColors'
 
 export const PlaceholderTipsBox = () => {
   const themeColors = useThemeColors()
+
+  // Reusable code element styling
+  const codeStyle = {
+    padding: '2px 4px',
+    backgroundColor: themeColors.background.secondary,
+    borderRadius: borders.radius.sm,
+    fontSize: typography.fontSize.xs,
+  } as const
+
   return (
     <div
       style={{
@@ -38,36 +49,11 @@ export const PlaceholderTipsBox = () => {
       >
         Add placeholders to personalize comments for each student:
         <br />
-        <code
-          style={{
-            padding: '2px 4px',
-            backgroundColor: themeColors.background.secondary,
-            borderRadius: borders.radius.sm,
-            fontSize: typography.fontSize.xs,
-          }}
-        >
-          &lt;first name&gt;
-        </code>{' '}
-        <code
-          style={{
-            padding: '2px 4px',
-            backgroundColor: themeColors.background.secondary,
-            borderRadius: borders.radius.sm,
-            fontSize: typography.fontSize.xs,
-          }}
-        >
-          &lt;last name&gt;
-        </code>{' '}
-        <code
-          style={{
-            padding: '2px 4px',
-            backgroundColor: themeColors.background.secondary,
-            borderRadius: borders.radius.sm,
-            fontSize: typography.fontSize.xs,
-          }}
-        >
-          &lt;grade&gt;
-        </code>
+        <code style={codeStyle}>&lt;first name&gt;</code> <code style={codeStyle}>&lt;last name&gt;</code>{' '}
+        <code style={codeStyle}>&lt;grade&gt;</code>
+        <br />
+        <code style={codeStyle}>&lt;pronoun&gt;</code> (e.g., he, she, they){' '}
+        <code style={codeStyle}>&lt;possessive pronoun&gt;</code> (e.g., his, her, their)
         <br />
         <em style={{ color: themeColors.text.tertiary }}>
           Example: &quot;&lt;first name&gt; earned &lt;grade&gt; points&quot; → &quot;Alice earned 95

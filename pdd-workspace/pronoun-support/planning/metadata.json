@@ -1,0 +1,47 @@
+{
+  "featureName": "Pronoun Support for Student Comments",
+  "featureId": "pronoun-support-v1",
+  "description": "Add pronoun placeholder support to Outcome and Personalized Comments, and enable pronoun selection in Final Comments UI",
+  "complexity": {
+    "level": "L1",
+    "levelName": "MICRO",
+    "reasoning": "Small feature scope with 4 user stories, 1-2 weeks effort, single developer, extends existing API (pronounId already in schema), no data migrations, integrates with existing pronoun endpoints",
+    "estimatedHours": 16,
+    "assessedAt": "2024-12-28T21:30:00Z",
+    "assessmentType": "conversational"
+  },
+  "scope": {
+    "storyCount": 4,
+    "estimatedWeeks": 1,
+    "teamSize": 1,
+    "frontendChanges": true,
+    "backendChanges": false,
+    "apiIntegrations": ["GET /api/pronouns", "Final Comment pronounId field"],
+    "dataMigrations": false
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "testing": "PENDING",
+    "deployment": "PENDING"
+  },
+  "businessValue": {
+    "priority": "HIGH",
+    "impact": "Enables personalization of comments using student pronouns - improves inclusivity and cultural sensitivity in student feedback",
+    "userBenefit": "Teachers can use gender-neutral or preferred pronouns when writing comments, making feedback more respectful and personalized"
+  },
+  "acceptance": {
+    "criteriaCount": 10,
+    "testScenarios": 5,
+    "completionRequirements": [
+      "Placeholders {{pronoun}} and {{possessivePronoun}} documented for Outcome Comments",
+      "Placeholders {{pronoun}} and {{possessivePronoun}} documented for Personalized Comments",
+      "Pronoun dropdown implemented in Final Comment form",
+      "Dropdown displays 'pronoun - possessivePronoun' format",
+      "Pronoun selection persists when saving Final Comment",
+      "All tests passing",
+      "No TypeScript errors"
+    ]
+  }
+}

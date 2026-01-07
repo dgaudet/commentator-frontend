@@ -288,6 +288,104 @@ describe('replacePlaceholders', () => {
       expect(result).toBe('Great work this semester!')
     })
   })
+
+  describe('Pronoun Placeholders (TASK-1.1, TASK-1.2, TASK-1.3, TASK-1.4)', () => {
+    it('replaces <pronoun> with student pronoun', () => {
+      const text = '<first name> uses <pronoun> pronouns.'
+      const studentData: StudentData = {
+        firstName: 'Alex',
+        lastName: 'Smith',
+        grade: 95,
+        pronoun: 'they',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Alex uses they pronouns.')
+    })
+
+    it('replaces <possessive pronoun> with student possessive pronoun', () => {
+      const text = '<first name> did great work on <possessive pronoun> project.'
+      const studentData: StudentData = {
+        firstName: 'Jordan',
+        lastName: 'Brown',
+        grade: 92,
+        possessivePronoun: 'their',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Jordan did great work on their project.')
+    })
+
+    it('replaces both pronoun and possessive pronoun', () => {
+      const text = '<first name> showed progress with <pronoun> studies, and <possessive pronoun> effort was commendable.'
+      const studentData: StudentData = {
+        firstName: 'Casey',
+        lastName: 'Johnson',
+        grade: 88,
+        pronoun: 'she',
+        possessivePronoun: 'her',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Casey showed progress with she studies, and her effort was commendable.')
+    })
+
+    it('handles case-insensitive pronoun placeholders', () => {
+      const text = '<PRONOUN> is a great student.'
+      const studentData: StudentData = {
+        firstName: 'Morgan',
+        pronoun: 'he',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('he is a great student.')
+    })
+
+    it('leaves <pronoun> unchanged when pronoun is undefined', () => {
+      const text = '<first name> uses <pronoun> pronouns.'
+      const studentData: StudentData = {
+        firstName: 'Alex',
+        lastName: 'Smith',
+        grade: 95,
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Alex uses <pronoun> pronouns.')
+    })
+
+    it('leaves <possessive pronoun> unchanged when possessive pronoun is undefined', () => {
+      const text = '<first name> did great work on <possessive pronoun> project.'
+      const studentData: StudentData = {
+        firstName: 'Jordan',
+        lastName: 'Brown',
+        grade: 92,
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Jordan did great work on <possessive pronoun> project.')
+    })
+
+    it('works with all placeholder types together', () => {
+      const text = '<first name> <last name> earned <grade> points. <pronoun> used <possessive pronoun> best effort.'
+      const studentData: StudentData = {
+        firstName: 'Riley',
+        lastName: 'Davis',
+        grade: 96,
+        pronoun: 'they',
+        possessivePronoun: 'their',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Riley Davis earned 96 points. they used their best effort.')
+    })
+  })
 })
 
 describe('validatePlaceholders', () => {

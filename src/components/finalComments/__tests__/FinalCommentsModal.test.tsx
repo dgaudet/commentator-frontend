@@ -681,6 +681,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
           lastName: 'Doe',
           grade: 85,
           comment: 'Excellent work!',
+          pronounId: null,
         })
       })
     })
@@ -713,6 +714,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
           classId: '65a1b2c3d4e5f6g7h8i9j0k1',
           firstName: 'Bob',
           grade: 78,
+          pronounId: null,
         })
       })
     })
@@ -1331,6 +1333,7 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
             lastName: 'Doe',
             grade: 85,
             comment: 'Excellent work this semester!',
+            pronounId: null,
           })
         })
       })
