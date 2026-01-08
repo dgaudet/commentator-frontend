@@ -44,7 +44,7 @@
  * - Full keyboard accessibility and screen reader support
  */
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import type {
   FinalComment,
   CreateFinalCommentRequest,
@@ -63,6 +63,7 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { PronounSelect } from '../common/PronounSelect'
+import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
 import { PronounDisplay } from './PronounDisplay'
 import { SelectedCommentsList } from './SelectedCommentsList'
 import { CopyButton } from '../common/CopyButton'
@@ -166,6 +167,9 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   // TASK-1.3: Pronoun selection state for edit form
   const [editPronounId, setEditPronounId] = useState('')
 
+  // US-FILTER-001: Track selected rating for filtering personalized comments
+  const [filterRating, setFilterRating] = useState<number>(0) // 0 = no selection
+
   /**
    * FCOI-001: Load outcome comments when component mounts
    * Fetches outcome comments for the selected class's subject
@@ -207,8 +211,17 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       // US-RATING-006: Clear ordered comments state
       setOrderedAddComments([])
       setOrderedEditComments([])
+      // US-FILTER-001: Reset rating filter to default on modal close
+      setFilterRating(0)
     }
   }, [isOpen, addForm, editForm])
+
+  // US-FILTER-002: Compute filtered comments based on selected rating
+  const filteredPersonalizedComments = useMemo(() => {
+    const sorted = sortPersonalizedCommentsByRating(personalizedComments)
+    if (filterRating === 0) return sorted
+    return sorted.filter((comment) => comment.rating === filterRating)
+  }, [personalizedComments, filterRating])
 
   // US-CLASS-TABS-003: Skip isOpen check when embedded (always render in TabPanel)
   if (!embedded && !isOpen) return null
@@ -726,9 +739,18 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   )}
                 </div>
 
-                {/* US-RATING-006: Typeahead to select multiple personalized comments */}
+                {/* US-FILTER-001: Rating selector for filtering personalized comments */}
+                <EmojiRatingSelector
+                  id="comment-filter-rating"
+                  label="Filter by Rating"
+                  value={filterRating}
+                  onChange={setFilterRating}
+                  disabled={submitting}
+                />
+
+                {/* US-RATING-006 & US-FILTER-002: Typeahead to select multiple personalized comments (filtered by rating) */}
                 <TypeaheadSearch
-                  items={sortPersonalizedCommentsByRating(personalizedComments)}
+                  items={filteredPersonalizedComments}
                   getItemLabel={(comment) => comment.comment}
                   getItemKey={(comment) => comment.id}
                   getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
@@ -742,7 +764,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   }}
                   label="Personalized Comment (Optional)"
                   placeholder={orderedAddComments.length > 0 ? 'Search personalized comments to add...' : 'Search personalized comments...'}
-                  emptyMessage="No personalized comments available for this subject"
+                  emptyMessage={
+                    filterRating > 0
+                      ? `No comments with rating ${filterRating}`
+                      : 'No personalized comments available for this subject'
+                  }
                   loading={personalizedCommentsLoading}
                   error={personalizedCommentsError}
                   disabled={submitting}
@@ -1021,9 +1047,9 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       )}
                                     </div>
 
-                                    {/* US-RATING-006: Typeahead to select multiple personalized comments (Edit Form) */}
+                                    {/* US-RATING-006 & US-FILTER-002: Typeahead to select multiple personalized comments (Edit Form, filtered by rating) */}
                                     <TypeaheadSearch
-                                      items={sortPersonalizedCommentsByRating(personalizedComments)}
+                                      items={filteredPersonalizedComments}
                                       getItemLabel={(comment) => comment.comment}
                                       getItemKey={(comment) => comment.id}
                                       getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
@@ -1037,7 +1063,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       }}
                                       label="Personalized Comment (Optional)"
                                       placeholder={orderedEditComments.length > 0 ? 'Search personalized comments to add...' : 'Search personalized comments...'}
-                                      emptyMessage="No personalized comments available for this subject"
+                                      emptyMessage={
+                                        filterRating > 0
+                                          ? `No comments with rating ${filterRating}`
+                                          : 'No personalized comments available for this subject'
+                                      }
                                       loading={personalizedCommentsLoading}
                                       error={personalizedCommentsError}
                                       disabled={submitting}

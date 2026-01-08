@@ -179,5 +179,3 @@ possible Auth0 login/user create flow by using Auth0 configuration, instead of i
 4. update the frontend to allow sending up to 3000 characters for the final comment as the backend has already been updated
 4. Copy personalized comments from one subject to another, with options to copy and replace, or add to the existing list
 5. What happens if you have 80-90, and there is also 90-100, show both comments and then you pick one
-
-ensure the timeout isn't an issue
