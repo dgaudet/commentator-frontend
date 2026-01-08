@@ -181,4 +181,6 @@ possible Auth0 login/user create flow by using Auth0 configuration, instead of i
 4. Copy personalized comments from one subject to another, with options to copy and replace, or add to the existing list
 5. What happens if you have 80-90, and there is also 90-100, show both comments and then you pick one
 
+make sure build is working
+
 ensure the timeout isn't an issue
