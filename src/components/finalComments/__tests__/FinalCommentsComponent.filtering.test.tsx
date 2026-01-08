@@ -302,6 +302,156 @@ describe('FinalCommentsModal - Personalized Comments Filtering', () => {
         })
       })
     })
+
+    describe('AC-2.2: Clear Filter Button', () => {
+      it('should show clear filter button when rating is selected', async () => {
+        render(
+          <FinalCommentsModal
+            {...defaultProps}
+            // Mocked hooks
+          />,
+        )
+
+        const ratingGroup = screen.getByRole('radiogroup')
+        const radioButtons = ratingGroup.querySelectorAll('[role="radio"]')
+
+        // Initially, clear button should not be visible
+        expect(screen.queryByText(/clear.*filter/i)).not.toBeInTheDocument()
+
+        // Select rating 5
+        fireEvent.click(radioButtons[4])
+
+        // Now the clear button should appear
+        await waitFor(() => {
+          expect(screen.getByText(/clear.*filter/i)).toBeInTheDocument()
+        })
+      })
+
+      it('should hide clear filter button when no rating is selected', async () => {
+        render(
+          <FinalCommentsModal
+            {...defaultProps}
+            // Mocked hooks
+          />,
+        )
+
+        const ratingGroup = screen.getByRole('radiogroup')
+        const radioButtons = ratingGroup.querySelectorAll('[role="radio"]')
+
+        // Select rating 3
+        fireEvent.click(radioButtons[2])
+
+        await waitFor(() => {
+          expect(screen.getByText(/clear.*filter/i)).toBeInTheDocument()
+        })
+
+        // Click Clear Filter button to deselect (only way to clear radio group)
+        const clearButton = screen.getByText(/clear.*filter/i)
+        fireEvent.click(clearButton)
+
+        // Clear button should disappear
+        await waitFor(() => {
+          expect(screen.queryByText(/clear.*filter/i)).not.toBeInTheDocument()
+        })
+      })
+
+      it('should reset rating to 0 when clear filter button is clicked', async () => {
+        render(
+          <FinalCommentsModal
+            {...defaultProps}
+            // Mocked hooks
+          />,
+        )
+
+        const ratingGroup = screen.getByRole('radiogroup')
+        const radioButtons = ratingGroup.querySelectorAll('[role="radio"]')
+
+        // Select rating 4
+        fireEvent.click(radioButtons[3])
+
+        await waitFor(() => {
+          expect(radioButtons[3]).toHaveAttribute('aria-checked', 'true')
+        })
+
+        // Click clear filter button (find by text)
+        const clearButton = screen.getByText(/clear.*filter/i)
+        fireEvent.click(clearButton)
+
+        // All rating buttons should be unchecked
+        await waitFor(() => {
+          radioButtons.forEach((btn) => {
+            expect(btn).toHaveAttribute('aria-checked', 'false')
+          })
+        })
+
+        // Clear button should disappear
+        await waitFor(() => {
+          expect(screen.queryByText(/clear.*filter/i)).not.toBeInTheDocument()
+        })
+      })
+
+      it('should work for all rating levels', async () => {
+        render(
+          <FinalCommentsModal
+            {...defaultProps}
+            // Mocked hooks
+          />,
+        )
+
+        const ratingGroup = screen.getByRole('radiogroup')
+        const radioButtons = ratingGroup.querySelectorAll('[role="radio"]')
+
+        // Test each rating level
+        for (let i = 0; i < 5; i++) {
+          // Select rating
+          fireEvent.click(radioButtons[i])
+
+          // Clear button should appear
+          await waitFor(() => {
+            expect(screen.getByText(/clear.*filter/i)).toBeInTheDocument()
+          })
+
+          // Click clear
+          const clearButton = screen.getByText(/clear.*filter/i)
+          fireEvent.click(clearButton)
+
+          // All buttons should be unchecked
+          await waitFor(() => {
+            radioButtons.forEach((btn) => {
+              expect(btn).toHaveAttribute('aria-checked', 'false')
+            })
+          })
+
+          // Button should disappear
+          await waitFor(() => {
+            expect(screen.queryByText(/clear.*filter/i)).not.toBeInTheDocument()
+          })
+        }
+      })
+
+      it('should be accessible with proper aria-label', async () => {
+        render(
+          <FinalCommentsModal
+            {...defaultProps}
+            // Mocked hooks
+          />,
+        )
+
+        const ratingGroup = screen.getByRole('radiogroup')
+        const radioButtons = ratingGroup.querySelectorAll('[role="radio"]')
+
+        // Select a rating
+        fireEvent.click(radioButtons[2])
+
+        // Verify clear button has proper aria-label for accessibility
+        await waitFor(() => {
+          const clearButton = screen.getByRole('button', { name: /clear/i })
+          expect(clearButton).toHaveAttribute('aria-label')
+          const ariaLabel = clearButton.getAttribute('aria-label') || ''
+          expect(ariaLabel.toLowerCase()).toContain('clear')
+        })
+      })
+    })
   })
 
   /**

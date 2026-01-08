@@ -740,13 +740,36 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                 </div>
 
                 {/* US-FILTER-001: Rating selector for filtering personalized comments */}
-                <EmojiRatingSelector
-                  id="comment-filter-rating"
-                  label="Filter by Rating"
-                  value={filterRating}
-                  onChange={setFilterRating}
-                  disabled={submitting}
-                />
+                <div style={{ marginBottom: spacing.lg }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      gap: spacing.md,
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <EmojiRatingSelector
+                        id="comment-filter-rating"
+                        label="Filter by Rating"
+                        value={filterRating}
+                        onChange={setFilterRating}
+                        disabled={submitting}
+                      />
+                    </div>
+                    {filterRating > 0 && (
+                      <Button
+                        onClick={() => setFilterRating(0)}
+                        variant="secondary"
+                        disabled={submitting}
+                        aria-label="Clear rating filter"
+                        style={{ marginBottom: spacing.sm }}
+                      >
+                        Clear Filter
+                      </Button>
+                    )}
+                  </div>
+                </div>
 
                 {/* US-RATING-006 & US-FILTER-002: Typeahead to select multiple personalized comments (filtered by rating) */}
                 <TypeaheadSearch
@@ -1046,6 +1069,20 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                         </div>
                                       )}
                                     </div>
+
+                                    {/* US-FILTER-001: Show clear filter button if rating is selected (Edit Form) */}
+                                    {filterRating > 0 && (
+                                      <div style={{ marginBottom: spacing.lg }}>
+                                        <Button
+                                          onClick={() => setFilterRating(0)}
+                                          variant="secondary"
+                                          disabled={submitting}
+                                          aria-label="Clear rating filter"
+                                        >
+                                          Clear Rating Filter
+                                        </Button>
+                                      </div>
+                                    )}
 
                                     {/* US-RATING-006 & US-FILTER-002: Typeahead to select multiple personalized comments (Edit Form, filtered by rating) */}
                                     <TypeaheadSearch
