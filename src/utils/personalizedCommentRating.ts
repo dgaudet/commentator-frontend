@@ -140,3 +140,67 @@ export function sortPersonalizedCommentsByRating(
     return a.comment.localeCompare(b.comment, undefined, { sensitivity: 'base' })
   })
 }
+
+/**
+ * Filters personalized comments by selected rating (US-FILTER-002).
+ * Returns all comments sorted by rating when no rating is selected (rating = 0).
+ * Returns only comments matching the selected rating when rating > 0.
+ *
+ * Filter rules:
+ * 1. If selectedRating is 0 or falsy: return all comments (sorted by rating)
+ * 2. If selectedRating > 0: return only comments with matching rating (sorted by rating)
+ *
+ * Note: Does not mutate the original array.
+ *
+ * @param comments - Array of personalized comments to filter
+ * @param selectedRating - The selected rating to filter by (0 = no filter)
+ * @returns Filtered and sorted array of personalized comments
+ *
+ * @example
+ * // Filter for rating 5 only
+ * filterPersonalizedCommentsByRating(
+ *   [
+ *     { id: '1', comment: 'Excellent', rating: 5 },
+ *     { id: '2', comment: 'Good', rating: 4 },
+ *     { id: '3', comment: 'Outstanding', rating: 5 }
+ *   ],
+ *   5
+ * )
+ * // Returns: [
+ * //   { id: '1', comment: 'Excellent', rating: 5 },
+ * //   { id: '3', comment: 'Outstanding', rating: 5 }
+ * // ]
+ *
+ * // No filter (show all)
+ * filterPersonalizedCommentsByRating(
+ *   [
+ *     { id: '1', comment: 'Excellent', rating: 5 },
+ *     { id: '2', comment: 'Good', rating: 4 }
+ *   ],
+ *   0
+ * )
+ * // Returns all comments sorted by rating: [
+ * //   { id: '1', comment: 'Excellent', rating: 5 },
+ * //   { id: '2', comment: 'Good', rating: 4 }
+ * // ]
+ */
+export function filterPersonalizedCommentsByRating(
+  comments: PersonalizedComment[],
+  selectedRating: number,
+): PersonalizedComment[] {
+  // Sort all comments by rating first
+  const sorted = sortPersonalizedCommentsByRating(comments)
+
+  // If no rating selected (0), return all sorted comments
+  if (selectedRating === 0) {
+    return sorted
+  }
+
+  // Filter to only comments matching the selected rating
+  // Normalize comment rating to nearest integer for comparison (matches sorting behavior)
+  return sorted.filter((comment) => {
+    const normalizedRating = getNormalizedRating(comment)
+    const roundedRating = Math.round(normalizedRating)
+    return roundedRating === selectedRating
+  })
+}

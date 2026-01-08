@@ -71,7 +71,7 @@ import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
-import { getRatingEmoji, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
+import { getRatingEmoji, getNormalizedRating, filterPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
 interface FinalCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
@@ -220,18 +220,16 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   }, [isOpen, addForm, editForm])
 
   // US-FILTER-002: Compute filtered comments for Add section based on selected rating
-  const filteredAddComments = useMemo(() => {
-    const sorted = sortPersonalizedCommentsByRating(personalizedComments)
-    if (addFilterRating === 0) return sorted
-    return sorted.filter((comment) => comment.rating === addFilterRating)
-  }, [personalizedComments, addFilterRating])
+  const filteredAddComments = useMemo(
+    () => filterPersonalizedCommentsByRating(personalizedComments, addFilterRating),
+    [personalizedComments, addFilterRating],
+  )
 
   // US-FILTER-002: Compute filtered comments for Edit section based on selected rating
-  const filteredEditComments = useMemo(() => {
-    const sorted = sortPersonalizedCommentsByRating(personalizedComments)
-    if (editFilterRating === 0) return sorted
-    return sorted.filter((comment) => comment.rating === editFilterRating)
-  }, [personalizedComments, editFilterRating])
+  const filteredEditComments = useMemo(
+    () => filterPersonalizedCommentsByRating(personalizedComments, editFilterRating),
+    [personalizedComments, editFilterRating],
+  )
 
   // US-CLASS-TABS-003: Skip isOpen check when embedded (always render in TabPanel)
   if (!embedded && !isOpen) return null
