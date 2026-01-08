@@ -262,7 +262,13 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
         request.comment = addForm.comment.trim()
       }
       // TASK-1.3: Add pronoun ID (or null to clear existing selection)
-      request.pronounId = addPronounId || null
+      // Type assertion needed: API accepts null to clear, but TS type only allows string | undefined
+      if (addPronounId) {
+        request.pronounId = addPronounId
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ;(request as any).pronounId = null
+      }
 
       await onCreateComment(request)
 
@@ -556,7 +562,13 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
         request.comment = editForm.comment.trim()
       }
       // TASK-1.3: Add pronoun ID (or null to clear existing selection)
-      request.pronounId = editPronounId || null
+      // Type assertion needed: API accepts null to clear, but TS type only allows string | undefined
+      if (editPronounId) {
+        request.pronounId = editPronounId
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ;(request as any).pronounId = null
+      }
 
       await onUpdateComment(editingId, request)
 
