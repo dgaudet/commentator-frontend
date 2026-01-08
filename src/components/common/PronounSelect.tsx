@@ -129,7 +129,7 @@ export const PronounSelect = ({
           id={id}
           value={value}
           onChange={handleChange}
-          disabled={disabled || loading || error}
+          disabled={Boolean(disabled || loading || error)}
           aria-label={ariaLabel || label}
           style={{
             width: '100%',
