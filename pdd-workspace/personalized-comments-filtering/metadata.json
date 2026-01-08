@@ -24,17 +24,21 @@
   },
   "phases": {
     "planning": {
-      "status": "IN_PROGRESS",
-      "startedAt": "2026-01-07"
+      "status": "COMPLETED",
+      "startedAt": "2026-01-07",
+      "completedAt": "2026-01-08"
     },
     "design": {
-      "status": "PENDING"
+      "status": "COMPLETED",
+      "completedAt": "2026-01-08"
     },
     "implementation": {
-      "status": "PENDING"
+      "status": "COMPLETED",
+      "completedAt": "2026-01-08"
     },
     "validation": {
-      "status": "PENDING"
+      "status": "COMPLETED",
+      "completedAt": "2026-01-08"
     }
   },
   "businessValue": {
@@ -49,5 +53,5 @@
     ],
     "blockingIssues": []
   },
-  "lastUpdated": "2026-01-07"
+  "lastUpdated": "2026-01-08"
 }
