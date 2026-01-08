@@ -121,7 +121,7 @@ describe('US-FC-REFACTOR-003: Populate with Above Comments Button', () => {
         />,
       )
 
-      const personalCommentInput = screen.getByLabelText(/Personalized Comment/i)
+      const personalCommentInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       const populateButton = screen.getByRole('button', { name: /Populate with Above Comments/i })
       const finalCommentTextarea = screen.getByLabelText(/^Comment$/i)
 
@@ -187,7 +187,7 @@ describe('US-FC-REFACTOR-003: Populate with Above Comments Button', () => {
         />,
       )
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
 
       const commentOption = screen.getByText('Excellent work this semester')
@@ -243,7 +243,7 @@ describe('US-FC-REFACTOR-003: Populate with Above Comments Button', () => {
       )
 
       // Select personal comment
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
 
       const commentOption = screen.getByText('Excellent work this semester')
@@ -279,7 +279,7 @@ describe('US-FC-REFACTOR-003: Populate with Above Comments Button', () => {
       fireEvent.change(gradeInput, { target: { value: '95' } })
 
       // Select personal comment
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
 
       const commentOption = screen.getByText('Excellent work this semester')

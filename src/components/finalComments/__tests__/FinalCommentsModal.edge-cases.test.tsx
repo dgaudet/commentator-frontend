@@ -126,7 +126,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
       fireEvent.change(gradeInput, { target: { value: '95' } })
 
       // Select personal comment
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
       const commentOption = screen.getByText('B'.repeat(500))
       fireEvent.click(commentOption)
@@ -264,7 +264,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
         />,
       )
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
       const commentOption = screen.getByText(unicodeComment.comment)
       fireEvent.click(commentOption)
@@ -337,7 +337,7 @@ describe('US-FC-REFACTOR-004: Edge Cases & Validation', () => {
       fireEvent.change(gradeInput, { target: { value: '70' } })
 
       // Select personal comment
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
       const commentOption = screen.getByText('Good effort this semester')
       fireEvent.click(commentOption)

@@ -44,7 +44,7 @@
  * - Full keyboard accessibility and screen reader support
  */
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import type {
   FinalComment,
   CreateFinalCommentRequest,
@@ -63,6 +63,7 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { PronounSelect } from '../common/PronounSelect'
+import { RatingFilterSelector } from './RatingFilterSelector'
 import { PronounDisplay } from './PronounDisplay'
 import { SelectedCommentsList } from './SelectedCommentsList'
 import { CopyButton } from '../common/CopyButton'
@@ -70,7 +71,7 @@ import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
-import { getRatingEmoji, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
+import { getRatingEmoji, getNormalizedRating, filterPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 
 interface FinalCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
@@ -166,6 +167,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   // TASK-1.3: Pronoun selection state for edit form
   const [editPronounId, setEditPronounId] = useState('')
 
+  // US-FILTER-001: Track selected rating for filtering personalized comments
+  // US-FILTER-001: Separate rating filters for Add and Edit sections
+  const [addFilterRating, setAddFilterRating] = useState<number>(0) // 0 = no selection
+  const [editFilterRating, setEditFilterRating] = useState<number>(0) // 0 = no selection
+
   /**
    * FCOI-001: Load outcome comments when component mounts
    * Fetches outcome comments for the selected class's subject
@@ -207,8 +213,23 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       // US-RATING-006: Clear ordered comments state
       setOrderedAddComments([])
       setOrderedEditComments([])
+      // US-FILTER-001: Reset rating filters to default on modal close
+      setAddFilterRating(0)
+      setEditFilterRating(0)
     }
   }, [isOpen, addForm, editForm])
+
+  // US-FILTER-002: Compute filtered comments for Add section based on selected rating
+  const filteredAddComments = useMemo(
+    () => filterPersonalizedCommentsByRating(personalizedComments, addFilterRating),
+    [personalizedComments, addFilterRating],
+  )
+
+  // US-FILTER-002: Compute filtered comments for Edit section based on selected rating
+  const filteredEditComments = useMemo(
+    () => filterPersonalizedCommentsByRating(personalizedComments, editFilterRating),
+    [personalizedComments, editFilterRating],
+  )
 
   // US-CLASS-TABS-003: Skip isOpen check when embedded (always render in TabPanel)
   if (!embedded && !isOpen) return null
@@ -726,9 +747,18 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   )}
                 </div>
 
-                {/* US-RATING-006: Typeahead to select multiple personalized comments */}
+                {/* US-FILTER-001: Rating selector for filtering personalized comments (Add Form) */}
+                <RatingFilterSelector
+                  id="add-comment-filter-rating"
+                  label="Filter Personalized Comments by Rating"
+                  value={addFilterRating}
+                  onChange={setAddFilterRating}
+                  disabled={submitting}
+                />
+
+                {/* US-RATING-006 & US-FILTER-002: Typeahead to select multiple personalized comments (Add Form, filtered by rating) */}
                 <TypeaheadSearch
-                  items={sortPersonalizedCommentsByRating(personalizedComments)}
+                  items={filteredAddComments}
                   getItemLabel={(comment) => comment.comment}
                   getItemKey={(comment) => comment.id}
                   getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
@@ -742,7 +772,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   }}
                   label="Personalized Comment (Optional)"
                   placeholder={orderedAddComments.length > 0 ? 'Search personalized comments to add...' : 'Search personalized comments...'}
-                  emptyMessage="No personalized comments available for this subject"
+                  emptyMessage={
+                    addFilterRating > 0
+                      ? `No comments with rating ${addFilterRating}`
+                      : 'No personalized comments available for this subject'
+                  }
                   loading={personalizedCommentsLoading}
                   error={personalizedCommentsError}
                   disabled={submitting}
@@ -1021,9 +1055,18 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       )}
                                     </div>
 
-                                    {/* US-RATING-006: Typeahead to select multiple personalized comments (Edit Form) */}
+                                    {/* US-FILTER-001: Rating selector for filtering personalized comments (Edit Form) */}
+                                    <RatingFilterSelector
+                                      id={`edit-comment-filter-rating-${comment.id}`}
+                                      label="Filter Personalized Comments by Rating"
+                                      value={editFilterRating}
+                                      onChange={setEditFilterRating}
+                                      disabled={submitting}
+                                    />
+
+                                    {/* US-RATING-006 & US-FILTER-002: Typeahead to select multiple personalized comments (Edit Form, filtered by rating) */}
                                     <TypeaheadSearch
-                                      items={sortPersonalizedCommentsByRating(personalizedComments)}
+                                      items={filteredEditComments}
                                       getItemLabel={(comment) => comment.comment}
                                       getItemKey={(comment) => comment.id}
                                       getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
@@ -1037,7 +1080,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       }}
                                       label="Personalized Comment (Optional)"
                                       placeholder={orderedEditComments.length > 0 ? 'Search personalized comments to add...' : 'Search personalized comments...'}
-                                      emptyMessage="No personalized comments available for this subject"
+                                      emptyMessage={
+                                        editFilterRating > 0
+                                          ? `No comments with rating ${editFilterRating}`
+                                          : 'No personalized comments available for this subject'
+                                      }
                                       loading={personalizedCommentsLoading}
                                       error={personalizedCommentsError}
                                       disabled={submitting}

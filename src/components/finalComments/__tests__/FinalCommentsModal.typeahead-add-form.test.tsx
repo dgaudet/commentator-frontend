@@ -105,7 +105,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
         />,
       )
 
-      expect(screen.getByLabelText(/Personalized Comment/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/Personalized Comment \(Optional\)/i)).toBeInTheDocument()
     })
 
     it('should have typeahead positioned after outcome comment and before final comment textarea', () => {
@@ -123,7 +123,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       )
 
       const outcomeCommentLabel = screen.getByLabelText(/Outcome Comment by Grade/i)
-      const personalizedCommentInput = screen.getByLabelText(/Personalized Comment/i)
+      const personalizedCommentInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       const finalCommentTextarea = screen.getByLabelText(/^Comment$/i)
 
       // Check DOM order: Outcome Comment -> Personalized Comment -> Final Comment
@@ -149,7 +149,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
         />,
       )
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.change(searchInput, { target: { value: 'excellent' } })
       fireEvent.focus(searchInput)
 
@@ -171,7 +171,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
         />,
       )
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
 
       expect(screen.getByText('Excellent work this semester')).toBeInTheDocument()
@@ -195,7 +195,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
         />,
       )
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
 
       const commentOption = screen.getByText('Excellent work this semester')
@@ -229,7 +229,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       expect(finalCommentTextarea).toHaveValue('Initial content')
 
       // Select personalized comment
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
 
       const commentOption = screen.getByText('Good effort on assignments')
@@ -261,7 +261,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
         />,
       )
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i) as HTMLInputElement
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i) as HTMLInputElement
       fireEvent.change(searchInput, { target: { value: 'excellent' } })
       fireEvent.focus(searchInput)
 
@@ -291,7 +291,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       )
 
       // Type in search and select comment
-      const searchInput = screen.getByLabelText(/Personalized Comment/i) as HTMLInputElement
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i) as HTMLInputElement
       fireEvent.change(searchInput, { target: { value: 'excellent' } })
       fireEvent.focus(searchInput)
 
@@ -349,7 +349,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
         />,
       )
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       expect(searchInput).toBeDisabled()
     })
 
@@ -418,7 +418,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
         />,
       )
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
 
       expect(screen.getByText(/No personalized comments available for this subject/i)).toBeInTheDocument()
@@ -441,7 +441,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       )
 
       // Type in search field
-      const searchInput = screen.getByLabelText(/Personalized Comment/i) as HTMLInputElement
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i) as HTMLInputElement
       fireEvent.change(searchInput, { target: { value: 'excellent work' } })
       expect(searchInput.value).toBe('excellent work')
 
@@ -474,7 +474,7 @@ describe.skip('US-PC-TYPEAHEAD-003: Integrate Typeahead in Add Form', () => {
       )
 
       // Search query should be cleared
-      const searchInputAfterReopen = screen.getByLabelText(/Personalized Comment/i) as HTMLInputElement
+      const searchInputAfterReopen = screen.getByLabelText(/Personalized Comment \(Optional\)/i) as HTMLInputElement
       expect(searchInputAfterReopen.value).toBe('')
     })
   })

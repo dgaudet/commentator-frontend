@@ -172,7 +172,7 @@ describe('FinalCommentsModal - Pronoun Integration (TASK-1.3, TASK-1.4)', () => 
       render(<FinalCommentsModal {...defaultProps} />)
 
       // Verify component renders
-      expect(screen.getByText(/Personalized Comment/i)).toBeInTheDocument()
+      expect(screen.getByText(/Personalized Comment \(Optional\)/i)).toBeInTheDocument()
     })
 
     it('should handle missing pronoun gracefully', () => {

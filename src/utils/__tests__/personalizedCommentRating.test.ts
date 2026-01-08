@@ -1,13 +1,14 @@
 /**
  * Personalized Comment Rating Utility Tests
  * TDD Phase: RED - Writing failing tests first
- * Reference: US-RATING-001, US-RATING-004, US-RATING-009
+ * Reference: US-RATING-001, US-RATING-004, US-RATING-009, US-FILTER-002
  *
  * Testing rating utility functions:
  * - getNormalizedRating: Default null/undefined ratings to 3
  * - getRatingEmoji: Map rating (1-5) to emoji
  * - getRatingLabel: Map rating (1-5) to accessibility label
  * - sortPersonalizedCommentsByRating: Sort by rating desc, then alphabetically
+ * - filterPersonalizedCommentsByRating: Filter by rating and sort (US-FILTER-002)
  */
 
 import {
@@ -15,8 +16,23 @@ import {
   getRatingEmoji,
   getRatingLabel,
   sortPersonalizedCommentsByRating,
+  filterPersonalizedCommentsByRating,
 } from '../personalizedCommentRating'
 import type { PersonalizedComment } from '../../types/PersonalizedComment'
+
+// Helper to create test comments
+const createComment = (
+  id: number,
+  comment: string,
+  rating?: number | null,
+): PersonalizedComment => ({
+  id: String(id),
+  comment,
+  subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+  rating: rating === undefined ? undefined : rating,
+  createdAt: '2024-01-15T10:00:00Z',
+  updatedAt: '2024-01-15T10:00:00Z',
+})
 
 describe('getNormalizedRating', () => {
   it('returns the rating when defined', () => {
@@ -156,19 +172,6 @@ describe('getRatingLabel', () => {
 })
 
 describe('sortPersonalizedCommentsByRating', () => {
-  const createComment = (
-    id: number,
-    comment: string,
-    rating?: number | null,
-  ): PersonalizedComment => ({
-    id: String(id),
-    comment,
-    subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
-    rating: rating === undefined ? undefined : rating,
-    createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-15T10:00:00Z',
-  })
-
   it('sorts comments by rating descending (5 → 1)', () => {
     const comments: PersonalizedComment[] = [
       createComment(1, 'Comment A', 1),
@@ -283,5 +286,165 @@ describe('sortPersonalizedCommentsByRating', () => {
 
     // Expected order: 4.8 (≈5), 3.5 (≈4), 1.4 (≈1)
     expect(sorted.map((c) => c.id)).toEqual(['2', '3', '1'])
+  })
+})
+
+describe('filterPersonalizedCommentsByRating (US-FILTER-002)', () => {
+  describe('AC-2.1: Rating Filter Applied to List', () => {
+    it('should filter comments to only those matching the selected rating', () => {
+      const comments: PersonalizedComment[] = [
+        createComment(1, 'Excellent performance', 5),
+        createComment(2, 'Very good effort', 4),
+        createComment(3, 'Outstanding achievement', 5),
+        createComment(4, 'Good solid work', 3),
+        createComment(5, 'Needs improvement', 2),
+      ]
+
+      const filtered = filterPersonalizedCommentsByRating(comments, 5)
+
+      // Should only include rating 5 comments
+      expect(filtered).toHaveLength(2)
+      expect(filtered.map((c) => c.id)).toEqual(['1', '3'])
+    })
+
+    it('should return empty array when no comments match the selected rating', () => {
+      const comments: PersonalizedComment[] = [
+        createComment(1, 'Good work', 3),
+        createComment(2, 'Fair work', 2),
+      ]
+
+      const filtered = filterPersonalizedCommentsByRating(comments, 5)
+
+      expect(filtered).toHaveLength(0)
+      expect(filtered).toEqual([])
+    })
+
+    it('should filter for all different rating levels (1-5)', () => {
+      const comments: PersonalizedComment[] = [
+        createComment(1, 'Rating 5', 5),
+        createComment(2, 'Rating 4', 4),
+        createComment(3, 'Rating 3', 3),
+        createComment(4, 'Rating 2', 2),
+        createComment(5, 'Rating 1', 1),
+      ]
+
+      // Test each rating level
+      expect(filterPersonalizedCommentsByRating(comments, 5)).toHaveLength(1)
+      expect(filterPersonalizedCommentsByRating(comments, 4)).toHaveLength(1)
+      expect(filterPersonalizedCommentsByRating(comments, 3)).toHaveLength(1)
+      expect(filterPersonalizedCommentsByRating(comments, 2)).toHaveLength(1)
+      expect(filterPersonalizedCommentsByRating(comments, 1)).toHaveLength(1)
+    })
+  })
+
+  describe('AC-2.2: Null Rating Clears Filter', () => {
+    it('should return all comments when rating is 0 (no filter selected)', () => {
+      const comments: PersonalizedComment[] = [
+        createComment(1, 'Rating 5', 5),
+        createComment(2, 'Rating 4', 4),
+        createComment(3, 'Rating 3', 3),
+      ]
+
+      const filtered = filterPersonalizedCommentsByRating(comments, 0)
+
+      expect(filtered).toHaveLength(3)
+      expect(filtered.map((c) => c.id)).toEqual(['1', '2', '3'])
+    })
+
+    it('should sort by rating descending when returning all comments', () => {
+      const comments: PersonalizedComment[] = [
+        createComment(1, 'B Rating 3', 3),
+        createComment(2, 'A Rating 5', 5),
+        createComment(3, 'C Rating 2', 2),
+        createComment(4, 'D Rating 5', 5),
+      ]
+
+      const filtered = filterPersonalizedCommentsByRating(comments, 0)
+
+      // Should be sorted: 5,5,3,2 with alphabetical tie-breaking for rating 5
+      expect(filtered.map((c) => c.id)).toEqual(['2', '4', '1', '3'])
+    })
+  })
+
+  describe('AC-2.3 & AC-2.4: Combined Requirements', () => {
+    it('should maintain sorted order when filtering', () => {
+      const comments: PersonalizedComment[] = [
+        createComment(1, 'Zebra Rating 5', 5),
+        createComment(2, 'Apple Rating 5', 5),
+        createComment(3, 'Mango Rating 5', 5),
+      ]
+
+      const filtered = filterPersonalizedCommentsByRating(comments, 5)
+
+      // Should be alphabetically sorted within same rating
+      expect(filtered.map((c) => c.comment)).toEqual([
+        'Apple Rating 5',
+        'Mango Rating 5',
+        'Zebra Rating 5',
+      ])
+    })
+
+    it('should handle multiple comments with same rating', () => {
+      const comments: PersonalizedComment[] = [
+        createComment(1, 'Good work 1', 4),
+        createComment(2, 'Good work 2', 4),
+        createComment(3, 'Good work 3', 4),
+        createComment(4, 'Excellent', 5),
+      ]
+
+      const filtered = filterPersonalizedCommentsByRating(comments, 4)
+
+      expect(filtered).toHaveLength(3)
+      expect(filtered.every((c) => c.rating === 4)).toBe(true)
+    })
+  })
+
+  describe('AC-2.5: State Isolation', () => {
+    it('should not mutate the original array', () => {
+      const originalComments: PersonalizedComment[] = [
+        createComment(1, 'Rating 5', 5),
+        createComment(2, 'Rating 4', 4),
+        createComment(3, 'Rating 3', 3),
+      ]
+      const originalOrder = originalComments.map((c) => c.id)
+
+      // Filter and get result
+      filterPersonalizedCommentsByRating(originalComments, 5)
+
+      // Original array should remain unchanged
+      expect(originalComments.map((c) => c.id)).toEqual(originalOrder)
+    })
+  })
+
+  describe('Edge Cases', () => {
+    it('should handle empty array', () => {
+      const filtered = filterPersonalizedCommentsByRating([], 5)
+      expect(filtered).toEqual([])
+    })
+
+    it('should handle null/undefined ratings in comments', () => {
+      const comments: PersonalizedComment[] = [
+        createComment(1, 'No rating', null),
+        createComment(2, 'Rating 5', 5),
+      ]
+
+      // Null ratings are normalized to 3, so filtering for 3 should include them
+      const filtered = filterPersonalizedCommentsByRating(comments, 3)
+      expect(filtered).toHaveLength(1)
+      expect(filtered[0].id).toBe('1')
+    })
+
+    it('should handle decimal ratings', () => {
+      const comments: PersonalizedComment[] = [
+        createComment(1, 'Rating 4.8', 4.8), // Rounds to 5
+        createComment(2, 'Rating 4.2', 4.2), // Rounds to 4
+        createComment(3, 'Rating 5.0', 5.0), // Exactly 5
+      ]
+
+      const filtered = filterPersonalizedCommentsByRating(comments, 5)
+
+      // Should include both 4.8 (rounds to 5) and 5.0
+      expect(filtered).toHaveLength(2)
+    })
   })
 })

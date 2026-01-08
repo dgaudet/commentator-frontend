@@ -174,10 +174,6 @@ aws url - http://commentator.prod.s3-website-us-west-2.amazonaws.com/
 
 possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
 
-3. filter by the emoji's, should be able to select it and then de-select it as needed
-   * this can probably be filtered in the frontend similar to the typeahead stuff
 4. update the frontend to allow sending up to 3000 characters for the final comment as the backend has already been updated
 4. Copy personalized comments from one subject to another, with options to copy and replace, or add to the existing list
 5. What happens if you have 80-90, and there is also 90-100, show both comments and then you pick one
-
-ensure the timeout isn't an issue

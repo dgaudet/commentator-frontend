@@ -341,7 +341,7 @@ describe('US-FC-REFACTOR-005: Accessibility Tests', () => {
         />,
       )
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
 
       // Verify typeahead has accessible label
       expect(searchInput).toHaveAccessibleName()
@@ -392,7 +392,7 @@ describe('US-FC-REFACTOR-005: Accessibility Tests', () => {
       )
 
       // Typeahead should be disabled during loading
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       expect(searchInput).toBeDisabled()
     })
   })
@@ -415,7 +415,7 @@ describe('US-FC-REFACTOR-005: Accessibility Tests', () => {
       // Verify all related fields have accessible names
       expect(screen.getByRole('spinbutton', { name: /Grade/i })).toHaveAccessibleName()
       expect(screen.getByLabelText(/Outcome Comment by Grade/i)).toHaveAccessibleName()
-      expect(screen.getByLabelText(/Personalized Comment/i)).toHaveAccessibleName()
+      expect(screen.getByLabelText(/Personalized Comment \(Optional\)/i)).toHaveAccessibleName()
       expect(screen.getByRole('button', { name: /Populate with Above Comments/i })).toHaveAccessibleName()
       expect(screen.getByLabelText(/^Comment$/i)).toHaveAccessibleName()
     })
@@ -443,7 +443,7 @@ describe('US-FC-REFACTOR-005: Accessibility Tests', () => {
       expect(commentTextarea).not.toHaveAttribute('required')
 
       // Personalized comment is optional
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       expect(searchInput).not.toHaveAttribute('required')
     })
   })
