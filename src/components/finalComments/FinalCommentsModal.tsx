@@ -745,6 +745,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                     style={{
                       display: 'flex',
                       alignItems: 'flex-end',
+                      justifyContent: 'space-between',
                       gap: spacing.md,
                     }}
                   >
@@ -758,15 +759,34 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                       />
                     </div>
                     {filterRating > 0 && (
-                      <Button
+                      <button
                         onClick={() => setFilterRating(0)}
-                        variant="secondary"
                         disabled={submitting}
                         aria-label="Clear rating filter"
-                        style={{ marginBottom: spacing.sm }}
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: `${borders.width.thin} solid ${themeColors.border.default}`,
+                          borderRadius: borders.radius.sm,
+                          padding: `${spacing.sm} ${spacing.md}`,
+                          fontSize: typography.fontSize.sm,
+                          color: themeColors.text.primary,
+                          cursor: submitting ? 'not-allowed' : 'pointer',
+                          opacity: submitting ? 0.5 : 1,
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!submitting) {
+                            e.currentTarget.style.backgroundColor = themeColors.background.secondary
+                            e.currentTarget.style.borderColor = themeColors.border.focus
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent'
+                          e.currentTarget.style.borderColor = themeColors.border.default
+                        }}
                       >
                         Clear Filter
-                      </Button>
+                      </button>
                     )}
                   </div>
                 </div>
@@ -1073,14 +1093,34 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                     {/* US-FILTER-001: Show clear filter button if rating is selected (Edit Form) */}
                                     {filterRating > 0 && (
                                       <div style={{ marginBottom: spacing.lg }}>
-                                        <Button
+                                        <button
                                           onClick={() => setFilterRating(0)}
-                                          variant="secondary"
                                           disabled={submitting}
                                           aria-label="Clear rating filter"
+                                          style={{
+                                            backgroundColor: 'transparent',
+                                            border: `${borders.width.thin} solid ${themeColors.border.default}`,
+                                            borderRadius: borders.radius.sm,
+                                            padding: `${spacing.sm} ${spacing.md}`,
+                                            fontSize: typography.fontSize.sm,
+                                            color: themeColors.text.primary,
+                                            cursor: submitting ? 'not-allowed' : 'pointer',
+                                            opacity: submitting ? 0.5 : 1,
+                                            transition: 'all 0.2s ease',
+                                          }}
+                                          onMouseEnter={(e) => {
+                                            if (!submitting) {
+                                              e.currentTarget.style.backgroundColor = themeColors.background.secondary
+                                              e.currentTarget.style.borderColor = themeColors.border.focus
+                                            }
+                                          }}
+                                          onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'transparent'
+                                            e.currentTarget.style.borderColor = themeColors.border.default
+                                          }}
                                         >
-                                          Clear Rating Filter
-                                        </Button>
+                                          Clear Filter
+                                        </button>
                                       </div>
                                     )}
 
