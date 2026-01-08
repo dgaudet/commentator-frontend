@@ -1,0 +1,53 @@
+{
+  "feature": {
+    "name": "personalized-comments-filtering",
+    "title": "Filter Personalized Comments by Rating and Search Text",
+    "description": "Add rating-based filtering to FinalCommentsComponent to complement existing typeahead search, allowing teachers to filter available personalized comments by both rating and search query simultaneously"
+  },
+  "complexity": {
+    "level": "L1",
+    "reasoning": "Single component behavior enhancement - reusing existing EmojiRatingSelector component, implementing combined filtering logic in one component, no new API endpoints required, minimal state management changes",
+    "assessedAt": "2026-01-07"
+  },
+  "scope": {
+    "userStories": 3,
+    "estimatedPoints": 5,
+    "affectedComponents": [
+      "src/components/finalComments/FinalCommentsComponent.tsx"
+    ],
+    "affectedTests": [
+      "src/components/finalComments/__tests__/FinalCommentsComponent.filtering.test.tsx"
+    ],
+    "dependencies": [
+      "personalized-comments-rating (prior feature)"
+    ]
+  },
+  "phases": {
+    "planning": {
+      "status": "IN_PROGRESS",
+      "startedAt": "2026-01-07"
+    },
+    "design": {
+      "status": "PENDING"
+    },
+    "implementation": {
+      "status": "PENDING"
+    },
+    "validation": {
+      "status": "PENDING"
+    }
+  },
+  "businessValue": {
+    "priority": "MEDIUM",
+    "userImpact": "Improves workflow efficiency when selecting personalized comments by enabling quick filtering through both rating preference and search text",
+    "effort": "LOW",
+    "riskLevel": "LOW"
+  },
+  "dependencies": {
+    "upstreamFeatures": [
+      "personalized-comments-rating"
+    ],
+    "blockingIssues": []
+  },
+  "lastUpdated": "2026-01-07"
+}
