@@ -54,20 +54,17 @@ export const RatingFilterSelector: React.FC<RatingFilterSelectorProps> = ({
       <div
         style={{
           display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'space-between',
+          alignItems: 'center',
           gap: spacing.md,
         }}
       >
-        <div style={{ flex: 1 }}>
-          <EmojiRatingSelector
-            id={id}
-            label={label}
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-          />
-        </div>
+        <EmojiRatingSelector
+          id={id}
+          label={label}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+        />
         {value > 0 && (
           <button
             onClick={() => onChange(0)}
