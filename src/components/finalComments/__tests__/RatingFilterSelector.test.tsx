@@ -15,7 +15,7 @@ describe('RatingFilterSelector Component', () => {
     id: 'test-rating-filter',
     value: 0,
     onChange: jest.fn(),
-    label: 'Filter by Rating',
+    label: 'Filter Personalized Comments by Rating',
     disabled: false,
   }
 
@@ -27,7 +27,7 @@ describe('RatingFilterSelector Component', () => {
     it('should render the component with label', () => {
       render(<RatingFilterSelector {...defaultProps} />)
 
-      expect(screen.getByText('Filter by Rating')).toBeInTheDocument()
+      expect(screen.getByText('Filter Personalized Comments by Rating')).toBeInTheDocument()
       expect(screen.getByRole('radiogroup')).toBeInTheDocument()
     })
 
@@ -43,7 +43,7 @@ describe('RatingFilterSelector Component', () => {
       const { label, ...propsWithoutLabel } = defaultProps
       render(<RatingFilterSelector {...propsWithoutLabel} />)
 
-      expect(screen.queryByText('Filter by Rating')).not.toBeInTheDocument()
+      expect(screen.queryByText('Filter Personalized Comments by Rating')).not.toBeInTheDocument()
       expect(screen.getByRole('radiogroup')).toBeInTheDocument()
     })
 

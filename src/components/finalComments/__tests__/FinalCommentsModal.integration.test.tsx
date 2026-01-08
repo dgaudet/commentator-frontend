@@ -137,7 +137,7 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
       expect(screen.getByText(/Demonstrates exceptional understanding of mathematical concepts/i)).toBeInTheDocument()
 
       // Step 3: Select personal comment
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
       const personalCommentOption = screen.getByText('Excellent work this semester')
       fireEvent.click(personalCommentOption)
@@ -241,7 +241,7 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
       fireEvent.change(gradeInput, { target: { value: '75' } }) // Grade outside outcome range
 
       // Select personal comment without matching outcome comment
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
       const personalCommentOption = screen.getByText('Good participation in class discussions')
       fireEvent.click(personalCommentOption)
@@ -313,7 +313,7 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
       fireEvent.change(editGradeInput, { target: { value: '95' } })
 
       // Step 3: Select personal comment - Get all typeahead inputs, edit form is second
-      const searchInputs = screen.getAllByLabelText(/Personalized Comment/i)
+      const searchInputs = screen.getAllByLabelText(/Personalized Comment \(Optional\)/i)
       const editSearchInput = searchInputs[1]
       fireEvent.focus(editSearchInput)
       const personalCommentOption = screen.getByText('Excellent work this semester')
@@ -414,7 +414,7 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
       )
 
       const gradeInput = screen.getByRole('spinbutton', { name: /Grade/i })
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       const populateButton = screen.getByRole('button', { name: /Populate with Above Comments/i })
       const finalCommentTextarea = screen.getByLabelText(/^Comment$/i) as HTMLTextAreaElement
 
@@ -476,7 +476,7 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
       )
 
       const gradeInput = screen.getByRole('spinbutton', { name: /Grade/i })
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       const populateButton = screen.getByRole('button', { name: /Populate with Above Comments/i })
 
       // Initially disabled (no selections)
@@ -524,7 +524,7 @@ describe('US-FC-REFACTOR-005: Integration Tests', () => {
       const gradeInput = screen.getByRole('spinbutton', { name: /Grade/i })
       fireEvent.change(gradeInput, { target: { value: '95' } })
 
-      const searchInput = screen.getByLabelText(/Personalized Comment/i)
+      const searchInput = screen.getByLabelText(/Personalized Comment \(Optional\)/i)
       fireEvent.focus(searchInput)
       fireEvent.click(screen.getByText('Excellent work this semester'))
 

@@ -752,7 +752,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                 {/* US-FILTER-001: Rating selector for filtering personalized comments (Add Form) */}
                 <RatingFilterSelector
                   id="add-comment-filter-rating"
-                  label="Filter by Rating"
+                  label="Filter Personalized Comments by Rating"
                   value={addFilterRating}
                   onChange={setAddFilterRating}
                   disabled={submitting}
@@ -1060,7 +1060,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                     {/* US-FILTER-001: Rating selector for filtering personalized comments (Edit Form) */}
                                     <RatingFilterSelector
                                       id={`edit-comment-filter-rating-${comment.id}`}
-                                      label="Filter by Rating"
+                                      label="Filter Personalized Comments by Rating"
                                       value={editFilterRating}
                                       onChange={setEditFilterRating}
                                       disabled={submitting}
