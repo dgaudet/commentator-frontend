@@ -13,7 +13,7 @@
 
 | Story ID | Title | Points | Status | Linked Tasks |
 |----------|-------|--------|--------|--------------|
-| US-FILTER-001 | Add rating selector to FinalCommentsComponent | 2 | PENDING | TASK-1, TASK-2 |
+| US-FILTER-001 | Add rating selector to FinalCommentsModal | 2 | PENDING | TASK-1, TASK-2 |
 | US-FILTER-002 | Filter personalized comments by selected rating | 2 | PENDING | TASK-3, TASK-4 |
 | US-FILTER-003 | Combine rating and search filters for precise selection | 1 | PENDING | TASK-5 |
 
@@ -23,7 +23,7 @@
 
 ---
 
-## US-FILTER-001: Add Rating Selector to FinalCommentsComponent
+## US-FILTER-001: Add Rating Selector to FinalCommentsModal
 
 **Complexity**: L1 (Micro)
 **Effort Estimate**: 2 points
@@ -34,7 +34,7 @@
 ### User Story
 
 ```
-AS A teacher using FinalCommentsComponent
+AS A teacher using FinalCommentsModal
 I WANT to see a rating selector above the personalized comment picker
 SO THAT I can visually select my preferred rating before searching for comments
 ```
@@ -43,7 +43,7 @@ SO THAT I can visually select my preferred rating before searching for comments
 
 **AC-1.1: Rating Selector Renders**
 ```
-GIVEN FinalCommentsComponent is mounted
+GIVEN FinalCommentsModal is mounted
 WHEN the component renders
 THEN the EmojiRatingSelector component appears above the comment picker
 AND the selector displays ratings 1-5 in emoji format
@@ -54,7 +54,7 @@ AND no rating is selected by default (empty state)
 
 **AC-1.2: Styling and Layout**
 ```
-GIVEN FinalCommentsComponent renders rating selector
+GIVEN FinalCommentsModal renders rating selector
 WHEN the component displays
 THEN the rating selector uses the same visual style as PersonalizedCommentsModal version
 AND the selector is positioned directly above the comment picker
@@ -66,7 +66,7 @@ AND responsive layout is maintained on mobile devices
 
 **AC-1.3: Rating Selector Props**
 ```
-GIVEN EmojiRatingSelector is integrated into FinalCommentsComponent
+GIVEN EmojiRatingSelector is integrated into FinalCommentsModal
 WHEN the component initializes
 THEN the selector receives required props:
   - value: current selected rating (initially null/empty)
@@ -112,7 +112,7 @@ SO THAT I can quickly find comments that match my preferred rating level
 
 **AC-2.1: Rating Filter Applied to List**
 ```
-GIVEN FinalCommentsComponent displays available personalized comments
+GIVEN FinalCommentsModal displays available personalized comments
 WHEN teacher selects a rating (e.g., rating 4) in the rating selector
 THEN the comment list updates immediately to show only comments with rating 4
 AND no API call is made (client-side filtering)
@@ -155,7 +155,7 @@ AND filtering works consistently across all rating levels
 **AC-2.5: State Isolation**
 ```
 GIVEN teacher applies a rating filter
-WHEN FinalCommentsComponent re-renders (due to parent updates, etc.)
+WHEN FinalCommentsModal re-renders (due to parent updates, etc.)
 THEN the selected rating persists throughout the component session
 AND the filter state is not lost on re-render
 ```
@@ -184,7 +184,7 @@ SO THAT I can quickly narrow down to comments matching both criteria
 
 **AC-3.1: Combined Filtering Logic**
 ```
-GIVEN FinalCommentsComponent has both rating selector and search field
+GIVEN FinalCommentsModal has both rating selector and search field
 WHEN teacher selects rating 4 AND types "excellent" in search
 THEN the comment list shows only comments with:
   - rating = 4 AND
@@ -209,7 +209,7 @@ THEN the list shows all available comments again
 
 **AC-3.3: Backwards Compatibility**
 ```
-GIVEN existing FinalCommentsComponent uses typeahead search
+GIVEN existing FinalCommentsModal uses typeahead search
 WHEN teacher uses the component without selecting a rating
 THEN the search filter works exactly as before
 AND the new rating filter does not interfere with existing search behavior
@@ -235,7 +235,7 @@ AND the message suggests narrowing or expanding filters (e.g., "No comments matc
 
 ### Component Integration Map
 ```
-FinalCommentsComponent
+FinalCommentsModal
 ├── EmojiRatingSelector (NEW)
 │   ├── value: selectedRating
 │   └── onChange: setSelectedRating
@@ -356,7 +356,7 @@ US-FILTER-003 (Combined filtering)
 ### Scenario A: Browse by Rating Level
 ```
 Scenario: Teacher finds all "Good" (4-star) comments
-Given: 20 personalized comments in FinalCommentsComponent
+Given: 20 personalized comments in FinalCommentsModal
 When: Teacher selects rating 4
 Then: 6 comments with rating 4 are displayed
 And: Other comments are hidden
