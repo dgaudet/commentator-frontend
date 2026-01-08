@@ -151,6 +151,7 @@ export function createMockFinalComment(
     lastName: 'Doe',
     grade: 85,
     comment: 'Good work',
+    userId: 'auth0|user123',
     createdAt: now,
     updatedAt: now,
     ...overrides,

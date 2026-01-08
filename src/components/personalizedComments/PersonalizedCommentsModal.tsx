@@ -25,7 +25,7 @@
  * US-DARK-005: Updated to use dynamic theme colors
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from '../../types'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
@@ -61,7 +61,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
 }: PersonalizedCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
   const [newCommentContent, setNewCommentContent] = useState('')
-  const [newCommentRating, setNewCommentRating] = useState(3) // Default rating: 3 (Neutral)
+  const [newCommentRating, setNewCommentRating] = useState(3) // US-RATING-PERSIST: Default rating 3 (Neutral), persists across submissions
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState('')
   const [editRating, setEditRating] = useState(3)
@@ -75,6 +75,14 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
     commentText: '',
   })
   const [validationError, setValidationError] = useState('')
+
+  // US-RATING-PERSIST-003: Reset ratings when modal closes/reopens (session-scoped persistence)
+  useEffect(() => {
+    if (!isOpen) {
+      setNewCommentRating(3)
+      setEditRating(3)
+    }
+  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -113,8 +121,8 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
       comment: newCommentContent.trim(),
       rating: newCommentRating, // US-RATING-003: Include rating
     })
+    // US-RATING-PERSIST-001: Clear comment text but keep rating selected for next entry
     setNewCommentContent('')
-    setNewCommentRating(3) // Reset to default rating
   }
 
   const handleEditStart = (comment: PersonalizedComment) => {
@@ -138,16 +146,18 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
         comment: editContent.trim(),
         rating: editRating, // US-RATING-003: Include rating
       })
+      // US-RATING-PERSIST-002: After editing, show the edited rating in add form for next entry
+      setNewCommentRating(editRating)
       setEditingId(null)
       setEditContent('')
-      setEditRating(3) // Reset to default
     }
   }
 
   const handleEditCancel = () => {
+    // US-RATING-PERSIST-002: After canceling edit, keep the edited comment's rating in add form
+    setNewCommentRating(editRating)
     setEditingId(null)
     setEditContent('')
-    setEditRating(3) // Reset to default
     setValidationError('')
   }
 
@@ -174,6 +184,9 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
   const getCommentPreview = (text: string): string => {
     return text.length > 100 ? `${text.substring(0, 100)}...` : text
   }
+
+  // US-RATING-PERSIST-001: Rating selector directly updates form state (handlers are simplified)
+  // Rating persists naturally by not being reset after comment submission
 
   // Character count validation for button disabled states
   const newCommentCharCount = newCommentContent.trim().length

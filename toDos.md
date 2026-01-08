@@ -174,7 +174,6 @@ aws url - http://commentator.prod.s3-website-us-west-2.amazonaws.com/
 
 possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
 
-2. The rating should stay on the last one picked instead of the middle.
 3. filter by the emoji's, should be able to select it and then de-select it as needed
    * this can probably be filtered in the frontend similar to the typeahead stuff
 4. update the frontend to allow sending up to 3000 characters for the final comment as the backend has already been updated

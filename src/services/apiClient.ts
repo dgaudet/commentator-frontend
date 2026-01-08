@@ -115,7 +115,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      timeout: 10000, // 10 seconds
+      timeout: 60000, // 10 seconds
     })
 
     // Request interceptor: Attach JWT token to all requests

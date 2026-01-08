@@ -113,7 +113,11 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
       })
     })
 
-    it('resets rating to default after successful create', async () => {
+    it('DEPRECATED: clears comment text but persists rating after successful create (see Rating Persistence tests)', async () => {
+      // NOTE: This test was originally about resetting rating to default after create,
+      // but that behavior changed with US-RATING-PERSIST-001.
+      // The new behavior is to PERSIST the rating instead of resetting it.
+      // See "Rating Persistence" describe block for the new tests.
       const onCreateComment = jest.fn().mockResolvedValue(undefined)
       render(
         <PersonalizedCommentsModal {...defaultProps} onCreateComment={onCreateComment} />,
@@ -134,7 +138,182 @@ describe('PersonalizedCommentsModal - Rating Selector Integration', () => {
         expect(onCreateComment).toHaveBeenCalled()
       })
 
-      // Rating should reset to 3 after successful create
+      // Rating should persist at 5 (not reset to 3) - NEW BEHAVIOR
+      await waitFor(() => {
+        const rating5ButtonAfter = screen.getByLabelText(/rate 5 out of 5.*very positive/i)
+        expect(rating5ButtonAfter).toHaveAttribute('aria-checked', 'true')
+      })
+
+      // Comment text should be cleared for next entry
+      expect(textarea).toHaveValue('')
+    })
+  })
+
+  describe('Rating Persistence (US-RATING-PERSIST-001, US-RATING-PERSIST-002, US-RATING-PERSIST-003)', () => {
+    it('should persist rating after successful add instead of resetting to default', async () => {
+      const onCreateComment = jest.fn().mockResolvedValue(undefined)
+      render(
+        <PersonalizedCommentsModal {...defaultProps} onCreateComment={onCreateComment} />,
+      )
+
+      // Select rating 5
+      const rating5Button = screen.getByLabelText(/rate 5 out of 5.*very positive/i)
+      fireEvent.click(rating5Button)
+
+      // Submit form
+      const textarea = screen.getByPlaceholderText(/enter personalized comment/i)
+      fireEvent.change(textarea, { target: { value: 'Test comment' } })
+      const addButton = screen.getByRole('button', { name: /add comment/i })
+      fireEvent.click(addButton)
+
+      await waitFor(() => {
+        expect(onCreateComment).toHaveBeenCalled()
+      })
+
+      // Rating should persist at 5 (not reset to 3)
+      await waitFor(() => {
+        const rating5ButtonAfter = screen.getByLabelText(/rate 5 out of 5.*very positive/i)
+        expect(rating5ButtonAfter).toHaveAttribute('aria-checked', 'true')
+      })
+    })
+
+    it('should support adding multiple comments with the same persistent rating', async () => {
+      const onCreateComment = jest.fn().mockResolvedValue(undefined)
+      render(
+        <PersonalizedCommentsModal {...defaultProps} onCreateComment={onCreateComment} />,
+      )
+
+      // Select rating 4 and add first comment
+      const rating4Button = screen.getByLabelText(/rate 4 out of 5.*positive/i)
+      fireEvent.click(rating4Button)
+      const textarea = screen.getByPlaceholderText(/enter personalized comment/i)
+      fireEvent.change(textarea, { target: { value: 'First comment' } })
+      const addButton = screen.getByRole('button', { name: /add comment/i })
+      fireEvent.click(addButton)
+
+      await waitFor(() => {
+        expect(onCreateComment).toHaveBeenCalledWith(
+          expect.objectContaining({ rating: 4 }),
+        )
+      })
+
+      // Clear the textarea for next comment
+      fireEvent.change(textarea, { target: { value: '' } })
+
+      // Verify rating is still 4
+      await waitFor(() => {
+        const rating4ButtonAfter = screen.getByLabelText(/rate 4 out of 5.*positive/i)
+        expect(rating4ButtonAfter).toHaveAttribute('aria-checked', 'true')
+      })
+
+      // Add second comment without changing rating
+      fireEvent.change(textarea, { target: { value: 'Second comment' } })
+      fireEvent.click(addButton)
+
+      await waitFor(() => {
+        expect(onCreateComment).toHaveBeenLastCalledWith(
+          expect.objectContaining({ rating: 4 }),
+        )
+      })
+    })
+
+    it('should allow changing persisted rating by clicking a different emoji', async () => {
+      const onCreateComment = jest.fn().mockResolvedValue(undefined)
+      render(
+        <PersonalizedCommentsModal {...defaultProps} onCreateComment={onCreateComment} />,
+      )
+
+      // Select rating 4 and add comment
+      const rating4Button = screen.getByLabelText(/rate 4 out of 5.*positive/i)
+      fireEvent.click(rating4Button)
+      const textarea = screen.getByPlaceholderText(/enter personalized comment/i)
+      fireEvent.change(textarea, { target: { value: 'First comment' } })
+      const addButton = screen.getByRole('button', { name: /add comment/i })
+      fireEvent.click(addButton)
+
+      await waitFor(() => {
+        expect(onCreateComment).toHaveBeenCalled()
+      })
+
+      // Change rating to 2
+      const rating2Button = screen.getByLabelText(/rate 2 out of 5.*negative/i)
+      fireEvent.click(rating2Button)
+
+      await waitFor(() => {
+        expect(rating2Button).toHaveAttribute('aria-checked', 'true')
+      })
+
+      // Verify rating 2 is now selected
+      expect(rating2Button).toHaveAttribute('aria-checked', 'true')
+    })
+
+    it('should persist rating from edited comment when returning to add form', async () => {
+      const onUpdateComment = jest.fn().mockResolvedValue(undefined)
+      const comment: PersonalizedComment = {
+        id: '65a1b2c3d4e5f6g7h8i9j0k1',
+        subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
+        comment: 'Existing comment',
+        rating: 2,
+        createdAt: '2024-01-15T10:00:00Z',
+        updatedAt: '2024-01-15T10:00:00Z',
+      }
+
+      render(
+        <PersonalizedCommentsModal
+          {...defaultProps}
+          personalizedComments={[comment]}
+          onUpdateComment={onUpdateComment}
+        />,
+      )
+
+      // Click Edit button
+      const editButton = screen.getByRole('button', { name: /edit/i })
+      fireEvent.click(editButton)
+
+      // Change rating to 1 and save
+      await waitFor(() => {
+        const rating1Buttons = screen.getAllByLabelText(/rate 1 out of 5.*very negative/i)
+        fireEvent.click(rating1Buttons[1]) // Click edit form rating 1
+      })
+
+      const saveButton = screen.getByRole('button', { name: /save/i })
+      fireEvent.click(saveButton)
+
+      await waitFor(() => {
+        expect(onUpdateComment).toHaveBeenCalled()
+      })
+
+      // After edit completes, add form should show rating 1 (from the edited comment)
+      await waitFor(() => {
+        const rating1Button = screen.getByLabelText(/rate 1 out of 5.*very negative/i)
+        expect(rating1Button).toHaveAttribute('aria-checked', 'true')
+      })
+    })
+
+    it('should reset rating to default (3) when modal closes and reopens', async () => {
+      const { rerender } = render(
+        <PersonalizedCommentsModal {...defaultProps} />,
+      )
+
+      // Select rating 5
+      const rating5Button = screen.getByLabelText(/rate 5 out of 5.*very positive/i)
+      fireEvent.click(rating5Button)
+
+      await waitFor(() => {
+        expect(rating5Button).toHaveAttribute('aria-checked', 'true')
+      })
+
+      // Close modal
+      rerender(
+        <PersonalizedCommentsModal {...defaultProps} isOpen={false} />,
+      )
+
+      // Reopen modal
+      rerender(
+        <PersonalizedCommentsModal {...defaultProps} isOpen={true} />,
+      )
+
+      // Rating should be reset to 3
       await waitFor(() => {
         const rating3Button = screen.getByLabelText(/rate 3 out of 5.*neutral/i)
         expect(rating3Button).toHaveAttribute('aria-checked', 'true')

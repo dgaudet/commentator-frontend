@@ -13,6 +13,7 @@
  * - Timestamps are ISO 8601 strings
  * - lastName is optional (may be undefined or omitted)
  * - comment is optional (may be undefined or omitted)
+ * - pronounId can be: string (set to specific pronoun), null (clear existing), or undefined (omit from request)
  */
 
 /**
@@ -57,8 +58,12 @@ export interface CreateFinalCommentRequest {
   grade: number
   /** Optional qualitative feedback comment - Max 1000 chars */
   comment?: string
-  /** Optional pronoun ID for student personalization */
-  pronounId?: string
+  /** Optional pronoun ID for student personalization
+   *  - Provide specific pronounId string to assign pronoun
+   *  - Provide null to clear existing pronoun assignment
+   *  - Omit (undefined) to leave unchanged
+   */
+  pronounId?: string | null
 }
 
 /**
@@ -76,6 +81,10 @@ export interface UpdateFinalCommentRequest {
   grade: number
   /** Optional qualitative feedback comment - Max 1000 chars */
   comment?: string
-  /** Optional pronoun ID for student personalization */
-  pronounId?: string
+  /** Optional pronoun ID for student personalization
+   *  - Provide specific pronounId string to assign pronoun
+   *  - Provide null to clear existing pronoun assignment
+   *  - Omit (undefined) to leave unchanged
+   */
+  pronounId?: string | null
 }
