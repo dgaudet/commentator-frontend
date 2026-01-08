@@ -40,8 +40,13 @@
  * - Auto-focus on textarea after population for immediate editing
  * - Persistent selected personal comment display (US-FC-REFACTOR-002)
  * - Validation: Button disabled when no comments selected
- * - Edge cases: Whitespace trimming, 1000 char truncation, special char preservation
+ * - Edge cases: Whitespace trimming, 3000 char truncation, special char preservation
  * - Full keyboard accessibility and screen reader support
+ *
+ * US-3000-CHAR-001 Features (3000 Character Limit):
+ * - Increased character limit from 1000 to 3000 in both Add and Edit forms
+ * - Character counter displays X/3000 format
+ * - Populate button truncates combined comments to 3000 characters
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react'
@@ -497,9 +502,9 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     // Concatenate with single space separator (per user's choice: Option A)
     let populatedText = parts.join(' ')
 
-    // US-FC-REFACTOR-004: Truncate to 1000 characters if exceeded
-    if (populatedText.length > 1000) {
-      populatedText = populatedText.substring(0, 1000)
+    // US-3000-CHAR-001: Truncate to 3000 characters if exceeded
+    if (populatedText.length > 3000) {
+      populatedText = populatedText.substring(0, 3000)
     }
 
     // Set the comment text
@@ -836,10 +841,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                     onChange={(e) => addForm.setComment(e.target.value)}
                     onFocus={handleCommentFocus}
                     onBlur={handleCommentBlur}
-                    placeholder="Enter optional comment (max 1000 characters)"
+                    placeholder="Enter optional comment (max 3000 characters)"
                     className="final-comment-textarea"
                     rows={4}
-                    maxLength={1000}
+                    maxLength={3000}
                     disabled={submitting}
                     style={{
                       width: '100%',
@@ -862,7 +867,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                       color: themeColors.text.tertiary,
                     }}
                   >
-                    {addForm.comment.length}/1000 characters
+                    {addForm.comment.length}/3000 characters
                   </div>
                 </div>
 
@@ -1144,10 +1149,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                         onChange={(e) => editForm.setComment(e.target.value)}
                                         onFocus={handleCommentFocus}
                                         onBlur={handleCommentBlur}
-                                        placeholder="Enter optional comment (max 1000 characters)"
+                                        placeholder="Enter optional comment (max 3000 characters)"
                                         className="comment-textarea"
                                         rows={4}
-                                        maxLength={1000}
+                                        maxLength={3000}
                                         style={{
                                           width: '100%',
                                           padding: spacing.md,
@@ -1169,7 +1174,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                           color: themeColors.text.tertiary,
                                         }}
                                       >
-                                        {editForm.comment.length}/1000 characters
+                                        {editForm.comment.length}/3000 characters
                                       </div>
                                     </div>
 

@@ -463,7 +463,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
         />,
       )
 
-      expect(screen.getByText(/0\/1000 characters/i)).toBeInTheDocument()
+      expect(screen.getByText(/0\/3000 characters/i)).toBeInTheDocument()
     })
 
     it('should update character counter as user types', () => {
@@ -483,7 +483,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       const commentField = screen.getByLabelText(/Comment/i, { selector: 'textarea' })
       fireEvent.change(commentField, { target: { value: 'Great work!' } })
 
-      expect(screen.getByText(/11\/1000 characters/i)).toBeInTheDocument()
+      expect(screen.getByText(/11\/3000 characters/i)).toBeInTheDocument()
     })
   })
 

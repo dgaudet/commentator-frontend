@@ -27,15 +27,17 @@
       "completedAt": "2026-01-08"
     },
     "design": {
-      "status": "PENDING",
-      "completedAt": null
+      "status": "COMPLETED",
+      "completedAt": "2026-01-08"
     },
     "implementation": {
-      "status": "PENDING",
-      "completedAt": null
+      "status": "COMPLETED",
+      "startedAt": "2026-01-08",
+      "completedAt": "2026-01-08"
     },
     "validation": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
+      "startedAt": "2026-01-08",
       "completedAt": null
     }
   },
