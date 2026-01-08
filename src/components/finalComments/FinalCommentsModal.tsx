@@ -63,7 +63,7 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { PronounSelect } from '../common/PronounSelect'
-import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
+import { RatingFilterSelector } from './RatingFilterSelector'
 import { PronounDisplay } from './PronounDisplay'
 import { SelectedCommentsList } from './SelectedCommentsList'
 import { CopyButton } from '../common/CopyButton'
@@ -168,7 +168,9 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   const [editPronounId, setEditPronounId] = useState('')
 
   // US-FILTER-001: Track selected rating for filtering personalized comments
-  const [filterRating, setFilterRating] = useState<number>(0) // 0 = no selection
+  // US-FILTER-001: Separate rating filters for Add and Edit sections
+  const [addFilterRating, setAddFilterRating] = useState<number>(0) // 0 = no selection
+  const [editFilterRating, setEditFilterRating] = useState<number>(0) // 0 = no selection
 
   /**
    * FCOI-001: Load outcome comments when component mounts
@@ -211,17 +213,25 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       // US-RATING-006: Clear ordered comments state
       setOrderedAddComments([])
       setOrderedEditComments([])
-      // US-FILTER-001: Reset rating filter to default on modal close
-      setFilterRating(0)
+      // US-FILTER-001: Reset rating filters to default on modal close
+      setAddFilterRating(0)
+      setEditFilterRating(0)
     }
   }, [isOpen, addForm, editForm])
 
-  // US-FILTER-002: Compute filtered comments based on selected rating
-  const filteredPersonalizedComments = useMemo(() => {
+  // US-FILTER-002: Compute filtered comments for Add section based on selected rating
+  const filteredAddComments = useMemo(() => {
     const sorted = sortPersonalizedCommentsByRating(personalizedComments)
-    if (filterRating === 0) return sorted
-    return sorted.filter((comment) => comment.rating === filterRating)
-  }, [personalizedComments, filterRating])
+    if (addFilterRating === 0) return sorted
+    return sorted.filter((comment) => comment.rating === addFilterRating)
+  }, [personalizedComments, addFilterRating])
+
+  // US-FILTER-002: Compute filtered comments for Edit section based on selected rating
+  const filteredEditComments = useMemo(() => {
+    const sorted = sortPersonalizedCommentsByRating(personalizedComments)
+    if (editFilterRating === 0) return sorted
+    return sorted.filter((comment) => comment.rating === editFilterRating)
+  }, [personalizedComments, editFilterRating])
 
   // US-CLASS-TABS-003: Skip isOpen check when embedded (always render in TabPanel)
   if (!embedded && !isOpen) return null
@@ -739,61 +749,18 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   )}
                 </div>
 
-                {/* US-FILTER-001: Rating selector for filtering personalized comments */}
-                <div style={{ marginBottom: spacing.lg }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-end',
-                      justifyContent: 'space-between',
-                      gap: spacing.md,
-                    }}
-                  >
-                    <div style={{ flex: 1 }}>
-                      <EmojiRatingSelector
-                        id="comment-filter-rating"
-                        label="Filter by Rating"
-                        value={filterRating}
-                        onChange={setFilterRating}
-                        disabled={submitting}
-                      />
-                    </div>
-                    {filterRating > 0 && (
-                      <button
-                        onClick={() => setFilterRating(0)}
-                        disabled={submitting}
-                        aria-label="Clear rating filter"
-                        style={{
-                          backgroundColor: 'transparent',
-                          border: `${borders.width.thin} solid ${themeColors.border.default}`,
-                          borderRadius: borders.radius.sm,
-                          padding: `${spacing.sm} ${spacing.md}`,
-                          fontSize: typography.fontSize.sm,
-                          color: themeColors.text.primary,
-                          cursor: submitting ? 'not-allowed' : 'pointer',
-                          opacity: submitting ? 0.5 : 1,
-                          transition: 'all 0.2s ease',
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!submitting) {
-                            e.currentTarget.style.backgroundColor = themeColors.background.secondary
-                            e.currentTarget.style.borderColor = themeColors.border.focus
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent'
-                          e.currentTarget.style.borderColor = themeColors.border.default
-                        }}
-                      >
-                        Clear Filter
-                      </button>
-                    )}
-                  </div>
-                </div>
+                {/* US-FILTER-001: Rating selector for filtering personalized comments (Add Form) */}
+                <RatingFilterSelector
+                  id="add-comment-filter-rating"
+                  label="Filter by Rating"
+                  value={addFilterRating}
+                  onChange={setAddFilterRating}
+                  disabled={submitting}
+                />
 
-                {/* US-RATING-006 & US-FILTER-002: Typeahead to select multiple personalized comments (filtered by rating) */}
+                {/* US-RATING-006 & US-FILTER-002: Typeahead to select multiple personalized comments (Add Form, filtered by rating) */}
                 <TypeaheadSearch
-                  items={filteredPersonalizedComments}
+                  items={filteredAddComments}
                   getItemLabel={(comment) => comment.comment}
                   getItemKey={(comment) => comment.id}
                   getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
@@ -808,8 +775,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   label="Personalized Comment (Optional)"
                   placeholder={orderedAddComments.length > 0 ? 'Search personalized comments to add...' : 'Search personalized comments...'}
                   emptyMessage={
-                    filterRating > 0
-                      ? `No comments with rating ${filterRating}`
+                    addFilterRating > 0
+                      ? `No comments with rating ${addFilterRating}`
                       : 'No personalized comments available for this subject'
                   }
                   loading={personalizedCommentsLoading}
@@ -1090,43 +1057,18 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       )}
                                     </div>
 
-                                    {/* US-FILTER-001: Show clear filter button if rating is selected (Edit Form) */}
-                                    {filterRating > 0 && (
-                                      <div style={{ marginBottom: spacing.lg }}>
-                                        <button
-                                          onClick={() => setFilterRating(0)}
-                                          disabled={submitting}
-                                          aria-label="Clear rating filter"
-                                          style={{
-                                            backgroundColor: 'transparent',
-                                            border: `${borders.width.thin} solid ${themeColors.border.default}`,
-                                            borderRadius: borders.radius.sm,
-                                            padding: `${spacing.sm} ${spacing.md}`,
-                                            fontSize: typography.fontSize.sm,
-                                            color: themeColors.text.primary,
-                                            cursor: submitting ? 'not-allowed' : 'pointer',
-                                            opacity: submitting ? 0.5 : 1,
-                                            transition: 'all 0.2s ease',
-                                          }}
-                                          onMouseEnter={(e) => {
-                                            if (!submitting) {
-                                              e.currentTarget.style.backgroundColor = themeColors.background.secondary
-                                              e.currentTarget.style.borderColor = themeColors.border.focus
-                                            }
-                                          }}
-                                          onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent'
-                                            e.currentTarget.style.borderColor = themeColors.border.default
-                                          }}
-                                        >
-                                          Clear Filter
-                                        </button>
-                                      </div>
-                                    )}
+                                    {/* US-FILTER-001: Rating selector for filtering personalized comments (Edit Form) */}
+                                    <RatingFilterSelector
+                                      id={`edit-comment-filter-rating-${comment.id}`}
+                                      label="Filter by Rating"
+                                      value={editFilterRating}
+                                      onChange={setEditFilterRating}
+                                      disabled={submitting}
+                                    />
 
                                     {/* US-RATING-006 & US-FILTER-002: Typeahead to select multiple personalized comments (Edit Form, filtered by rating) */}
                                     <TypeaheadSearch
-                                      items={filteredPersonalizedComments}
+                                      items={filteredEditComments}
                                       getItemLabel={(comment) => comment.comment}
                                       getItemKey={(comment) => comment.id}
                                       getItemPrefix={(comment) => getRatingEmoji(getNormalizedRating(comment))}
@@ -1141,8 +1083,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       label="Personalized Comment (Optional)"
                                       placeholder={orderedEditComments.length > 0 ? 'Search personalized comments to add...' : 'Search personalized comments...'}
                                       emptyMessage={
-                                        filterRating > 0
-                                          ? `No comments with rating ${filterRating}`
+                                        editFilterRating > 0
+                                          ? `No comments with rating ${editFilterRating}`
                                           : 'No personalized comments available for this subject'
                                       }
                                       loading={personalizedCommentsLoading}
