@@ -10,14 +10,14 @@
 
 ## Executive Summary
 
-Add combined filtering capabilities to FinalCommentsComponent's personalized comment picker. Teachers can now filter available personalized comments using both a rating selector (same EmojiRatingSelector from PersonalizedCommentsModal) and the existing typeahead search, enabling precise comment selection through dual filtering criteria.
+Add combined filtering capabilities to FinalCommentsModal's personalized comment picker. Teachers can now filter available personalized comments using both a rating selector (same EmojiRatingSelector from PersonalizedCommentsModal) and the existing typeahead search, enabling precise comment selection through dual filtering criteria.
 
 ---
 
 ## User Problem Statement
 
 **Current State (Before)**:
-- Teachers use only typeahead search to find personalized comments in FinalCommentsComponent
+- Teachers use only typeahead search to find personalized comments in FinalCommentsModal
 - When many comments exist, finding comments matching both a rating preference AND search text is cumbersome
 - Workflow requires scanning through all results or typing very specific search terms
 
@@ -32,9 +32,9 @@ Add combined filtering capabilities to FinalCommentsComponent's personalized com
 ## Feature Scope
 
 ### In Scope ✅
-- Add EmojiRatingSelector to FinalCommentsComponent above the comment picker
+- Add EmojiRatingSelector to FinalCommentsModal above the comment picker
 - Implement combined filtering logic: rating + typeahead search
-- Persist rating selection during FinalCommentsComponent session (optional)
+- Persist rating selection during FinalCommentsModal session (optional)
 - Handle empty states when no comments match both criteria
 - Keyboard navigation and accessibility for rating selector
 
@@ -51,7 +51,7 @@ Add combined filtering capabilities to FinalCommentsComponent's personalized com
 ### Functional Requirements
 
 1. **Rating Selector Display**
-   - EmojiRatingSelector positioned above personalized comment picker in FinalCommentsComponent
+   - EmojiRatingSelector positioned above personalized comment picker in FinalCommentsModal
    - Same visual style as PersonalizedCommentsModal
    - Shows rating options: 1-5 emoji scale
    - Default state: No rating selected (shows all comments)
@@ -98,7 +98,7 @@ Add combined filtering capabilities to FinalCommentsComponent's personalized com
 
 ### Workflow 1: Browse by Rating
 ```
-Teacher opens FinalCommentsComponent
+Teacher opens FinalCommentsModal
 → Selects rating 5 in rating selector
 → Sees only personalized comments rated 5
 → Selects comment from filtered list
@@ -107,7 +107,7 @@ Teacher opens FinalCommentsComponent
 
 ### Workflow 2: Combined Filtering
 ```
-Teacher opens FinalCommentsComponent
+Teacher opens FinalCommentsModal
 → Selects rating 4 in rating selector
 → Types "excellent" in search field
 → Sees only rating-4 comments with "excellent" in text
@@ -117,7 +117,7 @@ Teacher opens FinalCommentsComponent
 
 ### Workflow 3: Clear and Reset
 ```
-Teacher opens FinalCommentsComponent
+Teacher opens FinalCommentsModal
 → Selects rating 3
 → Realizes needs different search
 → Clears rating selector (back to default)
@@ -131,7 +131,7 @@ Teacher opens FinalCommentsComponent
 ## Technical Architecture
 
 ### Component Integration
-- **Parent**: FinalCommentsComponent
+- **Parent**: FinalCommentsModal
 - **New Addition**: EmojiRatingSelector (above comment picker)
 - **Unchanged**: Typeahead search field (continues working as before)
 - **Modified**: Comment list filtering logic
@@ -171,7 +171,7 @@ filtered comments → display in picker
 
 ## Success Criteria
 
-- [ ] Rating selector renders above comment picker in FinalCommentsComponent
+- [ ] Rating selector renders above comment picker in FinalCommentsModal
 - [ ] Selecting a rating filters comments by rating value
 - [ ] Search filter continues to work as before
 - [ ] Both filters work together (combined filtering)
@@ -212,7 +212,7 @@ filtered comments → display in picker
 - Existing PersonalizedComment data structure with rating field
 
 ### Integration Points
-- FinalCommentsComponent will import and render EmojiRatingSelector
+- FinalCommentsModal will import and render EmojiRatingSelector
 - Share filtering logic with PersonalizedCommentsModal patterns
 - Maintain consistent styling using design tokens
 
@@ -234,7 +234,7 @@ filtered comments → display in picker
 - [ ] Code changes committed to feature branch
 - [ ] All acceptance criteria from user stories verified with tests
 - [ ] Existing search functionality unaffected
-- [ ] No regressions in FinalCommentsComponent workflows
+- [ ] No regressions in FinalCommentsModal workflows
 - [ ] Code adheres to project TDD standards (Red-Green-Refactor)
 - [ ] PR includes reference to user stories and acceptance criteria
 - [ ] Product Owner acceptance: All acceptance criteria met

@@ -2,7 +2,7 @@
   "feature": {
     "name": "personalized-comments-filtering",
     "title": "Filter Personalized Comments by Rating and Search Text",
-    "description": "Add rating-based filtering to FinalCommentsComponent to complement existing typeahead search, allowing teachers to filter available personalized comments by both rating and search query simultaneously"
+    "description": "Add rating-based filtering to FinalCommentsModal to complement existing typeahead search, allowing teachers to filter available personalized comments by both rating and search query simultaneously"
   },
   "complexity": {
     "level": "L1",
@@ -13,7 +13,7 @@
     "userStories": 3,
     "estimatedPoints": 5,
     "affectedComponents": [
-      "src/components/finalComments/FinalCommentsComponent.tsx"
+      "src/components/finalComments/FinalCommentsModal.tsx"
     ],
     "affectedTests": [
       "src/components/finalComments/__tests__/FinalCommentsComponent.filtering.test.tsx"
