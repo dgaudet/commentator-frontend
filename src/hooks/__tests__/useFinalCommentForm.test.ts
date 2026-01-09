@@ -187,18 +187,18 @@ describe('useFinalCommentForm', () => {
       expect(error).toBe('Grade must be between 0 and 100')
     })
 
-    it('should return error when comment exceeds 1000 characters', () => {
+    it('should return error when comment exceeds 3000 characters', () => {
       const { result } = renderHook(() => useFinalCommentForm(mockOutcomeComments))
 
       act(() => {
         result.current.setFirstName('John')
         result.current.setGrade(85)
-        result.current.setComment('a'.repeat(1001))
+        result.current.setComment('a'.repeat(3001))
       })
 
       const error = result.current.validate()
 
-      expect(error).toBe('Comment cannot exceed 1000 characters')
+      expect(error).toBe('Comment cannot exceed 3000 characters')
     })
 
     it('should return null when form is valid', () => {

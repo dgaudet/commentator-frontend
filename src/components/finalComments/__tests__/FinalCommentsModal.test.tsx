@@ -463,7 +463,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
         />,
       )
 
-      expect(screen.getByText(/0\/1000 characters/i)).toBeInTheDocument()
+      expect(screen.getByText(/0\/3000 characters/i)).toBeInTheDocument()
     })
 
     it('should update character counter as user types', () => {
@@ -483,7 +483,7 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
       const commentField = screen.getByLabelText(/Comment/i, { selector: 'textarea' })
       fireEvent.change(commentField, { target: { value: 'Great work!' } })
 
-      expect(screen.getByText(/11\/1000 characters/i)).toBeInTheDocument()
+      expect(screen.getByText(/11\/3000 characters/i)).toBeInTheDocument()
     })
   })
 
@@ -611,13 +611,13 @@ describe('FinalCommentsModal - US-FINAL-003: Create New Final Comment', () => {
 
       fireEvent.change(firstNameField, { target: { value: 'John' } })
       fireEvent.change(gradeField, { target: { value: '85' } })
-      fireEvent.change(commentField, { target: { value: 'a'.repeat(1001) } })
+      fireEvent.change(commentField, { target: { value: 'a'.repeat(3001) } })
 
       const submitButton = screen.getByRole('button', { name: /Add Final Comment/i })
       fireEvent.click(submitButton)
 
       await waitFor(() => {
-        expect(screen.getByText(/Comment cannot exceed 1000 characters/i)).toBeInTheDocument()
+        expect(screen.getByText(/Comment cannot exceed 3000 characters/i)).toBeInTheDocument()
       })
     })
 
@@ -1288,14 +1288,14 @@ describe('FinalCommentsModal - US-FINAL-005: Delete Final Comment', () => {
 
         await waitFor(() => {
           const commentTextarea = screen.getByDisplayValue('Excellent work this semester!')
-          fireEvent.change(commentTextarea, { target: { value: 'a'.repeat(1001) } })
+          fireEvent.change(commentTextarea, { target: { value: 'a'.repeat(3001) } })
         })
 
         const saveButton = screen.getByRole('button', { name: /Save/i })
         fireEvent.click(saveButton)
 
         await waitFor(() => {
-          expect(screen.getByText(/Comment cannot exceed 1000 characters/i)).toBeInTheDocument()
+          expect(screen.getByText(/Comment cannot exceed 3000 characters/i)).toBeInTheDocument()
         })
       })
     })

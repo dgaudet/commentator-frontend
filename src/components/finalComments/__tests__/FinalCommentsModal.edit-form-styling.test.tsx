@@ -364,7 +364,7 @@ describe('US-FINAL-STYLE-004: Edit Form Styling', () => {
 
       fireEvent.click(screen.getByRole('button', { name: /Edit/i }))
 
-      const counter = screen.getByText(/29\/1000 characters/i)
+      const counter = screen.getByText(/29\/3000 characters/i)
 
       expect(counter).toHaveStyle({
         fontSize: '0.875rem',
@@ -391,7 +391,7 @@ describe('US-FINAL-STYLE-004: Edit Form Styling', () => {
       const commentTextarea = screen.getByDisplayValue('Excellent work this semester!')
       fireEvent.change(commentTextarea, { target: { value: 'Updated!' } })
 
-      expect(screen.getByText(/8\/1000 characters/i)).toBeInTheDocument()
+      expect(screen.getByText(/8\/3000 characters/i)).toBeInTheDocument()
     })
   })
 

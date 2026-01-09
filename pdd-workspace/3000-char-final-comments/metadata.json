@@ -1,0 +1,82 @@
+{
+  "feature": {
+    "name": "3000-char-final-comments",
+    "title": "Increase Final Comment Character Limit to 3000",
+    "description": "Update FinalCommentsModal component to accept up to 3000 characters for final comments (currently 1000), aligning frontend with backend API that already supports this limit"
+  },
+  "complexity": {
+    "level": "L0",
+    "reasoning": "Atomic configuration change - simple character limit updates in one component, no new functionality or logic required, backend already ready, minimal testing scope, can be completed in under 1 hour",
+    "assessedAt": "2026-01-08"
+  },
+  "scope": {
+    "userStories": 1,
+    "estimatedPoints": 1,
+    "affectedComponents": [
+      "src/components/finalComments/FinalCommentsModal.tsx",
+      "src/hooks/useFinalCommentForm.ts"
+    ],
+    "affectedTests": [
+      "src/components/finalComments/__tests__/FinalCommentsModal.test.tsx",
+      "src/hooks/__tests__/useFinalCommentForm.test.ts"
+    ],
+    "dependencies": []
+  },
+  "phases": {
+    "planning": {
+      "status": "COMPLETED",
+      "startedAt": "2026-01-08",
+      "completedAt": "2026-01-08"
+    },
+    "design": {
+      "status": "COMPLETED",
+      "completedAt": "2026-01-08"
+    },
+    "implementation": {
+      "status": "COMPLETED",
+      "startedAt": "2026-01-08",
+      "completedAt": "2026-01-08"
+    },
+    "validation": {
+      "status": "COMPLETED",
+      "startedAt": "2026-01-08",
+      "completedAt": "2026-01-08",
+      "notes": "✅ QA RE-VALIDATION PASSED: Critical defect (validation enforcing 1000 char limit) identified and fixed. All 1484 tests passing. All 5 acceptance criteria verified. Feature approved for production release."
+    }
+  },
+  "releaseReady": {
+    "status": "APPROVED",
+    "approvedAt": "2026-01-08",
+    "approvedBy": "Principal QA Engineer",
+    "qualityGatesStatus": "ALL_PASSED",
+    "testCoveragePercent": 85,
+    "automatedTestsCount": 1484,
+    "regressionRisk": "NONE",
+    "productionReady": true
+  },
+  "businessValue": {
+    "priority": "HIGH",
+    "userImpact": "Enables teachers to write more detailed and comprehensive feedback for students by providing 3x more character space, reducing need for workarounds or split comments",
+    "effort": "TRIVIAL",
+    "riskLevel": "TRIVIAL"
+  },
+  "dependencies": {
+    "upstreamFeatures": [],
+    "blockingIssues": [],
+    "blockedBy": []
+  },
+  "specification": {
+    "userStoriesFile": "planning/user-stories.md",
+    "prdFile": "planning/minimal-prd.md",
+    "designFile": null,
+    "tasksFile": null
+  },
+  "estimatedEffort": {
+    "planning": "30 minutes",
+    "design": "0 minutes",
+    "implementation": "15 minutes",
+    "testing": "30 minutes",
+    "total": "1 hour 15 minutes"
+  },
+  "lastUpdated": "2026-01-08"
+}

@@ -113,8 +113,8 @@ export const useFinalCommentForm = (
       return 'Grade must be between 0 and 100'
     }
 
-    if (comment.length > 1000) {
-      return 'Comment cannot exceed 1000 characters'
+    if (comment.length > 3000) {
+      return 'Comment cannot exceed 3000 characters'
     }
 
     return null

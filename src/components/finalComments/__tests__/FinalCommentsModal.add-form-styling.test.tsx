@@ -384,7 +384,7 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
         />,
       )
 
-      const counter = screen.getByText(/0\/1000 characters/i)
+      const counter = screen.getByText(/0\/3000 characters/i)
 
       expect(counter).toHaveStyle({
         fontSize: '0.875rem',
@@ -409,7 +409,7 @@ describe('US-FINAL-STYLE-003: Add Form Styling', () => {
       const commentTextarea = screen.getByPlaceholderText(/Enter optional comment/i)
       fireEvent.change(commentTextarea, { target: { value: 'Great work!' } })
 
-      expect(screen.getByText(/11\/1000 characters/i)).toBeInTheDocument()
+      expect(screen.getByText(/11\/3000 characters/i)).toBeInTheDocument()
     })
   })
 
