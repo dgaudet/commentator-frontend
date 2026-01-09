@@ -76,6 +76,16 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
   const selectedTarget = ownedSubjects.find((s) => s.id === selectedTargetId)
   const targetName = selectedTarget?.name || 'Unknown Subject'
 
+  // US-CP-005: Reset form state when modal is opened
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedTargetId('')
+      setOverwriteMode(false)
+      setError(null)
+      setSuccess(null)
+    }
+  }, [isOpen])
+
   // US-CP-004: Auto-close modal after success
   useEffect(() => {
     if (success) {
