@@ -86,16 +86,6 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
     }
   }, [isOpen])
 
-  // US-CP-004: Auto-close modal after success
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        onClose()
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [success, onClose])
-
   // US-CP-004: Handle copy action with API call
   const handleCopy = async () => {
     if (!selectedTargetId) {

@@ -219,8 +219,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       })
     })
 
-    it('should close modal after 2-3 seconds on success', async () => {
-      jest.useFakeTimers()
+    it('should keep modal open on success and require Done button to close', async () => {
       personalizedCommentService.copy.mockResolvedValue(mockComments)
       render(<CopyCommentsModal {...defaultProps} />)
 
@@ -233,14 +232,14 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
         expect(screen.getByText(/successfully copied/i)).toBeInTheDocument()
       })
 
-      // Fast-forward time
-      jest.advanceTimersByTime(3000)
+      // Modal should still be visible - onClose should not have been called
+      expect(mockOnClose).not.toHaveBeenCalled()
 
-      await waitFor(() => {
-        expect(mockOnClose).toHaveBeenCalled()
-      })
+      // Click Done button to close
+      const doneButton = screen.getByRole('button', { name: /done/i })
+      fireEvent.click(doneButton)
 
-      jest.useRealTimers()
+      expect(mockOnClose).toHaveBeenCalledTimes(1)
     })
 
     it('should allow user to close immediately with button', async () => {
