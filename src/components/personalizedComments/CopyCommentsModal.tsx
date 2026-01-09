@@ -30,11 +30,12 @@
  * - sourceSubjectName: string - Display name of source subject
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Subject } from '../../types'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 import { Button } from '../common/Button'
+import { personalizedCommentService } from '../../services/api/personalizedCommentService'
 
 interface CopyCommentsModalProps {
   isOpen: boolean
@@ -58,10 +59,59 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
   // US-CP-003: Copy mode selection - default to append
   const [overwriteMode, setOverwriteMode] = useState(false)
 
+  // US-CP-004: API integration state
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<{
+    count: number
+    overwrite: boolean
+  } | null>(null)
+
   // AC-2.3: Filter out source subject and sort alphabetically
   const availableTargets = ownedSubjects
     .filter((subject) => subject.id !== sourceSubjectId)
     .sort((a, b) => a.name.localeCompare(b.name))
+
+  // Get target subject name for success message
+  const selectedTarget = ownedSubjects.find((s) => s.id === selectedTargetId)
+  const targetName = selectedTarget?.name || 'Unknown Subject'
+
+  // US-CP-004: Auto-close modal after success
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        onClose()
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [success, onClose])
+
+  // US-CP-004: Handle copy action with API call
+  const handleCopy = async () => {
+    if (!selectedTargetId) {
+      setError('Please select a target subject')
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+    try {
+      const copied = await personalizedCommentService.copy({
+        subjectFromId: sourceSubjectId,
+        subjectToId: selectedTargetId,
+        overwrite: overwriteMode,
+      })
+      setSuccess({
+        count: copied.length,
+        overwrite: overwriteMode,
+      })
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to copy comments'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   if (!isOpen) return null
 
@@ -318,6 +368,62 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
           </fieldset>
         </div>
 
+        {/* Error State Display (AC-4.4) */}
+        {error && (
+          <div
+            style={{
+              marginBottom: spacing.lg,
+              padding: spacing.md,
+              backgroundColor: 'rgba(220, 38, 38, 0.1)',
+              borderRadius: borders.radius.md,
+              border: `${borders.width.thin} solid rgba(220, 38, 38, 0.5)`,
+            }}
+          >
+            <p
+              style={{
+                fontSize: typography.fontSize.sm,
+                color: 'rgb(220, 38, 38)',
+                margin: 0,
+              }}
+            >
+              Error: {error}
+            </p>
+          </div>
+        )}
+
+        {/* Success State Display (AC-4.3) */}
+        {success && (
+          <div
+            style={{
+              marginBottom: spacing.lg,
+              padding: spacing.md,
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              borderRadius: borders.radius.md,
+              border: `${borders.width.thin} solid rgba(34, 197, 94, 0.5)`,
+            }}
+          >
+            <p
+              style={{
+                fontSize: typography.fontSize.sm,
+                color: 'rgb(34, 197, 94)',
+                margin: 0,
+                marginBottom: spacing.xs,
+              }}
+            >
+              Successfully copied {success.count} {success.count === 1 ? 'comment' : 'comments'} to {targetName}
+            </p>
+            <p
+              style={{
+                fontSize: typography.fontSize.sm,
+                color: 'rgb(34, 197, 94)',
+                margin: 0,
+              }}
+            >
+              {success.overwrite ? 'Overwrote existing comments' : 'Appended to existing comments'}
+            </p>
+          </div>
+        )}
+
         {/* Modal Footer */}
         <div
           style={{
@@ -327,12 +433,31 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
             marginTop: spacing.xl,
           }}
         >
-          <Button onClick={onClose} variant="secondary">
-            Cancel
-          </Button>
-          <Button onClick={() => {}} variant="primary" disabled>
-            Copy
-          </Button>
+          {/* Success State Buttons (AC-4.3) */}
+          {success
+            ? (
+                <Button onClick={onClose} variant="primary">
+                  Done
+                </Button>
+              )
+            : (
+                <>
+                  <Button onClick={onClose} variant="secondary" disabled={isLoading}>
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleCopy}
+                    variant="primary"
+                    disabled={isLoading || (!selectedTargetId && !error)}
+                  >
+                    {error
+                      ? 'Try Again'
+                      : isLoading
+                        ? 'Copying...'
+                        : 'Copy'}
+                  </Button>
+                </>
+              )}
         </div>
       </div>
     </div>

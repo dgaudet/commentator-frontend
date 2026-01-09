@@ -9,6 +9,7 @@
  * - POST /personalized-comment - Create new personalized comment
  * - PUT /personalized-comment/{id} - Update existing personalized comment
  * - DELETE /personalized-comment/{id} - Delete personalized comment
+ * - POST /personalized-comment/copy - Copy comments from one subject to another (US-CP-004)
  */
 
 import { apiClient } from '../apiClient'
@@ -87,6 +88,31 @@ export const personalizedCommentService = {
     } catch (error) {
       console.error('Failed to delete personalized comment:', error)
       throw new Error('Failed to delete personalized comment')
+    }
+  },
+
+  /**
+   * Copy personalized comments from one subject to another
+   * Reference: US-CP-004 - Implement Copy API Integration with Feedback
+   * @param subjectFromId - ObjectId of source subject
+   * @param subjectToId - ObjectId of target subject
+   * @param overwrite - Whether to overwrite (true) or append (false) comments
+   * @returns Array of PersonalizedComment objects that were copied
+   */
+  async copy(request: {
+    subjectFromId: string
+    subjectToId: string
+    overwrite: boolean
+  }): Promise<PersonalizedComment[]> {
+    try {
+      const response = await apiClient.post<PersonalizedComment[]>(
+        '/personalized-comment/copy',
+        request,
+      )
+      return response.data
+    } catch (error) {
+      console.error('Failed to copy personalized comments:', error)
+      throw new Error('Failed to copy personalized comments')
     }
   },
 }
