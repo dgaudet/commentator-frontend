@@ -36,9 +36,9 @@
       "completedAt": "2026-01-08"
     },
     "validation": {
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "startedAt": "2026-01-08",
-      "completedAt": null
+      "completedAt": "2026-01-08"
     }
   },
   "businessValue": {
