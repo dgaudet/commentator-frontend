@@ -466,6 +466,8 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             onDeletePersonalizedComment={handleDeletePersonalizedComment}
             personalizedCommentsLoading={personalizedCommentsLoading}
             personalizedCommentsError={personalizedCommentsError}
+            // US-CP-002: Copy Comments feature - all subjects are owned by current user
+            ownedSubjects={subjects}
             // Classes panel props
             classes={classes}
             onCreateClass={handleCreateClass}

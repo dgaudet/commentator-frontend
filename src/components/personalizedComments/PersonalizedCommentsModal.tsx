@@ -15,6 +15,8 @@
  * - US-PERS-003: Edit existing personalized comment
  * - US-PERS-004: Delete personalized comment with confirmation (US-DELETE-CONFIRM-002)
  * - US-PERS-005: Navigate back to subject list
+ * - US-CP-001: Add Copy Button to Personalized Comments Page
+ * - US-CP-002: Display Modal with Subject Selection
  *
  * US-DELETE-CONFIRM-002 Features:
  * - Uses standardized ConfirmationModal component
@@ -26,7 +28,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from '../../types'
+import type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, Subject } from '../../types'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
@@ -37,6 +39,7 @@ import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
+import { CopyCommentsModal } from './CopyCommentsModal'
 
 interface PersonalizedCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
@@ -47,6 +50,8 @@ interface PersonalizedCommentsModalProps<T extends { id: string; name: string }>
   onDeleteComment: (id: string) => Promise<void>
   loading: boolean
   error: string | null
+  // US-CP-002: Copy Comments feature - optional props
+  ownedSubjects?: Subject[]
 }
 
 export const PersonalizedCommentsModal = <T extends { id: string; name: string }>({
@@ -58,6 +63,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
   onDeleteComment,
   loading,
   error,
+  ownedSubjects = [],
 }: PersonalizedCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
   const [newCommentContent, setNewCommentContent] = useState('')
@@ -75,6 +81,8 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
     commentText: '',
   })
   const [validationError, setValidationError] = useState('')
+  // US-CP-001: Copy Comments button state
+  const [isCopyModalOpen, setIsCopyModalOpen] = useState(false)
 
   // US-RATING-PERSIST-003: Reset ratings when modal closes/reopens (session-scoped persistence)
   useEffect(() => {
@@ -209,6 +217,17 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
           backgroundColor: themeColors.background.primary,
         }}
       >
+          {/* US-CP-001: Copy Comments to Another Subject button */}
+          <div style={{ marginBottom: spacing.lg, display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              onClick={() => setIsCopyModalOpen(true)}
+              variant="secondary"
+              aria-label="Copy comments to another subject"
+            >
+              Copy Comments to Another Subject
+            </Button>
+          </div>
+
           {loading && (
             <div className="loading-container">
               <LoadingSpinner data-testid="loading-spinner" />
@@ -485,6 +504,16 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
           "{getCommentPreview(deleteConfirmation.commentText)}"
         </p>
       </ConfirmationModal>
+
+      {/* US-CP-001, US-CP-002: Copy Comments Modal */}
+      <CopyCommentsModal
+        isOpen={isCopyModalOpen}
+        onClose={() => setIsCopyModalOpen(false)}
+        sourceSubjectId={entityData.id}
+        sourceSubjectName={entityData.name}
+        ownedSubjects={ownedSubjects}
+        sourceCommentCount={personalizedComments.length}
+      />
     </>
   )
 }
