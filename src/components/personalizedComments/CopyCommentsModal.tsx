@@ -55,6 +55,8 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
 }) => {
   const themeColors = useThemeColors()
   const [selectedTargetId, setSelectedTargetId] = useState<string>('')
+  // US-CP-003: Copy mode selection - default to append
+  const [overwriteMode, setOverwriteMode] = useState(false)
 
   // AC-2.3: Filter out source subject and sort alphabetically
   const availableTargets = ownedSubjects
@@ -208,6 +210,112 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
               {sourceCommentCount} {sourceCommentCount === 1 ? 'comment' : 'comments'} will be copied
             </p>
           )}
+        </div>
+
+        {/* US-CP-003: Copy Mode Selection (AC-3.1 through AC-3.5) */}
+        <div style={{ marginBottom: spacing.lg }}>
+          <fieldset
+            style={{
+              border: 'none',
+              padding: 0,
+              margin: 0,
+            }}
+          >
+            <legend
+              style={{
+                fontSize: typography.fontSize.sm,
+                fontWeight: typography.fontWeight.semibold,
+                color: themeColors.text.primary,
+                marginBottom: spacing.sm,
+              }}
+            >
+              How should existing comments be handled?
+            </legend>
+
+            {/* Overwrite Option */}
+            <div style={{ marginBottom: spacing.md }}>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: spacing.sm,
+                  cursor: 'pointer',
+                }}
+              >
+                <input
+                  type="radio"
+                  name="copy-mode"
+                  value="overwrite"
+                  checked={overwriteMode}
+                  onChange={(e) => setOverwriteMode(e.target.checked)}
+                  aria-label="Overwrite existing comments"
+                />
+                <div>
+                  <span
+                    style={{
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.semibold,
+                      color: themeColors.text.primary,
+                      display: 'block',
+                    }}
+                  >
+                    Overwrite existing comments
+                  </span>
+                  <p
+                    style={{
+                      fontSize: typography.fontSize.sm,
+                      color: themeColors.text.secondary,
+                      margin: `${spacing.xs} 0 0 0`,
+                    }}
+                  >
+                    This will replace any existing personalized comments in the target subject
+                  </p>
+                </div>
+              </label>
+            </div>
+
+            {/* Append Option */}
+            <div style={{ marginBottom: spacing.md }}>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: spacing.sm,
+                  cursor: 'pointer',
+                }}
+              >
+                <input
+                  type="radio"
+                  name="copy-mode"
+                  value="append"
+                  checked={!overwriteMode}
+                  onChange={(e) => setOverwriteMode(!e.target.checked)}
+                  aria-label="Append to existing comments"
+                />
+                <div>
+                  <span
+                    style={{
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.semibold,
+                      color: themeColors.text.primary,
+                      display: 'block',
+                    }}
+                  >
+                    Append to existing comments
+                  </span>
+                  <p
+                    style={{
+                      fontSize: typography.fontSize.sm,
+                      color: themeColors.text.secondary,
+                      margin: `${spacing.xs} 0 0 0`,
+                    }}
+                  >
+                    This will add these comments to any existing personalized comments in the target subject
+                  </p>
+                </div>
+              </label>
+            </div>
+          </fieldset>
         </div>
 
         {/* Modal Footer */}
