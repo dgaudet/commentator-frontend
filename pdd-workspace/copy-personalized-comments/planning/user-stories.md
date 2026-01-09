@@ -207,19 +207,25 @@ Integrate with the `/personalized-comment/copy` API endpoint, handle the copy re
 #### AC-4.2: API Request Format
 **GIVEN** the Copy Comments modal is complete
 **WHEN** the copy button is clicked
-**THEN** the API receives:
-- sourceSubjectId: ID of the current subject
-- targetSubjectId: ID of the selected target subject
-- mode: "overwrite" or "append" based on selection
+**THEN** the API receives the correct request payload:
+```json
+{
+  "subjectFromId": "string (MongoDB ObjectId of source subject)",
+  "subjectToId": "string (MongoDB ObjectId of target subject)",
+  "overwrite": boolean (true for overwrite, false for append)
+}
+```
+**AND** the request is sent to `POST /personalized-comment/copy`
 
 #### AC-4.3: Success Feedback with Mode Indication
-**GIVEN** the copy API request succeeds
-**WHEN** the API returns a success response
+**GIVEN** the copy API request succeeds (HTTP 200)
+**WHEN** the API returns an array of PersonalizedComment objects (the copied comments)
 **THEN** a success message is displayed with:
-- Count: "Successfully copied X comments to [Target Subject Name]"
+- Count: Extract from response array length
+- Message format: "Successfully copied X comments to [Target Subject Name]"
 - Mode indication:
-  - If overwrite mode: "(overwrote existing comments)"
-  - If append mode: "(appended to existing comments)"
+  - If overwrite=true was sent: "(overwrote existing comments)"
+  - If overwrite=false was sent: "(appended to existing comments)"
 - Full example: "Successfully copied 12 comments to Statistics 101 (appended to existing comments)"
 **AND** the message is displayed prominently (toast, alert, or modal overlay)
 **AND** the modal closes after 2-3 seconds automatically

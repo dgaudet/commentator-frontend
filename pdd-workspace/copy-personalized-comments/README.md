@@ -40,7 +40,9 @@ A teacher has created detailed personalized comments for 25 students in their "A
 
 ### 3. **API Integration** (US-CP-004)
 - Endpoint: `POST /personalized-comment/copy`
-- Handles request, loading state, success/error feedback
+- Request format: `{ subjectFromId, subjectToId, overwrite: boolean }`
+- Response: Array of PersonalizedComment objects copied
+- Frontend extracts comment count from response array length
 - **Success Message Format**:
   - "Successfully copied X comments to [Subject Name] (overwrote existing comments)" or
   - "Successfully copied X comments to [Subject Name] (appended to existing comments)"
@@ -65,28 +67,44 @@ A teacher has created detailed personalized comments for 25 students in their "A
 ### Request
 ```json
 {
-  "sourceSubjectId": "65a1b2c3d4e5f6g7h8i9j0k1",
-  "targetSubjectId": "65a1b2c3d4e5f6g7h8i9j0k2",
-  "mode": "overwrite" | "append"
+  "subjectFromId": "65a1b2c3d4e5f6g7h8i9j0k1",
+  "subjectToId": "65a1b2c3d4e5f6g7h8i9j0k2",
+  "overwrite": true
 }
 ```
+
+**Fields**:
+- `subjectFromId`: MongoDB ObjectId of source subject
+- `subjectToId`: MongoDB ObjectId of target subject
+- `overwrite`: `true` to replace target comments, `false` to append
 
 ### Success Response (200)
+Returns an array of PersonalizedComment objects that were copied:
 ```json
-{
-  "success": true,
-  "message": "Successfully copied 12 comments",
-  "copiedCount": 12,
-  "targetSubjectId": "65a1b2c3d4e5f6g7h8i9j0k2",
-  "targetSubjectName": "Statistics 101"
-}
+[
+  {
+    "id": "65a1b2c3d4e5f6g7h8i9j0k1",
+    "comment": "Great progress",
+    "subjectId": "65a1b2c3d4e5f6g7h8i9j0k2",
+    "rating": 4.5,
+    "userId": "auth0|user123",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  // ... more comments
+]
 ```
 
-### Error Response (400/500)
+**Frontend handles**:
+- Extract count from array length
+- Show success message: "Successfully copied X comments to [Subject] (overwrote/appended existing comments)"
+
+### Error Response (400, 404, 500)
 ```json
 {
-  "success": false,
-  "error": "Description of what went wrong"
+  "error": "Error message",
+  "details": "string or array of details",
+  "message": "Additional context"
 }
 ```
 

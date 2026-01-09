@@ -116,28 +116,44 @@ Enable teachers to efficiently copy personalized comments from one subject to an
 ### Request Payload
 ```json
 {
-  "sourceSubjectId": "string (MongoDB ObjectId)",
-  "targetSubjectId": "string (MongoDB ObjectId)",
-  "mode": "overwrite" | "append"
+  "subjectFromId": "65a1b2c3d4e5f6g7h8i9j0k1",
+  "subjectToId": "65a1b2c3d4e5f6g7h8i9j0k2",
+  "overwrite": true
 }
 ```
 
-### Response
+**Fields**:
+- `subjectFromId` (string, required): MongoDB ObjectId of the source subject
+- `subjectToId` (string, required): MongoDB ObjectId of the target subject
+- `overwrite` (boolean, required):
+  - `true` = Delete all existing comments in target subject before copying
+  - `false` = Append to existing comments in target subject
+
+### Success Response (200)
+Returns an array of PersonalizedComment objects that were copied:
 ```json
-{
-  "success": true,
-  "message": "Successfully copied 12 comments",
-  "copiedCount": 12,
-  "targetSubjectId": "string",
-  "targetSubjectName": "string"
-}
+[
+  {
+    "id": "65a1b2c3d4e5f6g7h8i9j0k1",
+    "comment": "Great progress",
+    "subjectId": "65a1b2c3d4e5f6g7h8i9j0k2",
+    "rating": 4.5,
+    "userId": "auth0|user123",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
+  // ... more comments
+]
 ```
 
-### Error Response
+**Note**: Frontend extracts the comment count from the response array length
+
+### Error Response (400, 404, 500)
 ```json
 {
-  "success": false,
-  "error": "Error message describing what went wrong"
+  "error": "Error message describing what went wrong",
+  "details": "string or array of error details",
+  "message": "Additional error context"
 }
 ```
 
