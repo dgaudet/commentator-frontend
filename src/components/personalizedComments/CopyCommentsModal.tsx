@@ -315,7 +315,10 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
                     style={{
                       fontSize: typography.fontSize.sm,
                       color: themeColors.text.secondary,
-                      margin: `${spacing.xs} 0 0 0`,
+                      marginTop: spacing.xs,
+                      marginBottom: 0,
+                      marginLeft: 0,
+                      marginRight: 0,
                     }}
                   >
                     This will replace any existing personalized comments in the target subject
@@ -357,7 +360,10 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
                     style={{
                       fontSize: typography.fontSize.sm,
                       color: themeColors.text.secondary,
-                      margin: `${spacing.xs} 0 0 0`,
+                      marginTop: spacing.xs,
+                      marginBottom: 0,
+                      marginLeft: 0,
+                      marginRight: 0,
                     }}
                   >
                     This will add these comments to any existing personalized comments in the target subject
