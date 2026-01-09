@@ -179,7 +179,7 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
           </p>
           <p
             style={{
-              fontSize: typography.fontSize.md,
+              fontSize: typography.fontSize.base,
               color: themeColors.text.primary,
               fontWeight: typography.fontWeight.semibold,
               margin: 0,
