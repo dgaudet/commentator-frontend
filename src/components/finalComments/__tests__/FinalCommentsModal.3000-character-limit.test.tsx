@@ -53,6 +53,7 @@ const mockOutcomeComments: OutcomeComment[] = [
   {
     id: '65a1b2c3d4e5f6g7h8i9j0k1',
     subjectId: 5,
+    userId: 'auth0|user123',
     lowerRange: 90,
     upperRange: 100,
     comment: 'Demonstrates strong understanding',
