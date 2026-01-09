@@ -74,11 +74,11 @@ describe('CopyCommentsModal - Component Integration (US-CP-002)', () => {
 
       // Wait for dropdown to be present and shows owned subjects
       await waitFor(() => {
-        const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+        const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
         expect(dropdown).toBeInTheDocument()
       })
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       // Verify options include both owned subjects
       const options = dropdown.querySelectorAll('option')
       expect(options.length).toBe(3) // placeholder + 2 owned subjects
@@ -102,7 +102,7 @@ describe('CopyCommentsModal - Component Integration (US-CP-002)', () => {
 
       // Verify dropdown is shown and no "no subjects" message
       await waitFor(() => {
-        const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+        const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
         expect(dropdown).toBeInTheDocument()
       })
 
@@ -127,7 +127,7 @@ describe('CopyCommentsModal - Component Integration (US-CP-002)', () => {
       })
 
       // Verify dropdown is not shown
-      expect(screen.queryByLabelText(/copy to \(subjects you own\)/i)).not.toBeInTheDocument()
+      expect(screen.queryByLabelText(/copy to \(Target\)/i)).not.toBeInTheDocument()
     })
 
     it('should exclude source subject from dropdown when included in ownedSubjects', async () => {
@@ -147,7 +147,7 @@ describe('CopyCommentsModal - Component Integration (US-CP-002)', () => {
 
       // Wait for dropdown and verify source is excluded
       await waitFor(() => {
-        const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+        const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
         expect(dropdown).toBeInTheDocument()
 
         const options = dropdown.querySelectorAll('option')
@@ -177,7 +177,7 @@ describe('CopyCommentsModal - Component Integration (US-CP-002)', () => {
 
       // Verify dropdown shows subjects in alphabetical order
       await waitFor(() => {
-        const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+        const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
         const options = dropdown.querySelectorAll('option')
 
         // Should be: placeholder, Chemistry (C), Physics (P)
@@ -218,7 +218,7 @@ describe('CopyCommentsModal - Component Integration (US-CP-002)', () => {
 
       // Verify initial dropdown shows 1 subject
       await waitFor(() => {
-        const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+        const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
         const options = dropdown.querySelectorAll('option')
         expect(options.length).toBe(2) // placeholder + 1 subject
       })
@@ -233,7 +233,7 @@ describe('CopyCommentsModal - Component Integration (US-CP-002)', () => {
 
       // Verify dropdown now shows 2 subjects
       await waitFor(() => {
-        const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+        const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
         const options = dropdown.querySelectorAll('option')
         expect(options.length).toBe(3) // placeholder + 2 subjects
       })

@@ -72,14 +72,14 @@ describe('CopyCommentsModal - Subject Selection (US-CP-002)', () => {
   })
 
   describe('AC-2.2 & AC-2.3: Target Subject Dropdown with Owned Subjects Filter', () => {
-    it('should display dropdown labeled "Copy to (subjects you own)"', () => {
+    it('should display dropdown labeled "Copy to (Target)"', () => {
       render(<CopyCommentsModal {...defaultProps} />)
-      expect(screen.getByLabelText(/copy to \(subjects you own\)/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/copy to \(Target\)/i)).toBeInTheDocument()
     })
 
     it('should show owned subjects in dropdown', async () => {
       render(<CopyCommentsModal {...defaultProps} />)
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.click(dropdown)
 
       await waitFor(() => {
@@ -90,7 +90,7 @@ describe('CopyCommentsModal - Subject Selection (US-CP-002)', () => {
 
     it('should exclude source subject from dropdown', async () => {
       render(<CopyCommentsModal {...defaultProps} />)
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.click(dropdown)
 
       await waitFor(() => {
@@ -194,13 +194,13 @@ describe('CopyCommentsModal - Subject Selection (US-CP-002)', () => {
 
     it('should have labels associated with form fields', () => {
       render(<CopyCommentsModal {...defaultProps} />)
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       expect(dropdown).toHaveAccessibleName()
     })
 
     it('should be navigable with arrow keys in dropdown', async () => {
       render(<CopyCommentsModal {...defaultProps} />)
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.click(dropdown)
 
       await waitFor(() => {

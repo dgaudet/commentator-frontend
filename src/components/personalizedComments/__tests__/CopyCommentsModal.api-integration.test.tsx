@@ -84,7 +84,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       render(<CopyCommentsModal {...defaultProps} />)
 
       // Select target subject
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
 
       // Click copy button
@@ -106,7 +106,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       render(<CopyCommentsModal {...defaultProps} />)
 
       // Select target and click copy
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -128,7 +128,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       render(<CopyCommentsModal {...defaultProps} />)
 
       const dialog = screen.getByRole('dialog')
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
 
@@ -145,7 +145,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       render(<CopyCommentsModal {...defaultProps} />)
 
       // Select target and mode
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
 
       // Keep append mode (default)
@@ -166,7 +166,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       render(<CopyCommentsModal {...defaultProps} />)
 
       // Select target
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
 
       // Select overwrite mode
@@ -191,7 +191,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockResolvedValue(mockComments) // 2 comments
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -206,7 +206,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockResolvedValue(mockComments)
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const overwriteRadio = screen.getByRole('radio', { name: /overwrite existing comments/i })
       fireEvent.click(overwriteRadio)
@@ -223,7 +223,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockResolvedValue(mockComments)
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -246,7 +246,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockResolvedValue(mockComments)
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -269,7 +269,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockRejectedValue(new Error('Failed to copy'))
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -283,7 +283,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockRejectedValue(new Error('API Error'))
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -297,7 +297,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockRejectedValue(new Error('API Error'))
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -311,7 +311,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockRejectedValue(new Error('API Error'))
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -328,7 +328,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
 
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
 
@@ -353,7 +353,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockRejectedValue(new Error('Network timeout'))
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -367,7 +367,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockRejectedValue(new Error('Network error'))
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -388,7 +388,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       )
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject.id } })
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)

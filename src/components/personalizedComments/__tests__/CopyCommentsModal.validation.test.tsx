@@ -85,7 +85,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
       expect(copyButton).toBeDisabled()
 
       // Select a target
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject1.id } })
 
       // Button should now be enabled
@@ -99,7 +99,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
       render(<CopyCommentsModal {...defaultProps} />)
 
       // First attempt with target
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject1.id } })
 
       const copyButton = screen.getByRole('button', { name: /copy/i })
@@ -135,7 +135,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
         />,
       )
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       const options = dropdown.querySelectorAll('option')
 
       // Should have placeholder + 2 owned subjects
@@ -155,7 +155,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
         />,
       )
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       const options = dropdown.querySelectorAll('option')
 
       // Should have placeholder + 2 subjects (source excluded)
@@ -182,7 +182,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
       ).toBeInTheDocument()
 
       // Dropdown should not be visible
-      expect(screen.queryByLabelText(/copy to \(subjects you own\)/i)).not.toBeInTheDocument()
+      expect(screen.queryByLabelText(/copy to \(Target\)/i)).not.toBeInTheDocument()
     })
   })
 
@@ -197,7 +197,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
         />,
       )
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject1.id } })
 
       const copyButton = screen.getByRole('button', { name: /copy/i })
@@ -218,7 +218,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
         />,
       )
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject1.id } })
 
       const copyButton = screen.getByRole('button', { name: /copy/i })
@@ -250,7 +250,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
 
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject2.id } })
 
       const copyButton = screen.getByRole('button', { name: /copy/i })
@@ -271,7 +271,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
 
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject2.id } })
 
       const copyButton = screen.getByRole('button', { name: /copy/i })
@@ -290,7 +290,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
 
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject1.id } })
 
       const copyButton = screen.getByRole('button', { name: /copy/i })
@@ -307,7 +307,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
 
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject1.id } })
 
       const copyButton = screen.getByRole('button', { name: /copy/i })
@@ -324,7 +324,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
 
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject1.id } })
 
       const copyButton = screen.getByRole('button', { name: /copy/i })
@@ -344,7 +344,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
       render(<CopyCommentsModal {...defaultProps} />)
 
       // Select target and overwrite mode
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject2.id } })
 
       const overwriteRadio = screen.getByRole('radio', { name: /overwrite existing comments/i })
@@ -375,7 +375,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
     it('should reset form state when modal is reopened after success', async () => {
       const { rerender } = render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject2.id } })
 
       personalizedCommentService.copy.mockResolvedValue(mockComments)
@@ -404,7 +404,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
       )
 
       // Form should be reset
-      const reopenedDropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const reopenedDropdown = screen.getByLabelText(/copy to \(Target\)/i)
       expect(reopenedDropdown).toHaveValue('')
 
       const appendRadio = screen.getByRole('radio', { name: /append to existing comments/i })
@@ -421,7 +421,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
 
       render(<CopyCommentsModal {...defaultProps} />)
 
-      const dropdown = screen.getByLabelText(/copy to \(subjects you own\)/i)
+      const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject2.id } })
 
       const copyButton = screen.getByRole('button', { name: /copy/i })

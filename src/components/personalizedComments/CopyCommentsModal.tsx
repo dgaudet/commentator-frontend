@@ -201,7 +201,7 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
               marginBottom: spacing.sm,
             }}
           >
-            Copy to (subjects you own):
+            Copy to (Target):
           </label>
 
           {
@@ -225,7 +225,7 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
                     id="target-subject"
                     value={selectedTargetId}
                     onChange={(e) => setSelectedTargetId(e.target.value)}
-                    aria-label="Copy to (subjects you own)"
+                    aria-label="Copy to (Target)"
                     style={{
                       width: '100%',
                       padding: spacing.md,
