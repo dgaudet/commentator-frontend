@@ -30,6 +30,8 @@
  * - sourceSubjectName: string - Display name of source subject
  */
 
+import { useState } from 'react'
+import type { Subject } from '../../types'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 import { Button } from '../common/Button'
@@ -39,15 +41,25 @@ interface CopyCommentsModalProps {
   onClose: () => void
   sourceSubjectId: string
   sourceSubjectName: string
+  ownedSubjects?: Subject[]
+  sourceCommentCount?: number
 }
 
 export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
   isOpen,
   onClose,
-  _sourceSubjectId,
+  sourceSubjectId,
   sourceSubjectName,
+  ownedSubjects = [],
+  sourceCommentCount = 0,
 }) => {
   const themeColors = useThemeColors()
+  const [selectedTargetId, setSelectedTargetId] = useState<string>('')
+
+  // AC-2.3: Filter out source subject and sort alphabetically
+  const availableTargets = ownedSubjects
+    .filter((subject) => subject.id !== sourceSubjectId)
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   if (!isOpen) return null
 
@@ -125,9 +137,10 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
           </p>
         </div>
 
-        {/* Copy To field placeholder (AC-2.2, AC-2.3) */}
+        {/* Copy To field (AC-2.2, AC-2.3, AC-2.4) */}
         <div style={{ marginBottom: spacing.lg }}>
           <label
+            htmlFor="target-subject"
             style={{
               display: 'block',
               fontSize: typography.fontSize.sm,
@@ -138,15 +151,63 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
           >
             Copy to (subjects you own):
           </label>
-          <p
-            style={{
-              fontSize: typography.fontSize.sm,
-              color: themeColors.text.secondary,
-              margin: 0,
-            }}
-          >
-            Target subject selection will appear here
-          </p>
+
+          {
+            availableTargets.length === 0
+              ? (
+                  <p
+                    style={{
+                      fontSize: typography.fontSize.sm,
+                      color: themeColors.text.secondary,
+                      margin: 0,
+                      padding: spacing.md,
+                      backgroundColor: themeColors.background.secondary,
+                      borderRadius: borders.radius.md,
+                    }}
+                  >
+                    You don't own any other subjects to copy to
+                  </p>
+                )
+              : (
+                  <select
+                    id="target-subject"
+                    value={selectedTargetId}
+                    onChange={(e) => setSelectedTargetId(e.target.value)}
+                    aria-label="Copy to (subjects you own)"
+                    style={{
+                      width: '100%',
+                      padding: spacing.md,
+                      fontSize: typography.fontSize.sm,
+                      borderRadius: borders.radius.md,
+                      border: `${borders.width.thin} solid ${themeColors.border.default}`,
+                      backgroundColor: themeColors.background.primary,
+                      color: themeColors.text.primary,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <option value="">-- Select target subject --</option>
+                    {availableTargets.map((subject) => (
+                      <option key={subject.id} value={subject.id}>
+                        {subject.name}
+                      </option>
+                    ))}
+                  </select>
+                )
+            }
+
+          {/* AC-2.4: Comment count display */}
+          {sourceCommentCount > 0 && (
+            <p
+              style={{
+                fontSize: typography.fontSize.sm,
+                color: themeColors.text.secondary,
+                marginTop: spacing.sm,
+                margin: spacing.sm + ' 0 0 0',
+              }}
+            >
+              {sourceCommentCount} {sourceCommentCount === 1 ? 'comment' : 'comments'} will be copied
+            </p>
+          )}
         </div>
 
         {/* Modal Footer */}

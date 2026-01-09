@@ -28,7 +28,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from '../../types'
+import type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, Subject } from '../../types'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
@@ -50,6 +50,8 @@ interface PersonalizedCommentsModalProps<T extends { id: string; name: string }>
   onDeleteComment: (id: string) => Promise<void>
   loading: boolean
   error: string | null
+  // US-CP-002: Copy Comments feature - optional props
+  ownedSubjects?: Subject[]
 }
 
 export const PersonalizedCommentsModal = <T extends { id: string; name: string }>({
@@ -61,6 +63,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
   onDeleteComment,
   loading,
   error,
+  ownedSubjects = [],
 }: PersonalizedCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
   const [newCommentContent, setNewCommentContent] = useState('')
@@ -508,6 +511,8 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
         onClose={() => setIsCopyModalOpen(false)}
         sourceSubjectId={entityData.id}
         sourceSubjectName={entityData.name}
+        ownedSubjects={ownedSubjects}
+        sourceCommentCount={personalizedComments.length}
       />
     </>
   )

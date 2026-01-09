@@ -105,9 +105,9 @@ describe('PersonalizedCommentsModal - Copy Button (US-CP-001)', () => {
 
       // Wait for copy modal to appear
       await waitFor(() => {
-        // The copy modal should be displayed
-        // We'll check for elements that should be in the copy modal
-        expect(screen.getByText(/copy to/i)).toBeInTheDocument()
+        // The copy modal should be displayed - check for the modal by aria-label
+        const copyModal = screen.getByRole('dialog', { name: /copy comments to another subject/i })
+        expect(copyModal).toBeInTheDocument()
       })
     })
 
@@ -132,8 +132,8 @@ describe('PersonalizedCommentsModal - Copy Button (US-CP-001)', () => {
 
       // Wait for copy modal elements to appear
       await waitFor(() => {
-        // Should show subject selection
-        expect(screen.getByText(/copy to/i)).toBeInTheDocument()
+        // Should show source subject display
+        expect(screen.getByText(/copy from \(source\):/i)).toBeInTheDocument()
       })
     })
   })
