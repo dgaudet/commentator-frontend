@@ -51,6 +51,8 @@ interface SubjectListItemProps {
   onDeletePersonalizedComment?: (id: string) => Promise<void>
   personalizedCommentsLoading?: boolean
   personalizedCommentsError?: string | null
+  // US-CP-002: Copy Comments feature - list of subjects owned by user
+  ownedSubjects?: Subject[]
   // Classes panel props
   classes?: Class[]
   onCreateClass?: (request: CreateClassRequest) => Promise<void>
@@ -94,6 +96,8 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onDeletePersonalizedComment,
   personalizedCommentsLoading = false,
   personalizedCommentsError = null,
+  // US-CP-002: Copy Comments feature
+  ownedSubjects = [],
   // Classes panel props
   classes = [],
   onCreateClass,
@@ -356,6 +360,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                     onDeleteComment={onDeletePersonalizedComment}
                     loading={personalizedCommentsLoading}
                     error={personalizedCommentsError}
+                    ownedSubjects={ownedSubjects}
                   />
                     )
                   : (
