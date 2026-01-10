@@ -71,6 +71,7 @@ import { PronounSelect } from '../common/PronounSelect'
 import { RatingFilterSelector } from './RatingFilterSelector'
 import { PronounDisplay } from './PronounDisplay'
 import { SelectedCommentsList } from './SelectedCommentsList'
+import { OutcomeCommentSelector } from './OutcomeCommentSelector'
 import { CopyButton } from '../common/CopyButton'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
@@ -694,63 +695,21 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   disabled={submitting}
                 />
 
-                {/* FCOI-001: Outcome Comment Display (READ-ONLY) */}
-                <div style={{ marginBottom: spacing.lg }}>
-                  <label
-                    htmlFor="outcome-comment-display"
-                    style={{
-                      display: 'block',
-                      marginBottom: spacing.sm,
-                      fontSize: typography.fontSize.sm,
-                      fontWeight: typography.fontWeight.medium,
-                      color: themeColors.text.secondary,
-                    }}
-                  >
-                    Outcome Comment by Grade
-                  </label>
-
-                  {outcomeCommentsLoading && (
-                    <div style={{ padding: spacing.md }}>
-                      <LoadingSpinner data-testid="loading-spinner" />
-                    </div>
-                  )}
-
-                  {!outcomeCommentsLoading && (
-                    <textarea
-                      id="outcome-comment-display"
-                      aria-label="Outcome Comment by Grade"
-                      value={addForm.matchedOutcomeComment || (addForm.grade !== '' ? 'No outcome comment for this subject with this grade level.' : '')}
-                      readOnly
-                      rows={3}
-                      style={{
-                        width: '100%',
-                        padding: spacing.md,
-                        fontSize: typography.fontSize.base,
-                        border: `${borders.width.thin} solid ${themeColors.border.default}`,
-                        borderRadius: borders.radius.md,
-                        backgroundColor: themeColors.background.secondary,
-                        color:
-                          !addForm.matchedOutcomeComment
-                            ? themeColors.text.disabled
-                            : themeColors.text.secondary,
-                        resize: 'none',
-                        cursor: 'default',
-                      }}
-                    />
-                  )}
-
-                  {outcomeCommentsError && (
-                    <div
-                      style={{
-                        marginTop: spacing.sm,
-                        fontSize: typography.fontSize.sm,
-                        color: themeColors.semantic.error,
-                      }}
-                    >
-                      Failed to load outcome comment. {outcomeCommentsError}
-                    </div>
-                  )}
-                </div>
+                {/* FCOI-001 & US-FINAL-001-005: Outcome Comment Selection */}
+                <OutcomeCommentSelector
+                  grade={addForm.grade === '' ? null : Number(addForm.grade)}
+                  selectedOutcomeCommentId={addForm.selectedOutcomeCommentId}
+                  outcomeComments={outcomeComments}
+                  onSelectComment={(commentId) => {
+                    addForm.setSelectedOutcomeCommentId(commentId)
+                    const selectedComment = outcomeComments.find((c) => c.id === commentId)
+                    if (selectedComment) {
+                      addForm.setComment(selectedComment.comment)
+                    }
+                  }}
+                  loading={outcomeCommentsLoading}
+                  error={outcomeCommentsError}
+                />
 
                 {/* US-FILTER-001: Rating selector for filtering personalized comments (Add Form) */}
                 <RatingFilterSelector
@@ -1002,63 +961,21 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       disabled={submitting}
                                     />
 
-                                    {/* FCOI-001: Outcome Comment Display (READ-ONLY) - EDIT MODE */}
-                                    <div style={{ marginBottom: spacing.lg }}>
-                                      <label
-                                        htmlFor={`edit-outcome-comment-display-${comment.id}`}
-                                        style={{
-                                          display: 'block',
-                                          marginBottom: spacing.sm,
-                                          fontSize: typography.fontSize.sm,
-                                          fontWeight: typography.fontWeight.medium,
-                                          color: themeColors.text.secondary,
-                                        }}
-                                      >
-                                        Outcome Comment by Grade (Edit)
-                                      </label>
-
-                                      {outcomeCommentsLoading && (
-                                        <div style={{ padding: spacing.md }}>
-                                          <LoadingSpinner data-testid="loading-spinner" />
-                                        </div>
-                                      )}
-
-                                      {!outcomeCommentsLoading && (
-                                        <textarea
-                                          id={`edit-outcome-comment-display-${comment.id}`}
-                                          aria-label="Outcome Comment by Grade (Edit)"
-                                          value={editForm.matchedOutcomeComment || (editForm.grade !== '' ? 'No outcome comment for this subject with this grade level.' : '')}
-                                          readOnly
-                                          rows={3}
-                                          style={{
-                                            width: '100%',
-                                            padding: spacing.md,
-                                            fontSize: typography.fontSize.base,
-                                            border: `${borders.width.thin} solid ${themeColors.border.default}`,
-                                            borderRadius: borders.radius.md,
-                                            backgroundColor: themeColors.background.secondary,
-                                            color:
-                                              !editForm.matchedOutcomeComment
-                                                ? themeColors.text.disabled
-                                                : themeColors.text.secondary,
-                                            resize: 'none',
-                                            cursor: 'default',
-                                          }}
-                                        />
-                                      )}
-
-                                      {outcomeCommentsError && (
-                                        <div
-                                          style={{
-                                            marginTop: spacing.sm,
-                                            fontSize: typography.fontSize.sm,
-                                            color: themeColors.semantic.error,
-                                          }}
-                                        >
-                                          Failed to load outcome comment. {outcomeCommentsError}
-                                        </div>
-                                      )}
-                                    </div>
+                                    {/* FCOI-001 & US-FINAL-001-005: Outcome Comment Selection - EDIT MODE */}
+                                    <OutcomeCommentSelector
+                                      grade={editForm.grade === '' ? null : Number(editForm.grade)}
+                                      selectedOutcomeCommentId={editForm.selectedOutcomeCommentId}
+                                      outcomeComments={outcomeComments}
+                                      onSelectComment={(commentId) => {
+                                        editForm.setSelectedOutcomeCommentId(commentId)
+                                        const selectedComment = outcomeComments.find((c) => c.id === commentId)
+                                        if (selectedComment) {
+                                          editForm.setComment(selectedComment.comment)
+                                        }
+                                      }}
+                                      loading={outcomeCommentsLoading}
+                                      error={outcomeCommentsError}
+                                    />
 
                                     {/* US-FILTER-001: Rating selector for filtering personalized comments (Edit Form) */}
                                     <RatingFilterSelector
