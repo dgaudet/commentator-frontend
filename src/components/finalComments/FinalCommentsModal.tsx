@@ -203,6 +203,50 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   }, [entityData, loadPersonalizedComments])
 
   /**
+   * US-FINAL-001 through US-FINAL-005: Auto-select first matching outcome comment
+   * When grade changes, automatically set selectedOutcomeCommentId to the first
+   * matching outcome comment so OutcomeCommentSelector can render
+   *
+   * Note: Only sets the selectedOutcomeCommentId, not the comment field.
+   * The comment field is populated via OutcomeCommentSelector.onSelectComment callback
+   * or via the "Populate with Above Comments" button.
+   */
+  useEffect(() => {
+    if (addForm.grade !== '' && outcomeComments.length > 0) {
+      const gradeNum = Number(addForm.grade)
+      const firstMatch = outcomeComments.find(
+        (c) => c.lowerRange <= gradeNum && gradeNum <= c.upperRange,
+      )
+      if (firstMatch) {
+        addForm.setSelectedOutcomeCommentId(firstMatch.id)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addForm.grade, outcomeComments])
+
+  /**
+   * US-FINAL-001 through US-FINAL-005: Auto-select first matching outcome comment (Edit form)
+   * When grade changes in edit mode, automatically set selectedOutcomeCommentId to the first
+   * matching outcome comment so OutcomeCommentSelector can render
+   *
+   * Note: Only sets the selectedOutcomeCommentId, not the comment field.
+   * The comment field is populated via OutcomeCommentSelector.onSelectComment callback
+   * or via the "Populate with Above Comments" button.
+   */
+  useEffect(() => {
+    if (editForm.grade !== '' && outcomeComments.length > 0) {
+      const gradeNum = Number(editForm.grade)
+      const firstMatch = outcomeComments.find(
+        (c) => c.lowerRange <= gradeNum && gradeNum <= c.upperRange,
+      )
+      if (firstMatch) {
+        editForm.setSelectedOutcomeCommentId(firstMatch.id)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editForm.grade, outcomeComments])
+
+  /**
    * US-FC-REFACTOR-001: Clear form states and editing mode when modal closes
    * US-FC-REFACTOR-003: Also clear selected personal comments
    * TASK-1.3: Also clear pronoun selections
