@@ -34,7 +34,7 @@
  * - error?: string | null - Error message if comment fetch fails
  */
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { OutcomeComment } from '../../types'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
@@ -52,12 +52,23 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
   grade,
   selectedOutcomeCommentId,
   outcomeComments,
-  onSelectComment: _onSelectComment,
+  onSelectComment,
   loading,
   error,
 }) => {
   const themeColors = useThemeColors()
-  const [_expandedAlternatives, setExpandedAlternatives] = useState(false)
+  const [expandedAlternatives, setExpandedAlternatives] = useState(false)
+
+  /**
+   * US-FINAL-005: Reset UI state when grade changes
+   * When the teacher changes the grade input, the alternatives list auto-collapses
+   * This ensures a clean UI and prevents confusion from old alternatives lingering
+   * from the previous grade. The parent component is responsible for updating
+   * selectedOutcomeCommentId to the first match for the new grade.
+   */
+  useEffect(() => {
+    setExpandedAlternatives(false)
+  }, [grade])
 
   // Find the selected comment to display
   const selectedComment = selectedOutcomeCommentId
@@ -68,13 +79,18 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
   const alternativeCount = Math.max(0, outcomeComments.length - 1)
   const hasMultipleOptions = outcomeComments.length > 1
 
+  // Cache filtered alternatives to avoid recalculating on every render
+  const alternatives = outcomeComments.filter(
+    (c) => c.id !== selectedOutcomeCommentId,
+  )
+
   /**
    * Generate button text with correct pluralization
    * Formats as "[+ Show X more option(s)]" or "[- Hide alternatives]"
    */
   const getButtonText = (): string => {
     if (alternativeCount === 0) return ''
-    if (_expandedAlternatives) {
+    if (expandedAlternatives) {
       return '[- Hide alternatives]'
     }
     const optionWord = alternativeCount === 1 ? 'option' : 'options'
@@ -124,6 +140,29 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
     } else {
       // Revert to original background on leave
       el.style.backgroundColor = themeColors.background.secondary
+    }
+  }
+
+  /**
+   * Handle selection of an alternative comment (US-FINAL-004)
+   * - Calls the onSelectComment callback to update parent state
+   * - Auto-collapses the alternatives list for cleaner UX
+   */
+  const handleAlternativeSelect = (commentId: string) => {
+    onSelectComment(commentId)
+    setExpandedAlternatives(false)
+  }
+
+  /**
+   * Handle keyboard selection (Enter key) on alternative items
+   */
+  const handleAlternativeKeyDown = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+    commentId: string,
+  ) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleAlternativeSelect(commentId)
     }
   }
 
@@ -199,7 +238,7 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
           {hasMultipleOptions && (
             <button
               type="button"
-              onClick={() => setExpandedAlternatives(!_expandedAlternatives)}
+              onClick={() => setExpandedAlternatives(!expandedAlternatives)}
               style={toggleButtonStyle}
             >
               {getButtonText()}
@@ -207,21 +246,23 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
           )}
 
           {/* Expanded Alternatives List (US-FINAL-003) */}
-          {hasMultipleOptions && _expandedAlternatives && (
+          {hasMultipleOptions && expandedAlternatives && (
             <div data-testid="outcome-alternatives-list">
-              {outcomeComments
-                .filter((c) => c.id !== selectedOutcomeCommentId)
-                .map((alternative) => (
-                  <div
-                    key={alternative.id}
-                    data-testid="outcome-alternative-item"
-                    style={alternativeItemStyle}
-                    onMouseEnter={(e) => handleAlternativeHover(e, true)}
-                    onMouseLeave={(e) => handleAlternativeHover(e, false)}
-                  >
-                    {alternative.comment}
-                  </div>
-                ))}
+              {alternatives.map((alternative) => (
+                <div
+                  key={alternative.id}
+                  data-testid="outcome-alternative-item"
+                  role="button"
+                  tabIndex={0}
+                  style={alternativeItemStyle}
+                  onMouseEnter={(e) => handleAlternativeHover(e, true)}
+                  onMouseLeave={(e) => handleAlternativeHover(e, false)}
+                  onClick={() => handleAlternativeSelect(alternative.id)}
+                  onKeyDown={(e) => handleAlternativeKeyDown(e, alternative.id)}
+                >
+                  {alternative.comment}
+                </div>
+              ))}
             </div>
           )}
         </>
