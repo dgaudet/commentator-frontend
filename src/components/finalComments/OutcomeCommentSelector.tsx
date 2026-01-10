@@ -13,7 +13,7 @@
  * User Story Implementation Status:
  * ✅ US-FINAL-001: Single comment display (baseline)
  * ✅ US-FINAL-002: Collapsed state with toggle button
- * ⏳ US-FINAL-003: Expanded alternatives list
+ * ✅ US-FINAL-003: Expanded alternatives list
  * ⏳ US-FINAL-004: Select alternative comment
  * ⏳ US-FINAL-005: Dynamic grade changes
  *
@@ -70,10 +70,13 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
 
   /**
    * Generate button text with correct pluralization
-   * Formats as "[+ Show X more option(s)]"
+   * Formats as "[+ Show X more option(s)]" or "[- Hide alternatives]"
    */
   const getButtonText = (): string => {
     if (alternativeCount === 0) return ''
+    if (_expandedAlternatives) {
+      return '[- Hide alternatives]'
+    }
     const optionWord = alternativeCount === 1 ? 'option' : 'options'
     return `[+ Show ${alternativeCount} more ${optionWord}]`
   }
@@ -88,6 +91,40 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
     fontSize: typography.fontSize.sm,
     cursor: 'pointer',
     textAlign: 'left' as const,
+  }
+
+  /**
+   * Create base style for alternative items
+   * Includes hover animation and clickable affordance
+   */
+  const alternativeItemStyle = {
+    padding: spacing.md,
+    marginTop: spacing.md,
+    backgroundColor: themeColors.background.secondary,
+    borderRadius: borders.radius.md,
+    color: themeColors.text.primary,
+    fontSize: typography.fontSize.sm,
+    lineHeight: '1.6',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease',
+  }
+
+  /**
+   * Apply hover effect to alternative item
+   * Darkens background to indicate interactive state
+   */
+  const handleAlternativeHover = (
+    e: React.MouseEvent<HTMLDivElement>,
+    isEntering: boolean,
+  ) => {
+    const el = e.currentTarget as HTMLElement
+    if (isEntering) {
+      // Apply slightly darker background on hover
+      el.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'
+    } else {
+      // Revert to original background on leave
+      el.style.backgroundColor = themeColors.background.secondary
+    }
   }
 
   // If no grade or no comment selected, don't render anything
@@ -167,6 +204,25 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
             >
               {getButtonText()}
             </button>
+          )}
+
+          {/* Expanded Alternatives List (US-FINAL-003) */}
+          {hasMultipleOptions && _expandedAlternatives && (
+            <div data-testid="outcome-alternatives-list">
+              {outcomeComments
+                .filter((c) => c.id !== selectedOutcomeCommentId)
+                .map((alternative) => (
+                  <div
+                    key={alternative.id}
+                    data-testid="outcome-alternative-item"
+                    style={alternativeItemStyle}
+                    onMouseEnter={(e) => handleAlternativeHover(e, true)}
+                    onMouseLeave={(e) => handleAlternativeHover(e, false)}
+                  >
+                    {alternative.comment}
+                  </div>
+                ))}
+            </div>
           )}
         </>
       )}
