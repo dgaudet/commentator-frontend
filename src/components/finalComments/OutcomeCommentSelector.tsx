@@ -166,11 +166,6 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
     }
   }
 
-  // If no grade or no comment selected, don't render anything
-  if (grade === null || !selectedComment) {
-    return null
-  }
-
   return (
     <div style={{ marginBottom: spacing.lg }}>
       {/* Section Title */}
@@ -186,8 +181,23 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
         Outcome Comment by Grade
       </h3>
 
+      {/* Empty State - No Grade Yet */}
+      {grade === null && (
+        <div
+          style={{
+            padding: spacing.md,
+            backgroundColor: themeColors.background.secondary,
+            borderRadius: borders.radius.md,
+            color: themeColors.text.secondary,
+            fontSize: typography.fontSize.sm,
+          }}
+        >
+          Enter a grade to see matching outcome comments
+        </div>
+      )}
+
       {/* Loading State */}
-      {loading && (
+      {grade !== null && loading && (
         <div
           style={{
             padding: spacing.md,
@@ -202,7 +212,7 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
       )}
 
       {/* Error State */}
-      {error && (
+      {grade !== null && error && (
         <div
           style={{
             padding: spacing.md,
@@ -218,7 +228,7 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
       )}
 
       {/* Read-Only Comment Display */}
-      {!loading && !error && selectedComment && (
+      {grade !== null && !loading && !error && selectedComment && (
         <>
           <div
             data-testid="outcome-comment-display"
@@ -266,6 +276,21 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
             </div>
           )}
         </>
+      )}
+
+      {/* No Matching Comment State */}
+      {grade !== null && !loading && !error && !selectedComment && (
+        <div
+          style={{
+            padding: spacing.md,
+            backgroundColor: themeColors.background.secondary,
+            borderRadius: borders.radius.md,
+            color: themeColors.text.secondary,
+            fontSize: typography.fontSize.sm,
+          }}
+        >
+          No outcome comment for this subject with this grade level
+        </div>
       )}
     </div>
   )
