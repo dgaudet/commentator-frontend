@@ -745,11 +745,9 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   selectedOutcomeCommentId={addForm.selectedOutcomeCommentId}
                   outcomeComments={outcomeComments}
                   onSelectComment={(commentId) => {
+                    // Only update the selected outcome comment ID
+                    // The final comment field is only populated via "Populate with Above Comments" button
                     addForm.setSelectedOutcomeCommentId(commentId)
-                    const selectedComment = outcomeComments.find((c) => c.id === commentId)
-                    if (selectedComment) {
-                      addForm.setComment(selectedComment.comment)
-                    }
                   }}
                   loading={outcomeCommentsLoading}
                   error={outcomeCommentsError}
@@ -1011,11 +1009,9 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       selectedOutcomeCommentId={editForm.selectedOutcomeCommentId}
                                       outcomeComments={outcomeComments}
                                       onSelectComment={(commentId) => {
+                                        // Only update the selected outcome comment ID
+                                        // The final comment field is only populated via "Populate with Above Comments" button
                                         editForm.setSelectedOutcomeCommentId(commentId)
-                                        const selectedComment = outcomeComments.find((c) => c.id === commentId)
-                                        if (selectedComment) {
-                                          editForm.setComment(selectedComment.comment)
-                                        }
                                       }}
                                       loading={outcomeCommentsLoading}
                                       error={outcomeCommentsError}
