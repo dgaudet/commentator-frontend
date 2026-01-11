@@ -34,7 +34,7 @@
  * - error?: string | null - Error message if comment fetch fails
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { OutcomeComment } from '../../types'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
@@ -60,6 +60,18 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
   const [expandedAlternatives, setExpandedAlternatives] = useState(false)
 
   /**
+   * Filter outcome comments by the entered grade
+   * Only outcomes where lowerRange <= grade <= upperRange are shown
+   * This ensures we only display options that match the current grade
+   */
+  const matchedByGrade = useMemo(() => {
+    if (grade === null || outcomeComments.length === 0) return []
+    return outcomeComments.filter(
+      (comment) => comment.lowerRange <= grade && grade <= comment.upperRange,
+    )
+  }, [grade, outcomeComments])
+
+  /**
    * US-FINAL-005: Reset UI state when grade changes
    * When the teacher changes the grade input, the alternatives list auto-collapses
    * This ensures a clean UI and prevents confusion from old alternatives lingering
@@ -70,17 +82,19 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
     setExpandedAlternatives(false)
   }, [grade])
 
-  // Find the selected comment to display
+  // Find the selected comment to display (from grade-matched comments only)
   const selectedComment = selectedOutcomeCommentId
-    ? outcomeComments.find((c) => c.id === selectedOutcomeCommentId)
+    ? matchedByGrade.find((c) => c.id === selectedOutcomeCommentId)
     : null
 
   // Calculate number of alternative comments (excludes currently displayed comment)
-  const alternativeCount = Math.max(0, outcomeComments.length - 1)
-  const hasMultipleOptions = outcomeComments.length > 1
+  // Only count alternatives from grade-matched comments
+  const alternativeCount = Math.max(0, matchedByGrade.length - 1)
+  const hasMultipleOptions = matchedByGrade.length > 1
 
   // Cache filtered alternatives to avoid recalculating on every render
-  const alternatives = outcomeComments.filter(
+  // Only include alternatives from grade-matched comments
+  const alternatives = matchedByGrade.filter(
     (c) => c.id !== selectedOutcomeCommentId,
   )
 

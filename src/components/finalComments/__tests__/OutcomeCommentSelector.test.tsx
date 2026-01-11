@@ -1654,24 +1654,24 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         const onSelectComment = jest.fn()
         const { rerender } = render(
           <OutcomeCommentSelector
-            grade={75}
+            grade={82}
             selectedOutcomeCommentId={comment1.id}
             outcomeComments={[comment1, comment2, comment3]}
             onSelectComment={onSelectComment}
           />,
         )
 
-        // Change to different grade
+        // Change to different grade (still within 80-89 range)
         rerender(
           <OutcomeCommentSelector
-            grade={95}
+            grade={88}
             selectedOutcomeCommentId={comment2.id}
             outcomeComments={[comment1, comment2, comment3]}
             onSelectComment={onSelectComment}
           />,
         )
 
-        // Should show comment2 for grade 95
+        // Should show comment2 for grade 88
         expect(screen.getByText(comment2.comment)).toBeInTheDocument()
       })
     })
@@ -1684,7 +1684,7 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
       it('should work with filtered outcomeComments for new grade', () => {
         const onSelectComment = jest.fn()
         const gradeA85Comments = [comment1, comment2]
-        const gradeA91Comments = [comment2, comment3]
+        const gradeA88Comments = [comment2, comment3]
 
         const { rerender } = render(
           <OutcomeCommentSelector
@@ -1697,12 +1697,12 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
 
         expect(screen.getByText(comment1.comment)).toBeInTheDocument()
 
-        // Change grade and outcomeComments list
+        // Change grade and outcomeComments list (within same range 80-89)
         rerender(
           <OutcomeCommentSelector
-            grade={91}
+            grade={88}
             selectedOutcomeCommentId={comment2.id}
-            outcomeComments={gradeA91Comments}
+            outcomeComments={gradeA88Comments}
             onSelectComment={onSelectComment}
           />,
         )
@@ -1713,6 +1713,16 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
       })
 
       it('should handle change from multiple to single match', () => {
+        const comment82: OutcomeComment = {
+          id: 'grade-82-single',
+          lowerRange: 80,
+          upperRange: 89,
+          comment: 'Perfect assignment',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        }
         const onSelectComment = jest.fn()
         const { rerender } = render(
           <OutcomeCommentSelector
@@ -1728,9 +1738,9 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         // Change to grade with only 1 match
         rerender(
           <OutcomeCommentSelector
-            grade={92}
-            selectedOutcomeCommentId={comment1.id}
-            outcomeComments={[comment1]}
+            grade={82}
+            selectedOutcomeCommentId={comment82.id}
+            outcomeComments={[comment82]}
             onSelectComment={onSelectComment}
           />,
         )
@@ -1761,7 +1771,7 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         // Change grade - parent should pass comment1 as selected
         rerender(
           <OutcomeCommentSelector
-            grade={91}
+            grade={88}
             selectedOutcomeCommentId={comment1.id}
             outcomeComments={[comment1, comment2, comment3]}
             onSelectComment={onSelectComment}
@@ -1790,7 +1800,7 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         // Change grade
         rerender(
           <OutcomeCommentSelector
-            grade={91}
+            grade={88}
             selectedOutcomeCommentId={comment1.id}
             outcomeComments={[comment1, comment2, comment3]}
             onSelectComment={onSelectComment}
@@ -1821,7 +1831,7 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         // Change to grade with only 2 total comments
         rerender(
           <OutcomeCommentSelector
-            grade={92}
+            grade={82}
             selectedOutcomeCommentId={comment1.id}
             outcomeComments={[comment1, comment2]}
             onSelectComment={onSelectComment}
@@ -1861,7 +1871,7 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         // Change grade
         rerender(
           <OutcomeCommentSelector
-            grade={91}
+            grade={88}
             selectedOutcomeCommentId={comment1.id}
             outcomeComments={[comment1, comment2, comment3]}
             onSelectComment={onSelectComment}
@@ -1889,7 +1899,7 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         // Parent resets selectedOutcomeCommentId to null when grade changes
         rerender(
           <OutcomeCommentSelector
-            grade={91}
+            grade={88}
             selectedOutcomeCommentId={null}
             outcomeComments={[comment1, comment2, comment3]}
             onSelectComment={onSelectComment}
@@ -1920,7 +1930,7 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         // Grade change with reset state from parent
         rerender(
           <OutcomeCommentSelector
-            grade={91}
+            grade={88}
             selectedOutcomeCommentId={comment1.id}
             outcomeComments={[comment1, comment2, comment3]}
             onSelectComment={onSelectComment}
@@ -1941,7 +1951,7 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
       it('should not show previous grade alternatives after grade change', () => {
         const onSelectComment = jest.fn()
         const grade85Comments = [comment1, comment2, comment3]
-        const grade91Comments = [comment2] // Only comment2 matches grade 91
+        const grade88Comments = [comment2] // Only comment2 when grade changes to 88
 
         const { rerender } = render(
           <OutcomeCommentSelector
@@ -1955,9 +1965,9 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         // Change grade
         rerender(
           <OutcomeCommentSelector
-            grade={91}
+            grade={88}
             selectedOutcomeCommentId={comment2.id}
-            outcomeComments={grade91Comments}
+            outcomeComments={grade88Comments}
             onSelectComment={onSelectComment}
           />,
         )
@@ -1970,16 +1980,16 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
 
       it('should use grade-appropriate comments always', () => {
         const onSelectComment = jest.fn()
-        // Grade 91 has comment2 and comment3
-        const grade91Comments = [comment2, comment3]
         // Grade 85 has comment1 and comment2
         const grade85Comments = [comment1, comment2]
+        // Grade 88 has comment2 and comment3
+        const grade88Comments = [comment2, comment3]
 
         const { rerender } = render(
           <OutcomeCommentSelector
-            grade={91}
+            grade={88}
             selectedOutcomeCommentId={comment2.id}
-            outcomeComments={grade91Comments}
+            outcomeComments={grade88Comments}
             onSelectComment={onSelectComment}
           />,
         )
@@ -2053,6 +2063,16 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
      */
     describe('AC-5.7: Edge Case - Only 1 Match', () => {
       it('should not show toggle for single match', () => {
+        const comment92: OutcomeComment = {
+          id: 'grade-92-comment',
+          lowerRange: 90,
+          upperRange: 99,
+          comment: 'Outstanding performance',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        }
         const onSelectComment = jest.fn()
         const { rerender } = render(
           <OutcomeCommentSelector
@@ -2070,29 +2090,39 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         rerender(
           <OutcomeCommentSelector
             grade={92}
-            selectedOutcomeCommentId={comment1.id}
-            outcomeComments={[comment1]}
+            selectedOutcomeCommentId={comment92.id}
+            outcomeComments={[comment92]}
             onSelectComment={onSelectComment}
           />,
         )
 
         // No toggle
         expect(screen.queryByRole('button')).not.toBeInTheDocument()
-        expect(screen.getByText(comment1.comment)).toBeInTheDocument()
+        expect(screen.getByText(comment92.comment)).toBeInTheDocument()
       })
 
       it('should work seamlessly with single match', () => {
+        const comment92: OutcomeComment = {
+          id: 'grade-92-comment-2',
+          lowerRange: 90,
+          upperRange: 99,
+          comment: 'Excellent performance on this task',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        }
         const onSelectComment = jest.fn()
         render(
           <OutcomeCommentSelector
             grade={92}
-            selectedOutcomeCommentId={comment1.id}
-            outcomeComments={[comment1]}
+            selectedOutcomeCommentId={comment92.id}
+            outcomeComments={[comment92]}
             onSelectComment={onSelectComment}
           />,
         )
 
-        expect(screen.getByText(comment1.comment)).toBeInTheDocument()
+        expect(screen.getByText(comment92.comment)).toBeInTheDocument()
         expect(screen.queryByRole('button')).not.toBeInTheDocument()
       })
     })
@@ -2102,12 +2132,42 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
      */
     describe('Test Case: TC-5.1 - Grade 91 → Select alt → Grade 85 → Show 1st', () => {
       it('should show first match after grade change from alternatives', () => {
+        const comment91x: OutcomeComment = {
+          id: 'grade-91-x',
+          lowerRange: 90,
+          upperRange: 99,
+          comment: 'Superior performance',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        }
+        const comment91y: OutcomeComment = {
+          id: 'grade-91-y',
+          lowerRange: 90,
+          upperRange: 99,
+          comment: 'Impressive results',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-02T00:00:00Z',
+          updatedAt: '2024-01-02T00:00:00Z',
+        }
+        const comment91z: OutcomeComment = {
+          id: 'grade-91-z',
+          lowerRange: 90,
+          upperRange: 99,
+          comment: 'Outstanding dedication',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-03T00:00:00Z',
+          updatedAt: '2024-01-03T00:00:00Z',
+        }
         const onSelectComment = jest.fn()
         const { rerender } = render(
           <OutcomeCommentSelector
             grade={91}
-            selectedOutcomeCommentId={comment1.id}
-            outcomeComments={[comment1, comment2, comment3]}
+            selectedOutcomeCommentId={comment91x.id}
+            outcomeComments={[comment91x, comment91y, comment91z]}
             onSelectComment={onSelectComment}
           />,
         )
@@ -2162,31 +2222,51 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
 
     describe('Test Case: TC-5.4 - Same grade (92)', () => {
       it('should not change when grade is same', () => {
+        const comment92a: OutcomeComment = {
+          id: 'grade-92-a',
+          lowerRange: 90,
+          upperRange: 99,
+          comment: 'Excellent work',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        }
+        const comment92b: OutcomeComment = {
+          id: 'grade-92-b',
+          lowerRange: 90,
+          upperRange: 99,
+          comment: 'Outstanding effort',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-02T00:00:00Z',
+          updatedAt: '2024-01-02T00:00:00Z',
+        }
         const onSelectComment = jest.fn()
         const { rerender } = render(
           <OutcomeCommentSelector
             grade={92}
-            selectedOutcomeCommentId={comment1.id}
-            outcomeComments={[comment1, comment2]}
+            selectedOutcomeCommentId={comment92a.id}
+            outcomeComments={[comment92a, comment92b]}
             onSelectComment={onSelectComment}
           />,
         )
 
         // Verify initial state
-        expect(screen.getByText(comment1.comment)).toBeInTheDocument()
+        expect(screen.getByText(comment92a.comment)).toBeInTheDocument()
 
         // Re-render with same grade
         rerender(
           <OutcomeCommentSelector
             grade={92}
-            selectedOutcomeCommentId={comment1.id}
-            outcomeComments={[comment1, comment2]}
+            selectedOutcomeCommentId={comment92a.id}
+            outcomeComments={[comment92a, comment92b]}
             onSelectComment={onSelectComment}
           />,
         )
 
         // Same display
-        expect(screen.getByText(comment1.comment)).toBeInTheDocument()
+        expect(screen.getByText(comment92a.comment)).toBeInTheDocument()
       })
     })
 
@@ -2224,6 +2304,26 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
 
     describe('Test Case: TC-5.6 - Multiple grade changes', () => {
       it('should handle multiple consecutive grade changes', () => {
+        const comment91a: OutcomeComment = {
+          id: 'grade-91-a',
+          lowerRange: 90,
+          upperRange: 99,
+          comment: 'Exceptional work',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        }
+        const comment91b: OutcomeComment = {
+          id: 'grade-91-b',
+          lowerRange: 90,
+          upperRange: 99,
+          comment: 'Great accomplishment',
+          subjectId: 'subject-1',
+          userId: 'user-1',
+          createdAt: '2024-01-02T00:00:00Z',
+          updatedAt: '2024-01-02T00:00:00Z',
+        }
         const onSelectComment = jest.fn()
         const { rerender } = render(
           <OutcomeCommentSelector
@@ -2240,25 +2340,25 @@ describe('OutcomeCommentSelector - US-FINAL-004: Select Alternative Comment', ()
         rerender(
           <OutcomeCommentSelector
             grade={91}
-            selectedOutcomeCommentId={comment2.id}
-            outcomeComments={[comment2, comment3]}
+            selectedOutcomeCommentId={comment91a.id}
+            outcomeComments={[comment91a, comment91b]}
             onSelectComment={onSelectComment}
           />,
         )
 
-        expect(screen.getByText(comment2.comment)).toBeInTheDocument()
+        expect(screen.getByText(comment91a.comment)).toBeInTheDocument()
 
-        // Change to 92
+        // Change to 92 with single match
         rerender(
           <OutcomeCommentSelector
             grade={92}
-            selectedOutcomeCommentId={comment3.id}
-            outcomeComments={[comment3]}
+            selectedOutcomeCommentId={comment91a.id}
+            outcomeComments={[comment91a]}
             onSelectComment={onSelectComment}
           />,
         )
 
-        expect(screen.getByText(comment3.comment)).toBeInTheDocument()
+        expect(screen.getByText(comment91a.comment)).toBeInTheDocument()
         expect(screen.queryByRole('button')).not.toBeInTheDocument()
 
         // Change back to 85
