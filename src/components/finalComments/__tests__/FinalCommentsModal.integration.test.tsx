@@ -90,7 +90,7 @@ const mockHandlers = {
   onDeleteComment: jest.fn(),
 }
 
-describe.skip('US-FC-REFACTOR-005: Integration Tests (DEPRECATED - See OutcomeCommentSelector integration)', () => {
+describe('US-FC-REFACTOR-005: Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUsePersonalizedComments.mockReturnValue({
