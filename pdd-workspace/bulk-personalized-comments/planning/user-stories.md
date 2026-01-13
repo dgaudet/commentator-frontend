@@ -151,22 +151,25 @@
 **So that** I know what to correct and retry
 
 ### Acceptance Criteria
-- [ ] Import result modal shows:
-  - ✅ "Successfully imported X comments"
-  - ⚠️ "X line(s) failed"
-- [ ] Failed lines section displays:
-  - Original line number (starting at 1)
-  - Original text pasted
-  - Reason for failure (e.g., "exceeds character limit")
-- [ ] Results are easy to scan and copy for correction
-- [ ] User can close results and retry with corrected text
-- [ ] Imported comments remain in database (user can dismiss and verify in list)
-- [ ] "Done" button closes modal and returns to personalized comments view
+- [x] Import result modal shows:
+  - [x] "Successfully imported X comments"
+  - [x] "X line(s) failed"
+- [x] Failed lines section displays:
+  - [x] Original line number (starting at 1)
+  - [x] Original text pasted
+  - [x] Reason for failure (e.g., "exceeds character limit")
+- [x] Results are easy to scan and copy for correction
+- [x] User can close results and retry with corrected text
+- [x] Imported comments remain in database (user can dismiss and verify in list)
+- [x] "Done" button closes modal and returns to personalized comments view
+- [ ] "Retry Failed" button to re-attempt failed lines (deferred to future release)
+
+**Status**: ✅ COMPLETE (12 tests passing - part of Story 5)
 
 ### UX Notes
 - Use visual indicators (checkmarks, warnings) for quick scanning
 - Allow copy-paste of failed lines for easy retry
-- Consider "Retry" button for convenient re-upload of failed lines
+- Consider "Retry" button for convenient re-upload of failed lines (deferred)
 
 ---
 
