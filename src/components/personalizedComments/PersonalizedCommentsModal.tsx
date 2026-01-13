@@ -534,8 +534,14 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
           isOpen={isBulkUploadModalOpen}
           onClose={() => setIsBulkUploadModalOpen(false)}
           subjectId={entityData.id}
-          onImport={async () => {
-            // Story 4-5 implementation will go here
+          onImport={async (comments) => {
+            // Story 4-5 implementation will integrate bulkSaveComments here
+            // For now, return a mock result that tests can extend
+            return {
+              successful: comments,
+              failed: [],
+              totalAttempted: comments.length,
+            }
           }}
         />
       )}
