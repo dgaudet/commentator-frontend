@@ -74,7 +74,7 @@ const mockHandlers = {
   onDeleteComment: jest.fn(),
 }
 
-describe.skip('US-FC-REFACTOR-005: Accessibility Tests (DEPRECATED - See OutcomeCommentSelector integration)', () => {
+describe('US-FC-REFACTOR-005: Accessibility Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUsePersonalizedComments.mockReturnValue({
@@ -421,7 +421,8 @@ describe.skip('US-FC-REFACTOR-005: Accessibility Tests (DEPRECATED - See Outcome
 
       // Verify all related fields have accessible names
       expect(screen.getByRole('spinbutton', { name: /Grade/i })).toHaveAccessibleName()
-      expect(screen.getByLabelText(/Outcome Comment by Grade/i)).toHaveAccessibleName()
+      // Outcome Comment by Grade is now a heading in OutcomeCommentSelector
+      expect(screen.getByRole('heading', { name: /Outcome Comment by Grade/i })).toBeInTheDocument()
       expect(screen.getByLabelText(/Personalized Comment \(Optional\)/i)).toHaveAccessibleName()
       expect(screen.getByRole('button', { name: /Populate with Above Comments/i })).toHaveAccessibleName()
       expect(screen.getByLabelText(/^Comment$/i)).toHaveAccessibleName()
