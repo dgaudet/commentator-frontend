@@ -99,10 +99,25 @@ The system parses each line, validates against existing form rules, assigns defa
 ✅ Performance meets <500ms requirement
 ✅ User documentation includes examples and troubleshooting
 
+## Technical Approach
+
+### No API Changes Required
+- Uses existing personalized comment create API endpoint
+- Each parsed comment is sent individually through the existing flow
+- Failures are tracked on the frontend and reported to user
+- No backend modifications needed
+
+### Implementation Strategy
+- Sequential save approach: attempt each comment one-by-one
+- Real-time progress feedback as comments are being saved
+- Collect all failures and display comprehensive results
+- Maximize successful imports (partial success is acceptable)
+
 ## Timeline & Complexity
 
 - **Complexity**: L1 (Micro)
 - **Estimated Effort**: 1-2 weeks
-- **Team Size**: 1-2 developers
-- **Key Dependencies**: None (standalone feature)
+- **Team Size**: 1-2 developers (frontend only)
+- **Key Dependencies**: None (uses existing APIs)
 - **Architecture**: SKIPPED (straightforward pattern)
+- **Backend Changes**: None required

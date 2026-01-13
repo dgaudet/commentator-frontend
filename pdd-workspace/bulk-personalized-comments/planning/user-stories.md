@@ -72,49 +72,67 @@
 
 ---
 
-## Story 4: Validate Comments Against Form Constraints
+## Story 4: Validate and Save Comments Sequentially
 
-**As a** teacher importing comments
-**I want to** be told immediately if a comment violates character limits
-**So that** I can correct them before importing
-
-### Acceptance Criteria
-- [ ] Each comment is validated against existing personalized comment form rules:
-  - Character limit must match form (verify current limit in codebase)
-  - Character limit applies to comment text only (not rating number)
-- [ ] Rating must be integer 1-5
-- [ ] Comments that exceed limits are marked as invalid
-- [ ] Failed lines retain original text for easy reference
-- [ ] Validation provides specific reason for failure (e.g., "exceeds 500 character limit")
-- [ ] Valid and invalid comments are tracked separately
-
-### Notes
-- Coordinate with frontend team to confirm exact character limit for personalized comments
-- Validation should be thorough but user-friendly in error messages
-
----
-
-## Story 5: Execute Bulk Import and Save to Database
-
-**As a** teacher completing a bulk upload
-**I want to** all valid comments saved to the database in one operation
-**So that** my import completes successfully without partial saves
+**As a** system processing bulk uploads
+**I want to** attempt saving each comment through the existing API one at a time
+**So that** maximum comments are saved even if some fail
 
 ### Acceptance Criteria
-- [ ] All valid comments are saved to the current subject in a single API call
-- [ ] Invalid comments are NOT saved (all-or-nothing for valid set)
-- [ ] Comments are inserted with:
+- [ ] For each parsed comment, call the existing personalized comment API to create it
+- [ ] Comments are saved with:
   - Correct subject ID (currently selected subject)
   - Correct rating (parsed or default 3)
   - Correct text (trimmed, original formatting preserved)
-- [ ] Import succeeds even if some lines failed parsing (valid lines still save)
-- [ ] Database timestamps (createdAt, updatedAt) are set by backend
-- [ ] User can immediately see imported comments in the comments list
+- [ ] If a save fails, capture:
+  - The line number (original position in pasted list)
+  - The original comment text (including rating if present)
+  - The error reason from the API (e.g., "exceeds character limit", validation error)
+- [ ] Continue attempting to save remaining comments even if previous ones fail
+- [ ] Track success and failure separately throughout the process
+- [ ] Return results object with:
+  - `successful`: array of comment objects that were saved
+  - `failed`: array of objects with `lineNumber`, `originalText`, `reason`
+  - `totalAttempted`: count of all parsed comments
 
 ### Technical Notes
-- Use batch create/insert operation if available
-- Ensure subject context is preserved and correct
-- Handle potential race conditions if user changes subject during import
+- Use existing personalized comment create API endpoint
+- Handle API errors gracefully (don't throw, just record failure)
+- Ensure subject context is correct for each save
+- Consider potential race condition if user changes subject mid-import (validate subject before saves)
+
+---
+
+## Story 5: Display Sequential Import Progress and Final Results
+
+**As a** teacher watching bulk upload complete
+**I want to** see real-time feedback on import progress
+**So that** I know the upload is working and see exactly what succeeded/failed
+
+### Acceptance Criteria
+- [ ] Import modal shows progress feedback:
+  - Progress indicator (e.g., "Saving comment 3 of 15...")
+  - Visual progress bar or spinner showing ongoing saves
+- [ ] After all save attempts complete, display comprehensive results:
+  - ✅ "Successfully imported X comments"
+  - ⚠️ "X comment(s) failed to save"
+- [ ] Failed comments section shows for each failed line:
+  - Line number (e.g., "Line 5:")
+  - Original text that was pasted (word-for-word)
+  - Specific error reason (from API)
+- [ ] Results are easy to scan and copy for correction:
+  - Failed lines in distinct section with monospace font for easy re-entry
+  - Consider allowing copy-paste of failed lines
+- [ ] User can:
+  - Close results modal and verify imported comments in list
+  - "Retry Failed" button to re-attempt failed lines with a new bulk upload
+- [ ] "Done" button closes modal and returns to personalized comments view
+
+### UX Notes
+- Progress feedback should feel responsive (update in real-time as each save completes)
+- Failed lines should be clearly visually distinguished (red border, warning icon, etc.)
+- Keep original text visible so user can see exactly what failed
+- Consider allowing users to select and copy individual failed lines for easy correction
 
 ---
 
@@ -208,11 +226,10 @@
 
 1. **Stories 1-2**: UI structure (button + modal + instructions)
 2. **Story 3**: Core parsing logic (independent, testable)
-3. **Story 4**: Validation logic (builds on Story 3)
-4. **Story 7**: Edge cases (validate all edge cases before saving)
-5. **Story 5**: Database integration (after validation confirmed working)
-6. **Story 6**: Results display (depends on Story 5)
-7. **Story 8**: List integration (final polish)
+3. **Story 4**: Sequential save logic (attempt each comment through existing API, track failures)
+4. **Story 7**: Edge cases (validate all parsing and error scenarios)
+5. **Story 5**: Progress feedback and results display (depends on Story 4 completion)
+6. **Story 8**: List integration (final polish, refresh after import)
 
 ## Dependencies & Notes
 
