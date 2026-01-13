@@ -26,7 +26,7 @@ type ModalState = 'input' | 'progress' | 'results'
 export const BulkUploadModal = ({
   isOpen,
   onClose,
-  _subjectId,
+  subjectId: _subjectId,
   onImport,
 }: BulkUploadModalProps) => {
   const themeColors = useThemeColors()
@@ -301,10 +301,7 @@ export const BulkUploadModal = ({
             style={{
               marginBottom: spacing.lg,
               padding: spacing.lg,
-              backgroundColor:
-                importResults.failed.length === 0
-                  ? themeColors.semantic.successLight
-                  : themeColors.semantic.warningLight,
+              backgroundColor: themeColors.background.secondary,
               border: `${borders.width.thin} solid ${importResults.failed.length === 0 ? themeColors.semantic.success : themeColors.semantic.warning}`,
               borderRadius: borders.radius.md,
               color: importResults.failed.length === 0 ? themeColors.semantic.success : themeColors.semantic.warning,
