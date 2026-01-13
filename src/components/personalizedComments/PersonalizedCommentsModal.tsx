@@ -40,6 +40,7 @@ import { useThemeColors } from '../../hooks/useThemeColors'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 import { CopyCommentsModal } from './CopyCommentsModal'
+import { BulkUploadModal } from './BulkUploadModal'
 
 interface PersonalizedCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
@@ -83,6 +84,8 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
   const [validationError, setValidationError] = useState('')
   // US-CP-001: Copy Comments button state
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false)
+  // Story 1: Bulk Upload Modal state
+  const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false)
 
   // US-RATING-PERSIST-003: Reset ratings when modal closes/reopens (session-scoped persistence)
   useEffect(() => {
@@ -217,11 +220,19 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
           backgroundColor: themeColors.background.primary,
         }}
       >
-          {/* US-CP-001: Copy Comments to Another Subject button */}
-          <div style={{ marginBottom: spacing.lg, display: 'flex', justifyContent: 'flex-end' }}>
+          {/* US-CP-001: Copy Comments to Another Subject button + Story 1: Bulk Upload button */}
+          <div style={{ marginBottom: spacing.lg, display: 'flex', justifyContent: 'flex-end', gap: spacing.md }}>
+            <Button
+              onClick={() => setIsBulkUploadModalOpen(true)}
+              variant="secondary"
+              disabled={!entityData}
+            >
+              Bulk Upload Comments
+            </Button>
             <Button
               onClick={() => setIsCopyModalOpen(true)}
               variant="secondary"
+              disabled={!entityData}
               aria-label="Copy comments to another subject"
             >
               Copy Comments to Another Subject
@@ -506,14 +517,28 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
       </ConfirmationModal>
 
       {/* US-CP-001, US-CP-002: Copy Comments Modal */}
-      <CopyCommentsModal
-        isOpen={isCopyModalOpen}
-        onClose={() => setIsCopyModalOpen(false)}
-        sourceSubjectId={entityData.id}
-        sourceSubjectName={entityData.name}
-        ownedSubjects={ownedSubjects}
-        sourceCommentCount={personalizedComments.length}
-      />
+      {entityData && (
+        <CopyCommentsModal
+          isOpen={isCopyModalOpen}
+          onClose={() => setIsCopyModalOpen(false)}
+          sourceSubjectId={entityData.id}
+          sourceSubjectName={entityData.name}
+          ownedSubjects={ownedSubjects}
+          sourceCommentCount={personalizedComments.length}
+        />
+      )}
+
+      {/* Story 1: Bulk Upload Modal */}
+      {entityData && (
+        <BulkUploadModal
+          isOpen={isBulkUploadModalOpen}
+          onClose={() => setIsBulkUploadModalOpen(false)}
+          subjectId={entityData.id}
+          onImport={async () => {
+            // Story 4-5 implementation will go here
+          }}
+        />
+      )}
     </>
   )
 }
