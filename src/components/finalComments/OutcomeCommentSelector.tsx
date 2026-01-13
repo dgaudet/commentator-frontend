@@ -1,0 +1,311 @@
+/**
+ * OutcomeCommentSelector Component
+ * TDD Development: Red-Green-Refactor cycle
+ * Reference: US-FINAL-001 through US-FINAL-005
+ *
+ * Displays outcome comments based on grade input with optional selection of alternatives.
+ * - When grade matches 1 comment: Show comment without toggle (US-FINAL-001) ✅
+ * - When grade matches 2+ comments: Show first with "[+ Show X more options]" toggle (US-FINAL-002) ✅
+ * - Expanded state shows all alternatives as clickable items (US-FINAL-003) ⏳
+ * - Clicking alternative selects it and collapses list (US-FINAL-004) ⏳
+ * - Grade changes reset selection to first match (US-FINAL-005) ⏳
+ *
+ * User Story Implementation Status:
+ * ✅ US-FINAL-001: Single comment display (baseline)
+ * ✅ US-FINAL-002: Collapsed state with toggle button
+ * ✅ US-FINAL-003: Expanded alternatives list
+ * ⏳ US-FINAL-004: Select alternative comment
+ * ⏳ US-FINAL-005: Dynamic grade changes
+ *
+ * Key Features:
+ * - Automatic comment matching based on grade
+ * - Collapsible alternatives UI for multiple matches
+ * - Proper pluralization ("option" vs "options")
+ * - Theme-aware styling with design tokens
+ * - WCAG 2.1 AA accessibility compliance
+ * - Keyboard navigation support
+ *
+ * Props:
+ * - grade: number | null - Current student grade (triggers comment matching)
+ * - selectedOutcomeCommentId: string | null - Currently selected comment ID
+ * - outcomeComments: OutcomeComment[] - All available outcome comments to match against
+ * - onSelectComment: (commentId: string) => void - Callback when user selects alternative
+ * - loading?: boolean - Loading state while fetching comments
+ * - error?: string | null - Error message if comment fetch fails
+ */
+
+import { useEffect, useMemo, useState } from 'react'
+import type { OutcomeComment } from '../../types'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { useThemeColors } from '../../hooks/useThemeColors'
+
+interface OutcomeCommentSelectorProps {
+  grade: number | null
+  selectedOutcomeCommentId: string | null
+  outcomeComments: OutcomeComment[]
+  onSelectComment: (commentId: string) => void
+  loading?: boolean
+  error?: string | null
+}
+
+export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
+  grade,
+  selectedOutcomeCommentId,
+  outcomeComments,
+  onSelectComment,
+  loading,
+  error,
+}) => {
+  const themeColors = useThemeColors()
+  const [expandedAlternatives, setExpandedAlternatives] = useState(false)
+
+  /**
+   * Filter outcome comments by the entered grade
+   * Only outcomes where lowerRange <= grade <= upperRange are shown
+   * This ensures we only display options that match the current grade
+   */
+  const matchedByGrade = useMemo(() => {
+    if (grade === null || outcomeComments.length === 0) return []
+    return outcomeComments.filter(
+      (comment) => comment.lowerRange <= grade && grade <= comment.upperRange,
+    )
+  }, [grade, outcomeComments])
+
+  /**
+   * US-FINAL-005: Reset UI state when grade changes
+   * When the teacher changes the grade input, the alternatives list auto-collapses
+   * This ensures a clean UI and prevents confusion from old alternatives lingering
+   * from the previous grade. The parent component is responsible for updating
+   * selectedOutcomeCommentId to the first match for the new grade.
+   */
+  useEffect(() => {
+    setExpandedAlternatives(false)
+  }, [grade])
+
+  // Find the selected comment to display (from grade-matched comments only)
+  const selectedComment = selectedOutcomeCommentId
+    ? matchedByGrade.find((c) => c.id === selectedOutcomeCommentId)
+    : null
+
+  // Calculate number of alternative comments (excludes currently displayed comment)
+  // Only count alternatives from grade-matched comments
+  const alternativeCount = Math.max(0, matchedByGrade.length - 1)
+  const hasMultipleOptions = matchedByGrade.length > 1
+
+  // Cache filtered alternatives to avoid recalculating on every render
+  // Only include alternatives from grade-matched comments
+  const alternatives = matchedByGrade.filter(
+    (c) => c.id !== selectedOutcomeCommentId,
+  )
+
+  /**
+   * Generate button text with correct pluralization
+   * Formats as "[+ Show X more option(s)]" or "[- Hide alternatives]"
+   */
+  const getButtonText = (): string => {
+    if (alternativeCount === 0) return ''
+    if (expandedAlternatives) {
+      return '[- Hide alternatives]'
+    }
+    const optionWord = alternativeCount === 1 ? 'option' : 'options'
+    return `[+ Show ${alternativeCount} more ${optionWord}]`
+  }
+
+  // Button styling - text link style (transparent background, no border)
+  const toggleButtonStyle = {
+    marginTop: spacing.sm,
+    padding: 0,
+    backgroundColor: 'transparent',
+    border: 'none',
+    color: themeColors.text.primary,
+    fontSize: typography.fontSize.sm,
+    cursor: 'pointer',
+    textAlign: 'left' as const,
+  }
+
+  /**
+   * Create base style for alternative items
+   * Includes hover animation and clickable affordance
+   */
+  const alternativeItemStyle = {
+    padding: spacing.md,
+    marginTop: spacing.md,
+    backgroundColor: themeColors.background.secondary,
+    borderRadius: borders.radius.md,
+    color: themeColors.text.primary,
+    fontSize: typography.fontSize.sm,
+    lineHeight: '1.6',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease',
+  }
+
+  /**
+   * Apply hover effect to alternative item
+   * Darkens background to indicate interactive state
+   */
+  const handleAlternativeHover = (
+    e: React.MouseEvent<HTMLDivElement>,
+    isEntering: boolean,
+  ) => {
+    const el = e.currentTarget as HTMLElement
+    if (isEntering) {
+      // Apply slightly darker background on hover
+      el.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'
+    } else {
+      // Revert to original background on leave
+      el.style.backgroundColor = themeColors.background.secondary
+    }
+  }
+
+  /**
+   * Handle selection of an alternative comment (US-FINAL-004)
+   * - Calls the onSelectComment callback to update parent state
+   * - Auto-collapses the alternatives list for cleaner UX
+   */
+  const handleAlternativeSelect = (commentId: string) => {
+    onSelectComment(commentId)
+    setExpandedAlternatives(false)
+  }
+
+  /**
+   * Handle keyboard selection (Enter key) on alternative items
+   */
+  const handleAlternativeKeyDown = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+    commentId: string,
+  ) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleAlternativeSelect(commentId)
+    }
+  }
+
+  return (
+    <div style={{ marginBottom: spacing.lg }}>
+      {/* Section Title */}
+      <h3
+        style={{
+          fontSize: typography.fontSize.sm,
+          fontWeight: typography.fontWeight.semibold,
+          color: themeColors.text.primary,
+          marginBottom: spacing.sm,
+          marginTop: 0,
+        }}
+      >
+        Outcome Comment by Grade
+      </h3>
+
+      {/* Empty State - No Grade Yet */}
+      {grade === null && (
+        <div
+          style={{
+            padding: spacing.md,
+            backgroundColor: themeColors.background.secondary,
+            borderRadius: borders.radius.md,
+            color: themeColors.text.secondary,
+            fontSize: typography.fontSize.sm,
+          }}
+        >
+          Enter a grade to see matching outcome comments
+        </div>
+      )}
+
+      {/* Loading State */}
+      {grade !== null && loading && (
+        <div
+          style={{
+            padding: spacing.md,
+            backgroundColor: themeColors.background.secondary,
+            borderRadius: borders.radius.md,
+            color: themeColors.text.secondary,
+            fontSize: typography.fontSize.sm,
+          }}
+        >
+          Loading comment...
+        </div>
+      )}
+
+      {/* Error State */}
+      {grade !== null && error && (
+        <div
+          style={{
+            padding: spacing.md,
+            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+            borderRadius: borders.radius.md,
+            border: `${borders.width.thin} solid rgba(220, 38, 38, 0.5)`,
+            color: 'rgb(220, 38, 38)',
+            fontSize: typography.fontSize.sm,
+          }}
+        >
+          Error loading outcome comment
+        </div>
+      )}
+
+      {/* Read-Only Comment Display */}
+      {grade !== null && !loading && !error && selectedComment && (
+        <>
+          <div
+            data-testid="outcome-comment-display"
+            style={{
+              padding: spacing.md,
+              backgroundColor: themeColors.background.secondary,
+              borderRadius: borders.radius.md,
+              color: themeColors.text.primary,
+              fontSize: typography.fontSize.sm,
+              lineHeight: '1.6',
+            }}
+          >
+            {selectedComment.comment}
+          </div>
+
+          {/* Toggle Button for Multiple Options (US-FINAL-002) */}
+          {hasMultipleOptions && (
+            <button
+              type="button"
+              onClick={() => setExpandedAlternatives(!expandedAlternatives)}
+              style={toggleButtonStyle}
+            >
+              {getButtonText()}
+            </button>
+          )}
+
+          {/* Expanded Alternatives List (US-FINAL-003) */}
+          {hasMultipleOptions && expandedAlternatives && (
+            <div data-testid="outcome-alternatives-list">
+              {alternatives.map((alternative) => (
+                <div
+                  key={alternative.id}
+                  data-testid="outcome-alternative-item"
+                  role="button"
+                  tabIndex={0}
+                  style={alternativeItemStyle}
+                  onMouseEnter={(e) => handleAlternativeHover(e, true)}
+                  onMouseLeave={(e) => handleAlternativeHover(e, false)}
+                  onClick={() => handleAlternativeSelect(alternative.id)}
+                  onKeyDown={(e) => handleAlternativeKeyDown(e, alternative.id)}
+                >
+                  {alternative.comment}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* No Matching Comment State */}
+      {grade !== null && !loading && !error && !selectedComment && (
+        <div
+          style={{
+            padding: spacing.md,
+            backgroundColor: themeColors.background.secondary,
+            borderRadius: borders.radius.md,
+            color: themeColors.text.secondary,
+            fontSize: typography.fontSize.sm,
+          }}
+        >
+          No outcome comment for this subject with this grade level
+        </div>
+      )}
+    </div>
+  )
+}

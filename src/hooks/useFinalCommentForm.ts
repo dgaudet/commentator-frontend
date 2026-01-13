@@ -33,6 +33,7 @@ interface UseFinalCommentFormReturn {
   comment: string
   personalizedCommentSearch: string
   validationError: string
+  selectedOutcomeCommentId: string | null
 
   // State setters
   setFirstName: (value: string) => void
@@ -41,9 +42,11 @@ interface UseFinalCommentFormReturn {
   setComment: (value: string) => void
   setPersonalizedCommentSearch: (value: string) => void
   setValidationError: (value: string) => void
+  setSelectedOutcomeCommentId: (id: string) => void
 
   // Outcome comment matching
   matchedOutcomeComment: string | null
+  matchedOutcomeComments: OutcomeComment[]
 
   // Validation
   validate: () => string | null
@@ -73,25 +76,45 @@ export const useFinalCommentForm = (
     initialValues?.personalizedCommentSearch || '',
   )
   const [validationError, setValidationError] = useState('')
+  const [selectedOutcomeCommentId, setSelectedOutcomeCommentId] = useState<string | null>(null)
 
   /**
-   * Find the outcome comment that matches the current grade range
-   * Returns the comment text or null if no match found
+   * Find all outcome comments that match the current grade range
+   * Supports multiple outcomes per grade for US-FINAL-001 through US-FINAL-005
    *
    * @memoized Recalculates only when grade or outcomeComments change
    */
-  const matchedOutcomeComment = useMemo(() => {
+  const matchedOutcomeComments = useMemo(() => {
     if (grade === '' || outcomeComments.length === 0) {
-      return null
+      return []
     }
 
     const gradeNum = Number(grade)
-    const matchedComment = outcomeComments.find(
+    return outcomeComments.filter(
       (comment) => comment.lowerRange <= gradeNum && gradeNum <= comment.upperRange,
     )
-
-    return matchedComment ? matchedComment.comment : null
   }, [grade, outcomeComments])
+
+  /**
+   * Get the currently selected outcome comment text
+   * Prioritizes selectedOutcomeCommentId, falls back to first match
+   *
+   * @memoized Recalculates when matched comments or selection changes
+   */
+  const matchedOutcomeComment = useMemo(() => {
+    if (matchedOutcomeComments.length === 0) {
+      return null
+    }
+
+    // If a specific comment is selected, use that one's text
+    if (selectedOutcomeCommentId) {
+      const selected = matchedOutcomeComments.find((c) => c.id === selectedOutcomeCommentId)
+      return selected ? selected.comment : matchedOutcomeComments[0].comment
+    }
+
+    // Otherwise use the first match
+    return matchedOutcomeComments[0].comment
+  }, [matchedOutcomeComments, selectedOutcomeCommentId])
 
   /**
    * Validate the form fields
@@ -137,6 +160,7 @@ export const useFinalCommentForm = (
     setComment('')
     setPersonalizedCommentSearch('')
     setValidationError('')
+    setSelectedOutcomeCommentId(null)
   }, [])
 
   return {
@@ -147,6 +171,7 @@ export const useFinalCommentForm = (
     comment,
     personalizedCommentSearch,
     validationError,
+    selectedOutcomeCommentId,
 
     // Setters
     setFirstName,
@@ -155,9 +180,11 @@ export const useFinalCommentForm = (
     setComment,
     setPersonalizedCommentSearch,
     setValidationError,
+    setSelectedOutcomeCommentId,
 
     // Outcome comment matching
     matchedOutcomeComment,
+    matchedOutcomeComments,
 
     // Validation
     validate,
