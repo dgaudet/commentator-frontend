@@ -41,6 +41,7 @@ import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCo
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 import { CopyCommentsModal } from './CopyCommentsModal'
 import { BulkUploadModal } from './BulkUploadModal'
+import { bulkSaveComments } from './bulkSaveComments'
 
 interface PersonalizedCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
@@ -535,13 +536,9 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
           onClose={() => setIsBulkUploadModalOpen(false)}
           subjectId={entityData.id}
           onImport={async (comments) => {
-            // Story 4-5 implementation will integrate bulkSaveComments here
-            // For now, return a mock result that tests can extend
-            return {
-              successful: comments,
-              failed: [],
-              totalAttempted: comments.length,
-            }
+            // Story 4: Sequential save using existing API
+            // bulkSaveComments attempts each comment via onCreateComment, tracking successes/failures
+            return bulkSaveComments(entityData.id, comments, onCreateComment)
           }}
         />
       )}
