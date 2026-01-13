@@ -144,7 +144,84 @@ Critical build infrastructure fixes to ensure clean compilation and successful d
 
 ---
 
-### 3. Outcome Comments Management
+### 3. Bulk Personalized Comments ✅ COMPLETE
+**Status**: ✅ Production Ready (8/8 User Stories Complete)
+**Sprint**: Personalized Comments Enhancement
+**Last Updated**: 2026-01-13
+
+**Memory File**: `.github/instructions/memory/features/bulk-personalized-comments/memory.md`
+
+**Overview**:
+Teachers can paste multiple personalized comments at once with optional ratings (1-5), parse them automatically, and save through the existing API with detailed feedback on success/failure.
+
+**User Stories Implemented (8/8)**:
+- ✅ **Story 1**: Display bulk upload button - 10 tests
+- ✅ **Story 2**: Modal with instructions & examples - 16 tests
+- ✅ **Story 3**: Parse comments with rating detection - 24 tests
+- ✅ **Story 4**: Sequential save with failure tracking - 14 tests
+- ✅ **Story 5**: Progress & results display - 12 tests
+- ✅ **Story 6**: Results summary (covered by Story 5)
+- ✅ **Story 7**: Edge cases & error handling - 8 tests
+- ✅ **Story 8**: Update comments list after import - 6 tests
+
+**Implementation Summary**:
+- ✅ BulkUploadModal component with state machine (input → progress → results)
+- ✅ parseComments utility (24 test cases)
+- ✅ bulkSaveComments utility with sequential API calls (14 test cases)
+- ✅ Accessibility compliant (ARIA labels, dialog role, keyboard navigation)
+- ✅ Error tracking with line numbers and original text
+- ✅ Integration with existing onCreateComment API (no new backend needed)
+
+**Quality Metrics**:
+- **Tests**: 90 total (all passing)
+  - Unit tests: 38
+  - Component tests: 44
+  - Integration tests: 8
+- **Build**: Passing with 0 TypeScript/ESLint errors
+- **TypeScript**: Strict mode, 100% compliance
+- **Accessibility**: WCAG 2.1 AA compliant
+
+**Key Features**:
+- Paste multiple comments at once (one per line)
+- Optional ratings (1-5) via comma-separated format at end of line
+- Default rating 3 if omitted
+- Handles internal commas in comment text
+- Real-time progress feedback during save
+- Detailed failure reporting with line numbers
+- Graceful error handling with user-friendly messages
+- Modal state machine for clear UX flow
+
+**Deferred Features** (Future Releases):
+- Character count indicator
+- "Retry Failed" button
+- Auto-refresh with visual highlight
+- Batch API endpoint (requires backend coordination)
+
+**Key Files**:
+- Component: `src/components/personalizedComments/BulkUploadModal.tsx`
+- Utilities: `src/components/personalizedComments/parseComments.ts`, `bulkSaveComments.ts`
+- Tests: 7 test suites with 90 total tests
+- Documentation: `pdd-workspace/bulk-personalized-comments/planning/user-stories.md`
+
+**Technical Decisions**:
+- Rating detection via last comma+digit regex pattern
+- Sequential saves for failure tracking and maximum success rate
+- Modal state machine pattern for clean component logic
+- Reuse existing API (no new backend endpoints)
+- Line number tracking (1-indexed) for failed items
+
+**Lessons Learned**:
+- Bulk operations benefit from detailed failure reporting
+- Sequential saves acceptable for typical use case (5-50 comments)
+- State machines simplify multi-step modal workflows
+- Clear error messages critical for user trust
+
+**Next Steps**:
+Ready for production deployment or enhancement with deferred features.
+
+---
+
+### 4. Outcome Comments Management
 **Status**: 🔜 Not Started
 **Priority**: Post-MVP
 
@@ -155,14 +232,19 @@ Critical build infrastructure fixes to ensure clean compilation and successful d
 
 ---
 
-### 3. Personalized Comments Management
-**Status**: 🔜 Not Started
-**Priority**: Post-MVP
+### 5. Personalized Comments Management (Core)
+**Status**: 🔜 Partially Complete
+**Priority**: MVP Enhancement
+**Latest**: Bulk upload feature complete (Story 1-8)
 
 **Planned Features**:
-- Student-specific comments
-- Personalization tools
-- Comment templates
+- ✅ View personalized comments
+- ✅ Create personalized comments
+- ✅ Copy comments to another subject
+- ✅ **Bulk upload comments** (NEW - Story 1-8 complete)
+- 🔜 Edit personalized comments (future)
+- 🔜 Delete personalized comments (future)
+- 🔜 Comment templates (future)
 
 ---
 
@@ -306,10 +388,33 @@ Tasks are classified by risk level:
 - 99.98 KB bundle size (50% under target)
 - Full documentation created
 
+### Sprint 2 ✅ COMPLETE
+**Goal**: Bulk Personalized Comments Feature
+**User Stories**: 8 stories (Story 1-8)
+**Duration**: Completed 2026-01-13
+**Status**: ✅ Production ready - All stories complete
+
+**Completed Tasks**:
+- ✅ Story 1: Display bulk upload button (10 tests)
+- ✅ Story 2: Modal with instructions & examples (16 tests)
+- ✅ Story 3: Parse comments with ratings (24 tests)
+- ✅ Story 4: Sequential API saves with failure tracking (14 tests)
+- ✅ Story 5: Progress & results display (12 tests)
+- ✅ Story 6: Results summary display
+- ✅ Story 7: Edge cases & error handling (8 tests)
+- ✅ Story 8: List integration after import (6 tests)
+
+**Deliverables**:
+- 90 tests passing (100%)
+- BulkUploadModal component + utilities
+- 0 TypeScript/ESLint errors
+- WCAG 2.1 AA compliant
+- Feature memory documentation complete
+
 ### Upcoming Sprints
-- **Sprint 2**: Class Management - Edit functionality (US-CLASS-003)
-- **Sprint 3**: Outcome Comments Management (new feature)
-- **Sprint 4**: Personalized Comments Management (new feature)
+- **Sprint 3**: Class Management - Edit functionality (US-CLASS-003)
+- **Sprint 4**: Outcome Comments Management (new feature)
+- **Sprint 5**: Additional Personalized Comments features (edit, delete, templates)
 
 ---
 
@@ -386,6 +491,18 @@ npm run lint
 
 ## Changelog
 
+### 2026-01-13 - Bulk Personalized Comments Feature Complete
+- ✅ Implemented all 8 user stories for bulk comment upload
+- ✅ Created BulkUploadModal component with state machine pattern
+- ✅ Built parseComments utility with 24 edge case tests
+- ✅ Built bulkSaveComments utility for sequential API calls with failure tracking
+- ✅ 90 total tests created and passing (38 unit, 44 component, 8 integration)
+- ✅ Integrated with existing onCreateComment API (no new backend needed)
+- ✅ TypeScript strict mode compliance (0 errors)
+- ✅ Accessibility audit passed (WCAG 2.1 AA)
+- ✅ Created comprehensive feature memory documentation
+- **Status**: ✅ PRODUCTION READY - Feature branch `feat/multiple-outcome-comments` ready for PR
+
 ### 2025-12-26 - Build & Deployment Readiness Complete
 - ✅ Fixed 68 TypeScript build errors → Reduced to 0 errors
 - ✅ Corrected 5 failing test assertions → All 1,359 tests now passing
@@ -440,6 +557,6 @@ npm run lint
 
 ---
 
-**Document Version**: 2.1.0 (Build & Deploy Complete)
+**Document Version**: 2.2.0 (Bulk Personalized Comments Complete)
 **Maintained By**: System Architect & Development Team
-**Last Updated**: 2025-12-26 (Build & Deploy Phase Complete)
+**Last Updated**: 2026-01-13 (Bulk Personalized Comments Feature Complete)
