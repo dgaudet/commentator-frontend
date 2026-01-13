@@ -227,6 +227,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
               onClick={() => setIsBulkUploadModalOpen(true)}
               variant="secondary"
               disabled={!entityData}
+              aria-label="Bulk Upload Comments"
             >
               Bulk Upload Comments
             </Button>
