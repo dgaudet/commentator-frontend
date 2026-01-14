@@ -73,7 +73,7 @@ describe('BulkUploadModal - Story 6 & 7: Edge Cases and Results', () => {
       const importButton = screen.getByRole('button', { name: /Import/i })
       fireEvent.click(importButton)
 
-      // Should call onImport with default rating 3
+      // Should call onImport with default rating 3 and progress callback
       await waitFor(() => {
         expect(mockOnImport).toHaveBeenCalledWith(
           expect.arrayContaining([
@@ -82,6 +82,7 @@ describe('BulkUploadModal - Story 6 & 7: Edge Cases and Results', () => {
               rating: 3,
             }),
           ]),
+          expect.any(Function),
         )
       })
     })
@@ -109,6 +110,7 @@ describe('BulkUploadModal - Story 6 & 7: Edge Cases and Results', () => {
               rating: 3,
             }),
           ]),
+          expect.any(Function),
         )
       })
     })

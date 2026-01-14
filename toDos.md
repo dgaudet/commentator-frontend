@@ -173,3 +173,5 @@ default github pages url - https://dgaudet.github.io/commentator-frontend/
 aws url - http://commentator.prod.s3-website-us-west-2.amazonaws.com/
 
 possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
+
+test progress indicator with a simulated slow insert process

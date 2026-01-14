@@ -30,6 +30,7 @@ export async function bulkSaveComments(
   subjectId: string,
   comments: ParsedComment[],
   createComment: (request: CreatePersonalizedCommentRequest) => Promise<unknown>,
+  onProgress?: (current: number) => void,
 ): Promise<BulkSaveResult> {
   const result: BulkSaveResult = {
     successful: [],
@@ -64,6 +65,9 @@ export async function bulkSaveComments(
         reason: errorMessage,
       })
     }
+
+    // Report progress after each comment is processed
+    onProgress?.(lineNumber + 1)
   }
 
   return result

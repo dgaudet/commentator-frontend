@@ -536,10 +536,11 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
           isOpen={isBulkUploadModalOpen}
           onClose={() => setIsBulkUploadModalOpen(false)}
           subjectId={entityData.id}
-          onImport={async (comments) => {
+          onImport={async (comments, onProgress) => {
             // Story 4: Sequential save using existing API
             // bulkSaveComments attempts each comment via onCreateComment, tracking successes/failures
-            return bulkSaveComments(entityData.id, comments, onCreateComment)
+            // Story 5: Pass progress callback for real-time progress updates
+            return bulkSaveComments(entityData.id, comments, onCreateComment, onProgress)
           }}
         />
       )}

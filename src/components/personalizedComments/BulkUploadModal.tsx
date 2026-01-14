@@ -18,7 +18,7 @@ interface BulkUploadModalProps {
   isOpen: boolean
   onClose: () => void
   subjectId: string
-  onImport: (comments: Array<{ text: string; rating: number }>) => Promise<BulkSaveResult>
+  onImport: (comments: Array<{ text: string; rating: number }>, onProgress?: (current: number) => void) => Promise<BulkSaveResult>
 }
 
 type ModalState = 'input' | 'progress' | 'results'
@@ -55,11 +55,11 @@ export const BulkUploadModal = ({
     setTotalComments(parsed.length)
     setCurrentProgress(0)
 
-    // Call onImport with callback to track progress
-    // Note: This is a simplified implementation. In Story 4-5, we'll integrate
-    // the actual bulkSaveComments function that provides fine-grained progress
+    // Call onImport with progress callback to track real-time progress
     try {
-      const results = await onImport(parsed)
+      const results = await onImport(parsed, (current) => {
+        setCurrentProgress(current)
+      })
       setImportResults(results)
       setModalState('results')
     } catch (error) {
