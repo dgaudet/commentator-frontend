@@ -33,8 +33,8 @@ export function parseComments(input: string): ParsedComment[] {
     // Pattern: ", X" where X is a digit (1-5)
     const ratingMatch = trimmed.match(/, (\d)$/)
 
-    let text: string
-    let rating: number = 3 // default rating
+    let text = trimmed
+    let rating = 3
 
     if (ratingMatch) {
       const ratingDigit = parseInt(ratingMatch[1], 10)
@@ -44,15 +44,7 @@ export function parseComments(input: string): ParsedComment[] {
         // Remove the ", X" from the end
         text = trimmed.substring(0, trimmed.lastIndexOf(',')).trim()
         rating = ratingDigit
-      } else {
-        // Invalid rating number, keep entire text with default rating
-        text = trimmed
-        rating = 3
       }
-    } else {
-      // No rating pattern found
-      text = trimmed
-      rating = 3
     }
 
     parsed.push({ text, rating })
