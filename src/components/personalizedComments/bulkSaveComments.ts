@@ -7,11 +7,7 @@
  */
 
 import type { CreatePersonalizedCommentRequest } from '../../types'
-
-export interface ParsedComment {
-  text: string
-  rating: number
-}
+import type { ParsedComment } from './parseComments'
 
 export interface SuccessfulSave {
   text: string
