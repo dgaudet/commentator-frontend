@@ -214,12 +214,14 @@ export const BulkUploadModal = ({
               style={{
                 width: '100%',
                 padding: spacing.md,
+                backgroundColor: themeColors.background.primary,
                 border: `${borders.width.thin} solid ${themeColors.border.default}`,
                 borderRadius: borders.radius.md,
                 fontSize: typography.fontSize.sm,
                 fontFamily: 'monospace',
                 resize: 'vertical',
                 boxSizing: 'border-box',
+                color: themeColors.text.primary,
               }}
             />
             {validationError && (
