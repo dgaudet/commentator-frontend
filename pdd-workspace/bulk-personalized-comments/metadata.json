@@ -1,0 +1,30 @@
+{
+  "feature": "bulk-personalized-comments",
+  "title": "Bulk Upload Personalized Comments",
+  "description": "Allow teachers to import multiple personalized comments at once via paste-and-parse modal dialog",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "Small, self-contained feature with 6-8 user stories, 1-2 weeks effort, minimal technical complexity, no external integrations, straightforward UI pattern (modal + form parsing)",
+    "assessedAt": "2026-01-13",
+    "confidence": 0.95
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING"
+  },
+  "artifacts": {
+    "prd": "pdd-workspace/bulk-personalized-comments/planning/minimal-prd.md",
+    "stories": "pdd-workspace/bulk-personalized-comments/planning/user-stories.md"
+  },
+  "estimates": {
+    "planning": "30 mins",
+    "implementation": "1-2 weeks",
+    "testing": "3-5 days"
+  },
+  "stakeholders": [
+    "Teachers (primary users)",
+    "School administrators",
+    "Support team"
+  ]
+}
