@@ -83,24 +83,40 @@ export const BulkUploadModal = ({
   ]
 
   return (
-    <div
-      role="dialog"
-      aria-label="Bulk Upload Personalized Comments"
-      style={{
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        backgroundColor: themeColors.background.primary,
-        borderRadius: borders.radius.lg,
-        padding: spacing['2xl'],
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        zIndex: 1000,
-        minWidth: '600px',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-      }}
-    >
+    <>
+      {/* Backdrop overlay - blocks interactions with content behind modal */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 999,
+        }}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      {/* Modal dialog */}
+      <div
+        role="dialog"
+        aria-label="Bulk Upload Personalized Comments"
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: themeColors.background.primary,
+          borderRadius: borders.radius.lg,
+          padding: spacing['2xl'],
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          zIndex: 1000,
+          minWidth: '600px',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+        }}
+      >
       <h2
         style={{
           marginTop: 0,
@@ -396,6 +412,7 @@ export const BulkUploadModal = ({
           </div>
         </>
       )}
-    </div>
+      </div>
+    </>
   )
 }
