@@ -101,6 +101,7 @@ export const BulkUploadModal = ({
       {/* Modal dialog */}
       <div
         role="dialog"
+        aria-modal="true"
         aria-label="Bulk Upload Personalized Comments"
         style={{
           position: 'fixed',
