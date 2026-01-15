@@ -10,8 +10,10 @@
 import { useState } from 'react'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
+import { usePronounsQuery } from '../../hooks/usePronounsQuery'
 import { Button } from '../common/Button'
 import { parseComments } from './parseComments'
+import { replacePronounsWithPlaceholders } from '../../utils/pronouns'
 import type { BulkSaveResult } from './bulkSaveComments'
 
 interface BulkUploadModalProps {
@@ -30,14 +32,108 @@ export const BulkUploadModal = ({
   onImport,
 }: BulkUploadModalProps) => {
   const themeColors = useThemeColors()
+  const { pronouns, loading: pronounsLoading, error: pronounsError } = usePronounsQuery()
   const [textareaValue, setTextareaValue] = useState('')
   const [validationError, setValidationError] = useState('')
   const [modalState, setModalState] = useState<ModalState>('input')
   const [currentProgress, setCurrentProgress] = useState(0)
   const [totalComments, setTotalComments] = useState(0)
   const [importResults, setImportResults] = useState<BulkSaveResult | null>(null)
+  const [replacePronounsLoading, setReplacePronounsLoading] = useState(false)
+  const [replacePronounsMessage, setReplacePronounsMessage] = useState<{
+    type: 'success' | 'error' | 'info'
+    text: string
+  } | null>(null)
 
   if (!isOpen) return null
+
+  const handleReplacePronounsClick = async () => {
+    // Clear previous messages
+    setReplacePronounsMessage(null)
+
+    // Check if textarea is empty
+    if (!textareaValue.trim()) {
+      setReplacePronounsMessage({
+        type: 'info',
+        text: 'Please enter text first',
+      })
+      return
+    }
+
+    // Set loading state
+    setReplacePronounsLoading(true)
+
+    try {
+      // Replace pronouns using the utility function
+      const result = replacePronounsWithPlaceholders(textareaValue, pronouns)
+
+      // Update textarea with replaced text
+      setTextareaValue(result.replacedText)
+
+      // Show success message with count
+      const { pronoun: pronounCount, possessivePronoun: possessiveCount } =
+        result.replacementCount
+      const totalReplacements = pronounCount + possessiveCount
+
+      if (totalReplacements === 0) {
+        setReplacePronounsMessage({
+          type: 'info',
+          text: 'No pronouns found in text',
+        })
+      } else {
+        setReplacePronounsMessage({
+          type: 'success',
+          text: `Replaced ${totalReplacements} pronouns (${pronounCount} subject, ${possessiveCount} possessive)`,
+        })
+      }
+    } catch (error) {
+      setReplacePronounsMessage({
+        type: 'error',
+        text: 'Failed to replace pronouns. Please try again.',
+      })
+    } finally {
+      setReplacePronounsLoading(false)
+    }
+  }
+
+  /**
+   * Get message box styling based on message type
+   */
+  const getMessageBoxStyle = (type: string) => {
+    const baseStyle = {
+      marginTop: spacing.md,
+      padding: spacing.md,
+      borderRadius: borders.radius.md,
+      fontSize: typography.fontSize.sm,
+      border: `${borders.width.thin} solid`,
+    }
+
+    if (type === 'success') {
+      return {
+        ...baseStyle,
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        borderColor: '#22c55e',
+        color: '#22c55e',
+      }
+    }
+
+    if (type === 'error') {
+      return {
+        ...baseStyle,
+        backgroundColor: themeColors.semantic.errorLight,
+        borderColor: themeColors.semantic.error,
+        color: themeColors.semantic.error,
+      }
+    }
+
+    // info
+    return {
+      ...baseStyle,
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderColor: '#3b82f6',
+      color: '#3b82f6',
+    }
+  }
 
   const handleImport = async () => {
     // Parse the comments
@@ -225,6 +321,38 @@ export const BulkUploadModal = ({
                 color: themeColors.text.primary,
               }}
             />
+
+            {/* Replace Pronouns Button */}
+            {!pronounsError && (
+              <div style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
+                <Button
+                  onClick={handleReplacePronounsClick}
+                  disabled={replacePronounsLoading || pronounsLoading || pronouns.length === 0}
+                  variant="secondary"
+                  title={
+                    pronounsLoading
+                      ? 'Loading pronouns...'
+                      : pronouns.length === 0
+                        ? 'No pronouns configured'
+                        : 'Replace pronouns with placeholders'
+                  }
+                >
+                  {replacePronounsLoading ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
+                </Button>
+              </div>
+            )}
+
+            {/* Replace Pronouns Message */}
+            {replacePronounsMessage && (
+              <div
+                role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
+                style={getMessageBoxStyle(replacePronounsMessage.type)}
+              >
+                {replacePronounsMessage.text}
+              </div>
+            )}
+
+            {/* Validation Error */}
             {validationError && (
               <div
                 role="alert"
