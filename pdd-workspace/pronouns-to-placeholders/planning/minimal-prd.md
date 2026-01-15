@@ -52,7 +52,7 @@ Add a "Replace Pronouns with Placeholders" button to personalized and final comm
 - Unit tests for utility function
 
 **NOT Included**:
-- Adding pronouns to final comments form (separate feature if needed)
+- Final comments form (no modifications to final comments components)
 - Undo/history functionality
 - Batch processing across multiple comments
 - Custom placeholder text (uses standard `<pronoun>` and `<possessive pronoun>`)
@@ -91,13 +91,13 @@ Add a "Replace Pronouns with Placeholders" button to personalized and final comm
 - [ ] On error, shows error message and leaves text unchanged
 - [ ] Multiple clicks work correctly (can reprocess text)
 
-### US-3: Replace Pronouns Button in Add/Edit Personalized Comments
+### US-3: Replace Pronouns Button in Personalized Comments Components
 **As a** teacher
-**When** creating or editing a single personalized comment
+**When** creating or editing a personalized comment
 **Then** I can replace pronouns with placeholders for reusability
 
 **Acceptance Criteria**:
-- [ ] "Replace Pronouns with Placeholders" button appears in add/edit modal
+- [ ] "Replace Pronouns with Placeholders" button appears in personalized comment components
 - [ ] Button position: near bottom right, consistent with other action buttons
 - [ ] Button is disabled while pronouns are loading or if no pronouns exist
 - [ ] Clicking button fetches pronouns and replaces them in textarea
@@ -106,20 +106,7 @@ Add a "Replace Pronouns with Placeholders" button to personalized and final comm
 - [ ] On error, shows error message and preserves original text
 - [ ] Works correctly with empty comment text
 
-### US-4: Replace Pronouns Button in Final Comments
-**As a** teacher
-**When** entering final comments for a student
-**Then** I can replace pronouns with placeholders to reuse across students
-
-**Acceptance Criteria**:
-- [ ] "Replace Pronouns with Placeholders" button appears in final comments form
-- [ ] Button follows same UX pattern as personalized comments
-- [ ] Clicking replaces pronouns in the final comment textarea
-- [ ] Shows loading and success states
-- [ ] Handles errors gracefully without losing text
-- [ ] Works with partial text and mid-editing replacement
-
-### US-5: Error Handling & Edge Cases
+### US-4: Error Handling & Edge Cases
 **As a** teacher
 **When** using the replace pronouns feature in various scenarios
 **Then** the app handles errors gracefully
@@ -133,7 +120,7 @@ Add a "Replace Pronouns with Placeholders" button to personalized and final comm
 - [ ] Function handles special characters in pronoun values
 - [ ] Case variations (HE, He, he) all match and replace
 
-### US-6: Integration & Accessibility
+### US-5: Integration & Accessibility
 **As a** teacher
 **When** using the replace pronouns feature
 **Then** it is accessible and integrates seamlessly with the app
@@ -221,8 +208,7 @@ interface Pronoun {
 
 ### Components to Modify
 - `BulkPersonalizedCommentsModal` (bulk upload)
-- `PersonalizedCommentModal` (add/edit)
-- `FinalCommentsModal` (final comments)
+- Personalized comments components (add/edit)
 
 ### Files to Create
 - `src/utils/pronouns.ts` (new utility)

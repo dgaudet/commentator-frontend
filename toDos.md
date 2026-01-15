@@ -174,4 +174,6 @@ aws url - http://commentator.prod.s3-website-us-west-2.amazonaws.com/
 
 possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
 
-also add replace pronouns in the outcome comments components 
+Can you make some modifications to our user stories.
+US-3, there is no modal for adding/editing personalized comments, instead these are just components.
+US-4, you can remove this feature as we do not want any modifications to final comments components.

@@ -17,6 +17,13 @@
     "prd": "pdd-workspace/pronouns-to-placeholders/planning/minimal-prd.md",
     "stories": "pdd-workspace/pronouns-to-placeholders/planning/user-stories.md"
   },
+  "userStories": [
+    "US-1: Reusable Pronoun-to-Placeholder Utility (TASK-1.1)",
+    "US-2: Replace Pronouns Button in Bulk Upload Modal (TASK-1.2)",
+    "US-3: Replace Pronouns Button in Personalized Comments Components (TASK-1.3)",
+    "US-4: Error Handling & Edge Cases (TASK-1.4)",
+    "US-5: Accessibility & Integration Testing (TASK-1.5)"
+  ],
   "estimates": {
     "planning": "30 mins",
     "implementation": "1-2 weeks",

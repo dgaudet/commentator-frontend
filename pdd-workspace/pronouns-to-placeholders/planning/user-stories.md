@@ -6,10 +6,9 @@
 EPIC: Replace Pronouns with Placeholders Utility
 ├── US-1: Reusable Utility Function (TECH STORY)
 ├── US-2: Bulk Upload Modal Integration
-├── US-3: Add/Edit Personalized Comments Integration
-├── US-4: Final Comments Integration
-├── US-5: Error Handling & Edge Cases
-└── US-6: Accessibility & Integration Testing
+├── US-3: Personalized Comments Component Integration
+├── US-4: Error Handling & Edge Cases
+└── US-5: Accessibility & Integration Testing
 ```
 
 ---
@@ -247,7 +246,7 @@ THEN the button is focusable and activatable with Enter/Space
 
 ---
 
-## US-3: Replace Pronouns Button in Personalized Comments Add/Edit
+## US-3: Replace Pronouns Button in Personalized Comments Components
 
 **ID**: TASK-1.3
 **Priority**: P1
@@ -257,8 +256,8 @@ THEN the button is focusable and activatable with Enter/Space
 
 ### Story
 ```gherkin
-GIVEN a teacher is adding or editing a personalized comment
-WHEN the modal is open with a comment textarea
+GIVEN a teacher is creating or editing a personalized comment
+WHEN the personalized comments component is open with a comment textarea
 THEN they can click "Replace Pronouns with Placeholders"
   AND pronouns are replaced in the textarea
   AND they see confirmation of replacements
@@ -266,93 +265,52 @@ THEN they can click "Replace Pronouns with Placeholders"
 
 ### Acceptance Criteria
 
-#### AC-3.1: Button in Add Modal
+#### AC-3.1: Button in Personalized Comments Components
 ```
-GIVEN the PersonalizedCommentModal is open in "add" mode
-WHEN I look at the modal
+GIVEN the personalized comments component is rendered
+WHEN I look at the textarea area
 THEN the "Replace Pronouns with Placeholders" button is visible
   AND it's positioned consistently with other action buttons
+  AND the button appears in all personalized comment input areas
 ```
 
-#### AC-3.2: Button in Edit Modal
+#### AC-3.2: Consistent Behavior
 ```
-GIVEN the PersonalizedCommentModal is open in "edit" mode
-WHEN I look at the modal
-THEN the "Replace Pronouns with Placeholders" button is visible
-```
-
-#### AC-3.3: Consistent Behavior
-```
-GIVEN the button works the same way in both add and edit modes
+GIVEN the button works across all personalized comment components
 WHEN I click it
 THEN the behavior is identical to US-2 (loading, success, error states)
+  AND the user experience is consistent
 ```
 
-#### AC-3.4: Modal Layout
+#### AC-3.3: Component Layout
 ```
-GIVEN the button is added to the modal
-WHEN the modal renders
+GIVEN the button is added to personalized comment components
+WHEN the components render
 THEN there is no layout shift or visual disruption
-  AND existing buttons maintain their positions
+  AND existing buttons and layout maintain their positions
   AND responsive design is preserved
 ```
 
+#### AC-3.4: Text Preservation
+```
+GIVEN any personalized comment component
+WHEN Replace Pronouns operation completes
+THEN all non-pronoun text remains exactly as before
+  AND formatting, line breaks, spacing are preserved
+```
+
 ### Tests Required
-- [ ] Button renders in add modal
-- [ ] Button renders in edit modal
-- [ ] Successful replacement in add mode
-- [ ] Successful replacement in edit mode
+- [ ] Button renders in personalized comments components
+- [ ] Successful replacement in components
 - [ ] Error handling consistent with US-2
-- [ ] No regression on existing add/edit functionality
+- [ ] Component layout remains stable
+- [ ] No regression on existing personalized comments functionality
 
 ---
 
-## US-4: Replace Pronouns Button in Final Comments
+## US-4: Error Handling & Edge Cases
 
 **ID**: TASK-1.4
-**Priority**: P2
-**Risk Tier**: Low
-**Effort**: 1-2 days
-**Depends on**: US-1
-
-### Story
-```gherkin
-GIVEN a teacher is entering a final comment for a student
-WHEN the FinalCommentsModal is open
-THEN they can click "Replace Pronouns with Placeholders"
-  AND pronouns in the comment are replaced with placeholders
-```
-
-### Acceptance Criteria
-
-#### AC-4.1: Button Presence
-```
-GIVEN FinalCommentsModal is open
-WHEN I look at the textarea
-THEN "Replace Pronouns with Placeholders" button is visible
-  AND uses same style as other buttons
-```
-
-#### AC-4.2: Functionality
-```
-GIVEN final comment contains pronouns
-WHEN I click the button
-THEN pronouns are replaced with placeholders
-  AND success message displays count
-  AND all error handling from US-2 applies
-```
-
-### Tests Required
-- [ ] Button renders in final comments modal
-- [ ] Successful replacement
-- [ ] Error handling
-- [ ] No regression on final comments functionality
-
----
-
-## US-5: Error Handling & Edge Cases
-
-**ID**: TASK-1.5
 **Priority**: P1
 **Risk Tier**: Low
 **Effort**: 1-2 days
@@ -417,9 +375,9 @@ THEN "the" is NOT replaced (no partial word matching)
 
 ---
 
-## US-6: Accessibility & Integration Testing
+## US-5: Accessibility & Integration Testing
 
-**ID**: TASK-1.6
+**ID**: TASK-1.5
 **Priority**: P1
 **Risk Tier**: Low
 **Effort**: 2-3 days
@@ -434,7 +392,7 @@ THEN the feature is fully accessible and well-integrated
 
 ### Acceptance Criteria
 
-#### AC-6.1: Keyboard Navigation
+#### AC-5.1: Keyboard Navigation
 ```
 GIVEN the Replace Pronouns button is on the page
 WHEN I navigate with Tab key
@@ -443,7 +401,7 @@ THEN the button receives focus
   AND focus management is correct after operation
 ```
 
-#### AC-6.2: Screen Reader Announcements
+#### AC-5.2: Screen Reader Announcements
 ```
 GIVEN a screen reader is active
 WHEN I click Replace Pronouns and operation completes
@@ -451,7 +409,7 @@ THEN success/error messages are automatically announced
   AND button state changes are communicated
 ```
 
-#### AC-6.3: Visual Feedback
+#### AC-5.3: Visual Feedback
 ```
 GIVEN any operation state (loading, success, error)
 WHEN the state changes
@@ -460,7 +418,7 @@ THEN there is clear visual feedback
   AND icons or text provide redundancy
 ```
 
-#### AC-6.4: ARIA Labels
+#### AC-5.4: ARIA Labels
 ```
 GIVEN the Replace Pronouns button
 WHEN I inspect it with accessibility tools
@@ -468,7 +426,7 @@ THEN it has proper aria-label or aria-labelledby
   AND disabled state has aria-disabled="true"
 ```
 
-#### AC-6.5: No Page Layout Shifts
+#### AC-5.5: No Page Layout Shifts
 ```
 GIVEN the button is added to existing components
 WHEN the page renders
@@ -476,7 +434,7 @@ THEN there are no Cumulative Layout Shift (CLS) issues
   AND the layout is stable when button appears/disappears
 ```
 
-#### AC-6.6: Design Token Compliance
+#### AC-5.6: Design Token Compliance
 ```
 GIVEN the button and messages use the design system
 WHEN rendered on the page
@@ -485,7 +443,7 @@ THEN all styling uses design tokens
   AND fonts and spacing are consistent
 ```
 
-#### AC-6.7: Integration with Existing Features
+#### AC-5.7: Integration with Existing Features
 ```
 GIVEN all components are in use
 WHEN Replace Pronouns feature is used alongside other features
@@ -507,11 +465,10 @@ THEN no regressions in existing functionality
 ## Implementation Order
 
 1. **US-1** (TASK-1.1): Create reusable utility function and tests
-2. **US-5** (TASK-1.5): Add error handling and edge case handling to utility
+2. **US-4** (TASK-1.4): Add error handling and edge case handling to utility
 3. **US-2** (TASK-1.2): Add button to bulk upload modal
-4. **US-3** (TASK-1.3): Add button to personalized comments add/edit
-5. **US-4** (TASK-1.4): Add button to final comments
-6. **US-6** (TASK-1.6): Comprehensive accessibility and integration testing
+4. **US-3** (TASK-1.3): Add button to personalized comments components
+5. **US-5** (TASK-1.5): Comprehensive accessibility and integration testing
 
 ---
 
@@ -535,8 +492,7 @@ Each user story is considered complete when:
 |-------|------|-----------|
 | US-1 | None | Straightforward utility, well-defined requirements |
 | US-2 | Low - API integration | Existing usePronounsQuery hook reduces risk |
-| US-3 | Low - Component modification | Isolated changes to one component |
-| US-4 | Low - Component modification | Isolated changes to one component |
-| US-5 | Very Low - Edge cases | Comprehensive test coverage |
-| US-6 | Very Low - Accessibility | WCAG 2.1 AA requirements are clear |
+| US-3 | Low - Component modification | Isolated changes to personalized comment components |
+| US-4 | Very Low - Edge cases | Comprehensive test coverage |
+| US-5 | Very Low - Accessibility | WCAG 2.1 AA requirements are clear |
 
