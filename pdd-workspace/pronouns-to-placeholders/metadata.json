@@ -1,0 +1,35 @@
+{
+  "feature": "pronouns-to-placeholders",
+  "title": "Replace Pronouns with Placeholders Utility",
+  "description": "Add reusable utility to replace actual pronoun values with placeholder text (<pronoun>, <possessive pronoun>) across personalized and final comments. Includes button in bulk upload modal and add/edit components.",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "Small, self-contained feature with 6-8 user stories, 1-2 weeks effort, straightforward utility function + 2-3 component updates, no external integrations (uses existing pronoun endpoint), minimal technical complexity",
+    "assessedAt": "2026-01-15",
+    "confidence": 0.92
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING"
+  },
+  "artifacts": {
+    "prd": "pdd-workspace/pronouns-to-placeholders/planning/minimal-prd.md",
+    "stories": "pdd-workspace/pronouns-to-placeholders/planning/user-stories.md"
+  },
+  "estimates": {
+    "planning": "30 mins",
+    "implementation": "1-2 weeks",
+    "testing": "3-5 days"
+  },
+  "stakeholders": [
+    "Teachers (primary users)",
+    "School administrators",
+    "Support team"
+  ],
+  "dependencies": [
+    "usePronounsQuery hook (existing)",
+    "placeholders utility (existing)",
+    "Pronoun API endpoint (existing)"
+  ]
+}
