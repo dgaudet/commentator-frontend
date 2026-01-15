@@ -37,7 +37,9 @@ import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
 import { CommentTextField } from '../common/CommentTextField'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
+import { usePronounsQuery } from '../../hooks/usePronounsQuery'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
+import { replacePronounsWithPlaceholders } from '../../utils/pronouns'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
 import { CopyCommentsModal } from './CopyCommentsModal'
 import { BulkUploadModal } from './BulkUploadModal'
@@ -68,6 +70,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
   ownedSubjects = [],
 }: PersonalizedCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
+  const { pronouns, loading: pronounsLoading, error: pronounsError } = usePronounsQuery()
   const [newCommentContent, setNewCommentContent] = useState('')
   const [newCommentRating, setNewCommentRating] = useState(3) // US-RATING-PERSIST: Default rating 3 (Neutral), persists across submissions
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -87,6 +90,13 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false)
   // Story 1: Bulk Upload Modal state
   const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false)
+  // TASK-1.3: Replace Pronouns state
+  const [replacePronounsLoading, setReplacePronounsLoading] = useState<'add' | 'edit' | null>(null)
+  const [replacePronounsMessage, setReplacePronounsMessage] = useState<{
+    section: 'add' | 'edit'
+    type: 'success' | 'error' | 'info'
+    text: string
+  } | null>(null)
 
   // US-RATING-PERSIST-003: Reset ratings when modal closes/reopens (session-scoped persistence)
   useEffect(() => {
@@ -95,6 +105,103 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
       setEditRating(3)
     }
   }, [isOpen])
+
+  /**
+   * Handle Replace Pronouns click for Add or Edit section
+   */
+  const handleReplacePronouncsClick = async (section: 'add' | 'edit') => {
+    setReplacePronounsMessage(null)
+
+    const textToReplace = section === 'add' ? newCommentContent : editContent
+    const setText = section === 'add' ? setNewCommentContent : setEditContent
+
+    // Check if text is empty
+    if (!textToReplace.trim()) {
+      setReplacePronounsMessage({
+        section,
+        type: 'info',
+        text: 'Please enter text first',
+      })
+      return
+    }
+
+    // Set loading state
+    setReplacePronounsLoading(section)
+
+    try {
+      // Replace pronouns using the utility function
+      const result = replacePronounsWithPlaceholders(textToReplace, pronouns)
+
+      // Update textarea with replaced text
+      setText(result.replacedText)
+
+      // Show success message with count
+      const { pronoun: pronounCount, possessivePronoun: possessiveCount } =
+        result.replacementCount
+      const totalReplacements = pronounCount + possessiveCount
+
+      if (totalReplacements === 0) {
+        setReplacePronounsMessage({
+          section,
+          type: 'info',
+          text: 'No pronouns found in text',
+        })
+      } else {
+        setReplacePronounsMessage({
+          section,
+          type: 'success',
+          text: `Replaced ${totalReplacements} pronouns (${pronounCount} subject, ${possessiveCount} possessive)`,
+        })
+      }
+    } catch (error) {
+      setReplacePronounsMessage({
+        section,
+        type: 'error',
+        text: 'Failed to replace pronouns. Please try again.',
+      })
+    } finally {
+      setReplacePronounsLoading(null)
+    }
+  }
+
+  /**
+   * Get message box styling based on message type
+   */
+  const getMessageBoxStyle = (type: string) => {
+    const baseStyle = {
+      marginTop: spacing.md,
+      padding: spacing.md,
+      borderRadius: borders.radius.md,
+      fontSize: typography.fontSize.sm,
+      border: `${borders.width.thin} solid`,
+    }
+
+    if (type === 'success') {
+      return {
+        ...baseStyle,
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        borderColor: '#22c55e',
+        color: '#22c55e',
+      }
+    }
+
+    if (type === 'error') {
+      return {
+        ...baseStyle,
+        backgroundColor: themeColors.semantic.errorLight,
+        borderColor: themeColors.semantic.error,
+        color: themeColors.semantic.error,
+      }
+    }
+
+    // info
+    return {
+      ...baseStyle,
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderColor: '#3b82f6',
+      color: '#3b82f6',
+    }
+  }
 
   if (!isOpen) return null
 
@@ -287,6 +394,37 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                   onChange={setNewCommentRating}
                   required
                 />
+
+                {/* TASK-1.3: Replace Pronouns Button in Add section */}
+                {!pronounsError && (
+                  <div style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
+                    <Button
+                      onClick={() => handleReplacePronouncsClick('add')}
+                      disabled={replacePronounsLoading === 'add' || pronounsLoading || pronouns.length === 0}
+                      variant="secondary"
+                      title={
+                        pronounsLoading
+                          ? 'Loading pronouns...'
+                          : pronouns.length === 0
+                            ? 'No pronouns configured'
+                            : 'Replace pronouns with placeholders'
+                      }
+                    >
+                      {replacePronounsLoading === 'add' ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
+                    </Button>
+                  </div>
+                )}
+
+                {/* TASK-1.3: Replace Pronouns Message in Add section */}
+                {replacePronounsMessage?.section === 'add' && (
+                  <div
+                    role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
+                    style={getMessageBoxStyle(replacePronounsMessage.type)}
+                  >
+                    {replacePronounsMessage.text}
+                  </div>
+                )}
+
                 {validationError && (
                   <div
                     role="alert"
@@ -398,6 +536,37 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                                   onChange={setEditRating}
                                   required
                                 />
+
+                                {/* TASK-1.3: Replace Pronouns Button in Edit section */}
+                                {!pronounsError && (
+                                  <div style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
+                                    <Button
+                                      onClick={() => handleReplacePronouncsClick('edit')}
+                                      disabled={replacePronounsLoading === 'edit' || pronounsLoading || pronouns.length === 0}
+                                      variant="secondary"
+                                      title={
+                                        pronounsLoading
+                                          ? 'Loading pronouns...'
+                                          : pronouns.length === 0
+                                            ? 'No pronouns configured'
+                                            : 'Replace pronouns with placeholders'
+                                      }
+                                    >
+                                      {replacePronounsLoading === 'edit' ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
+                                    </Button>
+                                  </div>
+                                )}
+
+                                {/* TASK-1.3: Replace Pronouns Message in Edit section */}
+                                {replacePronounsMessage?.section === 'edit' && (
+                                  <div
+                                    role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
+                                    style={getMessageBoxStyle(replacePronounsMessage.type)}
+                                  >
+                                    {replacePronounsMessage.text}
+                                  </div>
+                                )}
+
                                 {validationError && (
                                   <div
                                     role="alert"
