@@ -109,7 +109,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
   /**
    * Handle Replace Pronouns click for Add or Edit section
    */
-  const handleReplacePronouncsClick = async (section: 'add' | 'edit') => {
+  const handleReplacePronounsClick = async (section: 'add' | 'edit') => {
     setReplacePronounsMessage(null)
 
     const textToReplace = section === 'add' ? newCommentContent : editContent
@@ -388,9 +388,9 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
 
                 {/* TASK-1.3: Replace Pronouns Button in Add section - same level as character counter, left-aligned */}
                 {!pronounsError && (
-                  <div style={{ marginTop: `calc(${spacing.sm} - ${spacing.lg})`, marginBottom: spacing.md }}>
+                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md }}>
                     <Button
-                      onClick={() => handleReplacePronouncsClick('add')}
+                      onClick={() => handleReplacePronounsClick('add')}
                       disabled={replacePronounsLoading === 'add' || pronounsLoading || pronouns.length === 0}
                       variant="secondary"
                       title={
@@ -530,9 +530,9 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
 
                                 {/* TASK-1.3: Replace Pronouns Button in Edit section - same level as character counter, left-aligned */}
                                 {!pronounsError && (
-                                  <div style={{ marginTop: `calc(${spacing.sm} - ${spacing.lg})`, marginBottom: spacing.md }}>
+                                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md }}>
                                     <Button
-                                      onClick={() => handleReplacePronouncsClick('edit')}
+                                      onClick={() => handleReplacePronounsClick('edit')}
                                       disabled={replacePronounsLoading === 'edit' || pronounsLoading || pronouns.length === 0}
                                       variant="secondary"
                                       title={
