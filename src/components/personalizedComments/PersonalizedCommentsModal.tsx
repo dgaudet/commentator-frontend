@@ -386,18 +386,9 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                   showPlaceholderTips={true}
                 />
 
-                {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
-                <EmojiRatingSelector
-                  id="new-comment-rating"
-                  label="Rating"
-                  value={newCommentRating}
-                  onChange={setNewCommentRating}
-                  required
-                />
-
-                {/* TASK-1.3: Replace Pronouns Button in Add section */}
+                {/* TASK-1.3: Replace Pronouns Button in Add section - same level as character counter, left-aligned */}
                 {!pronounsError && (
-                  <div style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
+                  <div style={{ marginTop: `calc(${spacing.sm} - ${spacing.lg})`, marginBottom: spacing.md }}>
                     <Button
                       onClick={() => handleReplacePronouncsClick('add')}
                       disabled={replacePronounsLoading === 'add' || pronounsLoading || pronouns.length === 0}
@@ -414,6 +405,15 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                     </Button>
                   </div>
                 )}
+
+                {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
+                <EmojiRatingSelector
+                  id="new-comment-rating"
+                  label="Rating"
+                  value={newCommentRating}
+                  onChange={setNewCommentRating}
+                  required
+                />
 
                 {/* TASK-1.3: Replace Pronouns Message in Add section */}
                 {replacePronounsMessage?.section === 'add' && (
@@ -528,18 +528,9 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                                   showPlaceholderTips={true}
                                 />
 
-                                {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
-                                <EmojiRatingSelector
-                                  id="edit-comment-rating"
-                                  label="Rating"
-                                  value={editRating}
-                                  onChange={setEditRating}
-                                  required
-                                />
-
-                                {/* TASK-1.3: Replace Pronouns Button in Edit section */}
+                                {/* TASK-1.3: Replace Pronouns Button in Edit section - same level as character counter, left-aligned */}
                                 {!pronounsError && (
-                                  <div style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
+                                  <div style={{ marginTop: `calc(${spacing.sm} - ${spacing.lg})`, marginBottom: spacing.md }}>
                                     <Button
                                       onClick={() => handleReplacePronouncsClick('edit')}
                                       disabled={replacePronounsLoading === 'edit' || pronounsLoading || pronouns.length === 0}
@@ -556,6 +547,15 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                                     </Button>
                                   </div>
                                 )}
+
+                                {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
+                                <EmojiRatingSelector
+                                  id="edit-comment-rating"
+                                  label="Rating"
+                                  value={editRating}
+                                  onChange={setEditRating}
+                                  required
+                                />
 
                                 {/* TASK-1.3: Replace Pronouns Message in Edit section */}
                                 {replacePronounsMessage?.section === 'edit' && (
