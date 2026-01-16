@@ -196,19 +196,15 @@ describe('Replace Pronouns Feature - Accessibility & Integration (TASK-1.5)', ()
     })
 
     it('should display error message with role alert', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: 'API Error',
-        refetch: jest.fn(),
-      })
-
       render(
         <BulkUploadModal
           isOpen={true}
           onClose={jest.fn()}
           subjectId="subject1"
           onImport={jest.fn().mockResolvedValue({ successful: [], failed: [] })}
+          pronouns={mockPronouns}
+          pronounsLoading={false}
+          pronounsError="API Error"
         />,
       )
 

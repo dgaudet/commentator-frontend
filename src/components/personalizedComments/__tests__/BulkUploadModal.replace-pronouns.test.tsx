@@ -8,13 +8,7 @@
 
 import { render, screen, fireEvent, waitFor } from '../../../test-utils'
 import { BulkUploadModal } from '../BulkUploadModal'
-import * as pronounsApi from '../../../hooks/usePronounsQuery'
 import type { Pronoun } from '../../../types'
-
-/**
- * Mock the usePronounsQuery hook
- */
-jest.mock('../../../hooks/usePronounsQuery')
 
 describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
   const mockPronouns: Pronoun[] = [
@@ -39,6 +33,9 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
     onClose: mockOnClose,
     subjectId: 'subject1',
     onImport: mockOnImport,
+    pronouns: mockPronouns,
+    pronounsLoading: false,
+    pronounsError: null,
   }
 
   beforeEach(() => {
@@ -47,13 +44,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
 
   describe('AC-2.1: Button Presence & Placement', () => {
     it('should render "Replace Pronouns with Placeholders" button', () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const button = screen.getByRole('button', { name: /replace pronouns with placeholders/i })
@@ -61,13 +51,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
     })
 
     it('should place button near the textarea', () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const button = screen.getByRole('button', { name: /replace pronouns with placeholders/i })
@@ -81,41 +64,20 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
 
   describe('AC-2.2: Button Disabled State', () => {
     it('should disable button while pronouns are loading', () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: [],
-        loading: true,
-        error: null,
-        refetch: jest.fn(),
-      })
-
-      render(<BulkUploadModal {...defaultProps} />)
+      render(<BulkUploadModal {...defaultProps} pronounsLoading={true} />)
 
       const button = screen.getByRole('button', { name: /replace pronouns with placeholders/i })
       expect(button).toBeDisabled()
     })
 
     it('should disable button if no pronouns exist for user', () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: [],
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
-      render(<BulkUploadModal {...defaultProps} />)
+      render(<BulkUploadModal {...defaultProps} pronouns={[]} />)
 
       const button = screen.getByRole('button', { name: /replace pronouns with placeholders/i })
       expect(button).toBeDisabled()
     })
 
     it('should show tooltip explaining why button is disabled', () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: [],
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const button = screen.getByRole('button', { name: /replace pronouns with placeholders/i })
@@ -125,13 +87,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
 
   describe('AC-2.3: Loading State', () => {
     it('should show loading state briefly when replacing pronouns', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const button = screen.getByRole('button', { name: /replace pronouns with placeholders/i })
@@ -151,13 +106,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
     })
 
     it('should update textarea after replacement', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -174,13 +122,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
 
   describe('AC-2.4: Successful Replacement', () => {
     it('should replace pronouns in textarea on successful click', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -197,13 +138,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
     })
 
     it('should show success message with replacement count', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -221,13 +155,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
 
   describe('AC-2.5: No Pronouns Found', () => {
     it('should show message when no pronouns found in text', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -242,13 +169,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
     })
 
     it('should not modify text when no pronouns are found', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -266,13 +186,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
 
   describe('AC-2.6: Error Handling', () => {
     it('should show error message if replacement fails', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -288,16 +201,9 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
     })
 
     it('should disable button if pronouns error on load', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: [],
-        loading: false,
-        error: 'Failed to load pronouns',
-        refetch: jest.fn(),
-      })
+      render(<BulkUploadModal {...defaultProps} pronounsError="Failed to load pronouns" />)
 
-      render(<BulkUploadModal {...defaultProps} />)
-
-      // Button should not be visible if no pronouns and there was an error
+      // Button should not be visible if there was an error
       const button = screen.queryByRole('button', { name: /replace pronouns with placeholders/i })
       expect(button).not.toBeInTheDocument()
     })
@@ -305,13 +211,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
 
   describe('AC-2.7: Empty Textarea Handling', () => {
     it('should show message when textarea is empty', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -326,36 +225,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
     })
 
     it('should not make API call when textarea is empty', async () => {
-      const refetchMock = jest.fn()
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: refetchMock,
-      })
-
-      render(<BulkUploadModal {...defaultProps} />)
-
-      const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
-      fireEvent.change(textarea, { target: { value: '' } })
-
-      const button = screen.getByRole('button', { name: /replace pronouns with placeholders/i })
-      fireEvent.click(button)
-
-      // Refetch should not be called for empty text
-      expect(refetchMock).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('AC-2.8: Multiple Clicks', () => {
-    it('should handle multiple clicks correctly', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -385,13 +254,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
 
   describe('AC-2.9: Text Preservation', () => {
     it('should preserve non-pronoun text', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -413,13 +275,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
     })
 
     it('should preserve line breaks', async () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const textarea = screen.getByRole('textbox', { name: /paste your comments here/i })
@@ -438,13 +293,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
 
   describe('AC-2.10: Accessibility', () => {
     it('should be focusable and activatable with keyboard', () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const button = screen.getByRole('button', { name: /replace pronouns with placeholders/i })
@@ -458,13 +306,6 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
     })
 
     it('should have proper ARIA labels', () => {
-      jest.mocked(pronounsApi.usePronounsQuery).mockReturnValue({
-        pronouns: mockPronouns,
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      })
-
       render(<BulkUploadModal {...defaultProps} />)
 
       const button = screen.getByRole('button', { name: /replace pronouns with placeholders/i })

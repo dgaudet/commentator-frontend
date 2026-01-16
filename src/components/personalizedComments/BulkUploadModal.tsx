@@ -10,17 +10,21 @@
 import { useState } from 'react'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
-import { usePronounsQuery } from '../../hooks/usePronounsQuery'
 import { Button } from '../common/Button'
 import { parseComments } from './parseComments'
 import { replacePronounsWithPlaceholders } from '../../utils/pronouns'
 import type { BulkSaveResult } from './bulkSaveComments'
+import type { Pronoun } from '../../types'
 
 interface BulkUploadModalProps {
   isOpen: boolean
   onClose: () => void
   subjectId: string
   onImport: (comments: Array<{ text: string; rating: number }>, onProgress?: (current: number) => void) => Promise<BulkSaveResult>
+  // Pronouns passed from parent to avoid duplicate API calls
+  pronouns: Pronoun[]
+  pronounsLoading: boolean
+  pronounsError: string | null
 }
 
 type ModalState = 'input' | 'progress' | 'results'
@@ -30,9 +34,11 @@ export const BulkUploadModal = ({
   onClose,
   subjectId: _subjectId,
   onImport,
+  pronouns,
+  pronounsLoading,
+  pronounsError,
 }: BulkUploadModalProps) => {
   const themeColors = useThemeColors()
-  const { pronouns, loading: pronounsLoading, error: pronounsError } = usePronounsQuery()
   const [textareaValue, setTextareaValue] = useState('')
   const [validationError, setValidationError] = useState('')
   const [modalState, setModalState] = useState<ModalState>('input')

@@ -7,8 +7,13 @@
  * Features:
  * - Fetches all pronouns for the authenticated user
  * - Handles loading and error states
- * - Caches results during component lifetime
  * - Provides refetch capability
+ *
+ * Usage Pattern:
+ * - Parent component (e.g., PersonalizedCommentsModal) calls this hook
+ * - Parent passes pronouns, loading, error as props to child components
+ * - This avoids duplicate API calls from sibling/child components
+ * - When parent unmounts, all data is cleaned up naturally
  *
  * @returns Object with pronouns list, loading state, error message, and refetch function
  *
