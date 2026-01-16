@@ -31,6 +31,17 @@ export interface ReplacePronounsResult {
 }
 
 /**
+ * Escapes special regex characters in a string to prevent regex injection
+ * Escapes: . * + ? [ ] ( ) { } ^ $ | \
+ *
+ * @param str - The string to escape
+ * @returns The escaped string safe for use in regex patterns
+ */
+function escapeRegexSpecialChars(str: string): string {
+  return str.replace(/[.*+?[\](){}^$|\\]/g, '\\$&')
+}
+
+/**
  * Replaces actual pronoun values with standardized placeholders.
  *
  * This function processes each pronoun in the provided array and replaces
@@ -73,7 +84,9 @@ export function replacePronounsWithPlaceholders(
       // Use word boundary \b to match complete words only (e.g., "he" but not "the")
       // Global flag (g) replaces all occurrences
       // Case-insensitive flag (i) matches He, he, HE, hE, etc.
-      const pronounRegex = new RegExp(`\\b${pronoun.pronoun}\\b`, 'gi')
+      // Escape regex special characters to prevent regex injection
+      const escapedPronoun = escapeRegexSpecialChars(pronoun.pronoun)
+      const pronounRegex = new RegExp(`\\b${escapedPronoun}\\b`, 'gi')
       const matches = result.match(pronounRegex)
       if (matches) {
         pronounCount += matches.length
@@ -83,7 +96,9 @@ export function replacePronounsWithPlaceholders(
 
     // Replace possessive pronouns (case-insensitive with word boundaries)
     if (pronoun.possessivePronoun) {
-      const possessiveRegex = new RegExp(`\\b${pronoun.possessivePronoun}\\b`, 'gi')
+      // Escape regex special characters to prevent regex injection
+      const escapedPossessivePronoun = escapeRegexSpecialChars(pronoun.possessivePronoun)
+      const possessiveRegex = new RegExp(`\\b${escapedPossessivePronoun}\\b`, 'gi')
       const matches = result.match(possessiveRegex)
       if (matches) {
         possessivePronounCount += matches.length

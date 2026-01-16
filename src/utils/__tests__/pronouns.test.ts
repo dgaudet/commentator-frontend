@@ -337,6 +337,151 @@ describe('replacePronounsWithPlaceholders', () => {
     })
   })
 
+  describe('AC-1.11: Regex Special Character Escaping (Security)', () => {
+    it('should not be vulnerable to regex injection with dot metacharacter', () => {
+      // Without escaping, 'a.b' regex would match 'a' + any character + 'b'
+      // With escaping, it should only match the literal string 'a.b'
+      const text = 'aXb should not match here'
+      const pronouns: Pronoun[] = [
+        {
+          id: '1',
+          pronoun: 'a.b',
+          possessivePronoun: 'his',
+          userId: 'user1',
+          createdAt: '2025-01-15T00:00:00Z',
+          updatedAt: '2025-01-15T00:00:00Z',
+        },
+      ]
+
+      const result = replacePronounsWithPlaceholders(text, pronouns)
+
+      // With proper escaping, 'aXb' should not match the pattern 'a.b' (literal dot)
+      expect(result.replacementCount.pronoun).toBe(0)
+    })
+
+    it('should not be vulnerable to regex injection with asterisk metacharacter', () => {
+      // Without escaping, 'a*' would match 'a' repeated 0+ times
+      const text = 'aaa matches one a should not match'
+      const pronouns: Pronoun[] = [
+        {
+          id: '1',
+          pronoun: 'a*',
+          possessivePronoun: 'his',
+          userId: 'user1',
+          createdAt: '2025-01-15T00:00:00Z',
+          updatedAt: '2025-01-15T00:00:00Z',
+        },
+      ]
+
+      const result = replacePronounsWithPlaceholders(text, pronouns)
+
+      // Should not match because we escaped the asterisk
+      expect(result.replacementCount.pronoun).toBe(0)
+    })
+
+    it('should not be vulnerable to regex injection with pipe (OR) operator', () => {
+      // Without escaping, 'he|she' would match either 'he' or 'she'
+      const text = 'he and she are here'
+      const pronouns: Pronoun[] = [
+        {
+          id: '1',
+          pronoun: 'he|she',
+          possessivePronoun: 'his',
+          userId: 'user1',
+          createdAt: '2025-01-15T00:00:00Z',
+          updatedAt: '2025-01-15T00:00:00Z',
+        },
+      ]
+
+      const result = replacePronounsWithPlaceholders(text, pronouns)
+
+      // Should not match because we escaped the pipe operator
+      expect(result.replacementCount.pronoun).toBe(0)
+    })
+
+    it('should safely escape bracket characters', () => {
+      // Without escaping, '[abc]' would match any character in the set
+      const text = 'a and b and [abc] should not match'
+      const pronouns: Pronoun[] = [
+        {
+          id: '1',
+          pronoun: '[abc]',
+          possessivePronoun: 'his',
+          userId: 'user1',
+          createdAt: '2025-01-15T00:00:00Z',
+          updatedAt: '2025-01-15T00:00:00Z',
+        },
+      ]
+
+      const result = replacePronounsWithPlaceholders(text, pronouns)
+
+      // Should not match 'a' or 'b' because we escaped the brackets
+      expect(result.replacementCount.pronoun).toBe(0)
+    })
+
+    it('should safely escape caret (^) anchor character', () => {
+      // Without escaping, '^he' would match 'he' at start of string
+      const text = 'hello there. He is great'
+      const pronouns: Pronoun[] = [
+        {
+          id: '1',
+          pronoun: '^he',
+          possessivePronoun: 'his',
+          userId: 'user1',
+          createdAt: '2025-01-15T00:00:00Z',
+          updatedAt: '2025-01-15T00:00:00Z',
+        },
+      ]
+
+      const result = replacePronounsWithPlaceholders(text, pronouns)
+
+      // Should not match because we escaped the caret
+      expect(result.replacementCount.pronoun).toBe(0)
+    })
+
+    it('should safely escape dollar sign ($) anchor character', () => {
+      // Without escaping, 'he$' would match 'he' at end of string
+      const text = 'He is great'
+      const pronouns: Pronoun[] = [
+        {
+          id: '1',
+          pronoun: 'he$',
+          possessivePronoun: 'his',
+          userId: 'user1',
+          createdAt: '2025-01-15T00:00:00Z',
+          updatedAt: '2025-01-15T00:00:00Z',
+        },
+      ]
+
+      const result = replacePronounsWithPlaceholders(text, pronouns)
+
+      // Should not match because we escaped the dollar sign
+      expect(result.replacementCount.pronoun).toBe(0)
+    })
+
+    it('should safely escape backslash character without throwing errors', () => {
+      // Backslash has special meaning in regex escape sequences
+      // Test that escaping prevents errors when backslash is in pronoun
+      const text = 'hello world'
+      const pronouns: Pronoun[] = [
+        {
+          id: '1',
+          pronoun: 'he\\b',
+          possessivePronoun: 'his',
+          userId: 'user1',
+          createdAt: '2025-01-15T00:00:00Z',
+          updatedAt: '2025-01-15T00:00:00Z',
+        },
+      ]
+
+      // Should not throw an error when processing regex special character
+      const result = replacePronounsWithPlaceholders(text, pronouns)
+
+      // The pattern 'he\b' (with backslash) won't match 'he' in the text
+      expect(result.replacementCount.pronoun).toBe(0)
+    })
+  })
+
   describe('Integration Tests', () => {
     it('should handle typical comment scenario', () => {
       const outcomeComment = 'Alex scored 88. He performed well.'
