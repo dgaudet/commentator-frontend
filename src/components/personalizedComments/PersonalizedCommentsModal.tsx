@@ -386,9 +386,9 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                   showPlaceholderTips={true}
                 />
 
-                {/* TASK-1.3: Replace Pronouns Button in Add section - same level as character counter, left-aligned */}
+                {/* TASK-1.3: Replace Pronouns Button and Message in Add section - beside each other */}
                 {!pronounsError && (
-                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md }}>
+                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md, display: 'flex', gap: spacing.md, alignItems: 'center' }}>
                     <Button
                       onClick={() => handleReplacePronounsClick('add')}
                       disabled={replacePronounsLoading === 'add' || pronounsLoading || pronouns.length === 0}
@@ -403,6 +403,21 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                     >
                       {replacePronounsLoading === 'add' ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
                     </Button>
+
+                    {/* TASK-1.3: Replace Pronouns Message in Add section - beside button */}
+                    {replacePronounsMessage?.section === 'add' && (
+                      <div
+                        role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
+                        style={{
+                          ...getMessageBoxStyle(replacePronounsMessage.type),
+                          marginTop: 0,
+                          marginBottom: 0,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {replacePronounsMessage.text}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -414,16 +429,6 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                   onChange={setNewCommentRating}
                   required
                 />
-
-                {/* TASK-1.3: Replace Pronouns Message in Add section */}
-                {replacePronounsMessage?.section === 'add' && (
-                  <div
-                    role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
-                    style={getMessageBoxStyle(replacePronounsMessage.type)}
-                  >
-                    {replacePronounsMessage.text}
-                  </div>
-                )}
 
                 {validationError && (
                   <div
@@ -528,9 +533,9 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                                   showPlaceholderTips={true}
                                 />
 
-                                {/* TASK-1.3: Replace Pronouns Button in Edit section - same level as character counter, left-aligned */}
+                                {/* TASK-1.3: Replace Pronouns Button and Message in Edit section - beside each other */}
                                 {!pronounsError && (
-                                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md }}>
+                                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md, display: 'flex', gap: spacing.md, alignItems: 'center' }}>
                                     <Button
                                       onClick={() => handleReplacePronounsClick('edit')}
                                       disabled={replacePronounsLoading === 'edit' || pronounsLoading || pronouns.length === 0}
@@ -545,6 +550,21 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                                     >
                                       {replacePronounsLoading === 'edit' ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
                                     </Button>
+
+                                    {/* TASK-1.3: Replace Pronouns Message in Edit section - beside button */}
+                                    {replacePronounsMessage?.section === 'edit' && (
+                                      <div
+                                        role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
+                                        style={{
+                                          ...getMessageBoxStyle(replacePronounsMessage.type),
+                                          marginTop: 0,
+                                          marginBottom: 0,
+                                          whiteSpace: 'nowrap',
+                                        }}
+                                      >
+                                        {replacePronounsMessage.text}
+                                      </div>
+                                    )}
                                   </div>
                                 )}
 
@@ -556,16 +576,6 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                                   onChange={setEditRating}
                                   required
                                 />
-
-                                {/* TASK-1.3: Replace Pronouns Message in Edit section */}
-                                {replacePronounsMessage?.section === 'edit' && (
-                                  <div
-                                    role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
-                                    style={getMessageBoxStyle(replacePronounsMessage.type)}
-                                  >
-                                    {replacePronounsMessage.text}
-                                  </div>
-                                )}
 
                                 {validationError && (
                                   <div
