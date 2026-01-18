@@ -1,5 +1,5 @@
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0066FF 0%, #0052CC 100%);
   color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 0;
@@ -28,6 +28,13 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: white;
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .userSection {
@@ -106,20 +113,22 @@
     width: 100%;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 1rem;
   }
 
   .userInfo {
     align-items: center;
-    order: 1;
+    min-width: auto;
     width: 100%;
-  }
-
-  .logoutButton {
     order: 2;
   }
 
-  .errorMessage {
+  .logoutButton {
     order: 3;
+  }
+
+  .errorMessage {
+    order: 4;
     width: 100%;
   }
 }

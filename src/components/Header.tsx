@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { ThemeToggle } from './common/ThemeToggle'
 import styles from './Header.module.css'
 
 export const Header: React.FC = () => {
@@ -29,9 +30,11 @@ export const Header: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.brand}>
           <h1 className={styles.title}>Commentator</h1>
+          <p className={styles.subtitle}>Student Report Card Comment Management</p>
         </div>
 
         <div className={styles.userSection}>
+          <ThemeToggle />
           {user && (
             <>
               <div className={styles.userInfo}>

@@ -9,8 +9,8 @@
   "phases": {
     "planning": "COMPLETE",
     "architecture": "SKIPPED",
-    "implementation": "PENDING",
-    "testing": "PENDING",
+    "implementation": "COMPLETE",
+    "testing": "COMPLETE",
     "deployment": "PENDING"
   },
   "stakeholders": ["engineering"],

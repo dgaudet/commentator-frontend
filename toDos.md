@@ -155,10 +155,9 @@ When ready, configure a custom domain using Cloudflare:
 ---
 
 Older Notes:
-* Are the secrets in the built deployment - looks like it, so that's not very good
 * the callback url work is quite odd, and the url in the browser has the full callback url, which isn't very user friendly
 ** Should probably just have a callback page that does the work from the 404
-* The app doesn't wait for the backend to startup, it fails then you have to reload the browser to get the app to work
+* I never finished the custom domain with cloudflare
 * Killing the locally running app
 ** lsof -i :5173, then kill the process
 
