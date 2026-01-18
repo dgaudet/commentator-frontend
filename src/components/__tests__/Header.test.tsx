@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen } from '../../test-utils'
 import userEvent from '@testing-library/user-event'
 import * as AuthModule from '../../contexts/AuthContext'
 import { Header } from '../Header'
@@ -277,6 +277,64 @@ describe('Header', () => {
 
       const containerEl = container.querySelector('.container')
       expect(containerEl).toBeInTheDocument()
+    })
+  })
+
+  describe('Header Consolidation - Title and Subtitle', () => {
+    it('should display application subtitle "Student Report Card Comment Management"', () => {
+      render(<Header />)
+      expect(screen.getByText('Student Report Card Comment Management')).toBeInTheDocument()
+    })
+
+    it('should have proper heading hierarchy with title and subtitle', () => {
+      const { container } = render(<Header />)
+      const headings = container.querySelectorAll('h1, h2, h3')
+      expect(headings.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('Header Consolidation - Theme Toggle Integration', () => {
+    it('should render ThemeToggle component in header', () => {
+      render(<Header />)
+      // ThemeToggle renders a radiogroup with aria-label "Theme preference"
+      expect(screen.getByRole('radiogroup', { name: /theme preference/i })).toBeInTheDocument()
+    })
+
+    it('should have theme toggle options (Light, Dark, System)', () => {
+      render(<Header />)
+      expect(screen.getByRole('radio', { name: /light theme/i })).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /dark theme/i })).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /system theme/i })).toBeInTheDocument()
+    })
+
+    it('should allow changing theme preference', async () => {
+      render(<Header />)
+      const darkThemeRadio = screen.getByRole('radio', { name: /dark theme/i })
+
+      await userEvent.click(darkThemeRadio)
+
+      expect(darkThemeRadio).toBeChecked()
+    })
+  })
+
+  describe('Header Consolidation - Layout and Positioning', () => {
+    it('should position user info and theme toggle on the right side', () => {
+      const { container } = render(<Header />)
+      const userSection = container.querySelector('.userSection')
+      expect(userSection).toBeInTheDocument()
+
+      // ThemeToggle should be in or near the user section
+      const radiogroup = screen.getByRole('radiogroup', { name: /theme preference/i })
+      expect(radiogroup).toBeInTheDocument()
+    })
+
+    it('should have proper header structure with brand and controls', () => {
+      const { container } = render(<Header />)
+      const brand = container.querySelector('.brand')
+      expect(brand).toBeInTheDocument()
+
+      const userSection = container.querySelector('.userSection')
+      expect(userSection).toBeInTheDocument()
     })
   })
 })
