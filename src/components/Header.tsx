@@ -1,10 +1,12 @@
 import React, { useCallback, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useThemeColors } from '../hooks/useThemeColors'
 import { ThemeToggle } from './common/ThemeToggle'
 import styles from './Header.module.css'
 
 export const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth()
+  const themeColors = useThemeColors()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -25,8 +27,12 @@ export const Header: React.FC = () => {
     return null
   }
 
+  const headerStyle: React.CSSProperties = {
+    background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.primary.dark} 100%)`,
+  }
+
   return (
-    <header className={styles.header}>
+    <header className={styles.header} style={headerStyle}>
       <div className={styles.container}>
         <div className={styles.brand}>
           <h1 className={styles.title}>Commentator</h1>
