@@ -1,0 +1,88 @@
+{
+  "feature": "pronouns-to-placeholders",
+  "title": "Replace Pronouns with Placeholders Utility",
+  "description": "Add reusable utility to replace actual pronoun values with placeholder text (<pronoun>, <possessive pronoun>) across personalized and final comments. Includes button in bulk upload modal and add/edit components.",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "Small, self-contained feature with 6-8 user stories, 1-2 weeks effort, straightforward utility function + 2-3 component updates, no external integrations (uses existing pronoun endpoint), minimal technical complexity",
+    "assessedAt": "2026-01-15",
+    "confidence": 0.92
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "COMPLETE"
+  },
+  "completedAt": "2026-01-15",
+  "implementationStats": {
+    "filesCreated": 6,
+    "filesModified": 2,
+    "testsCreated": 76,
+    "testsPassing": 1836,
+    "lintErrors": 0,
+    "tddAdherence": "100%"
+  },
+  "artifacts": {
+    "prd": "pdd-workspace/pronouns-to-placeholders/planning/minimal-prd.md",
+    "stories": "pdd-workspace/pronouns-to-placeholders/planning/user-stories.md"
+  },
+  "userStories": [
+    {
+      "id": "US-1",
+      "title": "Reusable Pronoun-to-Placeholder Utility",
+      "taskId": "TASK-1.1",
+      "status": "COMPLETE",
+      "testsCreated": 17,
+      "filesCreated": ["src/utils/pronouns.ts", "src/utils/__tests__/pronouns.test.ts"]
+    },
+    {
+      "id": "US-2",
+      "title": "Replace Pronouns Button in Bulk Upload Modal",
+      "taskId": "TASK-1.2",
+      "status": "COMPLETE",
+      "testsCreated": 20,
+      "filesModified": ["src/components/personalizedComments/BulkUploadModal.tsx"],
+      "filesCreated": ["src/components/personalizedComments/__tests__/BulkUploadModal.replace-pronouns.test.tsx"]
+    },
+    {
+      "id": "US-3",
+      "title": "Replace Pronouns Button in Personalized Comments Components",
+      "taskId": "TASK-1.3",
+      "status": "COMPLETE",
+      "testsCreated": 10,
+      "filesModified": ["src/components/personalizedComments/PersonalizedCommentsModal.tsx"],
+      "filesCreated": ["src/components/personalizedComments/__tests__/PersonalizedCommentsModal.replace-pronouns.test.tsx"]
+    },
+    {
+      "id": "US-4",
+      "title": "Error Handling & Edge Cases",
+      "taskId": "TASK-1.4",
+      "status": "COMPLETE",
+      "testsCreated": 13,
+      "filesCreated": ["src/utils/__tests__/pronouns.edge-cases.test.ts"]
+    },
+    {
+      "id": "US-5",
+      "title": "Accessibility & Integration Testing",
+      "taskId": "TASK-1.5",
+      "status": "COMPLETE",
+      "testsCreated": 16,
+      "filesCreated": ["src/components/personalizedComments/__tests__/replace-pronouns.accessibility.test.tsx"]
+    }
+  ],
+  "estimates": {
+    "planning": "30 mins",
+    "implementation": "1-2 weeks",
+    "testing": "3-5 days"
+  },
+  "stakeholders": [
+    "Teachers (primary users)",
+    "School administrators",
+    "Support team"
+  ],
+  "dependencies": [
+    "usePronounsQuery hook (existing)",
+    "placeholders utility (existing)",
+    "Pronoun API endpoint (existing)"
+  ]
+}

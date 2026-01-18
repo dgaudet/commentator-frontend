@@ -19,6 +19,9 @@ npm run test
 
 # Check linting errors (MUST pass before commits)
 npm run lint
+
+# Build the application
+npm run build
 ```
 
 **Required before each commit**: `npm run lint` must pass without errors.
@@ -145,8 +148,7 @@ Tasks are classified by risk level with corresponding approval and retry policie
 - Main branch for PRs: `main`
 
 ### Commit Standards
-- Ensure the last line of each file ends with a newline character
-- Reference requirement IDs in commits for traceability (e.g., `REQ-3`, `DES-3`, `TASK-3.1`)
+- Do not commit, let the user commit changes
 
 ### Pull Requests
 - Reference `intent.md` and `tasks.md` in PR description

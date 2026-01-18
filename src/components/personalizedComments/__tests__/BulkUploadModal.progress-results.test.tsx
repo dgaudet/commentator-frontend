@@ -14,9 +14,21 @@
 import { render, screen, fireEvent, waitFor } from '../../../test-utils'
 import { BulkUploadModal } from '../BulkUploadModal'
 import type { BulkSaveResult } from '../bulkSaveComments'
+import type { Pronoun } from '../../../types'
 
 describe('BulkUploadModal - Story 5: Progress and Results', () => {
   const mockOnClose = jest.fn()
+
+  const mockPronouns: Pronoun[] = [
+    {
+      id: '1',
+      pronoun: 'he',
+      possessivePronoun: 'his',
+      userId: 'user1',
+      createdAt: '2025-01-15T00:00:00Z',
+      updatedAt: '2025-01-15T00:00:00Z',
+    },
+  ]
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -27,6 +39,9 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
     onClose: mockOnClose,
     subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     onImport: jest.fn(),
+    pronouns: mockPronouns,
+    pronounsLoading: false,
+    pronounsError: null,
   })
 
   describe('AC1: Progress feedback during import', () => {

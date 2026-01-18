@@ -12,16 +12,31 @@
 
 import { render, screen, fireEvent } from '../../../test-utils'
 import { BulkUploadModal } from '../BulkUploadModal'
+import type { Pronoun } from '../../../types'
 
 describe('BulkUploadModal - Story 2: Modal Instructions', () => {
   const mockOnImport = jest.fn()
   const mockOnClose = jest.fn()
+
+  const mockPronouns: Pronoun[] = [
+    {
+      id: '1',
+      pronoun: 'he',
+      possessivePronoun: 'his',
+      userId: 'user1',
+      createdAt: '2025-01-15T00:00:00Z',
+      updatedAt: '2025-01-15T00:00:00Z',
+    },
+  ]
 
   const defaultProps = {
     isOpen: true,
     onClose: mockOnClose,
     subjectId: '65a1b2c3d4e5f6g7h8i9j0k1',
     onImport: mockOnImport,
+    pronouns: mockPronouns,
+    pronounsLoading: false,
+    pronounsError: null,
   }
 
   beforeEach(() => {
