@@ -1,0 +1,72 @@
+{
+  "feature": {
+    "name": "auth0-callback-handler-github-pages",
+    "type": "authentication-infrastructure",
+    "status": "architected",
+    "baselineDateCreated": "2026-01-18",
+    "description": "Dedicated Auth0 callback handler for GitHub Pages static hosting with URL cleaning and error handling"
+  },
+  "complexity": {
+    "level": "L0",
+    "classification": "ATOMIC",
+    "reasoning": "Single well-defined task to create dedicated callback handler. Localized to two new/modified files (public/callback/index.html, src/contexts/AuthContext.tsx). No cross-module dependencies. Architecture pre-approved via ADR-0001. Single developer implementation with < 1 week effort.",
+    "assessedAt": "2026-01-18T00:00:00Z",
+    "lastReassessedAt": null,
+    "confidence": 0.95
+  },
+  "scope": {
+    "userStories": 4,
+    "epics": 0,
+    "estimatedDuration": "2-3 days",
+    "teamSize": 1,
+    "files": {
+      "new": ["public/callback/index.html"],
+      "modified": ["src/contexts/AuthContext.tsx", ".env.example"]
+    }
+  },
+  "technical": {
+    "externalIntegrations": ["Auth0 SDK (existing)"],
+    "dataChanges": false,
+    "performanceCritical": false,
+    "securityConsiderations": true,
+    "architectureApproved": true,
+    "architectureAdr": "docs/adr/0001-auth0-callback-handler-github-pages.md"
+  },
+  "phases": {
+    "planning": {
+      "status": "IN_PROGRESS",
+      "startedAt": "2026-01-18",
+      "completedAt": null
+    },
+    "implementation": {
+      "status": "PENDING",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "testing": {
+      "status": "PENDING",
+      "startedAt": null,
+      "completedAt": null
+    }
+  },
+  "artifacts": {
+    "generated": ["metadata.json", "planning/tech-note.md"],
+    "architecture": false,
+    "epicTechSpecs": false,
+    "researchRequired": false
+  },
+  "quality": {
+    "tddRequired": true,
+    "architectureGateRequired": false,
+    "executiveSignoffRequired": false,
+    "riskAssessment": "LOW - Isolated callback handler, no impact on existing auth flow"
+  },
+  "nextSteps": [
+    "Complete tech-note.md with implementation details",
+    "Review and approve tech-note.md",
+    "Hand off to Frontend Engineer for implementation",
+    "Frontend Engineer creates tests (TDD)",
+    "Frontend Engineer implements callback handler",
+    "QA Engineer validates against acceptance criteria"
+  ]
+}
