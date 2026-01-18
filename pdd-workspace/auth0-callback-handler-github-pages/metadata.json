@@ -34,19 +34,19 @@
   },
   "phases": {
     "planning": {
-      "status": "IN_PROGRESS",
+      "status": "COMPLETE",
       "startedAt": "2026-01-18",
-      "completedAt": null
+      "completedAt": "2026-01-18"
     },
     "implementation": {
-      "status": "PENDING",
-      "startedAt": null,
-      "completedAt": null
+      "status": "COMPLETE",
+      "startedAt": "2026-01-18",
+      "completedAt": "2026-01-18"
     },
     "testing": {
-      "status": "PENDING",
-      "startedAt": null,
-      "completedAt": null
+      "status": "COMPLETE",
+      "startedAt": "2026-01-18",
+      "completedAt": "2026-01-18"
     }
   },
   "artifacts": {

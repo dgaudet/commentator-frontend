@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authenticating...</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #f5f5f5;
+      }
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e0e0e0;
+        border-top-color: #3d8bff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .error {
+        max-width: 500px;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .error h2 {
+        margin-top: 0;
+        color: #d32f2f;
+      }
+      .error p {
+        color: #666;
+        margin: 0.5rem 0;
+      }
+      .error a {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.75rem 1.5rem;
+        background: #3d8bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 600;
+      }
+      .error a:hover {
+        background: #2b7fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="content">
+        <div class="spinner"></div>
+      </div>
+    </div>
+    <script>
+      const BASE = '/commentator-frontend'
+      function esc(t) {
+        const m = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;',
+        }
+        return t.replace(/[&<>"']/g, (c) => m[c])
+      }
+      function parse() {
+        const p = new URLSearchParams(window.location.search)
+        return {
+          code: p.get('code'),
+          state: p.get('state'),
+          error: p.get('error'),
+          desc: p.get('error_description'),
+        }
+      }
+      function validate(p) {
+        const err = p.error !== null
+        const ok = p.code !== null && p.state !== null
+        if (err) {
+          return { ok: false, type: 'error', err: p.error, desc: p.desc }
+        }
+        if (!ok) {
+          return { ok: false, type: 'invalid', err: 'missing', desc: 'Missing code or state' }
+        }
+        return { ok: true }
+      }
+      function getMsg(code) {
+        const msgs = {
+          access_denied: 'Login cancelled. Please try again.',
+          server_error: 'Authentication service error. Please try again later.',
+          unauthorized_client: 'Application configuration error. Please contact support.',
+        }
+        return msgs[code] || 'An error occurred during authentication.'
+      }
+      function err(e, d) {
+        const c = document.getElementById('content')
+        const m = getMsg(e)
+        c.innerHTML = `<div class="error"><h2>Authentication Error</h2><p>${esc(m)}</p>${
+          d ? `<p style="font-size:0.85rem;color:#999;">Code: ${esc(e)}</p>` : ''
+        }<a href="${BASE}/">Return to Application</a></div>`
+      }
+      function go() {
+        try {
+          const p = parse()
+          const v = validate(p)
+          if (!v.ok) {
+            console.error('Callback failed:', v)
+            err(v.err, v.desc)
+            return
+          }
+          sessionStorage.setItem('auth0_callback_processed', JSON.stringify({ t: Date.now(), ok: true }))
+          const url = BASE + '/'
+          window.history.replaceState(null, '', url)
+          setTimeout(() => {
+            window.location.replace(url)
+          }, 100)
+        } catch (e) {
+          console.error('Error:', e)
+          err('error', e.message)
+        }
+      }
+      go()
+    </script>
+  </body>
+</html>
