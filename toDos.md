@@ -8,10 +8,6 @@
     - Business value: Enables batch printing/review
 
 ### Data Management
-- [ ] **Sort final comments by student name**
-    - Current: Unsorted or sorted by creation date
-    - Business value: Easier to find specific students
-
 - [ ] **When adding a new class, select it by default**
     - Business value: Better UX, fewer clicks
 
@@ -90,13 +86,10 @@ The final comments error text doesn't use the standardized error label component
 Login
 * The header, should be modified to be the one we already have
 * The "pages" should be refactored to be components
-* Need to figure out how to get the JWT, and how to pass it to the backend
-** looks like I should be able to import { useAuth } like in other places, and call the getAccessToken on it
-** I should be able to ask claude to send the token on api rquests automatically
 * Need to style the login form
 * THe header with they dark/light styles should be used for the login as well
 
-THere are a lot of render issues when adding/updating an item
+There are a lot of render issues when adding/updating an item
 * Outcome Comments, you get a flash
 * Also when switching between tabs
 * Personalized Comments, you get a flash

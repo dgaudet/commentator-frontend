@@ -1,0 +1,19 @@
+{
+  "featureName": "header-consolidation",
+  "description": "Consolidate two separate header components into a single unified Header component",
+  "complexity": {
+    "level": "L0",
+    "reasoning": "Atomic task - single component consolidation with simple styling update. No API changes, no data migrations, no external integrations. Estimated effort: < 1 day, single developer.",
+    "assessedAt": "2026-01-18T00:00:00Z"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "testing": "PENDING",
+    "deployment": "PENDING"
+  },
+  "stakeholders": ["engineering"],
+  "priority": "medium",
+  "tags": ["ui-consolidation", "tech-debt", "design-system"]
+}
