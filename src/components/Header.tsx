@@ -34,30 +34,35 @@ export const Header: React.FC = () => {
         </div>
 
         <div className={styles.userSection}>
-          <ThemeToggle />
           {user && (
             <>
-              <div className={styles.userInfo}>
-                <span className={styles.userName}>{user.name}</span>
-                <span className={styles.userEmail}>{user.email}</span>
-              </div>
-
-              {error && (
-                <div className={styles.errorMessage} role="alert">
-                  {error}
+              <div className={styles.userControls}>
+                <div className={styles.userInfo}>
+                  <span className={styles.userName}>{user.name}</span>
+                  <span className={styles.userEmail}>{user.email}</span>
                 </div>
-              )}
 
-              <button
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                className={styles.logoutButton}
-                aria-label="Logout"
-              >
-                {isLoggingOut ? 'Logging out...' : 'Logout'}
-              </button>
+                {error && (
+                  <div className={styles.errorMessage} role="alert">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className={styles.logoutButton}
+                  aria-label="Logout"
+                >
+                  {isLoggingOut ? 'Logging out...' : 'Logout'}
+                </button>
+              </div>
             </>
           )}
+
+          <div className={styles.themeToggleContainer}>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </header>
