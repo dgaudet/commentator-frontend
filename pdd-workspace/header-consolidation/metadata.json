@@ -11,7 +11,7 @@
     "architecture": "SKIPPED",
     "implementation": "COMPLETE",
     "testing": "COMPLETE",
-    "deployment": "PENDING"
+    "deployment": "COMPLETE"
   },
   "stakeholders": ["engineering"],
   "priority": "medium",

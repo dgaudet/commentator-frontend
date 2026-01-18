@@ -34,6 +34,8 @@ Cleaned up and optimized:
 2. **App.tsx**: Removed unused imports (ThemeToggle, useThemeColors)
 3. **Header.module.css**: Improved mobile responsive design with proper ordering and gaps
 4. **Test suite**: Fixed linting errors, all tests passing
+5. **Header.tsx**: Refactored to use `useThemeColors` hook for dynamic gradient (theme-aware colors)
+6. **Header.module.css**: Removed hardcoded gradient, now applied via inline styles with theme tokens
 
 ---
 
@@ -41,8 +43,8 @@ Cleaned up and optimized:
 
 | File | Changes | Lines |
 |------|---------|-------|
-| `src/components/Header.tsx` | Added subtitle JSX, ThemeToggle import | +2 import, +1 JSX |
-| `src/components/Header.module.css` | Changed gradient color to blue, added subtitle styles, improved mobile layout | Updated |
+| `src/components/Header.tsx` | Added subtitle JSX, ThemeToggle import, useThemeColors hook for dynamic gradient | +3 imports, +1 inline style |
+| `src/components/Header.module.css` | Changed gradient color to blue, added subtitle styles, improved mobile layout, removed hardcoded gradient | Updated |
 | `src/components/__tests__/Header.test.tsx` | Fixed imports, added 7 new tests | +40 lines |
 | `src/App.tsx` | Removed hardcoded header, unused imports/variables | -9 header lines |
 
@@ -69,17 +71,19 @@ Cleaned up and optimized:
 
 ## Color Scheme Update
 
-**Before (Purple)**:
+**Before (Purple - Static CSS)**:
 ```css
 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 ```
 
-**After (Blue - Matches App Theme)**:
-```css
-background: linear-gradient(135deg, #0066FF 0%, #0052CC 100%);
+**After (Dynamic Theme Tokens)**:
+```typescript
+const headerStyle: React.CSSProperties = {
+  background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.primary.dark} 100%)`,
+}
 ```
 
-The new color matches the theme tokens: `primary.main` (#0066FF) and `primary.dark` (#0052CC)
+The new implementation uses the theme tokens: `themeColors.primary.main` and `themeColors.primary.dark`, which dynamically respond to theme changes (light/dark mode). This ensures the header respects user theme preferences and integrates seamlessly with the design system.
 
 ---
 
@@ -125,7 +129,8 @@ The new color matches the theme tokens: `primary.main` (#0066FF) and `primary.da
 ## Acceptance Criteria Met
 
 - ✅ Single unified header displays all content
-- ✅ Header background is blue gradient (primary.main → primary.dark)
+- ✅ Header background uses theme tokens (primary.main → primary.dark) for dynamic theming
+- ✅ Header respects light/dark mode theme changes
 - ✅ "Commentator" title visible
 - ✅ "Student Report Card Comment Management" subtitle visible
 - ✅ ThemeToggle functional in header
@@ -133,15 +138,17 @@ The new color matches the theme tokens: `primary.main` (#0066FF) and `primary.da
 - ✅ Responsive design works on mobile/tablet/desktop
 - ✅ All tests pass (1855 passing)
 - ✅ No hardcoded header remains in App.tsx
+- ✅ No hardcoded colors in header styling - uses design tokens
 
 ---
 
 ## Key Learnings
 
 1. **ThemeProvider Context**: ThemeToggle requires ThemeProvider, which is included in test-utils custom render function
-2. **Unused Hook Cleanup**: Linting caught unused `useThemeColors` hook that could be removed after header consolidation
-3. **Mobile Layout Ordering**: CSS flex-order property provides cleaner responsive design than restructuring DOM
-4. **Test-First Validation**: TDD approach caught all requirements before implementation, enabling comprehensive test coverage
+2. **Design System Integration**: Using `useThemeColors` hook for gradient styling ensures dynamic theme responsiveness - header respects light/dark mode changes
+3. **Inline Styles for Dynamic Values**: CSS Modules alone cannot use JavaScript theme context; inline styles with hooks enable theme-aware styling
+4. **Mobile Layout Ordering**: CSS flex-order property provides cleaner responsive design than restructuring DOM
+5. **Test-First Validation**: TDD approach caught all requirements before implementation, enabling comprehensive test coverage
 
 ---
 
