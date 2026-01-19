@@ -79,7 +79,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
             // We have stored callback parameters from the dedicated callback handler
             // Reconstruct the callback URL so Auth0 SDK can process it
             const callbackUrl = `${window.location.origin}${config.redirectUri}?code=${storedParams.code}&state=${storedParams.state}`
-            console.log('Processing stored callback parameters from handler')
 
             // Use handleRedirectCallback with the stored parameters
             // The Auth0 SDK will parse the code and state and exchange them for tokens
