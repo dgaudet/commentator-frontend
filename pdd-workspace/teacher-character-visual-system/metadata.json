@@ -1,0 +1,97 @@
+{
+  "feature": "teacher-character-visual-system",
+  "title": "Teacher Character Visual System (Favicon + Loading Indicator)",
+  "description": "Cohesive visual identity using a friendly, approachable teacher character for favicon and loading indicator animations",
+  "status": "PLANNING_COMPLETE",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "Micro-level feature: Two visual assets (favicon and loading indicator), straightforward design scope, no cross-team dependencies, single designer-led execution"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "design": "PENDING",
+    "implementation": "PENDING",
+    "qa": "PENDING"
+  },
+  "ownership": {
+    "creative": "Creative Strategist",
+    "design": "[To be assigned]",
+    "implementation": "Frontend Engineer",
+    "approval": "Product Owner"
+  },
+  "scope": {
+    "primary_deliverables": [
+      "favicon.svg + rasterized PNG versions (16x16, 32x32, 64x64, 128x128px)",
+      "loading-indicator animation (SVG or GIF, <50KB)"
+    ],
+    "constraints": [
+      "Use existing app color palette only",
+      "Favicon must be recognizable at 16x16px",
+      "Loader animation 1.5-2 second loop",
+      "File size <50KB for loader",
+      "WCAG AA accessibility compliance",
+      "Colorblind-safe design"
+    ],
+    "out_of_scope": [
+      "Additional UI illustrations or decorative graphics",
+      "App redesign or layout changes",
+      "Multiple character variations (Phase 1 uses single character)"
+    ]
+  },
+  "creative_requirements": {
+    "tone": "Friendly, approachable",
+    "personality": "Fun teacher",
+    "animation_style": "Calm and patient",
+    "diversity": "Yes - reflect inclusive representation",
+    "palette": "Exact app color palette (no new colors)"
+  },
+  "design_specifications": {
+    "style": "Minimalist line-art with rounded forms",
+    "favicon_sizes": ["16x16px", "32x32px", "64x64px", "128x128px"],
+    "favicon_formats": ["SVG", "PNG"],
+    "loader_format": "Animated SVG (or GIF fallback)",
+    "loader_dimensions": "64x64px (scalable)",
+    "animation_duration": "1.5-2.0 seconds",
+    "animation_loop": "Infinite, smooth",
+    "primary_animation": "Gentle pencil-tapping motion",
+    "secondary_animation": "Optional subtle head tilt/thinking gesture"
+  },
+  "accessibility": {
+    "wcag_level": "AA",
+    "contrast_minimum": "4.5:1 for text, 3:1 for graphics",
+    "colorblind_tested": false,
+    "animation_seizure_safe": "No strobing >3Hz"
+  },
+  "timeline": {
+    "design_kickoff": "2026-01-19",
+    "concept_sketches_due": "2026-02-02",
+    "stakeholder_review": "2026-02-05",
+    "final_assets_due": "2026-02-19",
+    "implementation_target": "2026-02-26"
+  },
+  "artifacts": {
+    "planning": [
+      "pdd-workspace/teacher-character-visual-system/planning/design-brief.md"
+    ],
+    "design": [
+      "favicon.svg (source)",
+      "favicon-16x16.png",
+      "favicon-32x32.png",
+      "favicon-64x64.png",
+      "favicon-128x128.png",
+      "loading-indicator.svg or .gif",
+      "design-specifications.md (color values, dimensions, etc.)"
+    ],
+    "implementation": [
+      "public/favicon.svg",
+      "public/favicon-*.png",
+      "src/components/LoadingIndicator.tsx or index.html update"
+    ]
+  },
+  "dependencies": [
+    "App color palette specification (must be finalized)"
+  ],
+  "notes": "This is a visual cohesion effort - uses teacher character across two key UI touchpoints. Design brief ready for designer handoff. Recommend phased approach: Phase 1 = single inclusive teacher character, Phase 2+ = additional character variations for future UI expansion.",
+  "assessedAt": "2026-01-19",
+  "lastUpdated": "2026-01-19"
+}

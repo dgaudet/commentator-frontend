@@ -167,3 +167,7 @@ possible Auth0 login/user create flow by using Auth0 configuration, instead of i
 test out changing my password in auth0
 
 Create a proper 404 page that gives information about not finding any result
+It would be nice to have the header and proper colors on the login page as well
+I just thought of a cool loading indicator, perhaps an image of a teacher thinking, tapping her pencil
+
+considerations: tone - friendly approachable, diversity - yes reflect diversity, animation - calm and patient, color same colors as the app palatte, personality - fun teacher.
