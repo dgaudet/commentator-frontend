@@ -186,9 +186,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
     getAccessToken,
   }
 
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
