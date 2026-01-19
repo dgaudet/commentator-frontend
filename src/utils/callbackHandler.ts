@@ -21,8 +21,8 @@ export interface CallbackParams {
 export interface ValidationResult {
   ok: boolean
   type?: 'error' | 'invalid'
-  err?: string
-  desc?: string
+  err?: string | null
+  desc?: string | null
 }
 
 /**
