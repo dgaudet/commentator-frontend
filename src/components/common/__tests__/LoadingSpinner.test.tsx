@@ -31,11 +31,11 @@ describe('LoadingSpinner', () => {
 
   it('should support different sizes', () => {
     const { rerender } = render(<LoadingSpinner size="small" />)
-    const spinnerSmall = screen.getByRole('status').querySelector('div')
+    const spinnerSmall = screen.getByRole('status').querySelector('svg')
     expect(spinnerSmall).toBeInTheDocument()
 
     rerender(<LoadingSpinner size="large" />)
-    const spinnerLarge = screen.getByRole('status').querySelector('div')
+    const spinnerLarge = screen.getByRole('status').querySelector('svg')
     expect(spinnerLarge).toBeInTheDocument()
   })
 
@@ -77,9 +77,13 @@ describe('LoadingSpinner', () => {
       const spinnerContainer = screen.getByTestId('loading-spinner')
       expect(spinnerContainer).toBeInTheDocument()
 
-      // Spinner should have inline styles for colors
-      const computedStyle = window.getComputedStyle(spinnerContainer)
-      expect(computedStyle.borderColor).toBeTruthy()
+      // SVG should be rendered with design tokens applied via stroke color
+      const svg = spinnerContainer.querySelector('svg')
+      expect(svg).toBeInTheDocument()
+
+      // Check that SVG has circles or paths with stroke attributes
+      const strokeElements = svg?.querySelectorAll('[stroke]')
+      expect(strokeElements?.length).toBeGreaterThan(0)
     })
 
     it('should adapt all styling to current theme', () => {

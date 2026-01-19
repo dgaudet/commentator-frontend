@@ -14,7 +14,6 @@ import { ReactElement } from 'react'
 import { render as rtlRender, RenderOptions } from '@testing-library/react'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { AuthProvider } from './contexts/AuthContext'
-import { LoadingProvider } from './contexts/LoadingContext'
 import { createTestAuthConfig } from './config/authConfig'
 
 // Create test auth config for use in test wrapper
@@ -37,11 +36,9 @@ function customRender(
 ) {
   return rtlRender(ui, {
     wrapper: ({ children }) => (
-      <LoadingProvider>
-        <AuthProvider authConfig={testAuthConfig}>
-          <ThemeProvider>{children}</ThemeProvider>
-        </AuthProvider>
-      </LoadingProvider>
+      <AuthProvider authConfig={testAuthConfig}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </AuthProvider>
     ),
     ...options,
   })

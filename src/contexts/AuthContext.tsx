@@ -4,7 +4,6 @@ import { setGetAccessToken, setCachedToken } from '../services/apiClient'
 import { parseAuthError } from '../utils/authErrorHandler'
 import { getDefaultAuthConfig, type AuthConfig } from '../config/authConfig'
 import { getStoredCallbackParams, clearStoredCallbackParams } from '../utils/callbackHandler'
-import { LoadingIndicator } from '../components/LoadingIndicator'
 
 interface User {
   sub: string
@@ -188,10 +187,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
   }
 
   return (
-    <>
-      <LoadingIndicator visible={loading} />
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    </>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   )
 }
 
