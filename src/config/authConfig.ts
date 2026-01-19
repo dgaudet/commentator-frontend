@@ -20,32 +20,16 @@ export interface AuthConfig {
 
 /**
  * Get Auth0 configuration from environment variables
- * Uses import.meta.env for Vite build (production) and process.env for Jest tests
+ * Uses import.meta.env for Vite and browser compatibility
  *
  * @returns Auth0 configuration from environment
  * @throws Error if required environment variables are missing
  */
 export function getDefaultAuthConfig(): AuthConfig {
-  // Try to use import.meta.env (Vite), fallback to process.env (Jest tests)
-  let domain: string | undefined
-  let clientId: string | undefined
-  let redirectUri: string | undefined
-  let audience: string | undefined
-
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const meta = import.meta as any
-    domain = meta.env.VITE_AUTH0_DOMAIN
-    clientId = meta.env.VITE_AUTH0_CLIENT_ID
-    redirectUri = meta.env.VITE_AUTH0_REDIRECT_URI
-    audience = meta.env.VITE_AUTH0_AUDIENCE
-  } catch {
-    // Jest doesn't support import.meta, use process.env instead
-    domain = process.env.VITE_AUTH0_DOMAIN
-    clientId = process.env.VITE_AUTH0_CLIENT_ID
-    redirectUri = process.env.VITE_AUTH0_REDIRECT_URI
-    audience = process.env.VITE_AUTH0_AUDIENCE
-  }
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID
+  const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI
+  const audience = import.meta.env.VITE_AUTH0_AUDIENCE
 
   if (!domain || !clientId || !redirectUri || !audience) {
     throw new Error(
