@@ -20,16 +20,16 @@ export interface AuthConfig {
 
 /**
  * Get Auth0 configuration from environment variables
- * Uses env module which provides consistent access across browser and test environments
+ * Uses import.meta.env for Vite and browser compatibility
  *
  * @returns Auth0 configuration from environment
  * @throws Error if required environment variables are missing
  */
 export function getDefaultAuthConfig(): AuthConfig {
-  const domain = process.env.AUTH0_DOMAIN
-  const clientId = process.env.AUTH0_CLIENT_ID
-  const redirectUri = process.env.AUTH0_REDIRECT_URI
-  const audience = process.env.AUTH0_AUDIENCE
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID
+  const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI
+  const audience = import.meta.env.VITE_AUTH0_AUDIENCE
 
   if (!domain || !clientId || !redirectUri || !audience) {
     throw new Error(
