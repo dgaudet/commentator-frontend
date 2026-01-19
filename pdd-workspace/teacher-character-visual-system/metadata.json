@@ -10,9 +10,9 @@
   "phases": {
     "planning": "COMPLETE",
     "requirements": "COMPLETE",
-    "design": "PENDING",
-    "implementation": "PENDING",
-    "qa": "PENDING"
+    "design": "PROTOTYPE_COMPLETE",
+    "implementation": "COMPLETE",
+    "qa": "PASSED"
   },
   "ownership": {
     "creative": "Creative Strategist",
