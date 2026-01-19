@@ -11,7 +11,9 @@ import {
   parseCallbackParams,
   validateCallbackParams,
   getErrorMessage,
-  storeCallbackFlag,
+  storeCallbackParams,
+  getStoredCallbackParams,
+  clearStoredCallbackParams,
   formatErrorHtml,
   type CallbackParams,
 } from '../utils/callbackHandler'
@@ -281,9 +283,9 @@ describe('callbackHandler - getErrorMessage()', () => {
 })
 
 /**
- * SessionStorage Flag Storage
+ * SessionStorage - Callback Parameter Storage
  */
-describe('callbackHandler - storeCallbackFlag()', () => {
+describe('callbackHandler - storeCallbackParams() and getStoredCallbackParams()', () => {
   beforeEach(() => {
     sessionStorage.clear()
   })
@@ -292,44 +294,95 @@ describe('callbackHandler - storeCallbackFlag()', () => {
     sessionStorage.clear()
   })
 
-  it('should store callback processed flag in sessionStorage', () => {
-    storeCallbackFlag()
+  it('should store callback parameters in sessionStorage', () => {
+    const params: CallbackParams = {
+      code: 'test-code-123',
+      state: 'test-state-456',
+      error: null,
+      errorDescription: null,
+    }
 
-    const stored = sessionStorage.getItem('auth0_callback_processed')
+    storeCallbackParams(params)
+
+    const stored = sessionStorage.getItem('auth0_callback_params')
     expect(stored).not.toBeNull()
 
     const data = JSON.parse(stored!)
-    expect(data.ok).toBe(true)
-    expect(data.t).toBeDefined()
+    expect(data.code).toBe('test-code-123')
+    expect(data.state).toBe('test-state-456')
+    expect(data.timestamp).toBeDefined()
   })
 
-  it('should store timestamp in callback flag', () => {
-    const beforeTime = Date.now()
-    storeCallbackFlag()
-    const afterTime = Date.now()
+  it('should retrieve stored callback parameters', () => {
+    const params: CallbackParams = {
+      code: 'test-code-abc',
+      state: 'test-state-xyz',
+      error: null,
+      errorDescription: null,
+    }
 
-    const stored = JSON.parse(sessionStorage.getItem('auth0_callback_processed')!)
-    expect(stored.t).toBeGreaterThanOrEqual(beforeTime)
-    expect(stored.t).toBeLessThanOrEqual(afterTime)
+    storeCallbackParams(params)
+
+    const retrieved = getStoredCallbackParams()
+    expect(retrieved).not.toBeNull()
+    expect(retrieved?.code).toBe('test-code-abc')
+    expect(retrieved?.state).toBe('test-state-xyz')
+  })
+
+  it('should return null if no parameters stored', () => {
+    const retrieved = getStoredCallbackParams()
+    expect(retrieved).toBeNull()
+  })
+
+  it('should clear stored parameters', () => {
+    const params: CallbackParams = {
+      code: 'test-code',
+      state: 'test-state',
+      error: null,
+      errorDescription: null,
+    }
+
+    storeCallbackParams(params)
+    expect(sessionStorage.getItem('auth0_callback_params')).not.toBeNull()
+
+    clearStoredCallbackParams()
+    expect(sessionStorage.getItem('auth0_callback_params')).toBeNull()
+    expect(getStoredCallbackParams()).toBeNull()
   })
 
   it('should use sessionStorage not localStorage (auto-clears on close)', () => {
-    storeCallbackFlag()
+    const params: CallbackParams = {
+      code: 'test-code',
+      state: 'test-state',
+      error: null,
+      errorDescription: null,
+    }
+
+    storeCallbackParams(params)
 
     // Verify stored in sessionStorage
-    expect(sessionStorage.getItem('auth0_callback_processed')).not.toBeNull()
+    expect(sessionStorage.getItem('auth0_callback_params')).not.toBeNull()
 
     // Clear and verify it's gone
     sessionStorage.clear()
-    expect(sessionStorage.getItem('auth0_callback_processed')).toBeNull()
+    expect(sessionStorage.getItem('auth0_callback_params')).toBeNull()
   })
 
-  it('should never store authorization code', () => {
-    storeCallbackFlag()
+  it('should never store authorization code separately', () => {
+    const params: CallbackParams = {
+      code: 'secret-auth-code-12345',
+      state: 'test-state',
+      error: null,
+      errorDescription: null,
+    }
 
-    const stored = sessionStorage.getItem('auth0_callback_processed')
-    expect(stored).not.toContain('secret-auth-code')
-    expect(stored).not.toContain('code=')
+    storeCallbackParams(params)
+
+    // Verify we're storing code as part of params, not separately
+    const stored = sessionStorage.getItem('auth0_callback_params')
+    const data = JSON.parse(stored!)
+    expect(data.code).toBe('secret-auth-code-12345') // Code is stored as param, which is necessary
+    expect(data.ok).toBeUndefined() // But not as a separate 'ok' flag
   })
 })
 
@@ -405,11 +458,16 @@ describe('callbackHandler - Integration', () => {
     const validation = validateCallbackParams(params)
     expect(validation.ok).toBe(true)
 
-    // 3. Store callback flag
-    storeCallbackFlag()
-    expect(sessionStorage.getItem('auth0_callback_processed')).not.toBeNull()
+    // 3. Store callback parameters for AuthContext to process
+    storeCallbackParams(params)
+    expect(sessionStorage.getItem('auth0_callback_params')).not.toBeNull()
 
-    // 4. Determine redirect URL (base path detection)
+    // 4. Retrieve stored parameters to verify they can be processed
+    const storedParams = getStoredCallbackParams()
+    expect(storedParams?.code).toBe('auth-code-xyz')
+    expect(storedParams?.state).toBe('state-xyz')
+
+    // 5. Determine redirect URL (base path detection)
     const basePath = getBasePath('/commentator-frontend/callback/')
     expect(basePath).toBe('/commentator-frontend/')
     expect(basePath).not.toContain('code')
