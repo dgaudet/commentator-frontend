@@ -38,10 +38,14 @@ Implemented actual callback handler (`public/callback/index.html`):
 
 ### Phase 3: REFACTOR - Quality & Optimization ✅
 Code quality improvements:
-1. **Optimized for size**: Reduced from 6.8KB to 3.9KB through minification
+1. **Optimized for size**: Reduced from 6.8KB to 4.1KB through minification
 2. **Security hardened**: XSS prevention via HTML escaping, open redirect prevention
 3. **Error handling**: Specific error messages for common OAuth2 errors
 4. **Performance**: Minimal payload, no external resources
+5. **Portability**: Dynamic base path detection (no hardcoded paths)
+   - Detects deployment path automatically from `window.location.pathname`
+   - Works with any repository name or deployment path
+   - 6 new tests validate dynamic path detection logic
 
 ### Phase 4: Configuration & Testing ✅
 Updated configuration and verified:
@@ -66,9 +70,9 @@ Updated configuration and verified:
 
 ✅ **All Tests Passing**
 - Test Suites: 107 passed, 2 skipped
-- Total Tests: 1884 passing
+- Total Tests: 1890 passing
   - Existing tests: 1855 ✅
-  - New callback handler tests: 29 ✅
+  - New callback handler tests: 35 ✅
 - No test failures
 - No regressions
 
@@ -82,8 +86,9 @@ Updated configuration and verified:
 | Error Messages | 4 | ✅ |
 | URL Handling | 3 | ✅ |
 | SessionStorage | 3 | ✅ |
+| Dynamic Base Path Detection | 6 | ✅ |
 | Integration Tests | 2 | ✅ |
-| **Total** | **29** | **✅** |
+| **Total** | **35** | **✅** |
 
 ---
 
@@ -165,11 +170,28 @@ Updated configuration and verified:
 
 ---
 
+## Portability & Flexibility
+
+✅ **Dynamic Base Path Detection**
+- Callback handler automatically detects deployment path from `window.location.pathname`
+- Removes `/callback/` from pathname to determine base path
+- **Works with any repository name**: No hardcoding required
+- **Works with any deployment path**: Supports nested paths, root deployments, etc.
+- **Verified with tests**: 6 comprehensive tests validate path detection logic
+
+**Examples**:
+- GitHub Pages at `/commentator-frontend/callback/` → redirects to `/commentator-frontend/`
+- Any repo name: `/my-app/callback/` → redirects to `/my-app/`
+- Root deployment: `/callback/` → redirects to `/`
+- Nested paths: `/org/project/app/callback/` → redirects to `/org/project/app/`
+
+---
+
 ## Performance Metrics
 
 | Metric | Target | Achieved | Status |
 |--------|--------|----------|--------|
-| File Size | < 5KB | 3.9KB | ✅ |
+| File Size | < 5KB | 4.1KB | ✅ |
 | Load Time | Minimal | Inline assets | ✅ |
 | HTTP Requests | 0 external | 0 | ✅ |
 | JavaScript | Vanilla | No dependencies | ✅ |

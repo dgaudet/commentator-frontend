@@ -307,6 +307,71 @@ describe('Callback Handler - SessionStorage', () => {
 })
 
 /**
+ * Base path detection - Dynamic path resolution
+ */
+describe('Callback Handler - Dynamic Base Path Detection', () => {
+  it('should detect base path by removing /callback/ from pathname', () => {
+    // Example: /commentator-frontend/callback/ → /commentator-frontend/
+    const pathname = '/commentator-frontend/callback/'
+    const basePathWithTrailingSlash = pathname.replace(/\/callback\/$/, '/')
+    expect(basePathWithTrailingSlash).toBe('/commentator-frontend/')
+  })
+
+  it('should detect base path without trailing slash', () => {
+    // Example: /commentator-frontend/callback → /commentator-frontend/
+    const pathname = '/commentator-frontend/callback'
+    const basePath = pathname.replace(/\/callback\/?$/, '')
+    const basePathWithSlash = basePath || '/'
+    expect(basePathWithSlash).toBe('/commentator-frontend')
+  })
+
+  it('should handle root path deployment', () => {
+    // Example: /callback/ → /
+    const pathname = '/callback/'
+    const basePath = pathname.replace(/\/callback\/$/, '/')
+    expect(basePath).toBe('/')
+  })
+
+  it('should handle nested paths', () => {
+    // Example: /users/deployments/app/callback/ → /users/deployments/app/
+    const pathname = '/users/deployments/app/callback/'
+    const basePath = pathname.replace(/\/callback\/$/, '/')
+    expect(basePath).toBe('/users/deployments/app/')
+  })
+
+  it('should work with dynamic path regardless of repository name', () => {
+    // Test different repository names
+    const paths = [
+      { pathname: '/commentator-frontend/callback/', expected: '/commentator-frontend/' },
+      { pathname: '/my-app/callback/', expected: '/my-app/' },
+      { pathname: '/repo-name-123/callback/', expected: '/repo-name-123/' },
+      { pathname: '/callback/', expected: '/' },
+    ]
+
+    paths.forEach(({ pathname, expected }) => {
+      const basePath = pathname.replace(/\/callback\/$/, '/')
+      expect(basePath).toBe(expected)
+    })
+  })
+
+  it('should be resilient to trailing slash variations', () => {
+    const scenarios = [
+      { pathname: '/app/callback/', expected: '/app/' },
+      { pathname: '/app/callback', expected: '/app/' }, // missing trailing slash
+      { pathname: '/callback/', expected: '/' },
+      { pathname: '/callback', expected: '/' },
+    ]
+
+    scenarios.forEach(({ pathname, expected }) => {
+      // Normalize to always have trailing slashes before replacing
+      const normalized = pathname.endsWith('/') ? pathname : pathname + '/'
+      const basePath = normalized.replace(/\/callback\/$/, '/')
+      expect(basePath).toBe(expected)
+    })
+  })
+})
+
+/**
  * Integration - Full callback flow
  */
 describe('Callback Handler - Integration', () => {

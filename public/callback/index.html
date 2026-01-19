@@ -67,7 +67,11 @@
       </div>
     </div>
     <script>
-      const BASE = '/commentator-frontend'
+      function getBase() {
+        const p = window.location.pathname
+        const n = p.endsWith('/') ? p : p + '/'
+        return n.replace(/\/callback\/$/, '/') || '/'
+      }
       function esc(t) {
         const m = {
           '&': '&amp;',
@@ -109,9 +113,10 @@
       function err(e, d) {
         const c = document.getElementById('content')
         const m = getMsg(e)
+        const base = getBase()
         c.innerHTML = `<div class="error"><h2>Authentication Error</h2><p>${esc(m)}</p>${
           d ? `<p style="font-size:0.85rem;color:#999;">Code: ${esc(e)}</p>` : ''
-        }<a href="${BASE}/">Return to Application</a></div>`
+        }<a href="${esc(base)}">Return to Application</a></div>`
       }
       function go() {
         try {
@@ -123,7 +128,7 @@
             return
           }
           sessionStorage.setItem('auth0_callback_processed', JSON.stringify({ t: Date.now(), ok: true }))
-          const url = BASE + '/'
+          const url = getBase()
           window.history.replaceState(null, '', url)
           setTimeout(() => {
             window.location.replace(url)
