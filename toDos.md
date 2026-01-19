@@ -172,3 +172,5 @@ https://dgaudet.github.io/commentator-frontend/callback/index.html
 PR's for callback change
 * test change - https://github.com/dgaudet/commentator-frontend/pull/74
 * Real change - https://github.com/dgaudet/commentator-frontend/pull/72
+* change to session storage - https://github.com/dgaudet/commentator-frontend/pull/76
+AuthContext.tsx changes should probably be put in a function so it's easier to understand
