@@ -8,10 +8,24 @@
       // When GitHub Pages gets a 404, it serves this file.
       // This script stores the original path and redirects to index.html
       // so React Router can handle the routing properly.
+      //
+      // IMPORTANT: /callback/ is handled by public/callback/index.html and should NOT be redirected
+      // The callback handler needs to run on this path to process Auth0 OAuth2 callbacks
       (function() {
         var l = window.location;
+        var pathname = l.pathname;
+
+        // Check if this is the Auth0 callback path - if so, do NOT redirect
+        // The callback handler will process the OAuth2 code and state parameters
+        if (pathname.includes('/callback/')) {
+          console.log('Auth0 callback path detected, allowing callback handler to process');
+          // Do nothing - let callback/index.html handle it
+          return;
+        }
+
+        // For all other 404s, apply the SPA redirect
         // Store the full path (minus /commentator-frontend) for the app to process
-        var pathWithoutBase = l.pathname.replace('/commentator-frontend', '');
+        var pathWithoutBase = pathname.replace('/commentator-frontend', '');
         var fullPath = pathWithoutBase + (l.search || '') + (l.hash || '');
 
         // Store in sessionStorage for index.html to retrieve

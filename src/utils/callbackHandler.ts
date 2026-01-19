@@ -108,14 +108,45 @@ export function getErrorMessage(errorCode: string): string {
 }
 
 /**
- * Store callback processed flag in sessionStorage
+ * Store callback parameters in sessionStorage for AuthContext to process
+ * The Auth0 SDK needs these to exchange the code for tokens
  */
-export function storeCallbackFlag(): void {
+export function storeCallbackParams(params: CallbackParams): void {
   const callbackData = {
-    t: Date.now(),
-    ok: true,
+    code: params.code,
+    state: params.state,
+    timestamp: Date.now(),
   }
-  sessionStorage.setItem('auth0_callback_processed', JSON.stringify(callbackData))
+  sessionStorage.setItem('auth0_callback_params', JSON.stringify(callbackData))
+}
+
+/**
+ * Retrieve callback parameters from sessionStorage
+ * Used by AuthContext to complete the OAuth2 flow
+ */
+export function getStoredCallbackParams(): CallbackParams | null {
+  try {
+    const stored = sessionStorage.getItem('auth0_callback_params')
+    if (!stored) return null
+
+    const data = JSON.parse(stored)
+    return {
+      code: data.code || null,
+      state: data.state || null,
+      error: null,
+      errorDescription: null,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Clear callback parameters from sessionStorage after processing
+ * Call this after Auth0 SDK successfully processes the callback
+ */
+export function clearStoredCallbackParams(): void {
+  sessionStorage.removeItem('auth0_callback_params')
 }
 
 /**

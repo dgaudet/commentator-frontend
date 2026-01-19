@@ -185,14 +185,16 @@
 
           console.log('✅ Parameters validated successfully')
 
-          // 3. Store callback processed flag in sessionStorage
-          console.log('Step 3: Storing callback flag in sessionStorage...')
+          // 3. Store callback parameters in sessionStorage for AuthContext to process
+          console.log('Step 3: Storing callback parameters in sessionStorage...')
           const callbackData = {
-            t: Date.now(),
-            ok: true,
+            code: params.code,
+            state: params.state,
+            timestamp: Date.now(),
           }
-          sessionStorage.setItem('auth0_callback_processed', JSON.stringify(callbackData))
-          console.log('✅ Callback flag stored')
+          sessionStorage.setItem('auth0_callback_params', JSON.stringify(callbackData))
+          console.log('✅ Callback parameters stored for AuthContext')
+          console.log('Stored params:', callbackData)
 
           // 4. Clean URL and redirect
           console.log('Step 4: Preparing redirect...')

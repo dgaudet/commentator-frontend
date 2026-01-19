@@ -3,6 +3,7 @@ import { Auth0Client } from '@auth0/auth0-spa-js'
 import { setGetAccessToken, setCachedToken } from '../services/apiClient'
 import { parseAuthError } from '../utils/authErrorHandler'
 import { getDefaultAuthConfig, type AuthConfig } from '../config/authConfig'
+import { getStoredCallbackParams, clearStoredCallbackParams } from '../utils/callbackHandler'
 
 interface User {
   sub: string
@@ -67,12 +68,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
         // Register the getAccessToken function with the API client
         setGetAccessToken(() => client.getTokenSilently())
 
+        // Check if we have callback parameters stored by the callback handler
+        // The callback handler (public/callback/index.html) stores these when returning from Auth0
+        const storedParams = getStoredCallbackParams()
+
         // Process the redirect if returning from Auth0 callback
         try {
-          await client.handleRedirectCallback()
+          if (storedParams) {
+            // We have stored callback parameters from the dedicated callback handler
+            // Reconstruct the callback URL so Auth0 SDK can process it
+            const callbackUrl = `${window.location.origin}${config.redirectUri}?code=${storedParams.code}&state=${storedParams.state}`
+            console.log('Processing stored callback parameters from handler')
+
+            // Use handleRedirectCallback with the stored parameters
+            // The Auth0 SDK will parse the code and state and exchange them for tokens
+            await client.handleRedirectCallback(callbackUrl)
+
+            // Clear the stored parameters after successful processing
+            clearStoredCallbackParams()
+          } else {
+            // No stored parameters - try normal callback flow (direct redirect from Auth0)
+            await client.handleRedirectCallback()
+          }
         } catch (err) {
           // handleRedirectCallback throws if not in callback flow - this is expected
-          console.debug('Not in callback flow or already processed')
+          console.debug('Not in callback flow or already processed', err)
         }
 
         const isAuth = await client.isAuthenticated()
