@@ -155,71 +155,41 @@
 
       // Main callback handler
       function handleCallback() {
-        console.log('=== Auth0 Callback Handler Started ===')
-        console.log('Current URL:', window.location.href)
-        console.log('Current pathname:', window.location.pathname)
-        console.log('Current search:', window.location.search)
-
         try {
           // 1. Parse parameters
-          console.log('Step 1: Parsing callback parameters...')
           const params = parse()
-          console.log('Parsed parameters:', {
-            hasCode: !!params.code,
-            hasState: !!params.state,
-            hasError: !!params.error,
-            errorCode: params.error,
-          })
 
           // 2. Validate parameters
-          console.log('Step 2: Validating parameters...')
           const validation = validate(params)
-          console.log('Validation result:', validation)
 
           if (!validation.ok) {
-            console.error('❌ Callback validation failed')
-            console.error('Validation details:', validation)
             showError(validation.err, validation.desc)
             return
           }
 
-          console.log('✅ Parameters validated successfully')
-
           // 3. Store callback parameters in sessionStorage for AuthContext to process
-          console.log('Step 3: Storing callback parameters in sessionStorage...')
           const callbackData = {
             code: params.code,
             state: params.state,
             timestamp: Date.now(),
           }
           sessionStorage.setItem('auth0_callback_params', JSON.stringify(callbackData))
-          console.log('✅ Callback parameters stored for AuthContext')
-          console.log('Stored params:', callbackData)
 
           // 4. Clean URL and redirect
-          console.log('Step 4: Preparing redirect...')
           const basePath = getBase()
-          console.log('Base path detected:', basePath)
-          console.log('Cleaned URL will be:', basePath)
 
           window.history.replaceState(null, '', basePath)
-          console.log('✅ URL cleaned via history.replaceState')
 
           // Brief delay to allow history update before navigation
-          console.log('Step 5: Redirecting to application...')
           setTimeout(() => {
-            console.log('🔄 Redirecting to:', basePath)
             window.location.replace(basePath)
           }, 100)
         } catch (e) {
-          console.error('❌ Callback handler error:', e)
-          console.error('Error stack:', e instanceof Error ? e.stack : 'N/A')
           showError('error', e instanceof Error ? e.message : 'Unknown error')
         }
       }
 
       // Execute handler
-      console.log('Auth0 Callback handler script loaded')
       handleCallback()
     </script>
   </body>

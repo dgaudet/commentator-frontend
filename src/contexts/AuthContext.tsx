@@ -70,6 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
 
         // Check if we have callback parameters stored by the callback handler
         // The callback handler (public/callback/index.html) stores these when returning from Auth0
+        // this is used when run in github pages as it doesn't properly work with SPA's
         const storedParams = getStoredCallbackParams()
 
         // Process the redirect if returning from Auth0 callback
@@ -78,7 +79,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
             // We have stored callback parameters from the dedicated callback handler
             // Reconstruct the callback URL so Auth0 SDK can process it
             const callbackUrl = `${window.location.origin}${config.redirectUri}?code=${storedParams.code}&state=${storedParams.state}`
-            console.log('Processing stored callback parameters from handler')
 
             // Use handleRedirectCallback with the stored parameters
             // The Auth0 SDK will parse the code and state and exchange them for tokens
