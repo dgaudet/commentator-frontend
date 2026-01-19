@@ -384,6 +384,169 @@ describe('callbackHandler - storeCallbackParams() and getStoredCallbackParams()'
     expect(data.code).toBe('secret-auth-code-12345') // Code is stored as param, which is necessary
     expect(data.ok).toBeUndefined() // But not as a separate 'ok' flag
   })
+
+  it('should handle getStoredCallbackParams with invalid JSON gracefully', () => {
+    // Simulate corrupted sessionStorage data
+    sessionStorage.setItem('auth0_callback_params', 'invalid-json-data{]')
+
+    const retrieved = getStoredCallbackParams()
+    expect(retrieved).toBeNull()
+  })
+
+  it('should handle getStoredCallbackParams with missing code field', () => {
+    // Store data without code field
+    const malformedData = { state: 'test-state' }
+    sessionStorage.setItem('auth0_callback_params', JSON.stringify(malformedData))
+
+    const retrieved = getStoredCallbackParams()
+    expect(retrieved).not.toBeNull()
+    expect(retrieved?.code).toBeNull()
+    expect(retrieved?.state).toBe('test-state')
+  })
+
+  it('should handle getStoredCallbackParams with missing state field', () => {
+    // Store data without state field
+    const malformedData = { code: 'test-code' }
+    sessionStorage.setItem('auth0_callback_params', JSON.stringify(malformedData))
+
+    const retrieved = getStoredCallbackParams()
+    expect(retrieved).not.toBeNull()
+    expect(retrieved?.code).toBe('test-code')
+    expect(retrieved?.state).toBeNull()
+  })
+
+  it('should handle getStoredCallbackParams with null code and state', () => {
+    // Store data with explicitly null code and state
+    const data = { code: null, state: null }
+    sessionStorage.setItem('auth0_callback_params', JSON.stringify(data))
+
+    const retrieved = getStoredCallbackParams()
+    expect(retrieved).not.toBeNull()
+    expect(retrieved?.code).toBeNull()
+    expect(retrieved?.state).toBeNull()
+  })
+
+  it('should handle getStoredCallbackParams with empty string code/state', () => {
+    // Store data with empty strings
+    const data = { code: '', state: '' }
+    sessionStorage.setItem('auth0_callback_params', JSON.stringify(data))
+
+    const retrieved = getStoredCallbackParams()
+    expect(retrieved).not.toBeNull()
+    // Empty strings should be converted to null per the implementation
+    expect(retrieved?.code).toBeNull()
+    expect(retrieved?.state).toBeNull()
+  })
+
+  it('should handle clearStoredCallbackParams when nothing is stored', () => {
+    // Ensure nothing is stored
+    sessionStorage.clear()
+
+    // Should not throw error
+    expect(() => {
+      clearStoredCallbackParams()
+    }).not.toThrow()
+
+    // Should still return null
+    expect(getStoredCallbackParams()).toBeNull()
+  })
+
+  it('should handle clearStoredCallbackParams called multiple times', () => {
+    const params: CallbackParams = {
+      code: 'test-code',
+      state: 'test-state',
+      error: null,
+      errorDescription: null,
+    }
+
+    storeCallbackParams(params)
+    expect(sessionStorage.getItem('auth0_callback_params')).not.toBeNull()
+
+    // Clear multiple times - should not throw error
+    clearStoredCallbackParams()
+    expect(sessionStorage.getItem('auth0_callback_params')).toBeNull()
+
+    clearStoredCallbackParams()
+    expect(sessionStorage.getItem('auth0_callback_params')).toBeNull()
+
+    clearStoredCallbackParams()
+    expect(sessionStorage.getItem('auth0_callback_params')).toBeNull()
+  })
+
+  it('should store and retrieve long code and state strings', () => {
+    // OAuth2 codes can be quite long
+    const longCode = 'a'.repeat(500)
+    const longState = 'b'.repeat(500)
+
+    const params: CallbackParams = {
+      code: longCode,
+      state: longState,
+      error: null,
+      errorDescription: null,
+    }
+
+    storeCallbackParams(params)
+
+    const retrieved = getStoredCallbackParams()
+    expect(retrieved?.code).toBe(longCode)
+    expect(retrieved?.state).toBe(longState)
+  })
+
+  it('should include timestamp when storing callback params', () => {
+    const params: CallbackParams = {
+      code: 'test-code',
+      state: 'test-state',
+      error: null,
+      errorDescription: null,
+    }
+
+    const beforeStore = Date.now()
+    storeCallbackParams(params)
+    const afterStore = Date.now()
+
+    const stored = sessionStorage.getItem('auth0_callback_params')
+    const data = JSON.parse(stored!)
+
+    expect(data.timestamp).toBeDefined()
+    expect(typeof data.timestamp).toBe('number')
+    expect(data.timestamp).toBeGreaterThanOrEqual(beforeStore)
+    expect(data.timestamp).toBeLessThanOrEqual(afterStore)
+  })
+
+  it('should always return error and errorDescription as null from getStoredCallbackParams', () => {
+    const params: CallbackParams = {
+      code: 'test-code',
+      state: 'test-state',
+      error: null,
+      errorDescription: null,
+    }
+
+    storeCallbackParams(params)
+
+    const retrieved = getStoredCallbackParams()
+    // These should always be null since we don't store error state
+    expect(retrieved?.error).toBeNull()
+    expect(retrieved?.errorDescription).toBeNull()
+  })
+
+  it('should not store error or errorDescription fields', () => {
+    const params: CallbackParams = {
+      code: 'test-code',
+      state: 'test-state',
+      error: null,
+      errorDescription: null,
+    }
+
+    storeCallbackParams(params)
+
+    const stored = sessionStorage.getItem('auth0_callback_params')
+    const data = JSON.parse(stored!)
+
+    // Verify only code, state, and timestamp are stored
+    expect(Object.keys(data).sort()).toEqual(['code', 'state', 'timestamp'].sort())
+    expect(data.error).toBeUndefined()
+    expect(data.errorDescription).toBeUndefined()
+  })
 })
 
 /**

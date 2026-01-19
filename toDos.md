@@ -167,10 +167,3 @@ possible Auth0 login/user create flow by using Auth0 configuration, instead of i
 test out changing my password in auth0
 
 Create a proper 404 page that gives information about not finding any result
-
-https://dgaudet.github.io/commentator-frontend/callback/index.html 
-PR's for callback change
-* test change - https://github.com/dgaudet/commentator-frontend/pull/74
-* Real change - https://github.com/dgaudet/commentator-frontend/pull/72
-* change to session storage - https://github.com/dgaudet/commentator-frontend/pull/76
-AuthContext.tsx changes should probably be put in a function so it's easier to understand
