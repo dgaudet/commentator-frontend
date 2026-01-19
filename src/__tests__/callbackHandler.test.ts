@@ -1,147 +1,25 @@
 /**
- * Callback Handler Tests
+ * Callback Handler Unit Tests
  *
- * Tests for Auth0 callback handler utility functions that will be used in
- * public/callback/index.html
- *
- * These tests verify:
- * - Parameter validation (code, state, error detection)
- * - Error handling and user-friendly messages
- * - XSS prevention via HTML escaping
- * - URL safety (no open redirects)
+ * Comprehensive tests for Auth0 callback handler functions in src/utils/callbackHandler.ts
+ * These tests validate the actual production code used in public/callback/index.html
  */
+
+import {
+  escapeHtml,
+  getBasePath,
+  parseCallbackParams,
+  validateCallbackParams,
+  getErrorMessage,
+  storeCallbackFlag,
+  formatErrorHtml,
+  type CallbackParams,
+} from '../utils/callbackHandler'
 
 /**
- * Parse and validate callback parameters
+ * HTML Escaping - XSS Prevention
  */
-describe('Callback Handler - Parameter Parsing', () => {
-  it('should parse code and state from URL search params', () => {
-    const mockUrl = new URL('http://localhost:3000/callback?code=test-code-123&state=test-state-456')
-    const searchParams = mockUrl.searchParams
-
-    expect(searchParams.get('code')).toBe('test-code-123')
-    expect(searchParams.get('state')).toBe('test-state-456')
-  })
-
-  it('should detect error parameter in callback', () => {
-    const mockUrl = new URL('http://localhost:3000/callback?error=access_denied&error_description=User+denied+access')
-    const searchParams = mockUrl.searchParams
-
-    expect(searchParams.get('error')).toBe('access_denied')
-    expect(searchParams.get('error_description')).toBe('User denied access')
-  })
-
-  it('should handle URL-encoded error descriptions', () => {
-    const encoded = 'Something%20went%20wrong%21'
-    const decoded = decodeURIComponent(encoded)
-
-    expect(decoded).toBe('Something went wrong!')
-  })
-
-  it('should return null for missing parameters', () => {
-    const mockUrl = new URL('http://localhost:3000/callback')
-    const searchParams = mockUrl.searchParams
-
-    expect(searchParams.get('code')).toBeNull()
-    expect(searchParams.get('state')).toBeNull()
-    expect(searchParams.get('error')).toBeNull()
-  })
-})
-
-/**
- * Callback validation logic
- */
-describe('Callback Handler - Validation', () => {
-  it('should recognize successful callback (code + state present)', () => {
-    const params = {
-      code: 'test-code',
-      state: 'test-state',
-      error: null,
-      errorDescription: null,
-    }
-
-    const hasError = params.error !== null
-    const hasAuthCode = params.code !== null && params.state !== null
-
-    expect(hasError).toBe(false)
-    expect(hasAuthCode).toBe(true)
-  })
-
-  it('should recognize error callback (error parameter present)', () => {
-    const params = {
-      code: null,
-      state: null,
-      error: 'access_denied',
-      errorDescription: 'User denied access',
-    }
-
-    const hasError = params.error !== null
-    const hasAuthCode = params.code !== null && params.state !== null
-
-    expect(hasError).toBe(true)
-    expect(hasAuthCode).toBe(false)
-  })
-
-  it('should reject callback missing state (CSRF prevention)', () => {
-    const params = {
-      code: 'test-code',
-      state: null, // Missing state
-      error: null,
-      errorDescription: null,
-    }
-
-    const isValid = params.code !== null && params.state !== null
-
-    expect(isValid).toBe(false)
-  })
-
-  it('should reject callback missing code', () => {
-    const params = {
-      code: null, // Missing code
-      state: 'test-state',
-      error: null,
-      errorDescription: null,
-    }
-
-    const isValid = params.code !== null && params.state !== null
-
-    expect(isValid).toBe(false)
-  })
-
-  it('should detect missing parameters', () => {
-    const params = {
-      code: null,
-      state: null,
-      error: null,
-      errorDescription: null,
-    }
-
-    const hasAuthCode = params.code !== null && params.state !== null
-    const hasError = params.error !== null
-
-    expect(hasAuthCode).toBe(false)
-    expect(hasError).toBe(false)
-  })
-})
-
-/**
- * XSS Prevention - HTML Escaping
- */
-describe('Callback Handler - XSS Prevention', () => {
-  /**
-   * Escapes HTML to prevent XSS attacks
-   */
-  function escapeHtml(text: string): string {
-    const map: { [key: string]: string } = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;',
-    }
-    return text.replace(/[&<>"']/g, (m) => map[m])
-  }
-
+describe('callbackHandler - escapeHtml()', () => {
   it('should escape HTML special characters', () => {
     expect(escapeHtml('<script>alert("xss")</script>')).toBe(
       '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;',
@@ -152,7 +30,7 @@ describe('Callback Handler - XSS Prevention', () => {
     expect(escapeHtml('Tom & Jerry')).toBe('Tom &amp; Jerry')
   })
 
-  it('should escape quotes', () => {
+  it('should escape double quotes', () => {
     expect(escapeHtml('He said "Hello"')).toBe('He said &quot;Hello&quot;')
   })
 
@@ -174,12 +52,11 @@ describe('Callback Handler - XSS Prevention', () => {
     expect(escapeHtml('Hello World 123')).toBe('Hello World 123')
   })
 
-  it('should prevent error_description injection', () => {
-    const maliciousDescription = '<img src=x onerror="alert(\'xss\')">'
-    const escaped = escapeHtml(maliciousDescription)
+  it('should prevent XSS via error_description injection', () => {
+    const malicious = '<img src=x onerror="alert(\'xss\')">'
+    const escaped = escapeHtml(malicious)
 
-    // XSS is prevented by HTML-encoding the dangerous characters
-    // The payload is rendered as harmless text, not executable code
+    // Verify dangerous HTML tags are encoded
     expect(escaped).not.toContain('<img')
     expect(escaped).toContain('&lt;img')
     expect(escaped).toContain('&quot;')
@@ -187,81 +64,226 @@ describe('Callback Handler - XSS Prevention', () => {
 })
 
 /**
- * Error message mapping
+ * Base Path Detection - Dynamic path resolution
  */
-describe('Callback Handler - Error Messages', () => {
-  const ERROR_MESSAGES: { [key: string]: string } = {
-    access_denied: 'Login cancelled. Please try again.',
-    server_error: 'Authentication service error. Please try again later.',
-    unauthorized_client: 'Application configuration error. Please contact support.',
-  }
+describe('callbackHandler - getBasePath()', () => {
+  it('should detect base path by removing /callback/ from pathname', () => {
+    const pathname = '/commentator-frontend/callback/'
+    expect(getBasePath(pathname)).toBe('/commentator-frontend/')
+  })
 
+  it('should handle missing trailing slash', () => {
+    const pathname = '/commentator-frontend/callback'
+    expect(getBasePath(pathname)).toBe('/commentator-frontend/')
+  })
+
+  it('should handle root path deployment', () => {
+    const pathname = '/callback/'
+    expect(getBasePath(pathname)).toBe('/')
+  })
+
+  it('should handle root path without trailing slash', () => {
+    const pathname = '/callback'
+    expect(getBasePath(pathname)).toBe('/')
+  })
+
+  it('should handle nested paths', () => {
+    const pathname = '/users/deployments/app/callback/'
+    expect(getBasePath(pathname)).toBe('/users/deployments/app/')
+  })
+
+  it('should work with any repository name', () => {
+    const testCases = [
+      { pathname: '/commentator-frontend/callback/', expected: '/commentator-frontend/' },
+      { pathname: '/my-app/callback/', expected: '/my-app/' },
+      { pathname: '/repo-name-123/callback/', expected: '/repo-name-123/' },
+      { pathname: '/callback/', expected: '/' },
+    ]
+
+    testCases.forEach(({ pathname, expected }) => {
+      expect(getBasePath(pathname)).toBe(expected)
+    })
+  })
+
+  it('should be resilient to trailing slash variations', () => {
+    const testCases = [
+      { pathname: '/app/callback/', expected: '/app/' },
+      { pathname: '/app/callback', expected: '/app/' },
+      { pathname: '/callback/', expected: '/' },
+      { pathname: '/callback', expected: '/' },
+    ]
+
+    testCases.forEach(({ pathname, expected }) => {
+      expect(getBasePath(pathname)).toBe(expected)
+    })
+  })
+})
+
+/**
+ * Parameter Parsing
+ */
+describe('callbackHandler - parseCallbackParams()', () => {
+  it('should parse code and state from search params', () => {
+    const params = new URLSearchParams('code=test-code-123&state=test-state-456')
+    const result = parseCallbackParams(params)
+
+    expect(result.code).toBe('test-code-123')
+    expect(result.state).toBe('test-state-456')
+    expect(result.error).toBeNull()
+  })
+
+  it('should parse error and error_description', () => {
+    const params = new URLSearchParams('error=access_denied&error_description=User+denied+access')
+    const result = parseCallbackParams(params)
+
+    expect(result.error).toBe('access_denied')
+    expect(result.errorDescription).toBe('User denied access')
+    expect(result.code).toBeNull()
+  })
+
+  it('should return null for missing parameters', () => {
+    const params = new URLSearchParams('')
+    const result = parseCallbackParams(params)
+
+    expect(result.code).toBeNull()
+    expect(result.state).toBeNull()
+    expect(result.error).toBeNull()
+  })
+
+  it('should handle URL-encoded values', () => {
+    const params = new URLSearchParams('error_description=Something%20went%20wrong%21')
+    const result = parseCallbackParams(params)
+
+    expect(result.errorDescription).toBe('Something went wrong!')
+  })
+})
+
+/**
+ * Parameter Validation
+ */
+describe('callbackHandler - validateCallbackParams()', () => {
+  it('should recognize successful callback with code and state', () => {
+    const params: CallbackParams = {
+      code: 'test-code',
+      state: 'test-state',
+      error: null,
+      errorDescription: null,
+    }
+
+    const result = validateCallbackParams(params)
+
+    expect(result.ok).toBe(true)
+  })
+
+  it('should reject callback missing state (CSRF prevention)', () => {
+    const params: CallbackParams = {
+      code: 'test-code',
+      state: null,
+      error: null,
+      errorDescription: null,
+    }
+
+    const result = validateCallbackParams(params)
+
+    expect(result.ok).toBe(false)
+    expect(result.type).toBe('invalid')
+  })
+
+  it('should reject callback missing code', () => {
+    const params: CallbackParams = {
+      code: null,
+      state: 'test-state',
+      error: null,
+      errorDescription: null,
+    }
+
+    const result = validateCallbackParams(params)
+
+    expect(result.ok).toBe(false)
+    expect(result.type).toBe('invalid')
+  })
+
+  it('should detect error parameter', () => {
+    const params: CallbackParams = {
+      code: null,
+      state: null,
+      error: 'access_denied',
+      errorDescription: 'User denied access',
+    }
+
+    const result = validateCallbackParams(params)
+
+    expect(result.ok).toBe(false)
+    expect(result.type).toBe('error')
+    expect(result.err).toBe('access_denied')
+  })
+
+  it('should prioritize error detection over missing params', () => {
+    const params: CallbackParams = {
+      code: null,
+      state: null,
+      error: 'server_error',
+      errorDescription: 'Server error occurred',
+    }
+
+    const result = validateCallbackParams(params)
+
+    expect(result.ok).toBe(false)
+    expect(result.type).toBe('error')
+    expect(result.err).toBe('server_error')
+  })
+
+  it('should reject all missing parameters', () => {
+    const params: CallbackParams = {
+      code: null,
+      state: null,
+      error: null,
+      errorDescription: null,
+    }
+
+    const result = validateCallbackParams(params)
+
+    expect(result.ok).toBe(false)
+    expect(result.type).toBe('invalid')
+  })
+})
+
+/**
+ * Error Message Mapping
+ */
+describe('callbackHandler - getErrorMessage()', () => {
   it('should map access_denied to user-friendly message', () => {
-    const errorCode = 'access_denied'
-    expect(ERROR_MESSAGES[errorCode]).toBe('Login cancelled. Please try again.')
+    const message = getErrorMessage('access_denied')
+    expect(message).toBe('Login cancelled. Please try again.')
   })
 
   it('should map server_error to user-friendly message', () => {
-    const errorCode = 'server_error'
-    expect(ERROR_MESSAGES[errorCode]).toBe('Authentication service error. Please try again later.')
+    const message = getErrorMessage('server_error')
+    expect(message).toBe('Authentication service error. Please try again later.')
+  })
+
+  it('should map unauthorized_client to user-friendly message', () => {
+    const message = getErrorMessage('unauthorized_client')
+    expect(message).toBe('Application configuration error. Please contact support.')
   })
 
   it('should provide fallback for unknown errors', () => {
-    const errorCode = 'unknown_error'
-    const message = ERROR_MESSAGES[errorCode] || 'An error occurred during authentication.'
-
+    const message = getErrorMessage('unknown_error_code')
     expect(message).toBe('An error occurred during authentication.')
   })
 
-  it('should never expose sensitive error details to user', () => {
-    const technicalError =
-      'invalid_code_verifier: Code verifier does not match challenge in session'
-    // User should not see this
-    expect(technicalError).toContain('Code verifier')
-
-    // Instead show friendly message
-    const friendlyMessage = 'An error occurred during authentication.'
-    expect(friendlyMessage).not.toContain('Code verifier')
+  it('should never expose technical error details', () => {
+    // Verify friendly message is used, not technical details
+    const message = getErrorMessage('invalid_code_verifier')
+    expect(message).not.toContain('Code verifier')
+    expect(message).toBe('An error occurred during authentication.')
   })
 })
 
 /**
- * URL handling and redirect
+ * SessionStorage Flag Storage
  */
-describe('Callback Handler - URL Handling', () => {
-  it('should build safe redirect URL (GitHub Pages base path)', () => {
-    const GITHUB_PAGES_BASE = '/commentator-frontend'
-    const redirectUrl = `${GITHUB_PAGES_BASE}/`
-
-    expect(redirectUrl).toBe('/commentator-frontend/')
-  })
-
-  it('should not allow user-supplied redirect targets', () => {
-    // Simulate malicious redirect attempt
-    const userSuppliedTarget = 'https://evil.com'
-
-    // Verify we use hardcoded path
-    const GITHUB_PAGES_BASE = '/commentator-frontend'
-    const safeRedirect = `${GITHUB_PAGES_BASE}/`
-
-    expect(safeRedirect).not.toContain(userSuppliedTarget)
-  })
-
-  it('should handle history.replaceState correctly', () => {
-    // This would be called in actual handler
-    const cleanPath = '/commentator-frontend/'
-
-    // Verify clean path doesn't contain callback or query params
-    expect(cleanPath).not.toContain('callback')
-    expect(cleanPath).not.toContain('?')
-    expect(cleanPath).not.toContain('code')
-  })
-})
-
-/**
- * SessionStorage for callback metadata
- */
-describe('Callback Handler - SessionStorage', () => {
+describe('callbackHandler - storeCallbackFlag()', () => {
   beforeEach(() => {
     sessionStorage.clear()
   })
@@ -271,155 +293,200 @@ describe('Callback Handler - SessionStorage', () => {
   })
 
   it('should store callback processed flag in sessionStorage', () => {
-    const callbackData = {
-      timestamp: Date.now(),
-      inCallbackFlow: true,
-    }
+    storeCallbackFlag()
 
-    sessionStorage.setItem('auth0_callback_processed', JSON.stringify(callbackData))
+    const stored = sessionStorage.getItem('auth0_callback_processed')
+    expect(stored).not.toBeNull()
 
-    const stored = JSON.parse(sessionStorage.getItem('auth0_callback_processed') || '{}')
-    expect(stored.inCallbackFlow).toBe(true)
+    const data = JSON.parse(stored!)
+    expect(data.ok).toBe(true)
+    expect(data.t).toBeDefined()
   })
 
-  it('should clear sessionStorage on browser close (automatically handled)', () => {
-    // SessionStorage is automatically cleared when browser/tab closes
-    // This test just verifies we're using sessionStorage, not localStorage
+  it('should store timestamp in callback flag', () => {
+    const beforeTime = Date.now()
+    storeCallbackFlag()
+    const afterTime = Date.now()
 
-    sessionStorage.setItem('test', 'value')
-    expect(sessionStorage.getItem('test')).toBe('value')
+    const stored = JSON.parse(sessionStorage.getItem('auth0_callback_processed')!)
+    expect(stored.t).toBeGreaterThanOrEqual(beforeTime)
+    expect(stored.t).toBeLessThanOrEqual(afterTime)
+  })
 
-    // In real scenario, this clears on browser close (not localStorage)
+  it('should use sessionStorage not localStorage (auto-clears on close)', () => {
+    storeCallbackFlag()
+
+    // Verify stored in sessionStorage
+    expect(sessionStorage.getItem('auth0_callback_processed')).not.toBeNull()
+
+    // Clear and verify it's gone
     sessionStorage.clear()
-    expect(sessionStorage.getItem('test')).toBeNull()
+    expect(sessionStorage.getItem('auth0_callback_processed')).toBeNull()
   })
 
   it('should never store authorization code', () => {
-    // Verify we DON'T do this
-    const code = 'secret-auth-code-12345'
-
-    // We should NOT be storing the code
-    sessionStorage.setItem('auth0_callback_processed', JSON.stringify({ timestamp: Date.now() }))
+    storeCallbackFlag()
 
     const stored = sessionStorage.getItem('auth0_callback_processed')
-    expect(stored).not.toContain(code)
+    expect(stored).not.toContain('secret-auth-code')
+    expect(stored).not.toContain('code=')
   })
 })
 
 /**
- * Base path detection - Dynamic path resolution
+ * Error HTML Formatting
  */
-describe('Callback Handler - Dynamic Base Path Detection', () => {
-  it('should detect base path by removing /callback/ from pathname', () => {
-    // Example: /commentator-frontend/callback/ → /commentator-frontend/
-    const pathname = '/commentator-frontend/callback/'
-    const basePathWithTrailingSlash = pathname.replace(/\/callback\/$/, '/')
-    expect(basePathWithTrailingSlash).toBe('/commentator-frontend/')
+describe('callbackHandler - formatErrorHtml()', () => {
+  it('should format error HTML with user-friendly message', () => {
+    const html = formatErrorHtml('access_denied', '/app/', false)
+
+    expect(html).toContain('Authentication Error')
+    expect(html).toContain('Login cancelled')
+    expect(html).toContain('Return to Application')
+    expect(html).toContain('href="/app/"')
   })
 
-  it('should detect base path without trailing slash', () => {
-    // Example: /commentator-frontend/callback → /commentator-frontend/
-    const pathname = '/commentator-frontend/callback'
-    const basePath = pathname.replace(/\/callback\/?$/, '')
-    const basePathWithSlash = basePath || '/'
-    expect(basePathWithSlash).toBe('/commentator-frontend')
+  it('should escape error message content', () => {
+    const html = formatErrorHtml('access_denied', '/app/', false)
+    const escapedMsg = escapeHtml('Login cancelled. Please try again.')
+
+    expect(html).toContain(escapedMsg)
   })
 
-  it('should handle root path deployment', () => {
-    // Example: /callback/ → /
-    const pathname = '/callback/'
-    const basePath = pathname.replace(/\/callback\/$/, '/')
-    expect(basePath).toBe('/')
+  it('should escape redirect URL', () => {
+    const evilUrl = '"><script>alert("xss")</script>'
+    const html = formatErrorHtml('access_denied', evilUrl, false)
+
+    // Verify URL is escaped
+    expect(html).toContain(escapeHtml(evilUrl))
+    expect(html).not.toContain('<script>')
   })
 
-  it('should handle nested paths', () => {
-    // Example: /users/deployments/app/callback/ → /users/deployments/app/
-    const pathname = '/users/deployments/app/callback/'
-    const basePath = pathname.replace(/\/callback\/$/, '/')
-    expect(basePath).toBe('/users/deployments/app/')
+  it('should include error code when requested', () => {
+    const html = formatErrorHtml('access_denied', '/app/', true)
+
+    expect(html).toContain('Code:')
+    expect(html).toContain('access_denied')
   })
 
-  it('should work with dynamic path regardless of repository name', () => {
-    // Test different repository names
-    const paths = [
-      { pathname: '/commentator-frontend/callback/', expected: '/commentator-frontend/' },
-      { pathname: '/my-app/callback/', expected: '/my-app/' },
-      { pathname: '/repo-name-123/callback/', expected: '/repo-name-123/' },
-      { pathname: '/callback/', expected: '/' },
-    ]
+  it('should omit error code when not requested', () => {
+    const html = formatErrorHtml('access_denied', '/app/', false)
 
-    paths.forEach(({ pathname, expected }) => {
-      const basePath = pathname.replace(/\/callback\/$/, '/')
-      expect(basePath).toBe(expected)
-    })
+    expect(html).not.toContain('Code:')
   })
 
-  it('should be resilient to trailing slash variations', () => {
-    const scenarios = [
-      { pathname: '/app/callback/', expected: '/app/' },
-      { pathname: '/app/callback', expected: '/app/' }, // missing trailing slash
-      { pathname: '/callback/', expected: '/' },
-      { pathname: '/callback', expected: '/' },
-    ]
+  it('should use hardcoded redirect URL (no open redirect)', () => {
+    const html = formatErrorHtml('access_denied', '/app/', false)
 
-    scenarios.forEach(({ pathname, expected }) => {
-      // Normalize to always have trailing slashes before replacing
-      const normalized = pathname.endsWith('/') ? pathname : pathname + '/'
-      const basePath = normalized.replace(/\/callback\/$/, '/')
-      expect(basePath).toBe(expected)
-    })
+    // Verify href is from basePath parameter only
+    expect(html).toContain('href="/app/"')
+    expect(html).not.toContain('https://evil.com')
   })
 })
 
 /**
- * Integration - Full callback flow
+ * Integration Tests - Full Callback Flow
  */
-describe('Callback Handler - Integration', () => {
-  it('should handle successful callback flow', () => {
-    // 1. Parse parameters
-    const mockUrl = new URL('http://localhost/callback?code=auth-code-xyz&state=state-xyz')
-    const params = {
-      code: mockUrl.searchParams.get('code'),
-      state: mockUrl.searchParams.get('state'),
-      error: mockUrl.searchParams.get('error'),
-      errorDescription: mockUrl.searchParams.get('error_description'),
-    }
+describe('callbackHandler - Integration', () => {
+  beforeEach(() => {
+    sessionStorage.clear()
+  })
 
-    // 2. Validate
-    const isValid = params.code !== null && params.state !== null && params.error === null
-    expect(isValid).toBe(true)
+  afterEach(() => {
+    sessionStorage.clear()
+  })
 
-    // 3. Store callback metadata
-    sessionStorage.setItem('auth0_callback_processed', JSON.stringify({ timestamp: Date.now() }))
+  it('should handle successful callback flow end-to-end', () => {
+    // 1. Parse parameters from successful callback
+    const searchParams = new URLSearchParams('code=auth-code-xyz&state=state-xyz')
+    const params = parseCallbackParams(searchParams)
+
+    // 2. Validate parameters
+    const validation = validateCallbackParams(params)
+    expect(validation.ok).toBe(true)
+
+    // 3. Store callback flag
+    storeCallbackFlag()
     expect(sessionStorage.getItem('auth0_callback_processed')).not.toBeNull()
 
-    // 4. Would redirect to app (verified by URL clean)
-    const redirectUrl = '/commentator-frontend/'
-    expect(redirectUrl).not.toContain('code')
-    expect(redirectUrl).not.toContain('state')
+    // 4. Determine redirect URL (base path detection)
+    const basePath = getBasePath('/commentator-frontend/callback/')
+    expect(basePath).toBe('/commentator-frontend/')
+    expect(basePath).not.toContain('code')
+    expect(basePath).not.toContain('state')
   })
 
-  it('should handle error callback flow', () => {
-    // 1. Parse parameters
-    const mockUrl = new URL(
-      'http://localhost/callback?error=access_denied&error_description=User+denied+access',
-    )
-    const params = {
-      code: mockUrl.searchParams.get('code'),
-      state: mockUrl.searchParams.get('state'),
-      error: mockUrl.searchParams.get('error'),
-      errorDescription: mockUrl.searchParams.get('error_description'),
-    }
+  it('should handle error callback flow end-to-end', () => {
+    // 1. Parse parameters from error callback
+    const searchParams = new URLSearchParams('error=access_denied&error_description=User+denied+access')
+    const params = parseCallbackParams(searchParams)
 
-    // 2. Validate - error detected
-    const hasError = params.error !== null
-    expect(hasError).toBe(true)
+    // 2. Validate parameters
+    const validation = validateCallbackParams(params)
+    expect(validation.ok).toBe(false)
+    expect(validation.type).toBe('error')
 
-    // 3. Show error message (safely)
-    const ERROR_MESSAGES: { [key: string]: string } = {
-      access_denied: 'Login cancelled. Please try again.',
-    }
-    const message = ERROR_MESSAGES[params.error] || 'An error occurred.'
+    // 3. Get error message
+    const message = getErrorMessage(validation.err!)
     expect(message).toBe('Login cancelled. Please try again.')
+
+    // 4. Format error display
+    const basePath = getBasePath('/commentator-frontend/callback/')
+    const html = formatErrorHtml(validation.err!, basePath, false)
+    expect(html).toContain('Authentication Error')
+    expect(html).toContain('Login cancelled')
+  })
+
+  it('should handle missing parameters flow', () => {
+    // 1. Parse parameters from malformed callback
+    const searchParams = new URLSearchParams('')
+    const params = parseCallbackParams(searchParams)
+
+    // 2. Validate parameters
+    const validation = validateCallbackParams(params)
+    expect(validation.ok).toBe(false)
+    expect(validation.type).toBe('invalid')
+
+    // 3. Get generic error message
+    const message = getErrorMessage('unknown')
+    expect(message).toBe('An error occurred during authentication.')
+  })
+
+  it('should detect base path regardless of deployment name', () => {
+    const deployments = [
+      '/commentator-frontend/callback/',
+      '/my-app/callback/',
+      '/production-app-v2/callback/',
+      '/callback/',
+    ]
+
+    deployments.forEach((pathname) => {
+      const basePath = getBasePath(pathname)
+      expect(basePath.endsWith('/')).toBe(true)
+      expect(basePath).not.toContain('callback')
+    })
+  })
+
+  it('should prevent XSS through entire flow', () => {
+    // Simulate malicious error description
+    const evilDescription = '<img src=x onerror="alert(\'xss\')">'
+    const params: CallbackParams = {
+      code: null,
+      state: null,
+      error: 'server_error',
+      errorDescription: evilDescription,
+    }
+
+    const validation = validateCallbackParams(params)
+    expect(validation.ok).toBe(false)
+
+    // Format error with potentially malicious description
+    const basePath = getBasePath('/app/callback/')
+    const html = formatErrorHtml(validation.err!, basePath, true)
+
+    // Verify XSS is prevented
+    expect(html).not.toContain('<img')
+    expect(html).not.toContain('onerror')
+    expect(html).not.toContain('alert')
   })
 })

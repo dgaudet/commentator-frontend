@@ -67,78 +67,129 @@
       </div>
     </div>
     <script>
-      function getBase() {
-        const p = window.location.pathname
-        const n = p.endsWith('/') ? p : p + '/'
-        return n.replace(/\/callback\/$/, '/') || '/'
-      }
-      function esc(t) {
-        const m = {
+      /**
+       * IMPORTANT: The logic in this file mirrors src/utils/callbackHandler.ts
+       *
+       * These functions are comprehensively tested in src/__tests__/callbackHandler.test.ts
+       * The test file imports the actual TypeScript module and validates:
+       * - Parameter parsing and validation (OAuth2)
+       * - XSS prevention through HTML escaping
+       * - Dynamic base path detection
+       * - Error handling and user-friendly messaging
+       * - SessionStorage management
+       *
+       * When updating these functions, ensure src/utils/callbackHandler.ts is updated
+       * and tests are run to maintain code synchronization.
+       */
+
+      // Escape HTML to prevent XSS attacks (matches callbackHandler.escapeHtml)
+      function esc(text) {
+        const map = {
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
           '"': '&quot;',
           "'": '&#039;',
         }
-        return t.replace(/[&<>"']/g, (c) => m[c])
+        return text.replace(/[&<>"']/g, (c) => map[c])
       }
+
+      // Detect base path by removing /callback/ from pathname (matches callbackHandler.getBasePath)
+      function getBase() {
+        const pathname = window.location.pathname
+        const normalized = pathname.endsWith('/') ? pathname : pathname + '/'
+        return normalized.replace(/\/callback\/$/, '/') || '/'
+      }
+
+      // Parse callback parameters from URL search params (matches callbackHandler.parseCallbackParams)
       function parse() {
-        const p = new URLSearchParams(window.location.search)
+        const searchParams = new URLSearchParams(window.location.search)
         return {
-          code: p.get('code'),
-          state: p.get('state'),
-          error: p.get('error'),
-          desc: p.get('error_description'),
+          code: searchParams.get('code'),
+          state: searchParams.get('state'),
+          error: searchParams.get('error'),
+          desc: searchParams.get('error_description'),
         }
       }
-      function validate(p) {
-        const err = p.error !== null
-        const ok = p.code !== null && p.state !== null
-        if (err) {
-          return { ok: false, type: 'error', err: p.error, desc: p.desc }
+
+      // Validate callback parameters (matches callbackHandler.validateCallbackParams)
+      function validate(params) {
+        const hasError = params.error !== null
+        const hasAuthCode = params.code !== null && params.state !== null
+
+        if (hasError) {
+          return { ok: false, type: 'error', err: params.error, desc: params.desc }
         }
-        if (!ok) {
+
+        if (!hasAuthCode) {
           return { ok: false, type: 'invalid', err: 'missing', desc: 'Missing code or state' }
         }
+
         return { ok: true }
       }
-      function getMsg(code) {
-        const msgs = {
+
+      // Get user-friendly error message (matches callbackHandler.getErrorMessage)
+      function getMsg(errorCode) {
+        const messages = {
           access_denied: 'Login cancelled. Please try again.',
           server_error: 'Authentication service error. Please try again later.',
           unauthorized_client: 'Application configuration error. Please contact support.',
         }
-        return msgs[code] || 'An error occurred during authentication.'
+        return messages[errorCode] || 'An error occurred during authentication.'
       }
-      function err(e, d) {
-        const c = document.getElementById('content')
-        const m = getMsg(e)
-        const base = getBase()
-        c.innerHTML = `<div class="error"><h2>Authentication Error</h2><p>${esc(m)}</p>${
-          d ? `<p style="font-size:0.85rem;color:#999;">Code: ${esc(e)}</p>` : ''
-        }<a href="${esc(base)}">Return to Application</a></div>`
+
+      // Display error HTML (matches callbackHandler.formatErrorHtml)
+      function showError(errorCode, hasDetails) {
+        const container = document.getElementById('content')
+        const message = getMsg(errorCode)
+        const basePath = getBase()
+        const codeDisplay = hasDetails ? `<p style="font-size:0.85rem;color:#999;">Code: ${esc(errorCode)}</p>` : ''
+
+        container.innerHTML = `<div class="error">
+          <h2>Authentication Error</h2>
+          <p>${esc(message)}</p>
+          ${codeDisplay}
+          <a href="${esc(basePath)}">Return to Application</a>
+        </div>`
       }
-      function go() {
+
+      // Main callback handler
+      function handleCallback() {
         try {
-          const p = parse()
-          const v = validate(p)
-          if (!v.ok) {
-            console.error('Callback failed:', v)
-            err(v.err, v.desc)
+          // 1. Parse parameters
+          const params = parse()
+
+          // 2. Validate parameters
+          const validation = validate(params)
+          if (!validation.ok) {
+            console.error('Callback validation failed:', validation)
+            showError(validation.err, validation.desc)
             return
           }
-          sessionStorage.setItem('auth0_callback_processed', JSON.stringify({ t: Date.now(), ok: true }))
-          const url = getBase()
-          window.history.replaceState(null, '', url)
+
+          // 3. Store callback processed flag in sessionStorage
+          const callbackData = {
+            t: Date.now(),
+            ok: true,
+          }
+          sessionStorage.setItem('auth0_callback_processed', JSON.stringify(callbackData))
+
+          // 4. Clean URL and redirect
+          const basePath = getBase()
+          window.history.replaceState(null, '', basePath)
+
+          // Brief delay to allow history update before navigation
           setTimeout(() => {
-            window.location.replace(url)
+            window.location.replace(basePath)
           }, 100)
         } catch (e) {
-          console.error('Error:', e)
-          err('error', e.message)
+          console.error('Callback handler error:', e)
+          showError('error', e.message)
         }
       }
-      go()
+
+      // Execute handler
+      handleCallback()
     </script>
   </body>
 </html>

@@ -166,7 +166,4 @@ default github pages url - https://dgaudet.github.io/commentator-frontend/
 possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
 test out changing my password in auth0
 
-Take a look at the current deployed code, what does the public folder look like
-Make sure this pdd only modified the code in the public folder
-
 Create a proper 404 page that gives information about not finding any result
