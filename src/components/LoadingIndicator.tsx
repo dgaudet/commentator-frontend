@@ -1,8 +1,8 @@
 /**
  * LoadingIndicator Component
  *
- * Displays an animated teacher character during app initialization.
- * Integrates with AuthContext loading state to show/hide the indicator.
+ * Displays an animated teacher character during app initialization and API calls.
+ * Can be controlled via visible prop or automatically via LoadingContext.
  *
  * Features:
  * - Minimalist line-art teacher character animation
@@ -10,22 +10,35 @@
  * - Centered on screen, responsive
  * - WCAG AA accessible (aria-busy, role, aria-label)
  * - SVG-based for performance (<50KB)
+ * - Supports controlled (via visible prop) and uncontrolled (via LoadingContext) modes
  *
  * Usage:
+ * // Controlled mode (pass visible prop)
  * <LoadingIndicator visible={isLoading} />
+ *
+ * // Uncontrolled mode (uses LoadingContext automatically)
+ * <LoadingIndicator />
  */
+
+import { useLoading } from '../contexts/LoadingContext'
 
 interface LoadingIndicatorProps {
   /**
-   * Controls visibility of the loading indicator
-   * When true, displays the animation
-   * When false, removes from DOM
+   * Optional: Controls visibility of the loading indicator
+   * When provided, displays the animation based on this prop
+   * When not provided, uses LoadingContext to determine visibility
+   * Can be true when: app is initializing OR any API call is in progress
    */
-  visible: boolean
+  visible?: boolean
 }
 
 export function LoadingIndicator({ visible }: LoadingIndicatorProps) {
-  if (!visible) {
+  const { isLoading } = useLoading()
+
+  // Use provided visible prop if given, otherwise use context
+  const shouldShow = visible !== undefined ? visible : isLoading
+
+  if (!shouldShow) {
     return null
   }
 

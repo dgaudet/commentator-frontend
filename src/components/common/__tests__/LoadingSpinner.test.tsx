@@ -74,21 +74,21 @@ describe('LoadingSpinner', () => {
     it('should use design tokens for spinner colors', () => {
       render(<LoadingSpinner />)
 
-      const spinner = screen.getByRole('status').querySelector('div')
-      expect(spinner).toBeInTheDocument()
+      const spinnerContainer = screen.getByTestId('loading-spinner')
+      expect(spinnerContainer).toBeInTheDocument()
 
       // Spinner should have inline styles for colors
-      const computedStyle = window.getComputedStyle(spinner!)
+      const computedStyle = window.getComputedStyle(spinnerContainer)
       expect(computedStyle.borderColor).toBeTruthy()
     })
 
     it('should adapt all styling to current theme', () => {
       render(<LoadingSpinner />)
 
-      const status = screen.getByRole('status')
+      const spinner = screen.getByTestId('loading-spinner')
 
       // Should use inline styles, not Tailwind classes
-      expect(status.getAttribute('style')).toBeTruthy()
+      expect(spinner.getAttribute('style')).toBeTruthy()
     })
   })
 })
