@@ -162,7 +162,8 @@ Older Notes:
 ** lsof -i :5173, then kill the process
 
 default github pages url - https://dgaudet.github.io/commentator-frontend/
-aws url - http://commentator.prod.s3-website-us-west-2.amazonaws.com/
 
 possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
 test out changing my password in auth0
+
+Create a proper 404 page that gives information about not finding any result
