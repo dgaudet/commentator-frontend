@@ -167,3 +167,5 @@ possible Auth0 login/user create flow by using Auth0 configuration, instead of i
 test out changing my password in auth0
 
 Create a proper 404 page that gives information about not finding any result
+
+https://dgaudet.github.io/commentator-frontend/callback/index.html 
