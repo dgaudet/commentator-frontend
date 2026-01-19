@@ -168,6 +168,10 @@ test out changing my password in auth0
 
 Create a proper 404 page that gives information about not finding any result
 
+Things to revert with testing
+* the authConfig.ts file
+* fix the tests in pull 76
+* 
 https://dgaudet.github.io/commentator-frontend/callback/index.html 
 PR's for callback change
 * test change - https://github.com/dgaudet/commentator-frontend/pull/74
