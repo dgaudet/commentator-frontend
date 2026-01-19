@@ -9,6 +9,7 @@
   },
   "phases": {
     "planning": "COMPLETE",
+    "requirements": "COMPLETE",
     "design": "PENDING",
     "implementation": "PENDING",
     "qa": "PENDING"
@@ -71,7 +72,8 @@
   },
   "artifacts": {
     "planning": [
-      "pdd-workspace/teacher-character-visual-system/planning/design-brief.md"
+      "pdd-workspace/teacher-character-visual-system/planning/design-brief.md",
+      "pdd-workspace/teacher-character-visual-system/planning/user-stories.md"
     ],
     "design": [
       "favicon.svg (source)",
