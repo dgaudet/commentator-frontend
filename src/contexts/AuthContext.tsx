@@ -70,6 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
 
         // Check if we have callback parameters stored by the callback handler
         // The callback handler (public/callback/index.html) stores these when returning from Auth0
+        // this is used when run in github pages as it doesn't properly work with SPA's
         const storedParams = getStoredCallbackParams()
 
         // Process the redirect if returning from Auth0 callback
