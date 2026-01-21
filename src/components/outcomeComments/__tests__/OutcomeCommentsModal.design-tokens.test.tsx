@@ -45,6 +45,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -69,6 +72,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -93,6 +99,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -119,6 +128,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -143,6 +155,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -169,6 +184,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -196,6 +214,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -222,6 +243,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -244,6 +268,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -268,6 +295,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -294,6 +324,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -317,6 +350,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -342,6 +378,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -367,6 +406,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -392,6 +434,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -410,6 +455,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -466,6 +514,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -487,6 +538,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 
@@ -509,6 +563,9 @@ describe('US-UI-002: OutcomeCommentsModal Component Design Tokens', () => {
           onDeleteComment={mockOnDelete}
           loading={false}
           error={null}
+          pronouns={[]}
+          pronounsLoading={false}
+          pronounsError={null}
         />,
       )
 

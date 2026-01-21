@@ -23,7 +23,8 @@
  */
 
 import { useState, useMemo } from 'react'
-import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from '../../types'
+import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, Pronoun } from '../../types'
+import { replacePronounsWithPlaceholders } from '../../utils/pronouns'
 import { sortOutcomeCommentsByRange } from '../../utils/sortOutcomeComments'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
@@ -44,6 +45,9 @@ interface OutcomeCommentsModalProps<T extends { id: string; name: string }> {
   onDeleteComment: (id: string) => Promise<void>
   loading: boolean
   error: string | null
+  pronouns: Pronoun[]
+  pronounsLoading: boolean
+  pronounsError: string | null
 }
 
 export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
@@ -55,6 +59,9 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
   onDeleteComment,
   loading,
   error,
+  pronouns,
+  pronounsLoading,
+  pronounsError,
 }: OutcomeCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
   const focusShadows = useThemeFocusShadows()
@@ -75,6 +82,11 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
     commentText: '',
   })
   const [validationError, setValidationError] = useState('')
+  const [replacePronounsLoading, setReplacePronounsLoading] = useState(false)
+  const [replacePronounsMessage, setReplacePronounsMessage] = useState<{
+    type: 'success' | 'error' | 'info'
+    text: string
+  } | null>(null)
 
   // Memoize sorted comments to avoid re-sorting on every render (Performance optimization)
   const sortedComments = useMemo(
@@ -104,6 +116,91 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
       return `Comment cannot exceed ${MAX_COMMENT_LENGTH} characters`
     }
     return null
+  }
+
+  const handleReplacePronounsClick = async () => {
+    // Clear previous messages
+    setReplacePronounsMessage(null)
+
+    // Check if textarea is empty
+    if (!newCommentContent.trim()) {
+      setReplacePronounsMessage({
+        type: 'info',
+        text: 'Please enter text first',
+      })
+      return
+    }
+
+    // Set loading state
+    setReplacePronounsLoading(true)
+
+    try {
+      // Replace pronouns using the utility function
+      const result = replacePronounsWithPlaceholders(newCommentContent, pronouns)
+
+      // Update textarea with replaced text
+      setNewCommentContent(result.replacedText)
+
+      // Show success message with count
+      const { pronoun: pronounCount, possessivePronoun: possessiveCount } =
+        result.replacementCount
+      const totalReplacements = pronounCount + possessiveCount
+
+      if (totalReplacements === 0) {
+        setReplacePronounsMessage({
+          type: 'info',
+          text: 'No pronouns found in text',
+        })
+      } else {
+        setReplacePronounsMessage({
+          type: 'success',
+          text: `Replaced ${totalReplacements} pronouns (${pronounCount} subject, ${possessiveCount} possessive)`,
+        })
+      }
+    } catch (error) {
+      setReplacePronounsMessage({
+        type: 'error',
+        text: 'Failed to replace pronouns. Please try again.',
+      })
+    } finally {
+      setReplacePronounsLoading(false)
+    }
+  }
+
+  const getMessageBoxStyle = (type: string) => {
+    const baseStyle = {
+      marginTop: spacing.md,
+      padding: spacing.md,
+      borderRadius: borders.radius.md,
+      fontSize: typography.fontSize.sm,
+      border: `${borders.width.thin} solid`,
+    }
+
+    if (type === 'success') {
+      return {
+        ...baseStyle,
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        borderColor: '#22c55e',
+        color: '#22c55e',
+      }
+    }
+
+    if (type === 'error') {
+      return {
+        ...baseStyle,
+        backgroundColor: themeColors.semantic.errorLight,
+        borderColor: themeColors.semantic.error,
+        color: themeColors.semantic.error,
+      }
+    }
+
+    // info
+    return {
+      ...baseStyle,
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderColor: '#3b82f6',
+      color: '#3b82f6',
+    }
   }
 
   const handleCreateComment = async () => {
@@ -273,6 +370,37 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
                   showCharCount={true}
                   showPlaceholderTips={true}
                 />
+
+                {/* Story 1: Replace Pronouns Button */}
+                {!pronounsError && (
+                  <div style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
+                    <Button
+                      onClick={handleReplacePronounsClick}
+                      disabled={replacePronounsLoading || pronounsLoading || pronouns.length === 0}
+                      variant="secondary"
+                      title={
+                        pronounsLoading
+                          ? 'Loading pronouns...'
+                          : pronouns.length === 0
+                            ? 'No pronouns configured'
+                            : 'Replace pronouns with placeholders'
+                      }
+                    >
+                      {replacePronounsLoading ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Story 1: Replace Pronouns Message */}
+                {replacePronounsMessage && (
+                  <div
+                    role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
+                    style={getMessageBoxStyle(replacePronounsMessage.type)}
+                  >
+                    {replacePronounsMessage.text}
+                  </div>
+                )}
+
                 <div
                   style={{
                     display: 'flex',

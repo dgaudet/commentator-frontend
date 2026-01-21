@@ -58,6 +58,9 @@ describe('OutcomeCommentsModal', () => {
     onDeleteComment: jest.fn(),
     loading: false,
     error: null,
+    pronouns: [],
+    pronounsLoading: false,
+    pronounsError: null,
   }
 
   beforeEach(() => {

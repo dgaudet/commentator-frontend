@@ -159,3 +159,5 @@ test out changing my password in auth0
 
 Create a proper 404 page that gives information about not finding any result
 It would be nice to have the header and proper colors on the login page as well
+
+make sure pronouns are only loaded once, and the loading indicator displays
