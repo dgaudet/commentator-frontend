@@ -161,6 +161,9 @@ It would be nice to have the header and proper colors on the login page as well
 make sure pronouns are only loaded once, and the loading indicator displays
 move the button up and the result message beside the button instead of below
 
+the subjectList should push the pronouns to the personalizedComment component as well so it doesn't need to be loaded again
+Editing multiple comments after replacing pronouns has some odd behavior
+
 React Query / TanStack Query (Industry Standard) - Best overall:
 - Handles request deduplication automatically
 - Prevents double requests in Strict Mode
