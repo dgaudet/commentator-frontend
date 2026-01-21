@@ -145,7 +145,7 @@ When ready, configure a custom domain using Cloudflare:
 
 **See `DEPLOYMENT.md` for detailed custom domain setup instructions.**
 
----
+---do n
 
 Older Notes:
 * I never finished the custom domain with cloudflare
