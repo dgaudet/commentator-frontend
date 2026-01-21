@@ -24,7 +24,7 @@
 
 import { useState, useMemo } from 'react'
 import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, Pronoun } from '../../types'
-import { replacePronounsWithPlaceholders } from '../../utils/pronouns'
+import { useReplacePronounsButton } from '../../hooks/useReplacePronounsButton'
 import { sortOutcomeCommentsByRange } from '../../utils/sortOutcomeComments'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
@@ -82,11 +82,8 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
     commentText: '',
   })
   const [validationError, setValidationError] = useState('')
-  const [replacePronounsLoading, setReplacePronounsLoading] = useState(false)
-  const [replacePronounsMessage, setReplacePronounsMessage] = useState<{
-    type: 'success' | 'error' | 'info'
-    text: string
-  } | null>(null)
+  const { isLoading: replacePronounsLoading, message: replacePronounsMessage, handleReplacePronounsFunctionality, getMessageBoxStyle } = useReplacePronounsButton()
+  const { isLoading: editReplacePronounsLoading, message: editReplacePronounsMessage, handleReplacePronounsFunctionality: handleEditReplacePronounsFunctionality, getMessageBoxStyle: getEditMessageBoxStyle } = useReplacePronounsButton()
 
   // Memoize sorted comments to avoid re-sorting on every render (Performance optimization)
   const sortedComments = useMemo(
@@ -119,88 +116,13 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
   }
 
   const handleReplacePronounsClick = async () => {
-    // Clear previous messages
-    setReplacePronounsMessage(null)
-
-    // Check if textarea is empty
-    if (!newCommentContent.trim()) {
-      setReplacePronounsMessage({
-        type: 'info',
-        text: 'Please enter text first',
-      })
-      return
-    }
-
-    // Set loading state
-    setReplacePronounsLoading(true)
-
-    try {
-      // Replace pronouns using the utility function
-      const result = replacePronounsWithPlaceholders(newCommentContent, pronouns)
-
-      // Update textarea with replaced text
-      setNewCommentContent(result.replacedText)
-
-      // Show success message with count
-      const { pronoun: pronounCount, possessivePronoun: possessiveCount } =
-        result.replacementCount
-      const totalReplacements = pronounCount + possessiveCount
-
-      if (totalReplacements === 0) {
-        setReplacePronounsMessage({
-          type: 'info',
-          text: 'No pronouns found in text',
-        })
-      } else {
-        setReplacePronounsMessage({
-          type: 'success',
-          text: `Replaced ${totalReplacements} pronouns (${pronounCount} subject, ${possessiveCount} possessive)`,
-        })
-      }
-    } catch (error) {
-      setReplacePronounsMessage({
-        type: 'error',
-        text: 'Failed to replace pronouns. Please try again.',
-      })
-    } finally {
-      setReplacePronounsLoading(false)
-    }
+    const replacedText = await handleReplacePronounsFunctionality(newCommentContent, pronouns)
+    setNewCommentContent(replacedText)
   }
 
-  const getMessageBoxStyle = (type: string) => {
-    const baseStyle = {
-      marginTop: spacing.md,
-      padding: spacing.md,
-      borderRadius: borders.radius.md,
-      fontSize: typography.fontSize.sm,
-      border: `${borders.width.thin} solid`,
-    }
-
-    if (type === 'success') {
-      return {
-        ...baseStyle,
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-        borderColor: '#22c55e',
-        color: '#22c55e',
-      }
-    }
-
-    if (type === 'error') {
-      return {
-        ...baseStyle,
-        backgroundColor: themeColors.semantic.errorLight,
-        borderColor: themeColors.semantic.error,
-        color: themeColors.semantic.error,
-      }
-    }
-
-    // info
-    return {
-      ...baseStyle,
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
-      borderColor: '#3b82f6',
-      color: '#3b82f6',
-    }
+  const handleEditReplacePronounsClick = async () => {
+    const replacedText = await handleEditReplacePronounsFunctionality(editContent, pronouns)
+    setEditContent(replacedText)
   }
 
   const handleCreateComment = async () => {
@@ -578,6 +500,37 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
                                   showCharCount={true}
                                   showPlaceholderTips={true}
                                 />
+
+                                {/* Story 3: Replace Pronouns Button - Edit Section */}
+                                {!pronounsError && (
+                                  <div style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
+                                    <Button
+                                      onClick={handleEditReplacePronounsClick}
+                                      disabled={editReplacePronounsLoading || pronounsLoading || pronouns.length === 0}
+                                      variant="secondary"
+                                      title={
+                                        pronounsLoading
+                                          ? 'Loading pronouns...'
+                                          : pronouns.length === 0
+                                            ? 'No pronouns configured'
+                                            : 'Replace pronouns with placeholders'
+                                      }
+                                    >
+                                      {editReplacePronounsLoading ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
+                                    </Button>
+                                  </div>
+                                )}
+
+                                {/* Story 3: Replace Pronouns Message - Edit Section */}
+                                {editReplacePronounsMessage && (
+                                  <div
+                                    role={editReplacePronounsMessage.type === 'error' ? 'alert' : undefined}
+                                    style={getEditMessageBoxStyle(editReplacePronounsMessage.type)}
+                                  >
+                                    {editReplacePronounsMessage.text}
+                                  </div>
+                                )}
+
                                 <div
                                   style={{
                                     display: 'flex',
