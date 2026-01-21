@@ -1,0 +1,114 @@
+{
+  "feature": "bulk-upload-deduplication",
+  "title": "Bulk Upload Deduplication - Remove Duplicate Comments",
+  "description": "Enhance bulk upload feature to automatically detect and remove duplicate comments before sending to API, with user-facing feedback showing how many duplicates were filtered",
+  "status": "PLANNING_COMPLETE",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "Micro-level feature: 3-4 focused user stories, client-side only (no API changes), straightforward deduplication logic, single developer execution, enhances existing functionality"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "requirements": "COMPLETE",
+    "design": "READY_FOR_IMPLEMENTATION",
+    "implementation": "PENDING",
+    "qa": "PENDING"
+  },
+  "ownership": {
+    "product": "Product Owner",
+    "implementation": "Frontend Engineer",
+    "qa": "QA Engineer",
+    "approval": "Product Owner"
+  },
+  "scope": {
+    "primary_deliverables": [
+      "Deduplication logic for bulk uploaded comments (client-side)",
+      "Enhanced status messaging showing duplicates removed",
+      "Deduplication algorithm selection (exact match vs. fuzzy/semantic)",
+      "Test coverage for deduplication scenarios"
+    ],
+    "constraints": [
+      "Client-side only - no API changes",
+      "Must preserve existing bulk upload workflow",
+      "Deduplication must be transparent to user (no additional clicks)",
+      "Status message must clearly communicate filtering action",
+      "Must handle edge cases (empty strings, whitespace, case sensitivity)"
+    ],
+    "out_of_scope": [
+      "API-side deduplication",
+      "Database cleanup of existing duplicates",
+      "Duplicate detection across different subjects/classes",
+      "UI redesign of bulk upload modal"
+    ]
+  },
+  "business_value": {
+    "user_problem": "Users accidentally paste duplicate comments in bulk upload, wasting time and cluttering the database",
+    "impact": "Improved data quality and reduced manual cleanup effort",
+    "success_metrics": [
+      "% of bulk uploads with duplicates removed",
+      "User satisfaction with transparency (clear feedback on duplicates)",
+      "Zero regressions in bulk upload success rate"
+    ]
+  },
+  "technical_approach": {
+    "deduplication_strategy": "Exact string match (case-insensitive, whitespace-normalized)",
+    "comparison_fields": [
+      "comment text (primary identifier for duplicate)",
+      "rating (optional - could have same text with different ratings)"
+    ],
+    "implementation_location": "Enhance bulkSaveComments.ts or add new deduplication utility",
+    "status_message_location": "BulkUploadModal.tsx success message display"
+  },
+  "timeline": {
+    "planning_complete": "2026-01-21",
+    "design_complete": "2026-01-21",
+    "implementation_target": "2026-02-04",
+    "qa_target": "2026-02-07",
+    "release_target": "2026-02-07"
+  },
+  "artifacts": {
+    "planning": [
+      "pdd-workspace/bulk-upload-deduplication/planning/minimal-prd.md",
+      "pdd-workspace/bulk-upload-deduplication/planning/user-stories.md"
+    ],
+    "design": [
+      "Deduplication algorithm specification",
+      "Status message format examples",
+      "Edge case handling rules"
+    ],
+    "implementation": [
+      "src/components/personalizedComments/bulkSaveComments.ts (enhanced with deduplication)",
+      "New utility: src/components/personalizedComments/deduplicateComments.ts",
+      "src/components/personalizedComments/BulkUploadModal.tsx (status message update)"
+    ],
+    "tests": [
+      "Test deduplication logic (exact matches, case variations, whitespace)",
+      "Test status message with duplicate counts",
+      "Test edge cases (empty results, all duplicates, no duplicates)",
+      "Test integration with existing bulk upload flow"
+    ]
+  },
+  "dependencies": [
+    "Existing bulk upload infrastructure (parseComments, bulkSaveComments, BulkUploadModal)"
+  ],
+  "risks": [
+    {
+      "risk": "Over-aggressive deduplication removes intentional duplicates with same text",
+      "mitigation": "Use exact match strategy (conservative); consider future fuzzy matching as Phase 2",
+      "severity": "MEDIUM"
+    },
+    {
+      "risk": "Performance impact with large datasets (1000+ comments)",
+      "mitigation": "Use Set-based deduplication (O(n)), no external dependencies",
+      "severity": "LOW"
+    },
+    {
+      "risk": "User confusion about which duplicates were removed",
+      "mitigation": "Clear status message, consider optional 'review duplicates' feature in Phase 2",
+      "severity": "MEDIUM"
+    }
+  ],
+  "notes": "Phase 1 uses exact string match (simple, predictable). Future enhancements: Phase 2 could add fuzzy matching, option to preview removed duplicates, or ability to configure deduplication rules.",
+  "assessedAt": "2026-01-21",
+  "lastUpdated": "2026-01-21"
+}
