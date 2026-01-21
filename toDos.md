@@ -7,18 +7,11 @@
     - Button to view all comments for class that you can print
     - Business value: Enables batch printing/review
 
-### Data Management
-- [ ] **When adding a new class, select it by default**
-    - Business value: Better UX, fewer clicks
-
 ---
 
 ## 📋 Medium Priority
 
 ### UI Improvements
-- [ ] **Update class selection label to "Select a Class to work with"**
-    - More descriptive label text
-
 - [ ] **Show comment count (e.g., "1 out of 100")**
     - Helps users track progress through student comments
     - Decision needed: How should comments be ordered?
@@ -155,8 +148,6 @@ When ready, configure a custom domain using Cloudflare:
 ---
 
 Older Notes:
-* the callback url work is quite odd, and the url in the browser has the full callback url, which isn't very user friendly
-** Should probably just have a callback page that does the work from the 404
 * I never finished the custom domain with cloudflare
 * Killing the locally running app
 ** lsof -i :5173, then kill the process
@@ -168,6 +159,6 @@ test out changing my password in auth0
 
 Create a proper 404 page that gives information about not finding any result
 It would be nice to have the header and proper colors on the login page as well
-I just thought of a cool loading indicator, perhaps an image of a teacher thinking, tapping her pencil
 
-considerations: tone - friendly approachable, diversity - yes reflect diversity, animation - calm and patient, color same colors as the app palatte, personality - fun teacher.
+Add the replace placeholder button to outcome comments
+ 

@@ -11,13 +11,26 @@
  */
 
 import { bulkSaveComments } from '../bulkSaveComments'
+import { deduplicateComments } from '../deduplicateComments'
+
+// Mock the deduplicateComments function
+jest.mock('../deduplicateComments')
 
 describe('bulkSaveComments - Story 4: Sequential Save', () => {
   const mockCreateComment = jest.fn()
   const subjectId = 'test-subject-123'
+  const mockDeduplicateComments = deduplicateComments as jest.MockedFunction<
+    typeof deduplicateComments
+  >
 
   beforeEach(() => {
     jest.clearAllMocks()
+    // Set up default mock behavior for Story 4 tests (pass through without dedup)
+    mockDeduplicateComments.mockImplementation((comments) => ({
+      unique: comments,
+      duplicateCount: 0,
+      removedDuplicates: [],
+    }))
   })
 
   describe('AC1: Basic sequential save', () => {
@@ -233,6 +246,288 @@ describe('bulkSaveComments - Story 4: Sequential Save', () => {
       expect(result.successful).toHaveLength(0)
       expect(result.failed).toHaveLength(0)
       expect(result.totalAttempted).toBe(0)
+    })
+  })
+})
+
+describe('bulkSaveComments - Story 2: Deduplication Integration', () => {
+  const mockCreateComment = jest.fn()
+  const subjectId = 'test-subject-123'
+  const mockDeduplicateComments = deduplicateComments as jest.MockedFunction<
+    typeof deduplicateComments
+  >
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    // Reset mock implementation before each test
+    mockDeduplicateComments.mockReset()
+  })
+
+  describe('AC1: Call deduplication before saving', () => {
+    it('should call deduplicateComments with input comments', async () => {
+      const comments = [
+        { text: 'Great work', rating: 5 },
+        { text: 'Good effort', rating: 4 },
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique: comments,
+        duplicateCount: 0,
+        removedDuplicates: [],
+      })
+
+      mockCreateComment
+        .mockResolvedValueOnce({ id: 'comment-1' })
+        .mockResolvedValueOnce({ id: 'comment-2' })
+
+      await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(mockDeduplicateComments).toHaveBeenCalledWith(comments)
+      expect(mockDeduplicateComments).toHaveBeenCalledTimes(1)
+    })
+
+    it('should send only unique comments to API', async () => {
+      const comments = [
+        { text: 'Great work', rating: 5 },
+        { text: 'great work', rating: 5 }, // duplicate
+        { text: 'Good effort', rating: 4 },
+      ]
+
+      const unique = [
+        { text: 'Great work', rating: 5 },
+        { text: 'Good effort', rating: 4 },
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique,
+        duplicateCount: 1,
+        removedDuplicates: [{ text: 'great work', rating: 5 }],
+      })
+
+      mockCreateComment
+        .mockResolvedValueOnce({ id: 'comment-1' })
+        .mockResolvedValueOnce({ id: 'comment-2' })
+
+      await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(mockCreateComment).toHaveBeenCalledTimes(2)
+      expect(mockCreateComment).toHaveBeenNthCalledWith(1, {
+        subjectId,
+        comment: 'Great work',
+        rating: 5,
+      })
+      expect(mockCreateComment).toHaveBeenNthCalledWith(2, {
+        subjectId,
+        comment: 'Good effort',
+        rating: 4,
+      })
+    })
+  })
+
+  describe('AC2: Return duplicate count in result', () => {
+    it('should include duplicateCount in result when duplicates removed', async () => {
+      const comments = [
+        { text: 'Same comment', rating: 5 },
+        { text: 'same comment', rating: 5 }, // duplicate
+        { text: 'Same comment', rating: 5 }, // duplicate
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique: [{ text: 'Same comment', rating: 5 }],
+        duplicateCount: 2,
+        removedDuplicates: [
+          { text: 'same comment', rating: 5 },
+          { text: 'Same comment', rating: 5 },
+        ],
+      })
+
+      mockCreateComment.mockResolvedValueOnce({ id: 'comment-1' })
+
+      const result = await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(result).toHaveProperty('duplicateCount')
+      expect(result.duplicateCount).toBe(2)
+    })
+
+    it('should return duplicateCount of 0 when no duplicates', async () => {
+      const comments = [
+        { text: 'Unique one', rating: 5 },
+        { text: 'Unique two', rating: 4 },
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique: comments,
+        duplicateCount: 0,
+        removedDuplicates: [],
+      })
+
+      mockCreateComment
+        .mockResolvedValueOnce({ id: 'comment-1' })
+        .mockResolvedValueOnce({ id: 'comment-2' })
+
+      const result = await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(result.duplicateCount).toBe(0)
+    })
+  })
+
+  describe('AC3: Preserve existing behavior with deduplication', () => {
+    it('should still track successful saves correctly', async () => {
+      const comments = [
+        { text: 'Comment 1', rating: 5 },
+        { text: 'comment 1', rating: 5 }, // duplicate
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique: [{ text: 'Comment 1', rating: 5 }],
+        duplicateCount: 1,
+        removedDuplicates: [{ text: 'comment 1', rating: 5 }],
+      })
+
+      mockCreateComment.mockResolvedValueOnce({ id: 'comment-1' })
+
+      const result = await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(result.successful).toHaveLength(1)
+      expect(result.successful[0]).toEqual({
+        text: 'Comment 1',
+        rating: 5,
+      })
+    })
+
+    it('should still track failed saves correctly after deduplication', async () => {
+      const comments = [
+        { text: 'Valid comment', rating: 5 },
+        { text: 'valid comment', rating: 5 }, // duplicate
+        { text: 'This will fail', rating: 4 },
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique: [
+          { text: 'Valid comment', rating: 5 },
+          { text: 'This will fail', rating: 4 },
+        ],
+        duplicateCount: 1,
+        removedDuplicates: [{ text: 'valid comment', rating: 5 }],
+      })
+
+      mockCreateComment
+        .mockResolvedValueOnce({ id: 'comment-1' })
+        .mockRejectedValueOnce(new Error('Character limit exceeded'))
+
+      const result = await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(result.successful).toHaveLength(1)
+      expect(result.failed).toHaveLength(1)
+      expect(result.failed[0].reason).toBe('Character limit exceeded')
+      expect(result.duplicateCount).toBe(1)
+    })
+
+    it('should continue saving after failures even with deduplication', async () => {
+      const comments = [
+        { text: 'Comment 1', rating: 5 },
+        { text: 'comment 1', rating: 5 }, // duplicate
+        { text: 'Comment 2', rating: 4 },
+        { text: 'Comment 3', rating: 3 },
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique: [
+          { text: 'Comment 1', rating: 5 },
+          { text: 'Comment 2', rating: 4 },
+          { text: 'Comment 3', rating: 3 },
+        ],
+        duplicateCount: 1,
+        removedDuplicates: [{ text: 'comment 1', rating: 5 }],
+      })
+
+      mockCreateComment
+        .mockResolvedValueOnce({ id: 'comment-1' })
+        .mockRejectedValueOnce(new Error('API error'))
+        .mockResolvedValueOnce({ id: 'comment-3' })
+
+      const result = await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(result.successful).toHaveLength(2)
+      expect(result.failed).toHaveLength(1)
+      expect(mockCreateComment).toHaveBeenCalledTimes(3)
+    })
+  })
+
+  describe('AC4: totalAttempted counts original comments before dedup', () => {
+    it('should set totalAttempted to original input count', async () => {
+      const comments = [
+        { text: 'Comment', rating: 5 },
+        { text: 'comment', rating: 5 }, // duplicate
+        { text: 'comment', rating: 5 }, // duplicate
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique: [{ text: 'Comment', rating: 5 }],
+        duplicateCount: 2,
+        removedDuplicates: [
+          { text: 'comment', rating: 5 },
+          { text: 'comment', rating: 5 },
+        ],
+      })
+
+      mockCreateComment.mockResolvedValueOnce({ id: 'comment-1' })
+
+      const result = await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(result.totalAttempted).toBe(3)
+    })
+  })
+
+  describe('AC5: Handle edge cases with deduplication', () => {
+    it('should handle all comments being duplicates', async () => {
+      const comments = [
+        { text: 'Same', rating: 5 },
+        { text: 'same', rating: 5 },
+        { text: 'SAME', rating: 5 },
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique: [{ text: 'Same', rating: 5 }],
+        duplicateCount: 2,
+        removedDuplicates: [
+          { text: 'same', rating: 5 },
+          { text: 'SAME', rating: 5 },
+        ],
+      })
+
+      mockCreateComment.mockResolvedValueOnce({ id: 'comment-1' })
+
+      const result = await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(result.successful).toHaveLength(1)
+      expect(result.duplicateCount).toBe(2)
+      expect(result.totalAttempted).toBe(3)
+      expect(mockCreateComment).toHaveBeenCalledTimes(1)
+    })
+
+    it('should handle empty result after deduplication', async () => {
+      const comments = [
+        { text: 'test', rating: 5 },
+        { text: 'test', rating: 5 },
+      ]
+
+      mockDeduplicateComments.mockReturnValueOnce({
+        unique: [],
+        duplicateCount: 2,
+        removedDuplicates: [
+          { text: 'test', rating: 5 },
+          { text: 'test', rating: 5 },
+        ],
+      })
+
+      const result = await bulkSaveComments(subjectId, comments, mockCreateComment)
+
+      expect(result.successful).toHaveLength(0)
+      expect(result.failed).toHaveLength(0)
+      expect(result.duplicateCount).toBe(2)
+      expect(result.totalAttempted).toBe(2)
+      expect(mockCreateComment).toHaveBeenCalledTimes(0)
     })
   })
 })

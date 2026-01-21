@@ -463,6 +463,13 @@ export const BulkUploadModal = ({
             <div style={{ marginBottom: spacing.sm }}>
               ✅ Successfully imported {importResults.successful.length} comment
               {importResults.successful.length !== 1 ? 's' : ''}
+              {importResults.duplicateCount > 0 && (
+                <>
+                  {' '}
+                  ({importResults.duplicateCount} duplicate
+                  {importResults.duplicateCount !== 1 ? 's' : ''} removed)
+                </>
+              )}
             </div>
             {importResults.failed.length > 0 && (
               <div>
