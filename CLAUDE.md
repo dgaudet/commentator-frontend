@@ -176,14 +176,48 @@ Maintain `.github/instructions/memory-index.md`:
 
 ## Code Quality Standards
 
+### React & TypeScript
 1. Follow React best practices and idiomatic patterns
-2. Maintain clean architecture principles with modular design
-3. Use dependency injection patterns where appropriate
-4. Document complex logic and public APIs
-5. Suggest README updates when appropriate
-6. Ensure all files end with a newline character
+   - Functional components with hooks
+   - Proper use of useEffect, useCallback, useMemo for performance
+   - Memoization for expensive computations
+2. Use TypeScript strict mode throughout
+   - No `any` types without explicit justification
+   - Proper type interfaces for props and state
+3. Component structure
+   - One component per file (except related small components)
+   - Clear prop interfaces with JSDoc comments
+   - Meaningful component names
 
-**Note**: The copilot instructions mention "Go best practices" which appears to be a copy-paste error - this is a React/JavaScript project.
+### Architecture & Design
+4. Maintain clean architecture principles with modular design
+   - Separation of concerns (components, hooks, services, utils)
+   - Single responsibility principle
+   - DRY (Don't Repeat Yourself) - extract reusable logic into hooks/utils
+5. Use dependency injection patterns where appropriate
+   - Pass dependencies as props rather than hard-coding imports
+   - Use React Context for cross-cutting concerns
+6. API integration
+   - Custom hooks for data fetching (prepare for TanStack Query migration)
+   - Centralized API client configuration
+   - Proper error handling and loading states
+
+### Code Quality
+7. Document complex logic and public APIs
+   - JSDoc comments for functions and hooks
+   - Clear comments for non-obvious logic
+8. Testing
+   - Test-Driven Development (TDD) mandatory - write tests first
+   - Unit tests for hooks and utilities
+   - Component integration tests
+9. Code style
+   - ESLint and Stylelint must pass (required before commits)
+   - Design token-driven styling (no hardcoded values)
+   - Ensure all files end with a newline character
+10. Accessibility & UX
+    - WCAG 2.1 AA compliance
+    - Semantic HTML and ARIA attributes
+    - Keyboard navigation support
 
 ## Project Context Files
 

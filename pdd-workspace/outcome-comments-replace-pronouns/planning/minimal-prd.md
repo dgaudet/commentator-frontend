@@ -94,21 +94,30 @@ Provide consistency and flexibility in outcome comments by allowing teachers to 
 
 ## Technical Notes
 
+**React & TypeScript Standards:**
+- Follow functional components with React hooks (no class components)
+- Use TypeScript strict mode - no `any` types without justification
+- Write tests first (TDD mandatory) - Red-Green-Refactor cycle
+- Use custom hooks for business logic (see Story 2: reusable hook pattern)
+- Proper prop interfaces with JSDoc comments
+- See CLAUDE.md for complete React/TypeScript coding guidelines
+
 **Code Reuse Opportunity:**
 - `replacePronounsWithPlaceholders()` utility already exists (src/utils/pronouns.ts)
 - Study PersonalizedCommentsModal architecture (similar modal structure to OutcomeCommentsModal) as implementation guide
 - Replace pronouns UI logic in BulkUploadModal and PersonalizedCommentsModal can be extracted
 - Recommend creating:
   1. Reusable `ReplacePronounsButton` component, OR
-  2. Custom hook like `useReplacePronounsFunctionality()`
+  2. Custom hook like `useReplacePronounsFunctionality()` ← *Recommended for Story 2*
   3. Shared message styling component or style utility
 
 **Integration Points:**
 - OutcomeCommentsModal needs access to pronouns list (may need prop pass-through)
 - Follow PersonalizedCommentsModal pattern for modal state and text area management
 - Uses existing `replacePronounsWithPlaceholders()` utility
-- Styling consistent with Button component and design tokens
+- Styling: Design token-driven only (no hardcoded values)
 - Error/success messaging pattern consistent across all modals
+- Accessibility: WCAG 2.1 AA compliance required
 
 ## Dependencies
 
