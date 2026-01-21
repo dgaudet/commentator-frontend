@@ -201,7 +201,7 @@ describe('Replace Pronouns Feature - Accessibility & Integration (TASK-1.5)', ()
           isOpen={true}
           onClose={jest.fn()}
           subjectId="subject1"
-          onImport={jest.fn().mockResolvedValue({ successful: [], failed: [] })}
+          onImport={jest.fn().mockResolvedValue({ successful: [], failed: [], totalAttempted: 0, duplicateCount: 0 })}
           pronouns={mockPronouns}
           pronounsLoading={false}
           pronounsError="API Error"

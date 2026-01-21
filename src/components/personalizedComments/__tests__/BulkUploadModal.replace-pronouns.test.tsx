@@ -26,6 +26,8 @@ describe('BulkUploadModal - Replace Pronouns with Placeholders Button', () => {
   const mockOnImport = jest.fn().mockResolvedValue({
     successful: [],
     failed: [],
+    totalAttempted: 0,
+    duplicateCount: 0,
   })
 
   const defaultProps = {

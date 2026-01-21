@@ -53,6 +53,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           successful: [],
           failed: [],
           totalAttempted: 0,
+          duplicateCount: 0,
         }
       })
 
@@ -81,6 +82,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           successful: [],
           failed: [],
           totalAttempted: 0,
+          duplicateCount: 0,
         }
       })
 
@@ -109,6 +111,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           successful: [],
           failed: [],
           totalAttempted: 0,
+          duplicateCount: 0,
         }
       })
 
@@ -158,6 +161,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           { lineNumber: 1, originalText: 'x'.repeat(600), reason: 'exceeds character limit' },
         ],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -184,6 +188,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           { lineNumber: 2, originalText: 'too long comment', reason: 'exceeds character limit' },
         ],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -207,6 +212,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           { lineNumber: 1, originalText: 'failed comment text', reason: 'validation error' },
         ],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -234,6 +240,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           { lineNumber: 1, originalText: 'text', reason: 'exceeds character limit' },
         ],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -349,6 +356,152 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
       await waitFor(() => {
         const alert = screen.queryByRole('alert')
         expect(alert).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('AC6: Story 3 - Duplicate count in status message', () => {
+    it('should display duplicate count when duplicates removed', async () => {
+      const mockResult: BulkSaveResult = {
+        successful: [{ text: 'Great work', rating: 5 }],
+        failed: [],
+        totalAttempted: 3,
+        duplicateCount: 2,
+      }
+      const mockOnImport = jest.fn(async () => mockResult)
+
+      const props = { ...getDefaultProps(), onImport: mockOnImport }
+      render(<BulkUploadModal {...props} />)
+
+      const textarea = screen.getByRole('textbox')
+      fireEvent.change(textarea, { target: { value: 'Great work, 5\ngreat work, 5\ngreat work, 5' } })
+      const importButton = screen.getByRole('button', { name: /Import/i })
+      fireEvent.click(importButton)
+
+      await waitFor(() => {
+        expect(screen.queryByText(/2 duplicates removed/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should not display duplicate count when no duplicates', async () => {
+      const mockResult: BulkSaveResult = {
+        successful: [
+          { text: 'Great work', rating: 5 },
+          { text: 'Good effort', rating: 4 },
+        ],
+        failed: [],
+        totalAttempted: 2,
+        duplicateCount: 0,
+      }
+      const mockOnImport = jest.fn(async () => mockResult)
+
+      const props = { ...getDefaultProps(), onImport: mockOnImport }
+      render(<BulkUploadModal {...props} />)
+
+      const textarea = screen.getByRole('textbox')
+      fireEvent.change(textarea, { target: { value: 'Great work, 5\nGood effort, 4' } })
+      const importButton = screen.getByRole('button', { name: /Import/i })
+      fireEvent.click(importButton)
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Successfully imported 2 comments$/i)).toBeInTheDocument()
+        expect(screen.queryByText(/duplicates removed/i)).not.toBeInTheDocument()
+      })
+    })
+
+    it('should use singular "1 duplicate removed" for single duplicate', async () => {
+      const mockResult: BulkSaveResult = {
+        successful: [{ text: 'Comment', rating: 5 }],
+        failed: [],
+        totalAttempted: 2,
+        duplicateCount: 1,
+      }
+      const mockOnImport = jest.fn(async () => mockResult)
+
+      const props = { ...getDefaultProps(), onImport: mockOnImport }
+      render(<BulkUploadModal {...props} />)
+
+      const textarea = screen.getByRole('textbox')
+      fireEvent.change(textarea, { target: { value: 'Comment, 5\ncomment, 5' } })
+      const importButton = screen.getByRole('button', { name: /Import/i })
+      fireEvent.click(importButton)
+
+      await waitFor(() => {
+        expect(screen.queryByText(/1 duplicate removed/i)).toBeInTheDocument()
+        expect(screen.queryByText(/duplicates removed/i)).not.toBeInTheDocument()
+      })
+    })
+
+    it('should use singular "1 comment" when only 1 successfully imported', async () => {
+      const mockResult: BulkSaveResult = {
+        successful: [{ text: 'Only one', rating: 5 }],
+        failed: [],
+        totalAttempted: 1,
+        duplicateCount: 0,
+      }
+      const mockOnImport = jest.fn(async () => mockResult)
+
+      const props = { ...getDefaultProps(), onImport: mockOnImport }
+      render(<BulkUploadModal {...props} />)
+
+      const textarea = screen.getByRole('textbox')
+      fireEvent.change(textarea, { target: { value: 'Only one, 5' } })
+      const importButton = screen.getByRole('button', { name: /Import/i })
+      fireEvent.click(importButton)
+
+      await waitFor(() => {
+        const message = screen.queryByText(/Successfully imported/)
+        expect(message?.textContent).toContain('1 comment')
+        expect(message?.textContent).not.toContain('1 comments')
+      })
+    })
+
+    it('should use plural "2 comments" when 2 or more successfully imported', async () => {
+      const mockResult: BulkSaveResult = {
+        successful: [
+          { text: 'Comment 1', rating: 5 },
+          { text: 'Comment 2', rating: 4 },
+        ],
+        failed: [],
+        totalAttempted: 2,
+        duplicateCount: 0,
+      }
+      const mockOnImport = jest.fn(async () => mockResult)
+
+      const props = { ...getDefaultProps(), onImport: mockOnImport }
+      render(<BulkUploadModal {...props} />)
+
+      const textarea = screen.getByRole('textbox')
+      fireEvent.change(textarea, { target: { value: 'Comment 1, 5\nComment 2, 4' } })
+      const importButton = screen.getByRole('button', { name: /Import/i })
+      fireEvent.click(importButton)
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Successfully imported 2 comments$/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should show both comment count and duplicate count in message', async () => {
+      const mockResult: BulkSaveResult = {
+        successful: [{ text: 'Great', rating: 5 }],
+        failed: [],
+        totalAttempted: 4,
+        duplicateCount: 3,
+      }
+      const mockOnImport = jest.fn(async () => mockResult)
+
+      const props = { ...getDefaultProps(), onImport: mockOnImport }
+      render(<BulkUploadModal {...props} />)
+
+      const textarea = screen.getByRole('textbox')
+      fireEvent.change(textarea, { target: { value: 'Great, 5\ngreat, 5\ngreat, 5\ngreat, 5' } })
+      const importButton = screen.getByRole('button', { name: /Import/i })
+      fireEvent.click(importButton)
+
+      await waitFor(() => {
+        const message = screen.queryByText(/Successfully imported 1 comment/)
+        expect(message).toBeInTheDocument()
+        expect(screen.queryByText(/3 duplicates removed/i)).toBeInTheDocument()
       })
     })
   })
