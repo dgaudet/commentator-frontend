@@ -1,0 +1,84 @@
+{
+  "feature": "bulk-upload-modal-width",
+  "title": "Wider Bulk Upload Modal - Match App Content Width",
+  "description": "Enhance BulkUploadModal to use full available width (1200px max) matching the main application content area for improved usability and consistency",
+  "status": "PLANNING",
+  "complexity": {
+    "level": "L0",
+    "reasoning": "Atomic-level feature: Single file modification, pure CSS/styling change, no logic changes, no dependencies, < 1 day effort, zero risk"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "requirements": "PENDING",
+    "design": "COMPLETE",
+    "implementation": "PENDING",
+    "qa": "PENDING"
+  },
+  "ownership": {
+    "product": "Product Owner",
+    "implementation": "Frontend Engineer",
+    "qa": "QA Engineer (visual regression)",
+    "approval": "Product Owner"
+  },
+  "scope": {
+    "primary_deliverables": [
+      "Modal width expanded to 1200px max (matching app main content)",
+      "Responsive behavior maintained across screen sizes",
+      "Improved textarea horizontal space"
+    ],
+    "constraints": [
+      "Must maintain modal responsiveness",
+      "Padding and readability must not degrade",
+      "Modal must remain centered on screen",
+      "No content/functionality changes"
+    ],
+    "out_of_scope": [
+      "Modal height adjustments",
+      "Content restructuring",
+      "Other modal sizing enhancements (Phase 2)"
+    ]
+  },
+  "business_value": {
+    "user_problem": "Modal appears narrow on large monitors, wasting horizontal space and creating inconsistency with main app layout",
+    "impact": "Improved UX consistency, better use of screen space, more comfortable textarea interaction",
+    "success_metrics": [
+      "Modal spans 1200px on desktop",
+      "Zero visual regressions on all screen sizes",
+      "User comfortable experience with additional horizontal space"
+    ]
+  },
+  "technical_approach": {
+    "file": "src/components/personalizedComments/BulkUploadModal.tsx",
+    "current_width": "minWidth: '600px'",
+    "target_width": "width: '90%', maxWidth: '1200px' (responsive with fallback)",
+    "implementation_notes": "Fixed positioning modal, so width is viewport-relative. Design tokens used for spacing consistency."
+  },
+  "timeline": {
+    "planning_complete": "2026-01-21",
+    "implementation_start": "PENDING",
+    "implementation_target": "< 1 day",
+    "qa_target": "PENDING",
+    "ready_for_release": "PENDING"
+  },
+  "artifacts": {
+    "planning": [
+      "pdd-workspace/bulk-upload-modal-width/planning/tech-note.md"
+    ]
+  },
+  "dependencies": [],
+  "risks": [
+    {
+      "risk": "Modal too wide on mobile devices",
+      "mitigation": "Use responsive width (90% with maxWidth) to handle all screen sizes",
+      "severity": "LOW"
+    },
+    {
+      "risk": "Content overflow or text wrapping issues",
+      "mitigation": "Existing padding/spacing via design tokens handles this; textarea is already flexible",
+      "severity": "VERY_LOW"
+    }
+  ],
+  "notes": "L0 feature - quick UI enhancement. Pure styling modification with zero functional risk. Ready for implementation approval.",
+  "assessedAt": "2026-01-21",
+  "lastUpdated": "2026-01-21"
+}
