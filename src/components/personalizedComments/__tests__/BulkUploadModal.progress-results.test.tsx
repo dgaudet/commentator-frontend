@@ -53,6 +53,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           successful: [],
           failed: [],
           totalAttempted: 0,
+          duplicateCount: 0,
         }
       })
 
@@ -81,6 +82,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           successful: [],
           failed: [],
           totalAttempted: 0,
+          duplicateCount: 0,
         }
       })
 
@@ -109,6 +111,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           successful: [],
           failed: [],
           totalAttempted: 0,
+          duplicateCount: 0,
         }
       })
 
@@ -158,6 +161,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           { lineNumber: 1, originalText: 'x'.repeat(600), reason: 'exceeds character limit' },
         ],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -184,6 +188,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           { lineNumber: 2, originalText: 'too long comment', reason: 'exceeds character limit' },
         ],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -207,6 +212,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           { lineNumber: 1, originalText: 'failed comment text', reason: 'validation error' },
         ],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -234,6 +240,7 @@ describe('BulkUploadModal - Story 5: Progress and Results', () => {
           { lineNumber: 1, originalText: 'text', reason: 'exceeds character limit' },
         ],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 

@@ -77,6 +77,7 @@ describe('BulkUploadModal - Story 6 & 7: Edge Cases and Results', () => {
         successful: [{ text: 'comment, abc', rating: 3 }],
         failed: [],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -107,6 +108,7 @@ describe('BulkUploadModal - Story 6 & 7: Edge Cases and Results', () => {
         successful: [{ text: 'comment, 6', rating: 3 }],
         failed: [],
         totalAttempted: 1,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -138,6 +140,7 @@ describe('BulkUploadModal - Story 6 & 7: Edge Cases and Results', () => {
         successful: comments.map((text) => ({ text, rating: 3 })),
         failed: [],
         totalAttempted: 55,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
@@ -209,6 +212,7 @@ describe('BulkUploadModal - Story 6 & 7: Edge Cases and Results', () => {
           { lineNumber: 2, originalText: 'x'.repeat(600), reason: 'exceeds character limit' },
         ],
         totalAttempted: 3,
+        duplicateCount: 0,
       }
       const mockOnImport = jest.fn(async () => mockResult)
 
