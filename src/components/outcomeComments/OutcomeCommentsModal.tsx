@@ -293,9 +293,9 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
                   showPlaceholderTips={true}
                 />
 
-                {/* Story 1: Replace Pronouns Button */}
+                {/* Story 1: Replace Pronouns Button and Message - positioned close to textarea */}
                 {!pronounsError && (
-                  <div style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
+                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md, display: 'flex', gap: spacing.md, alignItems: 'center' }}>
                     <Button
                       onClick={handleReplacePronounsClick}
                       disabled={replacePronounsLoading || pronounsLoading || pronouns.length === 0}
@@ -310,16 +310,21 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
                     >
                       {replacePronounsLoading ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
                     </Button>
-                  </div>
-                )}
 
-                {/* Story 1: Replace Pronouns Message */}
-                {replacePronounsMessage && (
-                  <div
-                    role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
-                    style={getMessageBoxStyle(replacePronounsMessage.type)}
-                  >
-                    {replacePronounsMessage.text}
+                    {/* Story 1: Replace Pronouns Message - beside button */}
+                    {replacePronounsMessage && (
+                      <div
+                        role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
+                        style={{
+                          ...getMessageBoxStyle(replacePronounsMessage.type),
+                          marginTop: 0,
+                          marginBottom: 0,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {replacePronounsMessage.text}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -501,9 +506,9 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
                                   showPlaceholderTips={true}
                                 />
 
-                                {/* Story 3: Replace Pronouns Button - Edit Section */}
+                                {/* Story 3: Replace Pronouns Button and Message - Edit Section - positioned close to textarea */}
                                 {!pronounsError && (
-                                  <div style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
+                                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md, display: 'flex', gap: spacing.md, alignItems: 'center' }}>
                                     <Button
                                       onClick={handleEditReplacePronounsClick}
                                       disabled={editReplacePronounsLoading || pronounsLoading || pronouns.length === 0}
@@ -518,16 +523,21 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
                                     >
                                       {editReplacePronounsLoading ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
                                     </Button>
-                                  </div>
-                                )}
 
-                                {/* Story 3: Replace Pronouns Message - Edit Section */}
-                                {editReplacePronounsMessage && (
-                                  <div
-                                    role={editReplacePronounsMessage.type === 'error' ? 'alert' : undefined}
-                                    style={getEditMessageBoxStyle(editReplacePronounsMessage.type)}
-                                  >
-                                    {editReplacePronounsMessage.text}
+                                    {/* Story 3: Replace Pronouns Message - Edit Section - beside button */}
+                                    {editReplacePronounsMessage && (
+                                      <div
+                                        role={editReplacePronounsMessage.type === 'error' ? 'alert' : undefined}
+                                        style={{
+                                          ...getEditMessageBoxStyle(editReplacePronounsMessage.type),
+                                          marginTop: 0,
+                                          marginBottom: 0,
+                                          whiteSpace: 'nowrap',
+                                        }}
+                                      >
+                                        {editReplacePronounsMessage.text}
+                                      </div>
+                                    )}
                                   </div>
                                 )}
 

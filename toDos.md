@@ -159,3 +159,11 @@ Create a proper 404 page that gives information about not finding any result
 It would be nice to have the header and proper colors on the login page as well
 
 make sure pronouns are only loaded once, and the loading indicator displays
+move the button up and the result message beside the button instead of below
+
+React Query / TanStack Query (Industry Standard) - Best overall:
+- Handles request deduplication automatically
+- Prevents double requests in Strict Mode
+- Handles caching, loading states, errors
+- Most React teams use this now
+To remove duplicated loading requests in components
