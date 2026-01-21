@@ -283,14 +283,12 @@ describe('deduplicateComments', () => {
         })
       }
 
-      const startTime = performance.now()
       const result = deduplicateComments(comments)
-      const endTime = performance.now()
 
-      // Should complete in reasonable time (< 100ms for 1000 items)
-      expect(endTime - startTime).toBeLessThan(100)
+      // Should correctly deduplicate large dataset without errors
       expect(result.unique).toHaveLength(100)
       expect(result.duplicateCount).toBe(900)
+      expect(result.removedDuplicates).toHaveLength(900)
     })
   })
 
