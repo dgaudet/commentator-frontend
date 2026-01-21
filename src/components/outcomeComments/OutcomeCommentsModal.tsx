@@ -31,6 +31,7 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { CommentTextField } from '../common/CommentTextField'
+import { ReplacePronounsButton } from './ReplacePronounsButton'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
@@ -295,37 +296,20 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
 
                 {/* Story 1: Replace Pronouns Button and Message - positioned close to textarea */}
                 {!pronounsError && (
-                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md, display: 'flex', gap: spacing.md, alignItems: 'center' }}>
-                    <Button
-                      onClick={handleReplacePronounsClick}
-                      disabled={replacePronounsLoading || pronounsLoading || pronouns.length === 0}
-                      variant="secondary"
-                      title={
-                        pronounsLoading
-                          ? 'Loading pronouns...'
-                          : pronouns.length === 0
-                            ? 'No pronouns configured'
-                            : 'Replace pronouns with placeholders'
-                      }
-                    >
-                      {replacePronounsLoading ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
-                    </Button>
-
-                    {/* Story 1: Replace Pronouns Message - beside button */}
-                    {replacePronounsMessage && (
-                      <div
-                        role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
-                        style={{
-                          ...getMessageBoxStyle(replacePronounsMessage.type),
-                          marginTop: 0,
-                          marginBottom: 0,
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {replacePronounsMessage.text}
-                      </div>
-                    )}
-                  </div>
+                  <ReplacePronounsButton
+                    isLoading={replacePronounsLoading}
+                    message={replacePronounsMessage}
+                    onReplace={handleReplacePronounsClick}
+                    getMessageBoxStyle={getMessageBoxStyle}
+                    disabled={replacePronounsLoading || pronounsLoading || pronouns.length === 0}
+                    title={
+                      pronounsLoading
+                        ? 'Loading pronouns...'
+                        : pronouns.length === 0
+                          ? 'No pronouns configured'
+                          : 'Replace pronouns with placeholders'
+                    }
+                  />
                 )}
 
                 <div
@@ -508,37 +492,20 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
 
                                 {/* Story 3: Replace Pronouns Button and Message - Edit Section - positioned close to textarea */}
                                 {!pronounsError && (
-                                  <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md, display: 'flex', gap: spacing.md, alignItems: 'center' }}>
-                                    <Button
-                                      onClick={handleEditReplacePronounsClick}
-                                      disabled={editReplacePronounsLoading || pronounsLoading || pronouns.length === 0}
-                                      variant="secondary"
-                                      title={
-                                        pronounsLoading
-                                          ? 'Loading pronouns...'
-                                          : pronouns.length === 0
-                                            ? 'No pronouns configured'
-                                            : 'Replace pronouns with placeholders'
-                                      }
-                                    >
-                                      {editReplacePronounsLoading ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
-                                    </Button>
-
-                                    {/* Story 3: Replace Pronouns Message - Edit Section - beside button */}
-                                    {editReplacePronounsMessage && (
-                                      <div
-                                        role={editReplacePronounsMessage.type === 'error' ? 'alert' : undefined}
-                                        style={{
-                                          ...getEditMessageBoxStyle(editReplacePronounsMessage.type),
-                                          marginTop: 0,
-                                          marginBottom: 0,
-                                          whiteSpace: 'nowrap',
-                                        }}
-                                      >
-                                        {editReplacePronounsMessage.text}
-                                      </div>
-                                    )}
-                                  </div>
+                                  <ReplacePronounsButton
+                                    isLoading={editReplacePronounsLoading}
+                                    message={editReplacePronounsMessage}
+                                    onReplace={handleEditReplacePronounsClick}
+                                    getMessageBoxStyle={getEditMessageBoxStyle}
+                                    disabled={editReplacePronounsLoading || pronounsLoading || pronouns.length === 0}
+                                    title={
+                                      pronounsLoading
+                                        ? 'Loading pronouns...'
+                                        : pronouns.length === 0
+                                          ? 'No pronouns configured'
+                                          : 'Replace pronouns with placeholders'
+                                    }
+                                  />
                                 )}
 
                                 <div
