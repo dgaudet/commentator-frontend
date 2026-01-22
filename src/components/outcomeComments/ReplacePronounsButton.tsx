@@ -3,13 +3,18 @@
  *
  * Reusable button component for replacing pronouns with placeholders.
  * Consolidates the button UI and message display logic to reduce duplication
- * across OutcomeCommentsModal add and edit sections.
+ * across multiple modals (OutcomeCommentsModal, PersonalizedCommentsModal).
+ *
+ * Supports two patterns:
+ * 1. Simple: Direct loading and message state (OutcomeCommentsModal)
+ * 2. With pronouns loading: Shows spinner while pronouns load (PersonalizedCommentsModal)
  *
  * Story: Code duplication reduction - extracted from OutcomeCommentsModal
  */
 
 import React from 'react'
 import { Button } from '../common/Button'
+import { LoadingSpinner } from '../common/LoadingSpinner'
 import type { ReplacePronounsMessage } from '../../hooks/useReplacePronounsButton'
 import { spacing } from '../../theme/tokens'
 
@@ -26,6 +31,8 @@ interface ReplacePronounsButtonProps {
   disabled: boolean
   /** Title attribute for the button (shown on hover) */
   title: string
+  /** Optional: Whether pronouns are currently loading (shows spinner instead of button) */
+  pronounsLoading?: boolean
 }
 
 /**
@@ -42,7 +49,17 @@ export const ReplacePronounsButton: React.FC<ReplacePronounsButtonProps> = ({
   getMessageBoxStyle,
   disabled,
   title,
+  pronounsLoading,
 }) => {
+  // Show loading spinner while pronouns are loading
+  if (pronounsLoading) {
+    return (
+      <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md }}>
+        <LoadingSpinner data-testid="pronouns-loading-spinner" />
+      </div>
+    )
+  }
+
   return (
     <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md, display: 'flex', gap: spacing.md, alignItems: 'center' }}>
       <Button

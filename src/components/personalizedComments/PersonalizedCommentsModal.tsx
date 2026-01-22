@@ -44,6 +44,7 @@ import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentL
 import { CopyCommentsModal } from './CopyCommentsModal'
 import { BulkUploadModal } from './BulkUploadModal'
 import { bulkSaveComments } from './bulkSaveComments'
+import { ReplacePronounsButton } from '../outcomeComments/ReplacePronounsButton'
 
 interface PersonalizedCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
@@ -386,46 +387,21 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                   showPlaceholderTips={true}
                 />
 
-                {/* TASK-1.3: Replace Pronouns Button and Message in Add section - beside each other */}
+                {/* TASK-1.3: Replace Pronouns Button and Message in Add section */}
                 {!pronounsError && (
-                  <>
-                    {pronounsLoading && (
-                      <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md }}>
-                        <LoadingSpinner data-testid="pronouns-loading-spinner" />
-                      </div>
-                    )}
-                    {!pronounsLoading && (
-                      <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md, display: 'flex', gap: spacing.md, alignItems: 'center' }}>
-                        <Button
-                          onClick={() => handleReplacePronounsClick('add')}
-                          disabled={replacePronounsLoading === 'add' || pronouns.length === 0}
-                          variant="secondary"
-                          title={
-                            pronouns.length === 0
-                              ? 'No pronouns configured'
-                              : 'Replace pronouns with placeholders'
-                          }
-                        >
-                          {replacePronounsLoading === 'add' ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
-                        </Button>
-
-                        {/* TASK-1.3: Replace Pronouns Message in Add section - beside button */}
-                        {replacePronounsMessage?.section === 'add' && (
-                          <div
-                            role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
-                            style={{
-                              ...getMessageBoxStyle(replacePronounsMessage.type),
-                              marginTop: 0,
-                              marginBottom: 0,
-                              whiteSpace: 'nowrap',
-                            }}
-                          >
-                            {replacePronounsMessage.text}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </>
+                  <ReplacePronounsButton
+                    isLoading={replacePronounsLoading === 'add'}
+                    message={replacePronounsMessage?.section === 'add' ? replacePronounsMessage : null}
+                    onReplace={() => handleReplacePronounsClick('add')}
+                    getMessageBoxStyle={getMessageBoxStyle}
+                    disabled={pronouns.length === 0}
+                    title={
+                      pronouns.length === 0
+                        ? 'No pronouns configured'
+                        : 'Replace pronouns with placeholders'
+                    }
+                    pronounsLoading={pronounsLoading}
+                  />
                 )}
 
                 {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}
@@ -540,46 +516,21 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                                   showPlaceholderTips={true}
                                 />
 
-                                {/* TASK-1.3: Replace Pronouns Button and Message in Edit section - beside each other */}
+                                {/* TASK-1.3: Replace Pronouns Button and Message in Edit section */}
                                 {!pronounsError && (
-                                  <>
-                                    {pronounsLoading && (
-                                      <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md }}>
-                                        <LoadingSpinner data-testid="pronouns-loading-spinner-edit" />
-                                      </div>
-                                    )}
-                                    {!pronounsLoading && (
-                                      <div style={{ marginTop: '-1.5rem', marginBottom: spacing.md, display: 'flex', gap: spacing.md, alignItems: 'center' }}>
-                                        <Button
-                                          onClick={() => handleReplacePronounsClick('edit')}
-                                          disabled={replacePronounsLoading === 'edit' || pronouns.length === 0}
-                                          variant="secondary"
-                                          title={
-                                            pronouns.length === 0
-                                              ? 'No pronouns configured'
-                                              : 'Replace pronouns with placeholders'
-                                          }
-                                        >
-                                          {replacePronounsLoading === 'edit' ? 'Replacing...' : 'Replace Pronouns with Placeholders'}
-                                        </Button>
-
-                                        {/* TASK-1.3: Replace Pronouns Message in Edit section - beside button */}
-                                        {replacePronounsMessage?.section === 'edit' && (
-                                          <div
-                                            role={replacePronounsMessage.type === 'error' ? 'alert' : undefined}
-                                            style={{
-                                              ...getMessageBoxStyle(replacePronounsMessage.type),
-                                              marginTop: 0,
-                                              marginBottom: 0,
-                                              whiteSpace: 'nowrap',
-                                            }}
-                                          >
-                                            {replacePronounsMessage.text}
-                                          </div>
-                                        )}
-                                      </div>
-                                    )}
-                                  </>
+                                  <ReplacePronounsButton
+                                    isLoading={replacePronounsLoading === 'edit'}
+                                    message={replacePronounsMessage?.section === 'edit' ? replacePronounsMessage : null}
+                                    onReplace={() => handleReplacePronounsClick('edit')}
+                                    getMessageBoxStyle={getMessageBoxStyle}
+                                    disabled={pronouns.length === 0}
+                                    title={
+                                      pronouns.length === 0
+                                        ? 'No pronouns configured'
+                                        : 'Replace pronouns with placeholders'
+                                    }
+                                    pronounsLoading={pronounsLoading}
+                                  />
                                 )}
 
                                 {/* US-RATING-003 & US-PLACEHOLDER-PC-004: Rating Selector after textarea */}

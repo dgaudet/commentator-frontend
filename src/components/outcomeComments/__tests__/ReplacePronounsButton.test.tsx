@@ -246,4 +246,40 @@ describe('ReplacePronounsButton Component', () => {
       expect(alert).not.toBeInTheDocument()
     })
   })
+
+  describe('Pronouns Loading State', () => {
+    it('should show loading spinner when pronounsLoading is true', () => {
+      renderComponent({ pronounsLoading: true })
+
+      const spinner = screen.getByTestId('pronouns-loading-spinner')
+      expect(spinner).toBeInTheDocument()
+    })
+
+    it('should not show button when pronounsLoading is true', () => {
+      renderComponent({ pronounsLoading: true })
+
+      const button = screen.queryByRole('button')
+      expect(button).not.toBeInTheDocument()
+    })
+
+    it('should not show message when pronounsLoading is true', () => {
+      const message: ReplacePronounsMessage = {
+        type: 'success',
+        text: 'Success',
+      }
+
+      renderComponent({ pronounsLoading: true, message })
+
+      expect(screen.queryByText('Success')).not.toBeInTheDocument()
+    })
+
+    it('should show button when pronounsLoading is false', () => {
+      renderComponent({ pronounsLoading: false })
+
+      const button = screen.getByRole('button', {
+        name: /Replace Pronouns with Placeholders/i,
+      })
+      expect(button).toBeInTheDocument()
+    })
+  })
 })
