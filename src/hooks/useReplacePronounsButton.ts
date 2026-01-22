@@ -77,37 +77,28 @@ export const useReplacePronounsButton = () => {
     // Set loading state
     setIsLoading(true)
 
-    try {
-      // Replace pronouns using the utility function
-      const result = replacePronounsWithPlaceholders(textToReplace, pronouns)
+    // Replace pronouns using the utility function
+    const result = replacePronounsWithPlaceholders(textToReplace, pronouns)
 
-      // Show success message with count
-      const { pronoun: pronounCount, possessivePronoun: possessiveCount } =
-        result.replacementCount
-      const totalReplacements = pronounCount + possessiveCount
+    // Show success message with count
+    const { pronoun: pronounCount, possessivePronoun: possessiveCount } =
+      result.replacementCount
+    const totalReplacements = pronounCount + possessiveCount
 
-      if (totalReplacements === 0) {
-        setMessage({
-          type: 'info',
-          text: 'No pronouns found in text',
-        })
-      } else {
-        setMessage({
-          type: 'success',
-          text: `Replaced ${totalReplacements} pronouns (${pronounCount} subject, ${possessiveCount} possessive)`,
-        })
-      }
-
-      return result.replacedText
-    } catch (error) {
+    if (totalReplacements === 0) {
       setMessage({
-        type: 'error',
-        text: 'Failed to replace pronouns. Please try again.',
+        type: 'info',
+        text: 'No pronouns found in text',
       })
-      return textToReplace
-    } finally {
-      setIsLoading(false)
+    } else {
+      setMessage({
+        type: 'success',
+        text: `Replaced ${totalReplacements} pronouns (${pronounCount} subject, ${possessiveCount} possessive)`,
+      })
     }
+
+    setIsLoading(false)
+    return result.replacedText
   }
 
   /**

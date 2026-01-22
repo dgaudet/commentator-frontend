@@ -171,5 +171,4 @@ React Query / TanStack Query (Industry Standard) - Best overall:
 - Most React teams use this now
 To remove duplicated loading requests in components
 
-
 When there is a name that has already been added the style is wrong, the background is white
