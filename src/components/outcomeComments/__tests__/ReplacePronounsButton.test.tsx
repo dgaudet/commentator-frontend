@@ -245,6 +245,30 @@ describe('ReplacePronounsButton Component', () => {
       const alert = screen.queryByRole('alert')
       expect(alert).not.toBeInTheDocument()
     })
+
+    it('should use status role for success messages to announce to screen readers', () => {
+      const successMessage: ReplacePronounsMessage = {
+        type: 'success',
+        text: 'Success message',
+      }
+
+      renderComponent({ message: successMessage })
+
+      const status = screen.getByRole('status')
+      expect(status).toHaveTextContent('Success message')
+    })
+
+    it('should use status role for info messages to announce to screen readers', () => {
+      const infoMessage: ReplacePronounsMessage = {
+        type: 'info',
+        text: 'Info message',
+      }
+
+      renderComponent({ message: infoMessage })
+
+      const status = screen.getByRole('status')
+      expect(status).toHaveTextContent('Info message')
+    })
   })
 
   describe('Pronouns Loading State', () => {

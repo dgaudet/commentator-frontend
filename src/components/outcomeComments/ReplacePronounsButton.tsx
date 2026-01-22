@@ -74,7 +74,7 @@ export const ReplacePronounsButton: React.FC<ReplacePronounsButtonProps> = ({
       {/* Message displayed beside button */}
       {message && (
         <div
-          role={message.type === 'error' ? 'alert' : undefined}
+          role={message.type === 'error' ? 'alert' : 'status'}
           style={{
             ...getMessageBoxStyle(message.type),
             marginTop: 0,
