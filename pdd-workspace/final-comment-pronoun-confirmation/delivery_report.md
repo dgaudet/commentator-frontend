@@ -26,7 +26,7 @@ The Final Comment Pronoun Confirmation Alert feature has been successfully imple
 4. **User Flow**:
    - User attempts save without pronoun → Alert shows
    - User clicks Yes → Save proceeds with null pronounId
-   - User clicks No or X → Alert closes, modal stays open
+   - User clicks No → Alert closes, modal stays open
 
 ## Testing Summary
 
@@ -44,7 +44,7 @@ The Final Comment Pronoun Confirmation Alert feature has been successfully imple
 - ✅ Yes and No buttons present
 - ✅ Clicking No dismisses alert and keeps modal open
 - ✅ Clicking Yes proceeds with save
-- ✅ X button acts as No
+- ✅ No button dismisses alert correctly
 
 **Edit Form Tests (3)**:
 - ✅ Shows alert when editing without pronoun
@@ -65,15 +65,14 @@ The Final Comment Pronoun Confirmation Alert feature has been successfully imple
 ## Acceptance Criteria Validation
 
 ✅ **AC1**: Alert displays when pronoun is null/empty/undefined during save (both create and edit)
-✅ **AC2**: Alert message: "You are adding this comment without a pronoun, do you want to continue saving?"
+✅ **AC2**: Alert message: "You are saving this comment without a pronoun. Do you want to continue?"
 ✅ **AC3**: Alert has Yes and No buttons
-✅ **AC4**: X button on alert acts as "No"
-✅ **AC5**: Selecting "No" dismisses alert and keeps modal open
-✅ **AC6**: Selecting "Yes" proceeds with save as normal
-✅ **AC7**: Alert only displays on save attempt, not on field focus/blur
-✅ **AC8**: Works in both FinalCommentsModal create form and edit form
-✅ **AC9**: Independent of replace pronouns functionality
-✅ **AC10**: No "don't show again" checkbox or user preferences
+✅ **AC4**: Selecting "No" dismisses alert and keeps modal open
+✅ **AC5**: Selecting "Yes" proceeds with save as normal
+✅ **AC6**: Alert only displays on save attempt, not on field focus/blur
+✅ **AC7**: Works in both FinalCommentsModal create form and edit form
+✅ **AC8**: Independent of replace pronouns functionality
+✅ **AC9**: No "don't show again" checkbox or user preferences
 
 ## Code Quality
 

@@ -16,9 +16,8 @@ When creating or editing a final comment, if a user attempts to save without sel
 
 **Desired Behavior**:
 - Display confirmation alert when user tries to save without pronoun
-- Alert message: "You are adding this comment without a pronoun, do you want to continue saving?"
+- Alert message: "You are saving this comment without a pronoun. Do you want to continue?"
 - Yes/No button options
-- X button dismisses like "No"
 - If No: alert closes, modal stays open for editing
 - If Yes: proceed with save as normal
 
@@ -36,9 +35,8 @@ Prevent data inconsistencies and remind teachers to explicitly select pronouns f
 
 **Acceptance Criteria:**
 - ✅ Alert displays when pronoun is null, empty, or undefined during save attempt (both create and edit)
-- ✅ Alert message reads: "You are adding this comment without a pronoun, do you want to continue saving?"
+- ✅ Alert message reads: "You are saving this comment without a pronoun. Do you want to continue?"
 - ✅ Alert has Yes and No buttons
-- ✅ X button on alert acts as "No"
 - ✅ Selecting "No" dismisses alert and keeps modal open
 - ✅ Selecting "Yes" proceeds with save as normal
 - ✅ Alert only displays on save attempt, not on field focus/blur
@@ -55,7 +53,7 @@ Prevent data inconsistencies and remind teachers to explicitly select pronouns f
   - Check if pronounId is null/empty/undefined before save
   - If empty, show confirmation alert
   - If user confirms (Yes), proceed with save
-  - If user cancels (No or X), dismiss alert and keep modal open
+  - If user cancels (No), dismiss alert and keep modal open
 - **No API changes** - purely frontend validation
 - **Dialog state** - managed locally in FinalCommentsModal component
 - **Scope**: Single component change in FinalCommentsModal
