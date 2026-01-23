@@ -23,19 +23,23 @@ Improve comment quality and readability by ensuring proper English grammar. Teac
 
 ## User Stories
 
-### US-1: Capitalize Pronouns at Sentence Start
+### US-1: Capitalize Pronouns at Sentence Start or Text Beginning
 
 **As a** teacher populating final comments with pronouns
-**I want** pronouns to be automatically capitalized when they start a sentence
+**I want** pronouns to be automatically capitalized when they start a sentence or appear at the beginning of the text
 **So that** my comments are grammatically correct without manual editing
 
 **Acceptance Criteria:**
-- When `<pronoun>` is replaced and appears after `.`, `!`, or `?`, capitalize first letter
-- When `<possessive pronoun>` is replaced and appears after `.`, `!`, or `?`, capitalize first letter
+- When `<pronoun>` is replaced at the very start of the text, capitalize first letter
+- When `<pronoun>` is replaced after `.`, `!`, or `?`, capitalize first letter
+- When `<possessive pronoun>` is replaced at the very start of the text, capitalize first letter
+- When `<possessive pronoun>` is replaced after `.`, `!`, or `?`, capitalize first letter
 - Examples:
-  - "She is bright. she shows leadership" → "She is bright. She shows leadership"
-  - "He participates well. his ideas are valuable" → "He participates well. His ideas are valuable"
-  - "They do great work! they always help others" → "They do great work! They always help others"
+  - "she is a great student" → "She is a great student" (start of text)
+  - "his work is excellent" → "His work is excellent" (start of text)
+  - "She is bright. she shows leadership" → "She is bright. She shows leadership" (after sentence ender)
+  - "He participates well. his ideas are valuable" → "He participates well. His ideas are valuable" (after sentence ender)
+  - "They do great work! they always help others" → "They do great work! They always help others" (after sentence ender)
 
 ### US-2: Handle Edge Case - Multiple Sentence Enders
 
