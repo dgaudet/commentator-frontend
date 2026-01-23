@@ -175,3 +175,6 @@ To remove duplicated loading requests in components
 When there is a name that has already been added the style is wrong, the background is white
 
 order final comments by createdate descending
+
+she forgot to the set the pronoun, so then on save she was expecting
+She wants the header to hide when scrolling

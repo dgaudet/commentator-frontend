@@ -1,0 +1,26 @@
+{
+  "feature": "final-comments-sorting",
+  "title": "Sort Final Comments by Created Date",
+  "description": "Display final comments with most recently created entries first",
+  "complexity": {
+    "level": "L0",
+    "reasoning": "Single atomic task - frontend-only sorting logic, no API changes, single user story, <1 week effort",
+    "assessedAt": "2026-01-22T00:00:00Z"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "COMPLETE",
+    "validation": "COMPLETE",
+    "delivery": "READY"
+  },
+  "userStories": {
+    "total": 1,
+    "completed": 1
+  },
+  "artifacts": {
+    "planning": ["tech-note.md"],
+    "implementation": ["FinalCommentsModal.tsx (sorting logic updated)"],
+    "testing": ["FinalCommentsModal.sorting.test.tsx (6 tests)"]
+  }
+}
