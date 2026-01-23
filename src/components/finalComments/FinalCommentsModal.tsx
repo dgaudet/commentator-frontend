@@ -104,7 +104,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
 }: FinalCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
   const focusShadows = useThemeFocusShadows()
-  const { pronouns } = usePronounsQuery()
+  const { pronouns, loading: pronounsLoading, error: pronounsError } = usePronounsQuery()
 
   // US-FC-REFACTOR-001: Shared hook state management
   const [submitting, setSubmitting] = useState(false)
@@ -134,6 +134,17 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   }>({
     isOpen: false,
     formType: 'add',
+  })
+
+  // Pronoun confirmation state (Pronoun-Confirmation Feature)
+  const [pronounConfirmation, setPronounConfirmation] = useState<{
+    isOpen: boolean
+    formType: 'add' | 'edit'
+    pendingData: CreateFinalCommentRequest | UpdateFinalCommentRequest | null
+  }>({
+    isOpen: false,
+    formType: 'add',
+    pendingData: null,
   })
 
   // US-FC-REFACTOR-003: Refs for focus management after populate
@@ -307,6 +318,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     e.currentTarget.style.boxShadow = 'none'
   }
 
+  // Helper to check if pronoun is missing (null, empty string, or undefined)
+  const isPronounMissing = (pronounId: string | null | undefined): boolean => {
+    return !pronounId || pronounId.trim() === ''
+  }
+
   // US-FC-REFACTOR-001: Handle create final comment using hook
   const handleCreateComment = async () => {
     const error = addForm.validate()
@@ -316,25 +332,38 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     }
 
     addForm.clearValidationError()
+
+    // Build the request object
+    const request: CreateFinalCommentRequest = {
+      classId: entityData.id,
+      firstName: addForm.firstName.trim(),
+      grade: Number(addForm.grade),
+    }
+
+    // Add optional fields only if provided
+    if (addForm.lastName.trim()) {
+      request.lastName = addForm.lastName.trim()
+    }
+    if (addForm.comment.trim()) {
+      request.comment = addForm.comment.trim()
+    }
+    // TASK-1.3: Add pronoun ID (or null to clear existing selection)
+    request.pronounId = addPronounId || null
+
+    // Check if pronounId is missing - if so, show confirmation alert
+    // Only show confirmation if pronouns are loaded (not loading and no error)
+    if (isPronounMissing(addPronounId) && !pronounsLoading && !pronounsError) {
+      setPronounConfirmation({
+        isOpen: true,
+        formType: 'add',
+        pendingData: request,
+      })
+      return
+    }
+
+    // Proceed with save if pronoun is selected
     setSubmitting(true)
-
     try {
-      const request: CreateFinalCommentRequest = {
-        classId: entityData.id,
-        firstName: addForm.firstName.trim(),
-        grade: Number(addForm.grade),
-      }
-
-      // Add optional fields only if provided
-      if (addForm.lastName.trim()) {
-        request.lastName = addForm.lastName.trim()
-      }
-      if (addForm.comment.trim()) {
-        request.comment = addForm.comment.trim()
-      }
-      // TASK-1.3: Add pronoun ID (or null to clear existing selection)
-      request.pronounId = addPronounId || null
-
       await onCreateComment(request)
 
       // Clear form on success
@@ -588,6 +617,62 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     })
   }
 
+  // Handle pronoun confirmation - Yes (proceed with save)
+  const handlePronounConfirmationYes = async () => {
+    if (!pronounConfirmation.pendingData) {
+      setPronounConfirmation({
+        isOpen: false,
+        formType: 'add',
+        pendingData: null,
+      })
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      if (pronounConfirmation.formType === 'add') {
+        await onCreateComment(pronounConfirmation.pendingData as CreateFinalCommentRequest)
+        // Clear form on success
+        addForm.reset()
+        setAddPronounId('')
+        setOrderedAddComments([])
+      } else {
+        // Edit form
+        if (editingId !== null) {
+          await onUpdateComment(editingId, pronounConfirmation.pendingData as UpdateFinalCommentRequest)
+          // Exit edit mode on success
+          setEditingId(null)
+          editForm.reset()
+          setEditPronounId('')
+          setOrderedEditComments([])
+        }
+      }
+    } catch (err) {
+      const errorMsg = 'Failed to save final comment. Please try again.'
+      if (pronounConfirmation.formType === 'add') {
+        addForm.setValidationError(errorMsg)
+      } else {
+        editForm.setValidationError(errorMsg)
+      }
+    } finally {
+      setSubmitting(false)
+      setPronounConfirmation({
+        isOpen: false,
+        formType: 'add',
+        pendingData: null,
+      })
+    }
+  }
+
+  // Handle pronoun confirmation - No (dismiss dialog and keep modal open)
+  const handlePronounConfirmationNo = () => {
+    setPronounConfirmation({
+      isOpen: false,
+      formType: 'add',
+      pendingData: null,
+    })
+  }
+
   // US-FC-REFACTOR-001: Handle edit start - populate form with existing values
   const handleEditStart = (finalComment: FinalComment) => {
     setEditingId(finalComment.id)
@@ -612,23 +697,36 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
 
     editForm.clearValidationError()
 
+    // Build the request object
+    const request: UpdateFinalCommentRequest = {
+      classId: entityData.id,
+      firstName: editForm.firstName.trim(),
+      grade: Number(editForm.grade),
+    }
+
+    // Add optional fields only if provided
+    if (editForm.lastName.trim()) {
+      request.lastName = editForm.lastName.trim()
+    }
+    if (editForm.comment.trim()) {
+      request.comment = editForm.comment.trim()
+    }
+    // TASK-1.3: Add pronoun ID (or null to clear existing selection)
+    request.pronounId = editPronounId || null
+
+    // Check if pronounId is missing - if so, show confirmation alert
+    // Only show confirmation if pronouns are loaded (not loading and no error)
+    if (isPronounMissing(editPronounId) && !pronounsLoading && !pronounsError) {
+      setPronounConfirmation({
+        isOpen: true,
+        formType: 'edit',
+        pendingData: request,
+      })
+      return
+    }
+
+    // Proceed with save if pronoun is selected
     try {
-      const request: UpdateFinalCommentRequest = {
-        classId: entityData.id,
-        firstName: editForm.firstName.trim(),
-        grade: Number(editForm.grade),
-      }
-
-      // Add optional fields only if provided
-      if (editForm.lastName.trim()) {
-        request.lastName = editForm.lastName.trim()
-      }
-      if (editForm.comment.trim()) {
-        request.comment = editForm.comment.trim()
-      }
-      // TASK-1.3: Add pronoun ID (or null to clear existing selection)
-      request.pronounId = editPronounId || null
-
       await onUpdateComment(editingId, request)
 
       // Exit edit mode on success
@@ -1294,6 +1392,17 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
           confirmButtonText="Replace"
           cancelButtonText="Cancel"
         />
+
+        {/* Pronoun Confirmation Alert Modal */}
+        <ConfirmationModal
+          isOpen={pronounConfirmation.isOpen}
+          title="Pronoun Confirmation"
+          message="You are saving this comment without a pronoun. Do you want to continue?"
+          onConfirm={handlePronounConfirmationYes}
+          onCancel={handlePronounConfirmationNo}
+          confirmButtonText="Yes"
+          cancelButtonText="No"
+        />
       </>
     )
   }
@@ -1345,6 +1454,17 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
         onCancel={handlePopulateCancel}
         confirmButtonText="Replace"
         cancelButtonText="Cancel"
+      />
+
+      {/* Pronoun Confirmation Alert Modal */}
+      <ConfirmationModal
+        isOpen={pronounConfirmation.isOpen}
+        title="Pronoun Confirmation"
+        message="You are saving this comment without a pronoun. Do you want to continue?"
+        onConfirm={handlePronounConfirmationYes}
+        onCancel={handlePronounConfirmationNo}
+        confirmButtonText="Yes"
+        cancelButtonText="No"
       />
     </div>
   )
