@@ -97,7 +97,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       // Confirmation alert should appear
       const confirmationAlert = screen.getByRole('dialog', { name: /pronoun confirmation/i })
       expect(confirmationAlert).toBeInTheDocument()
-      expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
+      expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
     })
 
     it('should show confirmation alert with correct message', async () => {
@@ -124,7 +124,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       await userEvent.click(saveButton)
 
       // Verify exact message
-      expect(screen.getByText(/you are adding this comment without a pronoun, do you want to continue saving?/i)).toBeInTheDocument()
+      expect(screen.getByText(/you are saving this comment without a pronoun. do you want to continue?/i)).toBeInTheDocument()
     })
 
     it('should show Yes and No buttons on confirmation alert', async () => {
@@ -184,7 +184,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
 
       // Alert should appear with No button
       await waitFor(() => {
-        expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
+        expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
       })
 
       // Modal should still be open (form should still be visible)
@@ -263,7 +263,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       }
 
       // Alert should be dismissed
-      expect(screen.queryByText(/you are adding this comment without a pronoun/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(/you are saving this comment without a pronoun/i)).not.toBeInTheDocument()
 
       // Modal should still be open
       expect(screen.getByRole('button', { name: /add final comment/i })).toBeInTheDocument()
@@ -316,7 +316,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       // Confirmation alert should appear
       const confirmationAlert = screen.getByRole('dialog', { name: /pronoun confirmation/i })
       expect(confirmationAlert).toBeInTheDocument()
-      expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
+      expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
     })
 
     it('should close alert and keep modal open when clicking No during edit', async () => {
@@ -360,7 +360,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
 
       // Alert should appear
       await waitFor(() => {
-        expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
+        expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
       })
 
       // onUpdateComment should NOT be called yet
@@ -455,7 +455,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       await userEvent.click(saveButton)
 
       // Alert should NOT appear
-      expect(screen.queryByText(/you are adding this comment without a pronoun/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(/you are saving this comment without a pronoun/i)).not.toBeInTheDocument()
 
       // onCreateComment should be called immediately
       expect(mockHandlers.onCreateComment).toHaveBeenCalledWith(
@@ -492,7 +492,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       await userEvent.click(saveButton)
 
       // Alert should appear
-      expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
+      expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
     })
 
     it('should show alert when pronounId is undefined', async () => {
@@ -520,7 +520,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       await userEvent.click(saveButton)
 
       // Alert should appear
-      expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
+      expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
     })
   })
 })

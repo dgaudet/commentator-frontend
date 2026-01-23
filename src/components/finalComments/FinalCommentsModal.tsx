@@ -1397,7 +1397,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
         <ConfirmationModal
           isOpen={pronounConfirmation.isOpen}
           title="Pronoun Confirmation"
-          message="You are adding this comment without a pronoun, do you want to continue saving?"
+          message="You are saving this comment without a pronoun. Do you want to continue?"
           onConfirm={handlePronounConfirmationYes}
           onCancel={handlePronounConfirmationNo}
           confirmButtonText="Yes"
@@ -1460,7 +1460,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       <ConfirmationModal
         isOpen={pronounConfirmation.isOpen}
         title="Pronoun Confirmation"
-        message="You are adding this comment without a pronoun, do you want to continue saving?"
+        message="You are saving this comment without a pronoun. Do you want to continue?"
         onConfirm={handlePronounConfirmationYes}
         onCancel={handlePronounConfirmationNo}
         confirmButtonText="Yes"
