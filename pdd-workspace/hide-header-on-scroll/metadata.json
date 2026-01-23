@@ -1,0 +1,26 @@
+{
+  "feature": "hide-header-on-scroll",
+  "title": "Hide Header on Scroll",
+  "description": "Hide header as user scrolls down to maximize visible content area",
+  "complexity": {
+    "level": "L0",
+    "reasoning": "Single atomic task - simple scroll detection, no animations, no state management, single component change, frontend-only, <1 day effort",
+    "assessedAt": "2026-01-22T00:00:00Z"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "READY",
+    "validation": "PENDING",
+    "delivery": "PENDING"
+  },
+  "userStories": {
+    "total": 1,
+    "completed": 0
+  },
+  "artifacts": {
+    "planning": ["tech-note.md"],
+    "implementation": [],
+    "testing": []
+  }
+}
