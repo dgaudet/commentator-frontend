@@ -7,7 +7,7 @@
  * Desired behavior: Display confirmation alert and allow save only if confirmed
  */
 
-import { render, screen } from '../../../test-utils'
+import { render, screen, waitFor } from '../../../test-utils'
 import userEvent from '@testing-library/user-event'
 import { FinalCommentsModal } from '../FinalCommentsModal'
 import type { Class, FinalComment } from '../../../types'
@@ -129,12 +129,17 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // Trigger the alert by attempting to save without pronoun
-      // (skipping form fill for brevity - focus on alert message verification)
-      // In actual test, would fill form and click save
+      // Fill in form and trigger alert
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      await userEvent.type(firstNameInput, 'Alice')
+      await userEvent.type(gradeInput, '90')
 
-      // Alert message should read exactly: "You are adding this comment without a pronoun, do you want to continue saving?"
-      // This test verifies the exact message is shown
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Verify exact message
+      expect(screen.getByText(/you are adding this comment without a pronoun, do you want to continue saving?/i)).toBeInTheDocument()
     })
 
     it('should show Yes and No buttons on confirmation alert', async () => {
@@ -158,9 +163,22 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // When alert appears, should have Yes and No buttons
-      // Yes button should proceed with save
-      // No button should dismiss alert and keep modal open
+      // Fill in form and trigger alert
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      await userEvent.type(firstNameInput, 'Bob')
+      await userEvent.type(gradeInput, '75')
+
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Verify alert appears with Yes and No buttons
+      await waitFor(() => {
+        const yesButtons = screen.queryAllByRole('button', { name: /yes/i })
+        const noButtons = screen.queryAllByRole('button', { name: /no/i })
+        expect(yesButtons.length).toBeGreaterThan(0)
+        expect(noButtons.length).toBeGreaterThan(0)
+      })
     })
 
     it('should close alert and keep modal open when clicking No', async () => {
@@ -184,14 +202,29 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // After clicking "No" on confirmation alert:
-      // 1. Alert should be dismissed
-      // 2. Modal should still be open
-      // 3. User can edit the pronoun
-      // 4. onCreateComment should NOT be called
+      // Fill in form and trigger alert
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      await userEvent.type(firstNameInput, 'Carol')
+      await userEvent.type(gradeInput, '88')
+
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Alert should appear with No button
+      await waitFor(() => {
+        expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      // Modal should still be open (form should still be visible)
+      expect(screen.getByRole('button', { name: /add final comment/i })).toBeInTheDocument()
+
+      // onCreateComment should NOT be called
+      expect(mockHandlers.onCreateComment).not.toHaveBeenCalled()
     })
 
     it('should proceed with save when clicking Yes on confirmation alert', async () => {
+      mockHandlers.onCreateComment.mockResolvedValue(undefined)
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -212,10 +245,28 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // After clicking "Yes" on confirmation alert:
-      // 1. Alert should be dismissed
-      // 2. onCreateComment should be called with the comment data
-      // 3. Modal should close (if save successful)
+      // Fill in form and trigger alert
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      await userEvent.type(firstNameInput, 'David')
+      await userEvent.type(gradeInput, '92')
+
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Click Yes button
+      const yesButton = screen.getByRole('button', { name: /yes/i })
+      await userEvent.click(yesButton)
+
+      // onCreateComment should be called with the comment data
+      expect(mockHandlers.onCreateComment).toHaveBeenCalledWith(
+        expect.objectContaining({
+          classId: 'class-1',
+          firstName: 'David',
+          grade: 92,
+          pronounId: null,
+        }),
+      )
     })
 
     it('should dismiss alert when clicking X button (acts as No)', async () => {
@@ -239,10 +290,29 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // Clicking X button should behave like "No":
-      // 1. Alert closes
-      // 2. Modal stays open
-      // 3. onCreateComment NOT called
+      // Fill in form and trigger alert
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      await userEvent.type(firstNameInput, 'Eve')
+      await userEvent.type(gradeInput, '79')
+
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Click on overlay (acts as X button - dismisses by clicking outside)
+      const overlay = screen.getByRole('dialog', { name: /pronoun confirmation/i }).parentElement
+      if (overlay) {
+        await userEvent.click(overlay)
+      }
+
+      // Alert should be dismissed
+      expect(screen.queryByText(/you are adding this comment without a pronoun/i)).not.toBeInTheDocument()
+
+      // Modal should still be open
+      expect(screen.getByRole('button', { name: /add final comment/i })).toBeInTheDocument()
+
+      // onCreateComment should NOT be called
+      expect(mockHandlers.onCreateComment).not.toHaveBeenCalled()
     })
   })
 
@@ -257,7 +327,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         comment: 'Great work!',
         createdAt: '2024-01-15T10:00:00Z',
         updatedAt: '2024-01-15T10:00:00Z',
-        pronounId: 'pronoun-1',
+        pronounId: '1',
       }
 
       render(
@@ -280,10 +350,23 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // Open edit form for existing comment
-      // Clear the pronoun field to make it null/undefined
+      // Open edit form
+      const editButton = screen.getByRole('button', { name: /edit/i })
+      await userEvent.click(editButton)
+
+      // Find the pronoun select and clear it by selecting empty option
+      const pronounSelects = screen.getAllByRole('combobox', { name: /pronoun/i })
+      const pronounSelect = pronounSelects[pronounSelects.length - 1] as HTMLSelectElement
+      await userEvent.selectOptions(pronounSelect, '')
+
       // Click save
+      const saveButton = screen.getByRole('button', { name: /save/i })
+      await userEvent.click(saveButton)
+
       // Confirmation alert should appear
+      const confirmationAlert = screen.getByRole('dialog', { name: /pronoun confirmation/i })
+      expect(confirmationAlert).toBeInTheDocument()
+      expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
     })
 
     it('should close alert and keep modal open when clicking No during edit', async () => {
@@ -296,7 +379,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         comment: 'Great work!',
         createdAt: '2024-01-15T10:00:00Z',
         updatedAt: '2024-01-15T10:00:00Z',
-        pronounId: 'pronoun-1',
+        pronounId: '1',
       }
 
       render(
@@ -319,13 +402,30 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // During edit, if user tries to save without pronoun and clicks "No":
-      // 1. Alert closes
-      // 2. Modal stays open with edit form visible
-      // 3. onUpdateComment NOT called
+      // Open edit form
+      const editButton = screen.getByRole('button', { name: /edit/i })
+      await userEvent.click(editButton)
+
+      // Clear pronoun
+      const pronounSelects = screen.getAllByRole('combobox', { name: /pronoun/i })
+      const pronounSelect = pronounSelects[pronounSelects.length - 1] as HTMLSelectElement
+      await userEvent.selectOptions(pronounSelect, '')
+
+      // Click save to trigger alert
+      const saveButtons = screen.getAllByRole('button', { name: /save/i })
+      await userEvent.click(saveButtons[saveButtons.length - 1])
+
+      // Alert should appear
+      await waitFor(() => {
+        expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      // onUpdateComment should NOT be called yet
+      expect(mockHandlers.onUpdateComment).not.toHaveBeenCalled()
     })
 
     it('should proceed with update when clicking Yes during edit', async () => {
+      mockHandlers.onUpdateComment.mockResolvedValue(undefined)
       const existingComment: FinalComment = {
         id: '1',
         classId: 'class-1',
@@ -335,7 +435,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         comment: 'Great work!',
         createdAt: '2024-01-15T10:00:00Z',
         updatedAt: '2024-01-15T10:00:00Z',
-        pronounId: 'pronoun-1',
+        pronounId: '1',
       }
 
       render(
@@ -358,15 +458,40 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // During edit, if user tries to save without pronoun and clicks "Yes":
-      // 1. Alert closes
-      // 2. onUpdateComment should be called with updated comment data
-      // 3. Modal closes after successful update
+      // Open edit form
+      const editButton = screen.getByRole('button', { name: /edit/i })
+      await userEvent.click(editButton)
+
+      // Clear pronoun
+      const pronounSelects = screen.getAllByRole('combobox', { name: /pronoun/i })
+      const pronounSelect = pronounSelects[pronounSelects.length - 1] as HTMLSelectElement
+      await userEvent.selectOptions(pronounSelect, '')
+
+      // Click save to trigger alert
+      const saveButton = screen.getByRole('button', { name: /save/i })
+      await userEvent.click(saveButton)
+
+      // Click Yes
+      const yesButton = screen.getByRole('button', { name: /yes/i })
+      await userEvent.click(yesButton)
+
+      // onUpdateComment should be called with updated data
+      expect(mockHandlers.onUpdateComment).toHaveBeenCalledWith(
+        '1',
+        expect.objectContaining({
+          classId: 'class-1',
+          firstName: 'John',
+          lastName: 'Doe',
+          grade: 85,
+          pronounId: null,
+        }),
+      )
     })
   })
 
   describe('Pronoun Confirmation - Edge Cases', () => {
     it('should NOT show alert when comment has pronoun selected', async () => {
+      mockHandlers.onCreateComment.mockResolvedValue(undefined)
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -387,9 +512,30 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // When comment has pronoun selected:
-      // 1. Save should proceed without showing confirmation alert
-      // 2. onCreateComment should be called immediately
+      // Fill in form with pronoun selected
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      const pronounSelect = screen.getByRole('combobox', { name: /pronoun/i }) as HTMLSelectElement
+
+      await userEvent.type(firstNameInput, 'Frank')
+      await userEvent.type(gradeInput, '88')
+      await userEvent.selectOptions(pronounSelect, '1')
+
+      // Click save
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Alert should NOT appear
+      expect(screen.queryByText(/you are adding this comment without a pronoun/i)).not.toBeInTheDocument()
+
+      // onCreateComment should be called immediately
+      expect(mockHandlers.onCreateComment).toHaveBeenCalledWith(
+        expect.objectContaining({
+          firstName: 'Frank',
+          grade: 88,
+          pronounId: '1',
+        }),
+      )
     })
 
     it('should show alert when pronounId is empty string', async () => {
@@ -413,8 +559,18 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // When pronounId is empty string (""):
-      // Alert should still appear (treat as missing pronoun)
+      // Fill in form without selecting pronoun (empty string)
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      await userEvent.type(firstNameInput, 'Grace')
+      await userEvent.type(gradeInput, '82')
+
+      // Click save without selecting pronoun
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Alert should appear
+      expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
     })
 
     it('should show alert when pronounId is undefined', async () => {
@@ -438,8 +594,18 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         />,
       )
 
-      // When pronounId is undefined:
+      // Fill in form without selecting pronoun (undefined by default)
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      await userEvent.type(firstNameInput, 'Henry')
+      await userEvent.type(gradeInput, '76')
+
+      // Click save without selecting pronoun
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
       // Alert should appear
+      expect(screen.getByText(/you are adding this comment without a pronoun/i)).toBeInTheDocument()
     })
   })
 })
