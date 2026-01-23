@@ -175,5 +175,6 @@ To remove duplicated loading requests in components
 When there is a name that has already been added the style is wrong, the background is white
 
 THe header comes back down when scrolling up, it shouldn't
-When saving a final comment if the user didn't set a pronoun, it should complain
 When saving a student with the same name as before, it doesn't tell you it's failing due to duplicate name
+* Also the flow when there is a failure, isn't good, you lose the student you were working with, perhaps it should be at the bottom of the form
+How can we help with proper casing of the pronoun when it's at the start of a sentence?
