@@ -12,15 +12,23 @@
     "architecture": "SKIPPED",
     "implementation": "COMPLETE",
     "validation": "COMPLETE",
-    "delivery": "READY"
+    "delivery": "COMPLETE"
   },
   "userStories": {
     "total": 1,
     "completed": 1
   },
   "artifacts": {
-    "planning": ["tech-note.md"],
-    "implementation": ["useScrollVisibility hook", "Header.tsx (scroll detection)", "Header.module.css (hidden state styling)"],
-    "testing": ["useScrollVisibility.test.tsx (9 tests)", "Header.test.tsx (4 scroll tests)"]
-  }
+    "planning": ["tech-note.md (with refinement: 100px threshold-based reappearance)"],
+    "implementation": ["useScrollVisibility hook (with 100px threshold logic)", "Header.tsx (scroll detection)", "Header.module.css (hidden state styling)"],
+    "testing": ["useScrollVisibility.test.tsx (14 tests including 5 threshold tests)", "Header.test.tsx (25 tests including 2 threshold integration tests)"]
+  },
+  "refinements": [
+    {
+      "name": "Threshold-Based Header Reappearance",
+      "description": "Header only reappears when user scrolls to within 100px from top of page, preventing 'pop-in' behavior",
+      "status": "COMPLETE",
+      "completedAt": "2026-01-23T00:00:00Z"
+    }
+  ]
 }
