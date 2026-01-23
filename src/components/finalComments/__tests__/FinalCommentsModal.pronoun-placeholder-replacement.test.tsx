@@ -23,8 +23,9 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
       const result = replacePlaceholders(outcomeComment, studentData)
 
       expect(result).toContain('Alex')
-      expect(result).toContain('they')
-      expect(result).toBe('Alex shows strong understanding. they excels in this subject.')
+      expect(result).toContain('They')
+      // Pronoun capitalized after period (sentence start)
+      expect(result).toBe('Alex shows strong understanding. They excels in this subject.')
     })
 
     it('should replace <possessive pronoun> placeholder in outcome comment', () => {
@@ -36,7 +37,8 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
 
       const result = replacePlaceholders(outcomeComment, studentData)
 
-      expect(result).toBe('Jordan completed all work on time. their effort was commendable.')
+      // Possessive pronoun capitalized after period (sentence start)
+      expect(result).toBe('Jordan completed all work on time. Their effort was commendable.')
     })
 
     it('should replace both pronoun and possessive pronoun in outcome comment', () => {
@@ -49,7 +51,8 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
 
       const result = replacePlaceholders(outcomeComment, studentData)
 
-      expect(result).toBe('Casey is an excellent student. she brings her best effort every day.')
+      // Pronoun capitalized after period; possessive pronoun mid-sentence stays lowercase
+      expect(result).toBe('Casey is an excellent student. She brings her best effort every day.')
     })
 
     it('should replace pronoun placeholders in personalized comment', () => {
@@ -61,7 +64,8 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
 
       const result = replacePlaceholders(personalizedComment, studentData)
 
-      expect(result).toBe('Excellent participation! he demonstrated his commitment to learning.')
+      // Pronoun capitalized after exclamation mark (sentence start)
+      expect(result).toBe('Excellent participation! He demonstrated his commitment to learning.')
     })
 
     it('should replace all placeholder types together in combined text', () => {
@@ -75,7 +79,8 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
 
       const result = replacePlaceholders(combined, studentData)
 
-      expect(result).toBe('Morgan earned 92 points. they demonstrates their dedication.')
+      // Pronoun capitalized after period; possessive pronoun mid-sentence stays lowercase
+      expect(result).toBe('Morgan earned 92 points. They demonstrates their dedication.')
     })
   })
 
@@ -124,7 +129,8 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
 
       const result = replacePlaceholders(outcomeComment, studentData)
 
-      expect(result).toBe('she is a dedicated student.')
+      // Pronoun capitalized at text start
+      expect(result).toBe('She is a dedicated student.')
     })
 
     it('should replace mixed case possessive pronoun placeholders', () => {
@@ -148,7 +154,7 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
 
       const result = replacePlaceholders(comment, studentData)
 
-      expect(result).toBe('they is a great student. they demonstrates leadership.')
+      expect(result).toBe('They is a great student. They demonstrates leadership.')
     })
 
     it('should replace multiple occurrences of possessive pronoun placeholder', () => {
@@ -159,7 +165,7 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
 
       const result = replacePlaceholders(comment, studentData)
 
-      expect(result).toBe('their work is excellent. their dedication is noted.')
+      expect(result).toBe('Their work is excellent. Their dedication is noted.')
     })
   })
 
@@ -178,8 +184,8 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
       const outcomeResult = replacePlaceholders(outcomeComment, studentData)
       const personalResult = replacePlaceholders(personalizedComment, studentData)
 
-      expect(outcomeResult).toBe('Riley scored 88. they performed well.')
-      expect(personalResult).toBe('Great job! their participation was excellent.')
+      expect(outcomeResult).toBe('Riley scored 88. They performed well.')
+      expect(personalResult).toBe('Great job! Their participation was excellent.')
     })
 
     it('should truncate combined text correctly after replacement', () => {
@@ -197,7 +203,7 @@ describe('Pronoun Placeholder Replacement in FinalCommentsModal', () => {
       const personalReplaced = replacePlaceholders(personal, studentData)
       const combined = `${outcomeReplaced} ${personalReplaced}`
 
-      expect(combined).toBe('he demonstrated exceptional skills. his work is outstanding. Samuel is a model student in every way.')
+      expect(combined).toBe('He demonstrated exceptional skills. His work is outstanding. Samuel is a model student in every way.')
     })
   })
 })

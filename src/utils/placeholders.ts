@@ -71,6 +71,113 @@ function isValidGrade(grade: number | null | undefined): boolean {
 }
 
 /**
+ * Checks if a position in the text is at the start of a sentence.
+ *
+ * A position is at sentence start if:
+ * - It's at the very beginning of the text (position === 0), OR
+ * - It's immediately after a sentence-ending punctuation mark (., !, ?)
+ *   with optional whitespace (spaces, tabs, newlines) between them
+ *
+ * This function is used for smart pronoun capitalization during placeholder
+ * replacement. For example:
+ * - "she is smart" → "She is smart" (at text start)
+ * - "She is smart. she helps others" → "She is smart. She helps others" (after period)
+ * - "You all participated! they contributed" → "You all participated! They contributed" (after exclamation)
+ *
+ * Implementation Notes:
+ * - Whitespace between punctuation and placeholder is ignored
+ * - Single periods are treated as sentence enders
+ * - Ellipsis (...) is treated as a sentence ender
+ * - Skips backward through whitespace to find the preceding non-whitespace character
+ *
+ * @param text - The text to check
+ * @param position - The position of the placeholder in the text
+ * @returns True if position is at the start of text or after sentence-ending punctuation
+ */
+function isAtSentenceStart(text: string, position: number): boolean {
+  // Check if at the beginning of text
+  if (position === 0) {
+    return true
+  }
+
+  // Look backwards from position to find first non-whitespace character
+  let i = position - 1
+  while (i >= 0 && /\s/.test(text[i])) {
+    i--
+  }
+
+  // If only whitespace before position, treat as sentence start
+  if (i < 0) {
+    return true
+  }
+
+  // Check if the character at i is a sentence ender
+  const char = text[i]
+  if (char === '.' || char === '!' || char === '?') {
+    // All sentence enders trigger capitalization
+    // Single periods, ellipsis, and other punctuation all work
+    return true
+  }
+
+  return false
+}
+
+/**
+ * Capitalizes the first character of a string if it's lowercase.
+ *
+ * Only capitalizes if the first character is a lowercase letter. This preserves
+ * any existing capitalization decisions made by the template author.
+ *
+ * Examples:
+ * - "they" → "They" (lowercase t is capitalized)
+ * - "he" → "He" (lowercase h is capitalized)
+ * - "She" → "She" (already capitalized, no change)
+ * - "THEY" → "THEY" (uppercase, no change)
+ *
+ * @param str - The string to capitalize
+ * @returns String with first character capitalized if it was lowercase
+ */
+function capitalizeFirstChar(str: string): string {
+  if (!str || str.length === 0) {
+    return str
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+/**
+ * Replaces pronoun placeholders with smart capitalization based on position.
+ *
+ * Uses regex replace() with a callback function to examine each match position
+ * and conditionally capitalize based on whether it appears at sentence start.
+ *
+ * Algorithm:
+ * 1. Find each placeholder match using the provided regex pattern
+ * 2. For each match, check if it's at sentence start using isAtSentenceStart()
+ * 3. If at sentence start: capitalize the replacement using capitalizeFirstChar()
+ * 4. If mid-sentence: use replacement as-is (preserve lowercase)
+ *
+ * This ensures grammatically correct text after placeholder replacement:
+ * - "She is bright. <pronoun> excels" → "She is bright. They excels"
+ * - "is <pronoun> helping?" → "is they helping?"
+ *
+ * @param text - The text containing placeholder(s)
+ * @param pattern - The regex pattern to match (e.g., /<pronoun>/gi)
+ * @param replacement - The pronoun value to use as replacement
+ * @returns Text with all placeholders replaced and capitalization applied
+ */
+function replacePronounWithCapitalization(text: string, pattern: RegExp, replacement: string): string {
+  return text.replace(pattern, (match, offset) => {
+    // Check if this match is at the start of a sentence
+    if (isAtSentenceStart(text, offset)) {
+      // Capitalize the first letter if it's lowercase
+      return capitalizeFirstChar(replacement)
+    }
+    // Mid-sentence: return the pronoun as-is
+    return replacement
+  })
+}
+
+/**
  * Replaces placeholders in text with student-specific data.
  *
  * @param text - The text containing placeholders
@@ -82,8 +189,8 @@ function isValidGrade(grade: number | null | undefined): boolean {
  * // Returns: 'Hello, Alice!'
  *
  * @example
- * replacePlaceholders('<first name> uses <pronoun> pronouns', { firstName: 'Alex', pronoun: 'they' })
- * // Returns: 'Alex uses they pronouns'
+ * replacePlaceholders('<pronoun> uses <possessive pronoun> time well', { pronoun: 'she', possessivePronoun: 'her' })
+ * // Returns: 'She uses her time well'
  */
 export function replacePlaceholders(text: string, studentData: StudentData): string {
   let result = text
@@ -103,14 +210,14 @@ export function replacePlaceholders(text: string, studentData: StudentData): str
     result = result.replace(PLACEHOLDER_PATTERNS.GRADE, studentData.grade!.toString())
   }
 
-  // Replace <pronoun> (case-insensitive)
+  // Replace <pronoun> with smart capitalization
   if (isValidString(studentData.pronoun)) {
-    result = result.replace(PLACEHOLDER_PATTERNS.PRONOUN, studentData.pronoun!)
+    result = replacePronounWithCapitalization(result, PLACEHOLDER_PATTERNS.PRONOUN, studentData.pronoun!)
   }
 
-  // Replace <possessive pronoun> (case-insensitive)
+  // Replace <possessive pronoun> with smart capitalization
   if (isValidString(studentData.possessivePronoun)) {
-    result = result.replace(PLACEHOLDER_PATTERNS.POSSESSIVE_PRONOUN, studentData.possessivePronoun!)
+    result = replacePronounWithCapitalization(result, PLACEHOLDER_PATTERNS.POSSESSIVE_PRONOUN, studentData.possessivePronoun!)
   }
 
   return result

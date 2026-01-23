@@ -342,7 +342,8 @@ describe('replacePlaceholders', () => {
 
       const result = replacePlaceholders(text, studentData)
 
-      expect(result).toBe('he is a great student.')
+      // Pronoun at start of text is capitalized
+      expect(result).toBe('He is a great student.')
     })
 
     it('leaves <pronoun> unchanged when pronoun is undefined', () => {
@@ -383,7 +384,8 @@ describe('replacePlaceholders', () => {
 
       const result = replacePlaceholders(text, studentData)
 
-      expect(result).toBe('Riley Davis earned 96 points. they used their best effort.')
+      // Pronoun after period is capitalized; possessive pronoun mid-sentence is lowercase
+      expect(result).toBe('Riley Davis earned 96 points. They used their best effort.')
     })
   })
 })
@@ -484,6 +486,261 @@ describe('validatePlaceholders', () => {
       const warnings = validatePlaceholders(text)
 
       expect(warnings).toEqual([])
+    })
+  })
+})
+
+describe('Smart Pronoun Capitalization (US-SMART-PRONOUN-CAPITALIZE)', () => {
+  describe('Capitalize at Text Start', () => {
+    it('capitalizes <pronoun> when it appears at the start of text', () => {
+      const text = '<pronoun> is a great student.'
+      const studentData: StudentData = {
+        firstName: 'Morgan',
+        pronoun: 'she',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('She is a great student.')
+    })
+
+    it('capitalizes <possessive pronoun> when it appears at the start of text', () => {
+      const text = '<possessive pronoun> work demonstrates mastery.'
+      const studentData: StudentData = {
+        firstName: 'Alex',
+        possessivePronoun: 'his',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('His work demonstrates mastery.')
+    })
+
+    it('does not double-capitalize when pronoun value is already capitalized', () => {
+      const text = '<pronoun> excels in class.'
+      const studentData: StudentData = {
+        firstName: 'Jordan',
+        pronoun: 'He',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('He excels in class.')
+    })
+
+    it('does not double-capitalize when possessive pronoun is already capitalized', () => {
+      const text = '<possessive pronoun> participation is excellent.'
+      const studentData: StudentData = {
+        firstName: 'Casey',
+        possessivePronoun: 'Their',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Their participation is excellent.')
+    })
+  })
+
+  describe('Capitalize After Sentence Enders (., !, ?)', () => {
+    it('capitalizes <pronoun> after period', () => {
+      const text = 'She did well. <pronoun> shows strong effort.'
+      const studentData: StudentData = {
+        firstName: 'Emma',
+        pronoun: 'she',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('She did well. She shows strong effort.')
+    })
+
+    it('capitalizes <pronoun> after exclamation mark', () => {
+      const text = 'Excellent work! <pronoun> demonstrates mastery!'
+      const studentData: StudentData = {
+        firstName: 'Oliver',
+        pronoun: 'he',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Excellent work! He demonstrates mastery!')
+    })
+
+    it('capitalizes <pronoun> after question mark', () => {
+      const text = 'Does <first name> participate? <pronoun> contribute regularly.'
+      const studentData: StudentData = {
+        firstName: 'Sam',
+        pronoun: 'they',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Does Sam participate? They contribute regularly.')
+    })
+
+    it('capitalizes <possessive pronoun> after period', () => {
+      const text = '<first name> excels in math. <possessive pronoun> problem-solving skills are strong.'
+      const studentData: StudentData = {
+        firstName: 'Riley',
+        possessivePronoun: 'their',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Riley excels in math. Their problem-solving skills are strong.')
+    })
+
+    it('capitalizes <possessive pronoun> after exclamation mark', () => {
+      const text = 'Outstanding achievement! <possessive pronoun> dedication is impressive.'
+      const studentData: StudentData = {
+        firstName: 'Avery',
+        possessivePronoun: 'her',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Outstanding achievement! Her dedication is impressive.')
+    })
+
+    it('capitalizes <possessive pronoun> after question mark', () => {
+      const text = 'Will <first name> continue? <possessive pronoun> progress is excellent.'
+      const studentData: StudentData = {
+        firstName: 'Taylor',
+        possessivePronoun: 'his',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Will Taylor continue? His progress is excellent.')
+    })
+  })
+
+  describe('Handle Edge Cases - Ellipsis', () => {
+    it('capitalizes <pronoun> after ellipsis (...)', () => {
+      const text = '<first name> shows great potential... <pronoun> will continue improving.'
+      const studentData: StudentData = {
+        firstName: 'Blake',
+        pronoun: 'she',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Blake shows great potential... She will continue improving.')
+    })
+
+    it('capitalizes <possessive pronoun> after ellipsis', () => {
+      const text = '<first name> is making progress... <possessive pronoun> efforts are paying off.'
+      const studentData: StudentData = {
+        firstName: 'Dakota',
+        possessivePronoun: 'their',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Dakota is making progress... Their efforts are paying off.')
+    })
+  })
+
+  describe('Handle Edge Cases - Multiple Spaces and Newlines', () => {
+    it('capitalizes <pronoun> after sentence ender with multiple spaces', () => {
+      const text = '<first name> participated well.   <pronoun> adds value to discussions.'
+      const studentData: StudentData = {
+        firstName: 'Morgan',
+        pronoun: 'he',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Morgan participated well.   He adds value to discussions.')
+    })
+
+    it('capitalizes <pronoun> after sentence ender with newline', () => {
+      const text = '<first name> did great work.\n<pronoun> is a model student.'
+      const studentData: StudentData = {
+        firstName: 'Quinn',
+        pronoun: 'they',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Quinn did great work.\nThey is a model student.')
+    })
+
+    it('capitalizes <possessive pronoun> after sentence ender with multiple spaces', () => {
+      const text = '<first name> showed dedication.    <possessive pronoun> commitment is admirable.'
+      const studentData: StudentData = {
+        firstName: 'Scout',
+        possessivePronoun: 'his',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Scout showed dedication.    His commitment is admirable.')
+    })
+
+    it('capitalizes <possessive pronoun> after sentence ender with newline', () => {
+      const text = '<first name> excels academically.\n<possessive pronoun> grade reflects <possessive pronoun> effort.'
+      const studentData: StudentData = {
+        firstName: 'Phoenix',
+        possessivePronoun: 'her',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Phoenix excels academically.\nHer grade reflects her effort.')
+    })
+  })
+
+  describe('Multiple Pronouns in Same Comment', () => {
+    it('capitalizes multiple occurrences of <pronoun> at proper positions', () => {
+      const text = '<pronoun> is brilliant. <pronoun> shows initiative. However, <pronoun> could improve.'
+      const studentData: StudentData = {
+        firstName: 'River',
+        pronoun: 'they',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('They is brilliant. They shows initiative. However, they could improve.')
+    })
+
+    it('capitalizes <pronoun> and <possessive pronoun> together', () => {
+      const text = '<pronoun> completed <possessive pronoun> assignment. <pronoun> did excellent work.'
+      const studentData: StudentData = {
+        firstName: 'Sage',
+        pronoun: 'she',
+        possessivePronoun: 'her',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('She completed her assignment. She did excellent work.')
+    })
+  })
+
+  describe('Do Not Capitalize Mid-Sentence', () => {
+    it('does not capitalize <pronoun> in middle of sentence', () => {
+      const text = '<first name> believes <pronoun> will succeed.'
+      const studentData: StudentData = {
+        firstName: 'Skylar',
+        pronoun: 'he',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Skylar believes he will succeed.')
+    })
+
+    it('does not capitalize <possessive pronoun> in middle of sentence', () => {
+      const text = '<first name> completed <possessive pronoun> project on time.'
+      const studentData: StudentData = {
+        firstName: 'Jordan',
+        possessivePronoun: 'their',
+      }
+
+      const result = replacePlaceholders(text, studentData)
+
+      expect(result).toBe('Jordan completed their project on time.')
     })
   })
 })
