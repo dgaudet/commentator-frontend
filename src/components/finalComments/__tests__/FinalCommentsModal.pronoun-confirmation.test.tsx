@@ -76,14 +76,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-            { id: '2', pronoun: 'she', possessivePronoun: 'her', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -119,13 +111,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -153,13 +138,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -192,13 +170,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -235,13 +206,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -280,13 +244,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -340,13 +297,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -392,13 +342,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -448,13 +391,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -502,13 +438,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -549,13 +478,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
@@ -584,13 +506,6 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
           onDeleteComment={mockHandlers.onDeleteComment}
           loading={false}
           error={null}
-          outcomeComments={[]}
-          personalizedComments={[]}
-          pronouns={[
-            { id: '1', pronoun: 'he', possessivePronoun: 'his', userId: 'user-1', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
-          ]}
-          pronounsLoading={false}
-          pronounsError={null}
         />,
       )
 
