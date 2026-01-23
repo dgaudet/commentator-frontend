@@ -106,12 +106,14 @@ Currently, the header reappears whenever the user scrolls up from any position. 
 **Logic**:
 ```
 If scrollTop <= 100px:
-  Header is always visible
-Else if scrolling up AND scrollTop <= 100px:
-  Header becomes visible
-Else:
-  Header remains hidden (or follows original down-scroll behavior)
+  Header is always visible (regardless of scroll direction)
+Else if scrolling down:
+  Header becomes hidden
+Else (scrolling up while scrollTop > 100px):
+  Header remains hidden (prevents "pop-in" behavior)
 ```
+
+**Implementation Note**: The first condition covers all cases where scrollTop <= 100px, making scroll direction irrelevant in that zone. Scroll direction only matters when beyond the 100px threshold.
 
 **Implementation Location**: `useScrollVisibility` hook in `src/hooks/useScrollVisibility.ts`
 **Changes**: Update scroll direction detection logic to consider proximity to top
