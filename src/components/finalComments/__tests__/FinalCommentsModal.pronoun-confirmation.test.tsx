@@ -523,4 +523,228 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
     })
   })
+
+  describe('Pronoun Confirmation - Loading and Error Guard Conditions', () => {
+    it('should NOT show alert and proceed with save when pronounsLoading is true during create', async () => {
+      // Import the mocked hook to update its return value for this test
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { usePronounsQuery } = require('../../../hooks/usePronounsQuery')
+      const mockUsePronounQuery = usePronounsQuery as jest.Mock
+      mockUsePronounQuery.mockReturnValue({
+        pronouns: [],
+        loading: true,
+        error: null,
+      })
+
+      mockHandlers.onCreateComment.mockResolvedValue(undefined)
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Fill in form without selecting pronoun
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      await userEvent.type(firstNameInput, 'Isaac')
+      await userEvent.type(gradeInput, '80')
+
+      // Click save without selecting pronoun
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Alert should NOT appear because pronouns are loading
+      expect(screen.queryByText(/you are saving this comment without a pronoun/i)).not.toBeInTheDocument()
+
+      // Save should proceed immediately (no confirmation needed)
+      expect(mockHandlers.onCreateComment).toHaveBeenCalledWith(
+        expect.objectContaining({
+          firstName: 'Isaac',
+          grade: 80,
+          pronounId: null,
+        }),
+      )
+    })
+
+    it('should NOT show alert and proceed with save when pronounsError exists during create', async () => {
+      // Update mock to return error state
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { usePronounsQuery } = require('../../../hooks/usePronounsQuery')
+      const mockUsePronounQuery = usePronounsQuery as jest.Mock
+      mockUsePronounQuery.mockReturnValue({
+        pronouns: [],
+        loading: false,
+        error: 'Failed to load pronouns',
+      })
+
+      mockHandlers.onCreateComment.mockResolvedValue(undefined)
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Fill in form without selecting pronoun
+      const firstNameInput = screen.getByPlaceholderText(/first name/i)
+      const gradeInput = screen.getByLabelText(/grade/i)
+      await userEvent.type(firstNameInput, 'Ivy')
+      await userEvent.type(gradeInput, '87')
+
+      // Click save without selecting pronoun
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Alert should NOT appear because there's an error loading pronouns
+      expect(screen.queryByText(/you are saving this comment without a pronoun/i)).not.toBeInTheDocument()
+
+      // Save should proceed immediately (no confirmation needed)
+      expect(mockHandlers.onCreateComment).toHaveBeenCalledWith(
+        expect.objectContaining({
+          firstName: 'Ivy',
+          grade: 87,
+          pronounId: null,
+        }),
+      )
+    })
+
+    it('should NOT show alert and proceed with update when pronounsLoading is true during edit', async () => {
+      const existingComment: FinalComment = {
+        id: '1',
+        classId: 'class-1',
+        firstName: 'Jack',
+        lastName: 'Smith',
+        grade: 90,
+        comment: 'Excellent work!',
+        createdAt: '2024-01-15T10:00:00Z',
+        updatedAt: '2024-01-15T10:00:00Z',
+        pronounId: '1',
+      }
+
+      // Update mock to return loading state
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { usePronounsQuery: usePronounsQueryLoading } = require('../../../hooks/usePronounsQuery')
+      const mockUsePronounQueryLoading = usePronounsQueryLoading as jest.Mock
+      mockUsePronounQueryLoading.mockReturnValue({
+        pronouns: [],
+        loading: true,
+        error: null,
+      })
+
+      mockHandlers.onUpdateComment.mockResolvedValue(undefined)
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[existingComment]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Open edit form
+      const editButton = screen.getByRole('button', { name: /edit/i })
+      await userEvent.click(editButton)
+
+      // When pronouns are loading, the pronoun selector shows loading state
+      // No need to interact with it - just save as-is without selecting a pronoun
+      // This simulates the scenario where pronounId becomes null during loading
+
+      // Click save to trigger save attempt
+      const saveButtons = screen.getAllByRole('button', { name: /save/i })
+      await userEvent.click(saveButtons[saveButtons.length - 1])
+
+      // Alert should NOT appear because pronouns are loading (guard condition prevents alert)
+      expect(screen.queryByText(/you are saving this comment without a pronoun/i)).not.toBeInTheDocument()
+
+      // Update should proceed immediately (no confirmation needed)
+      expect(mockHandlers.onUpdateComment).toHaveBeenCalledWith(
+        '1',
+        expect.objectContaining({
+          firstName: 'Jack',
+          lastName: 'Smith',
+          grade: 90,
+        }),
+      )
+    })
+
+    it('should NOT show alert and proceed with update when pronounsError exists during edit', async () => {
+      const existingComment: FinalComment = {
+        id: '1',
+        classId: 'class-1',
+        firstName: 'Kate',
+        lastName: 'Johnson',
+        grade: 93,
+        comment: 'Outstanding effort!',
+        createdAt: '2024-01-15T10:00:00Z',
+        updatedAt: '2024-01-15T10:00:00Z',
+        pronounId: '1',
+      }
+
+      // Update mock to return error state
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { usePronounsQuery: usePronounsQueryError } = require('../../../hooks/usePronounsQuery')
+      const mockUsePronounQueryError = usePronounsQueryError as jest.Mock
+      mockUsePronounQueryError.mockReturnValue({
+        pronouns: [],
+        loading: false,
+        error: 'Failed to load pronouns',
+      })
+
+      mockHandlers.onUpdateComment.mockResolvedValue(undefined)
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={[existingComment]}
+          onCreateComment={mockHandlers.onCreateComment}
+          onUpdateComment={mockHandlers.onUpdateComment}
+          onDeleteComment={mockHandlers.onDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Open edit form
+      const editButton = screen.getByRole('button', { name: /edit/i })
+      await userEvent.click(editButton)
+
+      // When pronouns fail to load, the pronoun selector shows error message
+      // No select element available - can't change the pronoun
+      // Just save as-is, which will result in pronounId being undefined/null
+
+      // Click save to trigger save attempt
+      const saveButtons = screen.getAllByRole('button', { name: /save/i })
+      await userEvent.click(saveButtons[saveButtons.length - 1])
+
+      // Alert should NOT appear because there's an error loading pronouns (guard condition prevents alert)
+      expect(screen.queryByText(/you are saving this comment without a pronoun/i)).not.toBeInTheDocument()
+
+      // Update should proceed immediately (no confirmation needed)
+      expect(mockHandlers.onUpdateComment).toHaveBeenCalledWith(
+        '1',
+        expect.objectContaining({
+          firstName: 'Kate',
+          lastName: 'Johnson',
+          grade: 93,
+        }),
+      )
+    })
+  })
 })
