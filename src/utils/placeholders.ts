@@ -167,7 +167,7 @@ function capitalizeFirstChar(str: string): string {
  * @returns Text with all placeholders replaced and capitalization applied
  */
 function replacePronounWithCapitalization(text: string, pattern: RegExp, replacement: string): string {
-  return text.replace(pattern, (match, offset) => {
+  return text.replace(pattern, (_match, offset) => {
     // Check if this match is at the start of a sentence
     if (isAtSentenceStart(text, offset)) {
       // Capitalize the first letter if it's lowercase
