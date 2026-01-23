@@ -1,0 +1,40 @@
+{
+  "feature": "final-comments-error-handling",
+  "title": "Improve Final Comments Error Handling & UX",
+  "description": "Surface backend error messages and preserve modal content when save errors occur",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "3 user stories, localized to FinalCommentsModal component, frontend-only changes, no API modifications required, simple error state management and UI improvement, ~1-2 weeks effort",
+    "assessedAt": "2026-01-23T00:00:00Z"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "validation": "PENDING",
+    "delivery": "PENDING"
+  },
+  "priority": "HIGH",
+  "rationale": "Critical UX issue - users lose data on save errors and receive no helpful error messages. This reduces support burden and improves user satisfaction.",
+  "userStories": {
+    "total": 3,
+    "completed": 0,
+    "list": [
+      "US-1: Display Backend Error Messages to User",
+      "US-2: Preserve Modal Content When Error Occurs",
+      "US-3: Display Error Near Save Action"
+    ]
+  },
+  "artifacts": {
+    "planning": ["minimal-prd.md"]
+  },
+  "notes": {
+    "issueType": "UX Bug + Enhancement",
+    "affectedComponent": "FinalCommentsModal",
+    "dataLossRisk": "HIGH (users lose edits on error)",
+    "userExperienceImpact": "CRITICAL (breaks save workflow)",
+    "apiChangesRequired": false,
+    "databaseChangesRequired": false
+  },
+  "createdAt": "2026-01-23T00:00:00Z"
+}
