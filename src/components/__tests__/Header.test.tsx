@@ -5,6 +5,18 @@ import { Header } from '../Header'
 
 const mockUseAuth = jest.spyOn(AuthModule, 'useAuth')
 
+/**
+ * Helper to set window.scrollY value for testing
+ * Since scrollY is read-only, we need to mock it using Object.defineProperty
+ */
+const setScrollY = (value: number) => {
+  Object.defineProperty(window, 'scrollY', {
+    writable: true,
+    configurable: true,
+    value,
+  })
+}
+
 describe('Header', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -335,6 +347,69 @@ describe('Header', () => {
 
       const userSection = container.querySelector('.userSection')
       expect(userSection).toBeInTheDocument()
+    })
+  })
+
+  describe('Scroll Visibility - Hide on Scroll', () => {
+    beforeEach(() => {
+      setScrollY(0)
+    })
+
+    afterEach(() => {
+      setScrollY(0)
+    })
+
+    it('should display header by default when page is not scrolled', () => {
+      const { container } = render(<Header />)
+      const header = container.querySelector('.header')
+      expect(header).toBeInTheDocument()
+    })
+
+    it('should hide header when user scrolls down', async () => {
+      const { container } = render(<Header />)
+      const header = container.querySelector('.header') as HTMLElement
+
+      // Simulate scrolling down
+      setScrollY(100)
+      window.dispatchEvent(new Event('scroll'))
+
+      // Wait for state update
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      // Header should have hidden class
+      expect(header).toHaveClass('hidden')
+    })
+
+    it('should show header when user scrolls up', async () => {
+      const { container } = render(<Header />)
+      const header = container.querySelector('.header') as HTMLElement
+
+      // Simulate scrolling down first
+      setScrollY(100)
+      window.dispatchEvent(new Event('scroll'))
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      expect(header).toHaveClass('hidden')
+
+      // Simulate scrolling back up
+      setScrollY(50)
+      window.dispatchEvent(new Event('scroll'))
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      expect(header).not.toHaveClass('hidden')
+    })
+
+    it('should keep header visible when scrolling minimally', async () => {
+      const { container } = render(<Header />)
+      const header = container.querySelector('.header') as HTMLElement
+
+      // Simulate minimal scroll (less than threshold)
+      setScrollY(5)
+      window.dispatchEvent(new Event('scroll'))
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      // Header should still be visible
+      expect(header).not.toHaveClass('hidden')
     })
   })
 })
