@@ -176,5 +176,4 @@ When there is a name that has already been added the style is wrong, the backgro
 
 order final comments by createdate descending
 
-she forgot to the set the pronoun, so then on save she was expecting
-She wants the header to hide when scrolling
+she forgot to the set the pronoun, then when she set the pronoun on save she was expecting, that it would update the missing ones

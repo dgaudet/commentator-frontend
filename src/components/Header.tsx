@@ -1,12 +1,14 @@
 import React, { useCallback, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeColors } from '../hooks/useThemeColors'
+import { useScrollVisibility } from '../hooks/useScrollVisibility'
 import { ThemeToggle } from './common/ThemeToggle'
 import styles from './Header.module.css'
 
 export const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth()
   const themeColors = useThemeColors()
+  const { isVisible } = useScrollVisibility()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -32,7 +34,7 @@ export const Header: React.FC = () => {
   }
 
   return (
-    <header className={styles.header} style={headerStyle}>
+    <header className={`${styles.header} ${!isVisible ? styles.hidden : ''}`} style={headerStyle}>
       <div className={styles.container}>
         <div className={styles.brand}>
           <h1 className={styles.title}>Commentator</h1>

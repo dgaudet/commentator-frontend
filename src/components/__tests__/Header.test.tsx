@@ -337,4 +337,59 @@ describe('Header', () => {
       expect(userSection).toBeInTheDocument()
     })
   })
+
+  describe('Scroll Visibility - Hide on Scroll', () => {
+    it('should display header by default when page is not scrolled', () => {
+      const { container } = render(<Header />)
+      const header = container.querySelector('.header')
+      expect(header).toBeInTheDocument()
+    })
+
+    it('should hide header when user scrolls down', async () => {
+      const { container } = render(<Header />)
+      const header = container.querySelector('.header') as HTMLElement
+
+      // Simulate scrolling down
+      window.scrollY = 100
+      window.dispatchEvent(new Event('scroll'))
+
+      // Wait for state update
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      // Header should have hidden class
+      expect(header).toHaveClass('hidden')
+    })
+
+    it('should show header when user scrolls up', async () => {
+      const { container } = render(<Header />)
+      const header = container.querySelector('.header') as HTMLElement
+
+      // Simulate scrolling down first
+      window.scrollY = 100
+      window.dispatchEvent(new Event('scroll'))
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      expect(header).toHaveClass('hidden')
+
+      // Simulate scrolling back up
+      window.scrollY = 50
+      window.dispatchEvent(new Event('scroll'))
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      expect(header).not.toHaveClass('hidden')
+    })
+
+    it('should keep header visible when scrolling minimally', async () => {
+      const { container } = render(<Header />)
+      const header = container.querySelector('.header') as HTMLElement
+
+      // Simulate minimal scroll (less than threshold)
+      window.scrollY = 5
+      window.dispatchEvent(new Event('scroll'))
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      // Header should still be visible
+      expect(header).not.toHaveClass('hidden')
+    })
+  })
 })
