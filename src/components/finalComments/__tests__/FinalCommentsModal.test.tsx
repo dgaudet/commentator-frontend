@@ -338,7 +338,7 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       expect(screen.getByText(/Jan 15, 2024/i)).toBeInTheDocument()
     })
 
-    it('should sort final comments by firstName alphabetically (A-Z)', () => {
+    it('should sort final comments by createdAt in descending order (newest first)', () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -353,9 +353,9 @@ describe('FinalCommentsModal - US-FINAL-002: View List', () => {
       )
 
       const names = screen.getAllByText(/Alice Smith|Bob|John Doe/i)
-      // Should be sorted: Alice, Bob, John
-      expect(names[0].textContent).toContain('Alice')
-      expect(names[1].textContent).toContain('Bob')
+      // Should be sorted by createdAt descending: Bob (newest), Alice (middle), John (oldest)
+      expect(names[0].textContent).toContain('Bob')
+      expect(names[1].textContent).toContain('Alice')
       expect(names[2].textContent).toContain('John')
     })
   })

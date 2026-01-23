@@ -651,9 +651,9 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     setOrderedEditComments([])
   }
 
-  // Sort final comments by firstName alphabetically (A-Z)
+  // Sort final comments by createdAt in descending order (newest first)
   const sortedComments = [...finalComments].sort((a, b) =>
-    a.firstName.localeCompare(b.firstName),
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   )
 
   // US-CLASS-TABS-003: Render content JSX for both embedded and modal modes
