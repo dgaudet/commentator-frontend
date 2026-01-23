@@ -1,8 +1,9 @@
 /**
  * useScrollVisibility Hook
  *
- * Tracks scroll direction and manages header visibility.
- * Returns isVisible state based on whether user is scrolling down (hide) or up (show).
+ * Manages header visibility based on scroll position with a 100px threshold.
+ * Hides header when scrolling down, prevents "pop-in" by keeping it hidden
+ * when scrolling up past the threshold zone.
  *
  * Usage:
  * ```typescript
@@ -19,10 +20,12 @@ interface ScrollVisibilityState {
 
 /**
  * Custom hook to detect scroll direction and toggle element visibility
- * Header is hidden when scrolling down (except near top of page)
- * Header is shown when:
- *   - At top of page (scrollY <= 100px)
- *   - Scrolling up and within 100px from top
+ *
+ * Header visibility is based on scroll position with a 100px threshold from top:
+ * - Always visible when scrollY <= 100px (near top of page)
+ * - Hidden when scrolling down past the 100px threshold
+ * - Remains hidden if scrolling up while still > 100px (prevents "pop-in")
+ * - Reappears when scrolling back into the 100px threshold zone
  *
  * @returns Object with isVisible boolean state
  */
