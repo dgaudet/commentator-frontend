@@ -1,0 +1,24 @@
+{
+  "feature": "final-comment-smart-pronoun-capitalization",
+  "title": "Smart Pronoun Capitalization in Final Comments",
+  "description": "Automatically capitalize pronoun and possessive pronoun placeholders when they appear at the start of a sentence",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "2-3 user stories, simple scope (sentence-end detection only), frontend-only text processing, no API changes, ~1-2 weeks effort",
+    "assessedAt": "2026-01-23T00:00:00Z"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "PENDING",
+    "validation": "PENDING",
+    "delivery": "PENDING"
+  },
+  "userStories": {
+    "total": 3,
+    "completed": 0
+  },
+  "artifacts": {
+    "planning": ["minimal-prd.md"]
+  }
+}

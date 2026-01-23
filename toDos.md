@@ -176,4 +176,3 @@ When there is a name that has already been added the style is wrong, the backgro
 
 When saving a student with the same name as before, it doesn't tell you it's failing due to duplicate name
 * Also the flow when there is a failure, isn't good, you lose the student you were working with, perhaps it should be at the bottom of the form
-How can we help with proper casing of the pronoun when it's at the start of a sentence, probably a pronoun right after a period or period space
