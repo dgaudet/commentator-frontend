@@ -79,8 +79,55 @@ Improve teacher productivity by increasing visible content area when reviewing a
 | Implementation Time | < 1 day |
 | User Stories | 1/1 ✅ |
 
+## Refinement: Threshold-Based Header Reappearance
+
+**Status**: Ready for Implementation
+**Complexity**: L0 (Atomic refinement)
+**Date Requested**: 2026-01-23
+
+### Refinement Request
+
+Currently, the header reappears whenever the user scrolls up from any position. This can cause distracting "pop-in" behavior when the user scrolls up slightly while reading content far down the page. This refinement improves the UX by requiring the user to scroll near the top of the page before the header reappears.
+
+### Refined Acceptance Criteria
+
+- ✅ Header hides when user scrolls down (existing behavior maintained)
+- ✅ Header reappears ONLY when user scrolls up AND is within 100px from the top of the page
+- ✅ Header is ALWAYS visible when user is at the top of the page (scrollTop ≤ 100px)
+- ✅ Header does not reappear when user scrolls up if still far from the top (scrollTop > 100px)
+- ✅ No animations or transitions needed (instant visibility toggle)
+- ✅ Works in all modal and page views
+- ✅ No impact on existing functionality
+- ✅ Scrolling behavior remains smooth without jumps or layout shifts
+
+### Technical Specification
+
+**Threshold Parameter**: 100px from top of page
+**Logic**:
+```
+If scrollTop <= 100px:
+  Header is always visible
+Else if scrolling up AND scrollTop <= 100px:
+  Header becomes visible
+Else:
+  Header remains hidden (or follows original down-scroll behavior)
+```
+
+**Implementation Location**: `useScrollVisibility` hook in `src/hooks/useScrollVisibility.ts`
+**Changes**: Update scroll direction detection logic to consider proximity to top
+
+### Testing Requirements
+
+- ✅ Existing tests pass with new threshold logic
+- ✅ New test: Header visible when scrollTop = 0
+- ✅ New test: Header hidden when scrolling down past 100px
+- ✅ New test: Header not visible when scrolling up but scrollTop > 100px
+- ✅ New test: Header appears when scrolling up and crosses 100px threshold
+- ✅ Regression: No impact on existing scroll behavior tests
+
 ## Next Steps
 
-1. Frontend Engineer implements scroll detection and header visibility toggle
-2. QA Engineer validates functionality across different views
-3. Product Owner accepts completed work
+1. Frontend Engineer implements scroll threshold logic
+2. Frontend Engineer updates tests for new threshold behavior
+3. QA Engineer validates functionality across different views
+4. Product Owner accepts completed work
