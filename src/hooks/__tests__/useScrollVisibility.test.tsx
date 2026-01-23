@@ -42,14 +42,14 @@ describe('useScrollVisibility Hook', () => {
   })
 
   describe('Scroll Down Detection', () => {
-    it('should hide header when scrolling down', () => {
+    it('should hide header when scrolling down past 100px threshold', () => {
       const { result } = renderHook(() => useScrollVisibility())
 
       expect(result.current.isVisible).toBe(true)
 
-      // Simulate scrolling down
+      // Simulate scrolling down past threshold
       act(() => {
-        setScrollY(100)
+        setScrollY(150)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -59,9 +59,9 @@ describe('useScrollVisibility Hook', () => {
     it('should continue hiding header when scrolling down further', () => {
       const { result } = renderHook(() => useScrollVisibility())
 
-      // Simulate scrolling down multiple times
+      // Simulate scrolling down past threshold
       act(() => {
-        setScrollY(100)
+        setScrollY(150)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -80,15 +80,15 @@ describe('useScrollVisibility Hook', () => {
     it('should show header when scrolling up after scrolling down', () => {
       const { result } = renderHook(() => useScrollVisibility())
 
-      // Scroll down first
+      // Scroll down past threshold first
       act(() => {
-        setScrollY(100)
+        setScrollY(150)
         window.dispatchEvent(new Event('scroll'))
       })
 
       expect(result.current.isVisible).toBe(false)
 
-      // Scroll back up
+      // Scroll back up into threshold area
       act(() => {
         setScrollY(50)
         window.dispatchEvent(new Event('scroll'))
@@ -163,6 +163,112 @@ describe('useScrollVisibility Hook', () => {
         setScrollY(50)
         window.dispatchEvent(new Event('scroll'))
         setScrollY(0)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      expect(result.current.isVisible).toBe(true)
+    })
+  })
+
+  describe('Threshold-Based Visibility (100px from top)', () => {
+    it('should always show header when scrollTop <= 100px', () => {
+      const { result } = renderHook(() => useScrollVisibility())
+
+      // Start at top
+      expect(result.current.isVisible).toBe(true)
+
+      // Scroll to 50px (within threshold)
+      act(() => {
+        setScrollY(50)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      expect(result.current.isVisible).toBe(true)
+
+      // Scroll to 100px (at threshold boundary)
+      act(() => {
+        setScrollY(100)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      expect(result.current.isVisible).toBe(true)
+    })
+
+    it('should hide header when scrolling down past 100px', () => {
+      const { result } = renderHook(() => useScrollVisibility())
+
+      // Scroll down to 150px
+      act(() => {
+        setScrollY(150)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      expect(result.current.isVisible).toBe(false)
+    })
+
+    it('should NOT show header when scrolling up but still scrollTop > 100px', () => {
+      const { result } = renderHook(() => useScrollVisibility())
+
+      // Start far down (200px)
+      act(() => {
+        setScrollY(200)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      expect(result.current.isVisible).toBe(false)
+
+      // Scroll up a bit (to 150px) but still > 100px threshold
+      act(() => {
+        setScrollY(150)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      // Header should still be hidden since we're not near the top yet
+      expect(result.current.isVisible).toBe(false)
+    })
+
+    it('should show header when scrolling up and crossing into 100px threshold', () => {
+      const { result } = renderHook(() => useScrollVisibility())
+
+      // Start far down (200px)
+      act(() => {
+        setScrollY(200)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      expect(result.current.isVisible).toBe(false)
+
+      // Scroll up and cross into threshold (to 90px)
+      act(() => {
+        setScrollY(90)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      expect(result.current.isVisible).toBe(true)
+    })
+
+    it('should keep header visible within threshold range', () => {
+      const { result } = renderHook(() => useScrollVisibility())
+
+      // Scroll to 50px (within threshold)
+      act(() => {
+        setScrollY(50)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      expect(result.current.isVisible).toBe(true)
+
+      // Scroll to 80px (still within threshold)
+      act(() => {
+        setScrollY(80)
+        window.dispatchEvent(new Event('scroll'))
+      })
+
+      expect(result.current.isVisible).toBe(true)
+
+      // Scroll back to 30px (still within threshold)
+      act(() => {
+        setScrollY(30)
         window.dispatchEvent(new Event('scroll'))
       })
 
