@@ -123,19 +123,20 @@ function isAtSentenceStart(text: string, position: number): boolean {
 }
 
 /**
- * Capitalizes the first character of a string if it's lowercase.
+ * Capitalizes the first character of a string using toUpperCase().
  *
- * Only capitalizes if the first character is a lowercase letter. This preserves
- * any existing capitalization decisions made by the template author.
+ * Since toUpperCase() is idempotent (applying it to an already-uppercase character
+ * returns the same character), this preserves any existing capitalization decisions
+ * made by the template author.
  *
  * Examples:
- * - "they" → "They" (lowercase t is capitalized)
- * - "he" → "He" (lowercase h is capitalized)
- * - "She" → "She" (already capitalized, no change)
- * - "THEY" → "THEY" (uppercase, no change)
+ * - "they" → "They" (lowercase t is uppercased)
+ * - "he" → "He" (lowercase h is uppercased)
+ * - "She" → "She" (S is already uppercase, toUpperCase() returns S)
+ * - "THEY" → "THEY" (T is already uppercase, toUpperCase() returns T)
  *
  * @param str - The string to capitalize
- * @returns String with first character capitalized if it was lowercase
+ * @returns String with first character uppercased (preserves existing uppercase)
  */
 function capitalizeFirstChar(str: string): string {
   if (!str || str.length === 0) {
