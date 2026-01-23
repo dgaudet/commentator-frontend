@@ -5,6 +5,18 @@ import { Header } from '../Header'
 
 const mockUseAuth = jest.spyOn(AuthModule, 'useAuth')
 
+/**
+ * Helper to set window.scrollY value for testing
+ * Since scrollY is read-only, we need to mock it using Object.defineProperty
+ */
+const setScrollY = (value: number) => {
+  Object.defineProperty(window, 'scrollY', {
+    writable: true,
+    configurable: true,
+    value,
+  })
+}
+
 describe('Header', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -339,6 +351,14 @@ describe('Header', () => {
   })
 
   describe('Scroll Visibility - Hide on Scroll', () => {
+    beforeEach(() => {
+      setScrollY(0)
+    })
+
+    afterEach(() => {
+      setScrollY(0)
+    })
+
     it('should display header by default when page is not scrolled', () => {
       const { container } = render(<Header />)
       const header = container.querySelector('.header')
@@ -350,7 +370,7 @@ describe('Header', () => {
       const header = container.querySelector('.header') as HTMLElement
 
       // Simulate scrolling down
-      window.scrollY = 100
+      setScrollY(100)
       window.dispatchEvent(new Event('scroll'))
 
       // Wait for state update
@@ -365,14 +385,14 @@ describe('Header', () => {
       const header = container.querySelector('.header') as HTMLElement
 
       // Simulate scrolling down first
-      window.scrollY = 100
+      setScrollY(100)
       window.dispatchEvent(new Event('scroll'))
       await new Promise((resolve) => setTimeout(resolve, 50))
 
       expect(header).toHaveClass('hidden')
 
       // Simulate scrolling back up
-      window.scrollY = 50
+      setScrollY(50)
       window.dispatchEvent(new Event('scroll'))
       await new Promise((resolve) => setTimeout(resolve, 50))
 
@@ -384,7 +404,7 @@ describe('Header', () => {
       const header = container.querySelector('.header') as HTMLElement
 
       // Simulate minimal scroll (less than threshold)
-      window.scrollY = 5
+      setScrollY(5)
       window.dispatchEvent(new Event('scroll'))
       await new Promise((resolve) => setTimeout(resolve, 50))
 

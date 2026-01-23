@@ -10,15 +10,27 @@
 import { renderHook, act } from '@testing-library/react'
 import { useScrollVisibility } from '../useScrollVisibility'
 
+/**
+ * Helper to set window.scrollY value for testing
+ * Since scrollY is read-only, we need to mock it using Object.defineProperty
+ */
+const setScrollY = (value: number) => {
+  Object.defineProperty(window, 'scrollY', {
+    writable: true,
+    configurable: true,
+    value,
+  })
+}
+
 describe('useScrollVisibility Hook', () => {
   beforeEach(() => {
     // Reset scroll position before each test
-    window.scrollY = 0
+    setScrollY(0)
   })
 
   afterEach(() => {
     // Clean up
-    window.scrollY = 0
+    setScrollY(0)
   })
 
   describe('Initialization', () => {
@@ -37,7 +49,7 @@ describe('useScrollVisibility Hook', () => {
 
       // Simulate scrolling down
       act(() => {
-        window.scrollY = 100
+        setScrollY(100)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -49,14 +61,14 @@ describe('useScrollVisibility Hook', () => {
 
       // Simulate scrolling down multiple times
       act(() => {
-        window.scrollY = 100
+        setScrollY(100)
         window.dispatchEvent(new Event('scroll'))
       })
 
       expect(result.current.isVisible).toBe(false)
 
       act(() => {
-        window.scrollY = 200
+        setScrollY(200)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -70,7 +82,7 @@ describe('useScrollVisibility Hook', () => {
 
       // Scroll down first
       act(() => {
-        window.scrollY = 100
+        setScrollY(100)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -78,7 +90,7 @@ describe('useScrollVisibility Hook', () => {
 
       // Scroll back up
       act(() => {
-        window.scrollY = 50
+        setScrollY(50)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -90,13 +102,13 @@ describe('useScrollVisibility Hook', () => {
 
       // Scroll down
       act(() => {
-        window.scrollY = 150
+        setScrollY(150)
         window.dispatchEvent(new Event('scroll'))
       })
 
       // Scroll back to top
       act(() => {
-        window.scrollY = 0
+        setScrollY(0)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -110,7 +122,7 @@ describe('useScrollVisibility Hook', () => {
 
       // Scroll just 1 pixel
       act(() => {
-        window.scrollY = 1
+        setScrollY(1)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -122,7 +134,7 @@ describe('useScrollVisibility Hook', () => {
       const { result } = renderHook(() => useScrollVisibility())
 
       act(() => {
-        window.scrollY = 0
+        setScrollY(0)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -134,11 +146,11 @@ describe('useScrollVisibility Hook', () => {
 
       // Simulate rapid scrolling down
       act(() => {
-        window.scrollY = 50
+        setScrollY(50)
         window.dispatchEvent(new Event('scroll'))
-        window.scrollY = 100
+        setScrollY(100)
         window.dispatchEvent(new Event('scroll'))
-        window.scrollY = 150
+        setScrollY(150)
         window.dispatchEvent(new Event('scroll'))
       })
 
@@ -146,11 +158,11 @@ describe('useScrollVisibility Hook', () => {
 
       // Simulate rapid scrolling up
       act(() => {
-        window.scrollY = 100
+        setScrollY(100)
         window.dispatchEvent(new Event('scroll'))
-        window.scrollY = 50
+        setScrollY(50)
         window.dispatchEvent(new Event('scroll'))
-        window.scrollY = 0
+        setScrollY(0)
         window.dispatchEvent(new Event('scroll'))
       })
 
