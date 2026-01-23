@@ -365,12 +365,12 @@ describe('Header', () => {
       expect(header).toBeInTheDocument()
     })
 
-    it('should hide header when user scrolls down', async () => {
+    it('should hide header when user scrolls down past 100px threshold', async () => {
       const { container } = render(<Header />)
       const header = container.querySelector('.header') as HTMLElement
 
-      // Simulate scrolling down
-      setScrollY(100)
+      // Simulate scrolling down past 100px threshold
+      setScrollY(150)
       window.dispatchEvent(new Event('scroll'))
 
       // Wait for state update
@@ -380,18 +380,18 @@ describe('Header', () => {
       expect(header).toHaveClass('hidden')
     })
 
-    it('should show header when user scrolls up', async () => {
+    it('should show header when user scrolls back up into 100px threshold', async () => {
       const { container } = render(<Header />)
       const header = container.querySelector('.header') as HTMLElement
 
-      // Simulate scrolling down first
-      setScrollY(100)
+      // Simulate scrolling down past threshold first
+      setScrollY(150)
       window.dispatchEvent(new Event('scroll'))
       await new Promise((resolve) => setTimeout(resolve, 50))
 
       expect(header).toHaveClass('hidden')
 
-      // Simulate scrolling back up
+      // Simulate scrolling back up into threshold area
       setScrollY(50)
       window.dispatchEvent(new Event('scroll'))
       await new Promise((resolve) => setTimeout(resolve, 50))

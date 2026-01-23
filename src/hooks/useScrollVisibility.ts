@@ -19,14 +19,17 @@ interface ScrollVisibilityState {
 
 /**
  * Custom hook to detect scroll direction and toggle element visibility
- * Header is hidden when scrolling down, shown when scrolling up
+ * Header is hidden when scrolling down (except near top of page)
+ * Header is shown when:
+ *   - At top of page (scrollY <= 100px)
+ *   - Scrolling up and within 100px from top
  *
  * @returns Object with isVisible boolean state
  */
 export const useScrollVisibility = (): ScrollVisibilityState => {
   const [isVisible, setIsVisible] = useState(true)
   const lastScrollYRef = useRef(0)
-  const scrollThresholdRef = useRef(10) // Minimum scroll distance to trigger hide
+  const topThresholdRef = useRef(100) // Distance from top where header stays visible
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,12 +38,17 @@ export const useScrollVisibility = (): ScrollVisibilityState => {
       // Determine scroll direction
       const isScrollingDown = currentScrollY > lastScrollYRef.current
 
-      // Only hide if we've scrolled past the threshold
-      if (isScrollingDown && currentScrollY > scrollThresholdRef.current) {
-        setIsVisible(false)
-      } else {
-        // Show header when scrolling up or at top
+      // Header visibility logic with threshold-based reappearance:
+      // 1. Always show when within 100px from top
+      if (currentScrollY <= topThresholdRef.current) {
         setIsVisible(true)
+      } else {
+        // 2. When beyond 100px threshold: hide on scroll down, stay hidden on scroll up
+        // (only show if we re-enter the 100px zone)
+        if (isScrollingDown) {
+          setIsVisible(false)
+        }
+        // If scrolling up but still > 100px, maintain current hidden state
       }
 
       lastScrollYRef.current = currentScrollY
