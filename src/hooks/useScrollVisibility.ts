@@ -11,7 +11,7 @@
  * ```
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface ScrollVisibilityState {
   isVisible: boolean
@@ -25,25 +25,25 @@ interface ScrollVisibilityState {
  */
 export const useScrollVisibility = (): ScrollVisibilityState => {
   const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-  const [scrollThreshold] = useState(10) // Minimum scroll distance to trigger hide
+  const lastScrollYRef = useRef(0)
+  const scrollThresholdRef = useRef(10) // Minimum scroll distance to trigger hide
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
 
       // Determine scroll direction
-      const isScrollingDown = currentScrollY > lastScrollY
+      const isScrollingDown = currentScrollY > lastScrollYRef.current
 
       // Only hide if we've scrolled past the threshold
-      if (isScrollingDown && currentScrollY > scrollThreshold) {
+      if (isScrollingDown && currentScrollY > scrollThresholdRef.current) {
         setIsVisible(false)
       } else {
         // Show header when scrolling up or at top
         setIsVisible(true)
       }
 
-      setLastScrollY(currentScrollY)
+      lastScrollYRef.current = currentScrollY
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -51,7 +51,7 @@ export const useScrollVisibility = (): ScrollVisibilityState => {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [lastScrollY, scrollThreshold])
+  }, []) // Empty dependency array - effect runs once on mount only
 
   return { isVisible }
 }
