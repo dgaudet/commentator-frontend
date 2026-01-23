@@ -24,7 +24,7 @@ import { SubjectForm } from './SubjectForm'
 import { OutcomeCommentsModal } from '../outcomeComments/OutcomeCommentsModal'
 import { PersonalizedCommentsModal } from '../personalizedComments/PersonalizedCommentsModal'
 import { ClassManagementModal } from '../classes/ClassManagementModal'
-import type { OutcomeComment, PersonalizedComment, Class, FinalComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
+import type { OutcomeComment, PersonalizedComment, Class, FinalComment, Pronoun, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, CreateClassRequest, UpdateClassRequest, CreateFinalCommentRequest, UpdateFinalCommentRequest } from '../../types'
 
 interface SubjectListItemProps {
   subjectItem: Subject
@@ -44,6 +44,10 @@ interface SubjectListItemProps {
   onDeleteOutcomeComment?: (id: string) => Promise<void>
   outcomeCommentsLoading?: boolean
   outcomeCommentsError?: string | null
+  // Story 1: Replace Pronouns Button props
+  pronouns?: Pronoun[]
+  pronounsLoading?: boolean
+  pronounsError?: string | null
   // Personalized Comments panel props
   personalizedComments?: PersonalizedComment[]
   onCreatePersonalizedComment?: (request: CreatePersonalizedCommentRequest) => Promise<void>
@@ -89,6 +93,10 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
   onDeleteOutcomeComment,
   outcomeCommentsLoading = false,
   outcomeCommentsError = null,
+  // Story 1: Replace Pronouns Button props
+  pronouns = [],
+  pronounsLoading = false,
+  pronounsError = null,
   // Personalized Comments panel props
   personalizedComments = [],
   onCreatePersonalizedComment,
@@ -332,6 +340,9 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
                     onDeleteComment={onDeleteOutcomeComment}
                     loading={outcomeCommentsLoading}
                     error={outcomeCommentsError}
+                    pronouns={pronouns}
+                    pronounsLoading={pronounsLoading}
+                    pronounsError={pronounsError}
                   />
                     )
                   : (

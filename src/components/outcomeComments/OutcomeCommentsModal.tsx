@@ -23,13 +23,15 @@
  */
 
 import { useState, useMemo } from 'react'
-import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from '../../types'
+import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, Pronoun } from '../../types'
+import { useReplacePronounsButton } from '../../hooks/useReplacePronounsButton'
 import { sortOutcomeCommentsByRange } from '../../utils/sortOutcomeComments'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { CommentTextField } from '../common/CommentTextField'
+import { ReplacePronounsButton } from './ReplacePronounsButton'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
@@ -44,6 +46,9 @@ interface OutcomeCommentsModalProps<T extends { id: string; name: string }> {
   onDeleteComment: (id: string) => Promise<void>
   loading: boolean
   error: string | null
+  pronouns: Pronoun[]
+  pronounsLoading: boolean
+  pronounsError: string | null
 }
 
 export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
@@ -55,6 +60,9 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
   onDeleteComment,
   loading,
   error,
+  pronouns,
+  pronounsLoading,
+  pronounsError,
 }: OutcomeCommentsModalProps<T>) => {
   const themeColors = useThemeColors()
   const focusShadows = useThemeFocusShadows()
@@ -75,6 +83,8 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
     commentText: '',
   })
   const [validationError, setValidationError] = useState('')
+  const { isLoading: replacePronounsLoading, message: replacePronounsMessage, handleReplacePronounsFunctionality, getMessageBoxStyle } = useReplacePronounsButton()
+  const { isLoading: editReplacePronounsLoading, message: editReplacePronounsMessage, handleReplacePronounsFunctionality: handleEditReplacePronounsFunctionality, getMessageBoxStyle: getEditMessageBoxStyle } = useReplacePronounsButton()
 
   // Memoize sorted comments to avoid re-sorting on every render (Performance optimization)
   const sortedComments = useMemo(
@@ -104,6 +114,16 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
       return `Comment cannot exceed ${MAX_COMMENT_LENGTH} characters`
     }
     return null
+  }
+
+  const handleReplacePronounsClick = async () => {
+    const replacedText = await handleReplacePronounsFunctionality(newCommentContent, pronouns)
+    setNewCommentContent(replacedText)
+  }
+
+  const handleEditReplacePronounsClick = async () => {
+    const replacedText = await handleEditReplacePronounsFunctionality(editContent, pronouns)
+    setEditContent(replacedText)
   }
 
   const handleCreateComment = async () => {
@@ -273,6 +293,25 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
                   showCharCount={true}
                   showPlaceholderTips={true}
                 />
+
+                {/* Story 1: Replace Pronouns Button and Message - positioned close to textarea */}
+                {!pronounsError && (
+                  <ReplacePronounsButton
+                    isLoading={replacePronounsLoading}
+                    message={replacePronounsMessage}
+                    onReplace={handleReplacePronounsClick}
+                    getMessageBoxStyle={getMessageBoxStyle}
+                    disabled={replacePronounsLoading || pronounsLoading || pronouns.length === 0}
+                    title={
+                      pronounsLoading
+                        ? 'Loading pronouns...'
+                        : pronouns.length === 0
+                          ? 'No pronouns configured'
+                          : 'Replace pronouns with placeholders'
+                    }
+                  />
+                )}
+
                 <div
                   style={{
                     display: 'flex',
@@ -450,6 +489,25 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
                                   showCharCount={true}
                                   showPlaceholderTips={true}
                                 />
+
+                                {/* Story 3: Replace Pronouns Button and Message - Edit Section - positioned close to textarea */}
+                                {!pronounsError && (
+                                  <ReplacePronounsButton
+                                    isLoading={editReplacePronounsLoading}
+                                    message={editReplacePronounsMessage}
+                                    onReplace={handleEditReplacePronounsClick}
+                                    getMessageBoxStyle={getEditMessageBoxStyle}
+                                    disabled={editReplacePronounsLoading || pronounsLoading || pronouns.length === 0}
+                                    title={
+                                      pronounsLoading
+                                        ? 'Loading pronouns...'
+                                        : pronouns.length === 0
+                                          ? 'No pronouns configured'
+                                          : 'Replace pronouns with placeholders'
+                                    }
+                                  />
+                                )}
+
                                 <div
                                   style={{
                                     display: 'flex',

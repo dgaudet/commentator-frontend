@@ -145,8 +145,6 @@ When ready, configure a custom domain using Cloudflare:
 
 **See `DEPLOYMENT.md` for detailed custom domain setup instructions.**
 
----
-
 Older Notes:
 * I never finished the custom domain with cloudflare
 * Killing the locally running app
@@ -160,5 +158,20 @@ test out changing my password in auth0
 Create a proper 404 page that gives information about not finding any result
 It would be nice to have the header and proper colors on the login page as well
 
-Add the replace placeholder button to outcome comments
-Make the bulk upload modal as wide as the rest of the app
+make sure pronouns are only loaded once, and the loading indicator displays
+move the button up and the result message beside the button instead of below
+
+the subjectList should push the pronouns to the personalizedComment component as well so it doesn't need to be loaded again
+* then we can move extra loading logic fom the useReplacePronounsButton.ts
+Editing multiple comments after replacing pronouns has some odd behavior
+
+React Query / TanStack Query (Industry Standard) - Best overall:
+- Handles request deduplication automatically
+- Prevents double requests in Strict Mode
+- Handles caching, loading states, errors
+- Most React teams use this now
+To remove duplicated loading requests in components
+
+When there is a name that has already been added the style is wrong, the background is white
+
+order final comments by createdate descending

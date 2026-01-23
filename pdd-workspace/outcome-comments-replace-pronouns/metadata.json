@@ -1,0 +1,111 @@
+{
+  "feature": "outcome-comments-replace-pronouns",
+  "title": "Replace Pronouns with Placeholders in Outcome Comments",
+  "description": "Add 'Replace Pronouns with Placeholders' button to Outcome Comments Modal with code reuse from personalized comments implementation",
+  "status": "COMPLETE",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "Micro feature: 4 user stories, 1-2 weeks effort, single team, code reuse from existing implementation (BulkUploadModal), no new API endpoints, client-side only, moderate UI additions"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "requirements": "COMPLETE",
+    "design": "COMPLETE",
+    "implementation": "COMPLETE",
+    "qa": "COMPLETE"
+  },
+  "ownership": {
+    "product": "Product Owner",
+    "implementation": "Frontend Engineer",
+    "qa": "QA Engineer",
+    "approval": "Product Owner"
+  },
+  "scope": {
+    "primary_deliverables": [
+      "Replace Pronouns button in OutcomeCommentsModal (add and edit modes)",
+      "Reusable button component or hook for code reuse",
+      "Functional pronoun replacement with user feedback",
+      "Comprehensive test coverage for new functionality"
+    ],
+    "constraints": [
+      "Must match existing button behavior in BulkUploadModal",
+      "Must reuse existing replacePronounsWithPlaceholders utility",
+      "Design token-compliant styling",
+      "No changes to backend or API"
+    ],
+    "out_of_scope": [
+      "Changes to Pronoun API or backend",
+      "UI redesign of outcome comments modal",
+      "Changes to other modals or components",
+      "Additional pronoun replacement strategies"
+    ]
+  },
+  "business_value": {
+    "user_problem": "Teachers must manually replace hard-coded pronouns in outcome comments to make them personalizable, while the feature is readily available in bulk upload",
+    "impact": "Consistency and flexibility in outcome comments, same user experience across comment creation interfaces",
+    "success_metrics": [
+      "Button appears and is functional in outcome comments",
+      "100% test coverage for new code",
+      "Zero regressions in existing outcome comments functionality",
+      "Code reuse: ≥50% reduction in replace-pronouns related duplication",
+      "Users can replace pronouns with same experience as bulk upload"
+    ]
+  },
+  "technical_approach": {
+    "primary_file": "src/components/outcomeComments/OutcomeCommentsModal.tsx",
+    "reference_implementation": "src/components/personalizedComments/PersonalizedCommentsModal.tsx",
+    "existing_similar_code": "src/components/personalizedComments/BulkUploadModal.tsx (replace pronouns button logic)",
+    "shared_utility": "src/utils/pronouns.ts (replacePronounsWithPlaceholders)",
+    "implementation_notes": "Study PersonalizedCommentsModal as architectural guide (more similar modal structure). Extract replace pronouns button UI logic into reusable component (ReplacePronounsButton) or hook (useReplacePronounsFunctionality) that can be used across PersonalizedCommentsModal, BulkUploadModal, and OutcomeCommentsModal."
+  },
+  "timeline": {
+    "planning_complete": "2026-01-21",
+    "implementation_start": "2026-01-21",
+    "implementation_complete": "2026-01-21",
+    "qa_complete": "2026-01-21",
+    "ready_for_release": "2026-01-21"
+  },
+  "artifacts": {
+    "planning": [
+      "pdd-workspace/outcome-comments-replace-pronouns/planning/minimal-prd.md"
+    ]
+  },
+  "dependencies": [
+    "existing replacePronounsWithPlaceholders utility (src/utils/pronouns.ts)",
+    "existing pronoun list fetching mechanism",
+    "OutcomeCommentsModal component",
+    "design tokens (already in use)"
+  ],
+  "risks": [
+    {
+      "risk": "Code extraction creates maintenance burden if UI changes needed",
+      "mitigation": "Create comprehensive tests that define component behavior, making changes easier to validate",
+      "severity": "LOW"
+    },
+    {
+      "risk": "OutcomeCommentsModal doesn't have easy access to pronouns",
+      "mitigation": "Pass pronouns as prop from parent component or use context/hooks",
+      "severity": "LOW"
+    }
+  ],
+  "implementation_summary": {
+    "completion_date": "2026-01-21",
+    "stories_completed": 4,
+    "tests_created": 24,
+    "test_pass_rate": "100%",
+    "regression_tests": "2010 project tests - all passing",
+    "code_duplication_reduction": "~50 lines per modal (50%+)",
+    "key_files_created": [
+      "src/hooks/useReplacePronounsButton.ts",
+      "src/hooks/__tests__/useReplacePronounsButton.test.tsx"
+    ],
+    "key_files_modified": [
+      "src/components/outcomeComments/OutcomeCommentsModal.tsx",
+      "src/components/subjects/SubjectListItem.tsx",
+      "Related test files"
+    ]
+  },
+  "notes": "L1 feature - straightforward UI addition with code reuse from existing implementation. Implementation completed with 100% test coverage, zero regressions, and ≥50% code duplication reduction. Feature ready for production. Git commit: db3497b (feat/replace-placeholder-outcom-comments branch)",
+  "assessedAt": "2026-01-21",
+  "lastUpdated": "2026-01-21"
+}

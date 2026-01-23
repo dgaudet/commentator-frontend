@@ -17,6 +17,7 @@ import { useOutcomeComments } from '../../hooks/useOutcomeComments'
 import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
 import { useClasses } from '../../hooks/useClasses'
 import { useFinalComments } from '../../hooks/useFinalComments'
+import { usePronounsQuery } from '../../hooks/usePronounsQuery'
 import { finalCommentService } from '../../services/api/finalCommentService'
 import { SubjectListItem } from './SubjectListItem'
 import { SubjectEmptyState } from './SubjectEmptyState'
@@ -99,6 +100,13 @@ export const SubjectList: React.FC<SubjectListProps> = ({
     updateComment: updateFinalComment,
     deleteComment: deleteFinalComment,
   } = useFinalComments()
+
+  // Story 1: Hook for fetching pronouns (for Replace Pronouns button in Outcome Comments)
+  const {
+    pronouns,
+    loading: pronounsLoading,
+    error: pronounsError,
+  } = usePronounsQuery()
 
   // State for selected subject ID
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null)
@@ -459,6 +467,10 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             onDeleteOutcomeComment={handleDeleteOutcomeComment}
             outcomeCommentsLoading={outcomeCommentsLoading}
             outcomeCommentsError={outcomeCommentsError}
+            // Story 1: Replace Pronouns Button props
+            pronouns={pronouns}
+            pronounsLoading={pronounsLoading}
+            pronounsError={pronounsError}
             // Personalized Comments panel props
             personalizedComments={personalizedComments}
             onCreatePersonalizedComment={handleCreatePersonalizedComment}
