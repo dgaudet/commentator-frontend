@@ -162,6 +162,7 @@ make sure pronouns are only loaded once, and the loading indicator displays
 move the button up and the result message beside the button instead of below
 
 the subjectList should push the pronouns to the personalizedComment component as well so it doesn't need to be loaded again
+* then we can move extra loading logic fom the useReplacePronounsButton.ts
 Editing multiple comments after replacing pronouns has some odd behavior
 
 React Query / TanStack Query (Industry Standard) - Best overall:
@@ -172,3 +173,5 @@ React Query / TanStack Query (Industry Standard) - Best overall:
 To remove duplicated loading requests in components
 
 When there is a name that has already been added the style is wrong, the background is white
+
+order final comments by createdate descending
