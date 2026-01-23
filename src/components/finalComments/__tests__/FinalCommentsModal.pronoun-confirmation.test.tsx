@@ -182,10 +182,17 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       const saveButton = screen.getByRole('button', { name: /add final comment/i })
       await userEvent.click(saveButton)
 
-      // Alert should appear with No button
+      // Alert should appear
       await waitFor(() => {
         expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
       })
+
+      // Click No button
+      const noButtons = screen.getAllByRole('button', { name: /no/i })
+      await userEvent.click(noButtons[noButtons.length - 1])
+
+      // Alert should be dismissed
+      expect(screen.queryByText(/you are saving this comment without a pronoun/i)).not.toBeInTheDocument()
 
       // Modal should still be open (form should still be visible)
       expect(screen.getByRole('button', { name: /add final comment/i })).toBeInTheDocument()
@@ -233,7 +240,7 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       )
     })
 
-    it('should dismiss alert when clicking X button (acts as No)', async () => {
+    it('should dismiss alert when clicking No button', async () => {
       render(
         <FinalCommentsModal
           isOpen={true}
@@ -256,11 +263,14 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
       const saveButton = screen.getByRole('button', { name: /add final comment/i })
       await userEvent.click(saveButton)
 
-      // Click on overlay (acts as X button - dismisses by clicking outside)
-      const overlay = screen.getByRole('dialog', { name: /pronoun confirmation/i }).parentElement
-      if (overlay) {
-        await userEvent.click(overlay)
-      }
+      // Alert should appear
+      await waitFor(() => {
+        expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      // Click No button
+      const noButtons = screen.getAllByRole('button', { name: /no/i })
+      await userEvent.click(noButtons[noButtons.length - 1])
 
       // Alert should be dismissed
       expect(screen.queryByText(/you are saving this comment without a pronoun/i)).not.toBeInTheDocument()
@@ -363,7 +373,18 @@ describe('FinalCommentsModal - Pronoun Confirmation Alert', () => {
         expect(screen.getByText(/you are saving this comment without a pronoun/i)).toBeInTheDocument()
       })
 
-      // onUpdateComment should NOT be called yet
+      // Click No button
+      const noButtons = screen.getAllByRole('button', { name: /no/i })
+      await userEvent.click(noButtons[noButtons.length - 1])
+
+      // Alert should be dismissed
+      expect(screen.queryByText(/you are saving this comment without a pronoun/i)).not.toBeInTheDocument()
+
+      // Modal should still be in edit form (save button should still be visible)
+      const remainingSaveButtons = screen.getAllByRole('button', { name: /save/i })
+      expect(remainingSaveButtons.length).toBeGreaterThan(0)
+
+      // onUpdateComment should NOT be called
       expect(mockHandlers.onUpdateComment).not.toHaveBeenCalled()
     })
 
