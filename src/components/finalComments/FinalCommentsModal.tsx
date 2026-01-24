@@ -61,6 +61,7 @@ import { useOutcomeComments } from '../../hooks/useOutcomeComments'
 import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
 import { useFinalCommentForm } from '../../hooks/useFinalCommentForm'
 import { usePronounsQuery } from '../../hooks/usePronounsQuery'
+import { useSaveError } from '../../hooks/useSaveError'
 import { Button } from '../common/Button'
 import { Input } from '../common/Input'
 import { LoadingSpinner } from '../common/LoadingSpinner'
@@ -68,6 +69,7 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { PronounSelect } from '../common/PronounSelect'
+import { SaveErrorAlert } from '../common/SaveErrorAlert'
 import { RatingFilterSelector } from './RatingFilterSelector'
 import { PronounDisplay } from './PronounDisplay'
 import { SelectedCommentsList } from './SelectedCommentsList'
@@ -78,6 +80,7 @@ import { useThemeColors } from '../../hooks/useThemeColors'
 import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
 import { getRatingEmoji, getNormalizedRating, filterPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
+import { extractErrorMessage } from '../../utils/errorHandling'
 
 interface FinalCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
@@ -105,6 +108,9 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   const themeColors = useThemeColors()
   const focusShadows = useThemeFocusShadows()
   const { pronouns, loading: pronounsLoading, error: pronounsError } = usePronounsQuery()
+
+  // Error handling state (Final Comments Error Handling)
+  const { saveError, setError: setSaveError, clearError: clearSaveError, clearErrorOnEdit } = useSaveError()
 
   // US-FC-REFACTOR-001: Shared hook state management
   const [submitting, setSubmitting] = useState(false)
@@ -371,8 +377,12 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       setAddPronounId('')
       // US-RATING-006: Clear ordered comments state
       setOrderedAddComments([])
+      // Clear any existing error on successful save
+      clearSaveError()
     } catch (err) {
-      addForm.setValidationError('Failed to add final comment. Please try again.')
+      // Extract structured error from response
+      const errorInfo = extractErrorMessage(err)
+      setSaveError(errorInfo)
     } finally {
       setSubmitting(false)
     }
@@ -405,8 +415,12 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
           className: '',
           classYear: 0,
         })
+        // Clear any existing error on successful delete
+        clearSaveError()
       } catch (err) {
-        addForm.setValidationError('Failed to delete final comment. Please try again.')
+        // Extract structured error from response
+        const errorInfo = extractErrorMessage(err)
+        setSaveError(errorInfo)
       }
     }
   }
@@ -726,6 +740,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     }
 
     // Proceed with save if pronoun is selected
+    setSubmitting(true)
     try {
       await onUpdateComment(editingId, request)
 
@@ -735,8 +750,14 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       setEditPronounId('')
       // US-RATING-006: Clear ordered comments state
       setOrderedEditComments([])
+      // Clear any existing error on successful save
+      clearSaveError()
     } catch (err) {
-      editForm.setValidationError('Failed to update final comment. Please try again.')
+      // Extract structured error from response
+      const errorInfo = extractErrorMessage(err)
+      setSaveError(errorInfo)
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -937,7 +958,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                     id="comment-input"
                     ref={addCommentTextareaRef}
                     value={addForm.comment}
-                    onChange={(e) => addForm.setComment(e.target.value)}
+                    onChange={(e) => {
+                      addForm.setComment(e.target.value)
+                      clearErrorOnEdit()
+                    }}
                     onFocus={handleCommentFocus}
                     onBlur={handleCommentBlur}
                     placeholder="Enter optional comment (max 3000 characters)"
@@ -969,6 +993,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                     {addForm.comment.length}/3000 characters
                   </div>
                 </div>
+
+                {/* Error Alert (Final Comments Error Handling) */}
+                {saveError && (
+                  <SaveErrorAlert error={saveError} onDismiss={clearSaveError} />
+                )}
 
                 {addForm.validationError && (
                   <ErrorMessage message={addForm.validationError} />
@@ -1201,7 +1230,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                         id={`edit-comment-${comment.id}`}
                                         ref={editCommentTextareaRef}
                                         value={editForm.comment}
-                                        onChange={(e) => editForm.setComment(e.target.value)}
+                                        onChange={(e) => {
+                                          editForm.setComment(e.target.value)
+                                          clearErrorOnEdit()
+                                        }}
                                         onFocus={handleCommentFocus}
                                         onBlur={handleCommentBlur}
                                         placeholder="Enter optional comment (max 3000 characters)"
@@ -1232,6 +1264,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                         {editForm.comment.length}/3000 characters
                                       </div>
                                     </div>
+
+                                    {/* Error Alert (Final Comments Error Handling) */}
+                                    {saveError && (
+                                      <SaveErrorAlert error={saveError} onDismiss={clearSaveError} />
+                                    )}
 
                                     {editForm.validationError && (
                                       <div className="validation-error" role="alert">
