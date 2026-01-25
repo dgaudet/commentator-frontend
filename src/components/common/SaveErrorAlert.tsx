@@ -27,7 +27,7 @@
  * ```
  */
 
-import { useEffect, useCallback, type React } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import type { SaveError } from '../../utils/errorHandling'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
@@ -44,7 +44,7 @@ interface SaveErrorAlertProps {
  * @param onDismiss - Callback when user dismisses the alert
  * @returns Rendered alert component
  */
-export const SaveErrorAlert: React.FC<SaveErrorAlertProps> = ({ error, onDismiss }) => {
+export const SaveErrorAlert: React.FC<SaveErrorAlertProps> = ({ error, onDismiss }: SaveErrorAlertProps) => {
   const themeColors = useThemeColors()
 
   // Memoize key handler to prevent unnecessary re-renders
