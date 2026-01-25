@@ -112,6 +112,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   // Error handling state (Final Comments Error Handling)
   const { saveError, setError: setSaveError, clearError: clearSaveError, clearErrorOnEdit } = useSaveError()
 
+  // Track if user has started editing form content to distinguish initial load errors from edit-time errors
+  // If user has touched the form, show it even if there's a hook-level error (prevents data loss)
+  const [userHasStartedEditing, setUserHasStartedEditing] = useState(false)
+
   // US-FC-REFACTOR-001: Shared hook state management
   const [submitting, setSubmitting] = useState(false)
 
@@ -785,13 +789,13 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
             </div>
           )}
 
-          {/* Error State (AC 6) */}
+          {/* Error State (AC 6) - Show error but don't hide form if user is editing */}
           {error && (
             <ErrorMessage message={error} />
           )}
 
-          {/* Content - Only show when not loading and no error */}
-          {!loading && !error && (
+          {/* Content - Show when not loading, and either no error or user has started editing (prevents data loss) */}
+          {!loading && (!error || userHasStartedEditing) && (
             <>
               {/* US-FINAL-003: Create Form (AC 1, 2) - MOVED TO TOP per US-FINAL-STYLE-001 */}
               {/* US-CSS-006: Refactored to use standardized Input component and design tokens */}
@@ -813,7 +817,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                       label="First Name"
                       required
                       value={addForm.firstName}
-                      onChange={(e) => addForm.setFirstName(e.target.value)}
+                      onChange={(e) => {
+                        addForm.setFirstName(e.target.value)
+                        setUserHasStartedEditing(true)
+                      }}
                       placeholder="Enter student first name"
                       disabled={submitting}
                       error={addForm.validationError && !addForm.firstName}
@@ -825,7 +832,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                       id="last-name-input"
                       label="Last Name"
                       value={addForm.lastName}
-                      onChange={(e) => addForm.setLastName(e.target.value)}
+                      onChange={(e) => {
+                        addForm.setLastName(e.target.value)
+                        setUserHasStartedEditing(true)
+                      }}
                       placeholder="Enter student last name (optional)"
                       disabled={submitting}
                     />
@@ -841,6 +851,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   onChange={(e) => {
                     const value = e.target.value
                     addForm.setGrade(value === '' ? '' : Number(value))
+                    setUserHasStartedEditing(true)
                   }}
                   placeholder="0-100"
                   min="0"
@@ -852,7 +863,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                 {/* TASK-1.3: Pronoun selection dropdown */}
                 <PronounSelect
                   value={addPronounId}
-                  onChange={setAddPronounId}
+                  onChange={(pronounId) => {
+                    setAddPronounId(pronounId)
+                    setUserHasStartedEditing(true)
+                  }}
                   id="add-pronoun-select"
                   label="Pronoun"
                   disabled={submitting}
@@ -961,6 +975,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                     onChange={(e) => {
                       addForm.setComment(e.target.value)
                       clearErrorOnEdit()
+                      setUserHasStartedEditing(true)
                     }}
                     onFocus={handleCommentFocus}
                     onBlur={handleCommentBlur}
@@ -1088,7 +1103,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                           label="First Name"
                                           required
                                           value={editForm.firstName}
-                                          onChange={(e) => editForm.setFirstName(e.target.value)}
+                                          onChange={(e) => {
+                                            editForm.setFirstName(e.target.value)
+                                            setUserHasStartedEditing(true)
+                                          }}
                                           placeholder="Enter student first name"
                                           error={editForm.validationError && !editForm.firstName}
                                         />
@@ -1099,7 +1117,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                           id={`edit-last-name-${comment.id}`}
                                           label="Last Name"
                                           value={editForm.lastName}
-                                          onChange={(e) => editForm.setLastName(e.target.value)}
+                                          onChange={(e) => {
+                                            editForm.setLastName(e.target.value)
+                                            setUserHasStartedEditing(true)
+                                          }}
                                           placeholder="Enter student last name (optional)"
                                         />
                                       </div>
@@ -1114,6 +1135,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       onChange={(e) => {
                                         const value = e.target.value
                                         editForm.setGrade(value === '' ? '' : Number(value))
+                                        setUserHasStartedEditing(true)
                                       }}
                                       placeholder="0-100"
                                       min={0}
@@ -1124,7 +1146,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                     {/* TASK-1.3: Pronoun selection dropdown (Edit Form) */}
                                     <PronounSelect
                                       value={editPronounId}
-                                      onChange={setEditPronounId}
+                                      onChange={(pronounId) => {
+                                        setEditPronounId(pronounId)
+                                        setUserHasStartedEditing(true)
+                                      }}
                                       id={`edit-pronoun-select-${comment.id}`}
                                       label="Pronoun"
                                       disabled={submitting}
@@ -1233,6 +1258,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                         onChange={(e) => {
                                           editForm.setComment(e.target.value)
                                           clearErrorOnEdit()
+                                          setUserHasStartedEditing(true)
                                         }}
                                         onFocus={handleCommentFocus}
                                         onBlur={handleCommentBlur}
