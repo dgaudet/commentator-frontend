@@ -194,3 +194,5 @@ perhaps we could have the user upload comments from last year and use that to de
 
 Test a loading error on the final comments modal
 Test an error when saving comments that doesn't have the custom message and details
+
+If you have an extra space in outcome comment or personalized it only shows up in edit, or when copying

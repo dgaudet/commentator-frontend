@@ -7,17 +7,18 @@
  *
  * Features:
  * - Displays both error type and detailed message
- * - Accessible keyboard interaction (Escape to dismiss)
+ * - Dismissible button with accessible label
  * - Screen reader support with ARIA alert role
  * - Proper error styling with theme colors
  * - Positioned near save actions (non-modal, non-destructive)
+ * - Automatically clears when user starts editing form
  *
  * Accessibility:
  * - ARIA role="alert" for screen reader announcements
  * - aria-live="polite" for dynamic content updates
- * - Keyboard dismissible with Escape key
+ * - Accessible dismiss button (× button with aria-label)
  * - Semantic colors for WCAG AA contrast compliance
- * - Clear dismiss button with accessible label
+ * - No global event listeners to avoid conflicts with other components
  *
  * Usage:
  * ```tsx
@@ -27,7 +28,7 @@
  * ```
  */
 
-import React, { useEffect, useCallback } from 'react'
+import React from 'react'
 import type { SaveError } from '../../utils/errorHandling'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
@@ -40,25 +41,16 @@ interface SaveErrorAlertProps {
 /**
  * SaveErrorAlert - Accessible error message display
  *
+ * Dismissal can occur via:
+ * - Clicking the × button
+ * - User editing any form field (clearErrorOnEdit callback)
+ *
  * @param error - SaveError object with error type and details
  * @param onDismiss - Callback when user dismisses the alert
  * @returns Rendered alert component
  */
 export const SaveErrorAlert: React.FC<SaveErrorAlertProps> = ({ error, onDismiss }: SaveErrorAlertProps) => {
   const themeColors = useThemeColors()
-
-  // Memoize key handler to prevent unnecessary re-renders
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      onDismiss()
-    }
-  }, [onDismiss])
-
-  // Handle Escape key to dismiss (keyboard accessibility)
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [handleKeyDown])
 
   // Alert container styles
   const alertContainerStyle: React.CSSProperties = {

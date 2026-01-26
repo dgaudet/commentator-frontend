@@ -820,6 +820,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                       onChange={(e) => {
                         addForm.setFirstName(e.target.value)
                         setUserHasStartedEditing(true)
+                        clearErrorOnEdit()
                       }}
                       placeholder="Enter student first name"
                       disabled={submitting}
@@ -835,6 +836,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                       onChange={(e) => {
                         addForm.setLastName(e.target.value)
                         setUserHasStartedEditing(true)
+                        clearErrorOnEdit()
                       }}
                       placeholder="Enter student last name (optional)"
                       disabled={submitting}
@@ -852,6 +854,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                     const value = e.target.value
                     addForm.setGrade(value === '' ? '' : Number(value))
                     setUserHasStartedEditing(true)
+                    clearErrorOnEdit()
                   }}
                   placeholder="0-100"
                   min="0"
@@ -866,6 +869,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   onChange={(pronounId) => {
                     setAddPronounId(pronounId)
                     setUserHasStartedEditing(true)
+                    clearErrorOnEdit()
                   }}
                   id="add-pronoun-select"
                   label="Pronoun"

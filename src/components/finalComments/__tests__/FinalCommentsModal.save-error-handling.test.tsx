@@ -13,7 +13,7 @@
  * - Works for create, update, and delete operations
  */
 
-import { render, screen, waitFor, fireEvent } from '../../../test-utils'
+import { render, screen, waitFor } from '../../../test-utils'
 import userEvent from '@testing-library/user-event'
 import { FinalCommentsModal } from '../FinalCommentsModal'
 import { usePersonalizedComments } from '../../../hooks/usePersonalizedComments'
@@ -995,7 +995,7 @@ describe('FinalCommentsModal - Save Error Handling', () => {
       })
     })
 
-    it('should be keyboard dismissible (Escape key)', async () => {
+    it('should dismiss when user starts editing the form', async () => {
       const errorResponse = {
         error: 'Test error',
         details: 'Test details',
@@ -1023,15 +1023,20 @@ describe('FinalCommentsModal - Save Error Handling', () => {
       const saveButton = screen.getByRole('button', { name: /add final comment/i })
       await userEvent.click(saveButton)
 
+      // Error should be displayed
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
       })
 
-      // Press Escape to dismiss
-      fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' })
+      // User starts editing - this should dismiss the error
+      const firstNameInput = screen.getByPlaceholderText(/Enter student first name/i)
+      await userEvent.clear(firstNameInput)
+      await userEvent.type(firstNameInput, 'Jane')
 
-      // Error should be dismissed
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+      // Error should be dismissed after editing
+      await waitFor(() => {
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+      })
     })
 
     it('should announce error to screen readers', async () => {
