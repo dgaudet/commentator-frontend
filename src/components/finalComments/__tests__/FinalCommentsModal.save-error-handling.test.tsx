@@ -1072,4 +1072,284 @@ describe('FinalCommentsModal - Save Error Handling', () => {
       expect(alertElement).toHaveAttribute('role', 'alert')
     })
   })
+
+  describe('Pronoun Confirmation Error Handling Edge Case', () => {
+    it('should display structured error when save fails after pronounConfirmation Yes', async () => {
+      const errorResponse = {
+        error: 'Duplicate entry',
+        details: 'This student already has a final comment in this class',
+      }
+      mockOnCreateComment.mockRejectedValueOnce(errorResponse)
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockOnCreateComment}
+          onUpdateComment={mockOnUpdateComment}
+          onDeleteComment={mockOnDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Fill form with required fields but NO pronoun selected
+      const firstNameInput = screen.getByPlaceholderText(/Enter student first name/i)
+      await userEvent.type(firstNameInput, 'Jane')
+
+      const gradeInput = screen.getByPlaceholderText(/0-100/i)
+      await userEvent.type(gradeInput, '85')
+
+      const textarea = screen.getByPlaceholderText(/Enter optional comment/i)
+      await userEvent.type(textarea, 'Test comment')
+
+      // Attempt save without pronoun - should trigger confirmation modal
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Pronoun confirmation modal should appear
+      await waitFor(() => {
+        expect(screen.getByText(/saving this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      // User confirms (clicks Yes)
+      const confirmButton = screen.getByRole('button', { name: /yes/i })
+      await userEvent.click(confirmButton)
+
+      // Save attempt fails - error should be displayed with same format as normal save
+      await waitFor(() => {
+        expect(screen.getByText('Duplicate entry')).toBeInTheDocument()
+        expect(
+          screen.getByText('This student already has a final comment in this class'),
+        ).toBeInTheDocument()
+      })
+
+      // Verify error is displayed in SaveErrorAlert (not validation error)
+      const alertElement = screen.getByRole('alert')
+      expect(alertElement).toBeInTheDocument()
+      expect(alertElement).toHaveTextContent('Duplicate entry')
+    })
+
+    it('should preserve form content after pronounConfirmation error', async () => {
+      const errorResponse = {
+        error: 'Save failed',
+        details: 'Backend error occurred',
+      }
+      mockOnCreateComment.mockRejectedValueOnce(errorResponse)
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockOnCreateComment}
+          onUpdateComment={mockOnUpdateComment}
+          onDeleteComment={mockOnDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Fill form
+      const firstNameInput = screen.getByPlaceholderText(/Enter student first name/i)
+      await userEvent.type(firstNameInput, 'Alex')
+
+      const gradeInput = screen.getByPlaceholderText(/0-100/i)
+      await userEvent.type(gradeInput, '92')
+
+      const textarea = screen.getByPlaceholderText(/Enter optional comment/i)
+      await userEvent.type(textarea, 'Excellent performance')
+
+      // Save without pronoun -> confirm -> fail
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/saving this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      const confirmButton = screen.getByRole('button', { name: /yes/i })
+      await userEvent.click(confirmButton)
+
+      // Verify error appears
+      await waitFor(() => {
+        expect(screen.getByText('Save failed')).toBeInTheDocument()
+      })
+
+      // Verify form content is preserved
+      expect(firstNameInput).toHaveValue('Alex')
+      expect(gradeInput).toHaveValue(92)
+      expect(textarea).toHaveValue('Excellent performance')
+    })
+
+    it('should allow retry after pronounConfirmation error', async () => {
+      const errorResponse = {
+        error: 'Temporary error',
+        details: 'Please try again',
+      }
+
+      // First attempt fails, second succeeds
+      mockOnCreateComment
+        .mockRejectedValueOnce(errorResponse)
+        .mockResolvedValueOnce(undefined)
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockOnCreateComment}
+          onUpdateComment={mockOnUpdateComment}
+          onDeleteComment={mockOnDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Fill form without pronoun
+      const firstNameInput = screen.getByPlaceholderText(/Enter student first name/i)
+      await userEvent.type(firstNameInput, 'Sam')
+
+      const gradeInput = screen.getByPlaceholderText(/0-100/i)
+      await userEvent.type(gradeInput, '78')
+
+      const textarea = screen.getByPlaceholderText(/Enter optional comment/i)
+      await userEvent.type(textarea, 'Good work')
+
+      // First save attempt
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/saving this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      let confirmButton = screen.getByRole('button', { name: /yes/i })
+      await userEvent.click(confirmButton)
+
+      // Verify first error appears
+      await waitFor(() => {
+        expect(screen.getByText('Temporary error')).toBeInTheDocument()
+      })
+
+      // Attempt retry by clicking save again (form is still filled)
+      await userEvent.click(saveButton)
+
+      // Confirm again
+      await waitFor(() => {
+        expect(screen.getByText(/saving this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      confirmButton = screen.getByRole('button', { name: /yes/i })
+      await userEvent.click(confirmButton)
+
+      // Second attempt should succeed
+      await waitFor(() => {
+        expect(screen.queryByText('Temporary error')).not.toBeInTheDocument()
+        // Form should be cleared on success
+        expect(firstNameInput).toHaveValue('')
+      })
+    })
+
+    it('should use same error handling as normal save flow', async () => {
+      const errorResponse = {
+        error: 'Validation failed',
+        details: 'Invalid data provided',
+      }
+      mockOnCreateComment.mockRejectedValueOnce(errorResponse)
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockOnCreateComment}
+          onUpdateComment={mockOnUpdateComment}
+          onDeleteComment={mockOnDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Save without pronoun
+      const firstNameInput = screen.getByPlaceholderText(/Enter student first name/i)
+      await userEvent.type(firstNameInput, 'Test')
+
+      const gradeInput = screen.getByPlaceholderText(/0-100/i)
+      await userEvent.type(gradeInput, '50')
+
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/saving this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      const confirmButton = screen.getByRole('button', { name: /yes/i })
+      await userEvent.click(confirmButton)
+
+      // Error should appear in SaveErrorAlert format (same as normal save)
+      const alertElement = await screen.findByRole('alert')
+      expect(alertElement).toBeInTheDocument()
+      expect(alertElement).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByText('Validation failed')).toBeInTheDocument()
+      expect(screen.getByText('Invalid data provided')).toBeInTheDocument()
+
+      // Should have dismiss button
+      expect(screen.getByRole('button', { name: /close error message/i })).toBeInTheDocument()
+    })
+
+    it('should clear error when user edits form after pronounConfirmation error', async () => {
+      const errorResponse = {
+        error: 'Save failed',
+        details: 'Try again',
+      }
+      mockOnCreateComment.mockRejectedValueOnce(errorResponse)
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockOnCreateComment}
+          onUpdateComment={mockOnUpdateComment}
+          onDeleteComment={mockOnDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Save without pronoun -> confirm -> fail
+      const firstNameInput = screen.getByPlaceholderText(/Enter student first name/i)
+      await userEvent.type(firstNameInput, 'Test')
+
+      const gradeInput = screen.getByPlaceholderText(/0-100/i)
+      await userEvent.type(gradeInput, '80')
+
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      await waitFor(() => {
+        expect(screen.getByText(/saving this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      const confirmButton = screen.getByRole('button', { name: /yes/i })
+      await userEvent.click(confirmButton)
+
+      // Wait for error to appear
+      await waitFor(() => {
+        expect(screen.getByText('Save failed')).toBeInTheDocument()
+      })
+
+      // User edits form - error should clear
+      await userEvent.clear(firstNameInput)
+      await userEvent.type(firstNameInput, 'Updated')
+
+      // Error should be dismissed
+      await waitFor(() => {
+        expect(screen.queryByText('Save failed')).not.toBeInTheDocument()
+      })
+    })
+  })
 })

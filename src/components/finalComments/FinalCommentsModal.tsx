@@ -654,6 +654,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
         addForm.reset()
         setAddPronounId('')
         setOrderedAddComments([])
+        // Clear any existing error on successful save
+        clearSaveError()
       } else {
         // Edit form
         if (editingId !== null) {
@@ -663,15 +665,14 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
           editForm.reset()
           setEditPronounId('')
           setOrderedEditComments([])
+          // Clear any existing error on successful save
+          clearSaveError()
         }
       }
     } catch (err) {
-      const errorMsg = 'Failed to save final comment. Please try again.'
-      if (pronounConfirmation.formType === 'add') {
-        addForm.setValidationError(errorMsg)
-      } else {
-        editForm.setValidationError(errorMsg)
-      }
+      // Extract structured error from response (same as normal save flow)
+      const errorInfo = extractErrorMessage(err)
+      setSaveError(errorInfo)
     } finally {
       setSubmitting(false)
       setPronounConfirmation({
