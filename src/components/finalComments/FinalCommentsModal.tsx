@@ -702,6 +702,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     // TASK-1.3: Set selected pronoun ID if it exists
     setEditPronounId(finalComment.pronounId || '')
     editForm.clearValidationError()
+    // Clear any lingering save error from previous ADD or EDIT operation
+    clearSaveError()
+    // NOTE: Keep userHasStartedEditing as-is - it helps keep form visible during transitions.
+    // The form is primarily shown/hidden based on editingId for EDIT mode.
+    // When modal closes, useEffect will reset userHasStartedEditing and editingId.
   }
 
   // US-FC-REFACTOR-001: Handle edit save using hook
@@ -773,6 +778,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     setEditPronounId('')
     // US-RATING-006: Clear ordered comments state
     setOrderedEditComments([])
+    // Clear any lingering save error from EDIT operation before returning to ADD
+    clearSaveError()
+    // NOTE: Keep userHasStartedEditing as-is when returning to ADD form.
+    // This maintains form visibility if there was an error during the previous operation.
   }
 
   // Sort final comments by createdAt in descending order (newest first)

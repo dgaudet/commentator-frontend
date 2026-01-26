@@ -1352,4 +1352,66 @@ describe('FinalCommentsModal - Save Error Handling', () => {
       })
     })
   })
+
+  describe('Form Switching Error Clearing Edge Case', () => {
+    it('should clear ADD form error when switching to EDIT form', async () => {
+      const errorResponse = {
+        error: 'Add failed',
+        details: 'Error adding comment',
+      }
+      mockOnCreateComment.mockRejectedValueOnce(errorResponse)
+
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockOnCreateComment}
+          onUpdateComment={mockOnUpdateComment}
+          onDeleteComment={mockOnDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Attempt to add a comment without selecting pronoun
+      const firstNameInput = screen.getByPlaceholderText(/Enter student first name/i)
+      await userEvent.type(firstNameInput, 'Jane')
+
+      const gradeInput = screen.getByPlaceholderText(/0-100/i)
+      await userEvent.type(gradeInput, '85')
+
+      const textarea = screen.getByPlaceholderText(/Enter optional comment/i)
+      await userEvent.type(textarea, 'Test comment')
+
+      // Try to save - triggers pronoun confirmation
+      const saveButton = screen.getByRole('button', { name: /add final comment/i })
+      await userEvent.click(saveButton)
+
+      // Confirm save without pronoun
+      await waitFor(() => {
+        expect(screen.getByText(/saving this comment without a pronoun/i)).toBeInTheDocument()
+      })
+
+      const confirmButton = screen.getByRole('button', { name: /yes/i })
+      await userEvent.click(confirmButton)
+
+      // Save fails - error appears
+      await waitFor(() => {
+        expect(screen.getByText('Add failed')).toBeInTheDocument()
+      })
+
+      // Leave error showing and click to edit an existing comment
+      const editButtons = screen.getAllByRole('button', { name: /edit/i })
+      await userEvent.click(editButtons[0])
+
+      // Verify error from ADD is cleared when EDIT form opens
+      await waitFor(() => {
+        expect(screen.queryByText('Add failed')).not.toBeInTheDocument()
+      })
+
+      // Verify edit form is now displayed
+      expect(screen.getByDisplayValue('John')).toBeInTheDocument() // firstName of first comment
+    })
+  })
 })
