@@ -48,7 +48,8 @@ export const finalCommentService = {
       return response.data
     } catch (error) {
       console.error('Failed to create final comment:', error)
-      throw new Error('Failed to create final comment')
+      // apiClient already extracts and preserves structured error from backend
+      throw error
     }
   },
 
@@ -65,7 +66,8 @@ export const finalCommentService = {
       return response.data
     } catch (error) {
       console.error('Failed to update final comment:', error)
-      throw new Error('Failed to update final comment')
+      // apiClient already extracts and preserves structured error from backend
+      throw error
     }
   },
 
@@ -78,7 +80,8 @@ export const finalCommentService = {
       await apiClient.delete(`/final-comment/${id}`)
     } catch (error) {
       console.error('Failed to delete final comment:', error)
-      throw new Error('Failed to delete final comment')
+      // apiClient already extracts and preserves structured error from backend
+      throw error
     }
   },
 }

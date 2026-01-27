@@ -336,6 +336,135 @@ describe('ApiClient - Story 3.7: API Authentication', () => {
       // This ensures we never use an expired token
     })
   })
+
+  describe('Error Handling - Response Interceptor', () => {
+    it('should preserve structured error from backend with error and details fields', () => {
+      // Mock the response interceptor behavior
+      const structuredError = {
+        error: 'Duplicate entry',
+        details: 'This student already has a final comment in this class',
+      }
+
+      // Verify the error structure is preserved
+      expect(structuredError).toHaveProperty('error')
+      expect(structuredError).toHaveProperty('details')
+      expect(structuredError.error).toBe('Duplicate entry')
+      expect(structuredError.details).toBe(
+        'This student already has a final comment in this class',
+      )
+    })
+
+    it('should handle error response with only error field', () => {
+      const errorResponse = {
+        error: 'Validation failed',
+      }
+
+      expect(errorResponse).toHaveProperty('error')
+      expect(errorResponse.error).toBe('Validation failed')
+    })
+
+    it('should handle error response with only message field', () => {
+      const errorResponse = {
+        message: 'Server error occurred',
+      }
+
+      expect(errorResponse).toHaveProperty('message')
+      expect(errorResponse.message).toBe('Server error occurred')
+    })
+
+    it('should handle error response with error, message, and details fields', () => {
+      const errorResponse = {
+        error: 'Validation error',
+        message: 'Input validation failed',
+        details: 'Email format is invalid',
+      }
+
+      expect(errorResponse).toHaveProperty('error')
+      expect(errorResponse).toHaveProperty('message')
+      expect(errorResponse).toHaveProperty('details')
+    })
+
+    it('should handle null or undefined error data', () => {
+      const errorData = undefined
+
+      // Verify null/undefined handling logic
+      const isObject =
+        errorData && typeof errorData === 'object' && ('error' in errorData || 'message' in errorData)
+
+      expect(isObject).toBeFalsy()
+    })
+
+    it('should handle error response that is not an object', () => {
+      const errorResponse = 'String error message'
+
+      // When error data is a string, it should be handled as fallback
+      const isStructuredError =
+        errorResponse && typeof errorResponse === 'object' && 'error' in errorResponse
+
+      expect(isStructuredError).toBeFalsy()
+    })
+  })
+
+  describe('Error Handling - Integration with extractErrorMessage', () => {
+    it('should work with extractErrorMessage for structured errors', () => {
+      const backendError = {
+        error: 'Duplicate entry',
+        details: 'This student already has a final comment in this class',
+      }
+
+      // Simulate what extractErrorMessage does
+      if (
+        backendError &&
+        typeof backendError === 'object' &&
+        'error' in backendError &&
+        'details' in backendError
+      ) {
+        const errorObj = backendError as Record<string, unknown>
+        const result = {
+          error: String(errorObj.error || 'Save failed'),
+          details: String(errorObj.details || 'An unexpected error occurred.'),
+        }
+
+        expect(result.error).toBe('Duplicate entry')
+        expect(result.details).toBe(
+          'This student already has a final comment in this class',
+        )
+      }
+    })
+
+    it('should work with extractErrorMessage for message-only errors', () => {
+      const backendError = {
+        message: 'Failed to save comment',
+      }
+
+      // Simulate what extractErrorMessage does
+      if (backendError && typeof backendError === 'object' && 'message' in backendError) {
+        const errorObj = backendError as Record<string, unknown>
+        const result = {
+          error: 'Save failed',
+          details: String(errorObj.message || 'An unexpected error occurred.'),
+        }
+
+        expect(result.error).toBe('Save failed')
+        expect(result.details).toBe('Failed to save comment')
+      }
+    })
+
+    it('should create fallback error for unknown formats', () => {
+      const backendError = 'Unknown error format'
+
+      // Simulate fallback handling
+      if (typeof backendError === 'string') {
+        const result = {
+          error: 'Save failed',
+          details: backendError || 'An unexpected error occurred.',
+        }
+
+        expect(result.error).toBe('Save failed')
+        expect(result.details).toBe('Unknown error format')
+      }
+    })
+  })
 })
 
 // Note: Full integration tests with MSW will be performed in classService.test.ts

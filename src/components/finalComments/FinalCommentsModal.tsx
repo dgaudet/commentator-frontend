@@ -61,6 +61,7 @@ import { useOutcomeComments } from '../../hooks/useOutcomeComments'
 import { usePersonalizedComments } from '../../hooks/usePersonalizedComments'
 import { useFinalCommentForm } from '../../hooks/useFinalCommentForm'
 import { usePronounsQuery } from '../../hooks/usePronounsQuery'
+import { useSaveError } from '../../hooks/useSaveError'
 import { Button } from '../common/Button'
 import { Input } from '../common/Input'
 import { LoadingSpinner } from '../common/LoadingSpinner'
@@ -68,6 +69,7 @@ import { ErrorMessage } from '../common/ErrorMessage'
 import { ConfirmationModal } from '../common/ConfirmationModal'
 import { TypeaheadSearch } from '../common/TypeaheadSearch'
 import { PronounSelect } from '../common/PronounSelect'
+import { SaveErrorAlert } from '../common/SaveErrorAlert'
 import { RatingFilterSelector } from './RatingFilterSelector'
 import { PronounDisplay } from './PronounDisplay'
 import { SelectedCommentsList } from './SelectedCommentsList'
@@ -78,6 +80,7 @@ import { useThemeColors } from '../../hooks/useThemeColors'
 import { useThemeFocusShadows } from '../../hooks/useThemeFocusShadows'
 import { replacePlaceholders, type StudentData } from '../../utils/placeholders'
 import { getRatingEmoji, getNormalizedRating, filterPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
+import { extractErrorMessage } from '../../utils/errorHandling'
 
 interface FinalCommentsModalProps<T extends { id: string; name: string }> {
   isOpen: boolean
@@ -105,6 +108,16 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
   const themeColors = useThemeColors()
   const focusShadows = useThemeFocusShadows()
   const { pronouns, loading: pronounsLoading, error: pronounsError } = usePronounsQuery()
+
+  // Error handling state (Final Comments Error Handling)
+  // Separate error states for ADD, EDIT, and DELETE operations to prevent errors from one operation showing in others
+  const { saveError: addFormError, setError: setAddFormError, clearError: clearAddFormError, clearErrorOnEdit: clearAddFormErrorOnEdit } = useSaveError()
+  const { saveError: editFormError, setError: setEditFormError, clearError: clearEditFormError, clearErrorOnEdit: clearEditFormErrorOnEdit } = useSaveError()
+  const { saveError: deleteFormError, setError: setDeleteFormError, clearError: clearDeleteFormError } = useSaveError()
+
+  // Track if user has started editing form content to distinguish initial load errors from edit-time errors
+  // If user has touched the form, show it even if there's a hook-level error (prevents data loss)
+  const [userHasStartedEditing, setUserHasStartedEditing] = useState(false)
 
   // US-FC-REFACTOR-001: Shared hook state management
   const [submitting, setSubmitting] = useState(false)
@@ -371,8 +384,12 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       setAddPronounId('')
       // US-RATING-006: Clear ordered comments state
       setOrderedAddComments([])
+      // Clear any existing error on successful save
+      clearAddFormError()
     } catch (err) {
-      addForm.setValidationError('Failed to add final comment. Please try again.')
+      // Extract structured error from response
+      const errorInfo = extractErrorMessage(err)
+      setAddFormError(errorInfo)
     } finally {
       setSubmitting(false)
     }
@@ -405,8 +422,12 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
           className: '',
           classYear: 0,
         })
+        // Clear any existing error on successful delete
+        clearDeleteFormError()
       } catch (err) {
-        addForm.setValidationError('Failed to delete final comment. Please try again.')
+        // Extract structured error from response
+        const errorInfo = extractErrorMessage(err)
+        setDeleteFormError(errorInfo)
       }
     }
   }
@@ -636,6 +657,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
         addForm.reset()
         setAddPronounId('')
         setOrderedAddComments([])
+        // Clear any existing error on successful save
+        clearAddFormError()
       } else {
         // Edit form
         if (editingId !== null) {
@@ -645,14 +668,18 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
           editForm.reset()
           setEditPronounId('')
           setOrderedEditComments([])
+          // Clear any existing error on successful save
+          clearEditFormError()
         }
       }
     } catch (err) {
-      const errorMsg = 'Failed to save final comment. Please try again.'
+      // Extract structured error from response (same as normal save flow)
+      const errorInfo = extractErrorMessage(err)
+      // Set error in the appropriate form
       if (pronounConfirmation.formType === 'add') {
-        addForm.setValidationError(errorMsg)
+        setAddFormError(errorInfo)
       } else {
-        editForm.setValidationError(errorMsg)
+        setEditFormError(errorInfo)
       }
     } finally {
       setSubmitting(false)
@@ -683,6 +710,12 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     // TASK-1.3: Set selected pronoun ID if it exists
     setEditPronounId(finalComment.pronounId || '')
     editForm.clearValidationError()
+    // Clear any lingering save error from previous ADD operation when switching to EDIT
+    // Keep EDIT form errors separate - they'll be displayed in the EDIT form section only
+    clearAddFormError()
+    // NOTE: Keep userHasStartedEditing as-is - it helps keep form visible during transitions.
+    // The form is primarily shown/hidden based on editingId for EDIT mode.
+    // When modal closes, useEffect will reset userHasStartedEditing and editingId.
   }
 
   // US-FC-REFACTOR-001: Handle edit save using hook
@@ -726,6 +759,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     }
 
     // Proceed with save if pronoun is selected
+    setSubmitting(true)
     try {
       await onUpdateComment(editingId, request)
 
@@ -735,8 +769,14 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
       setEditPronounId('')
       // US-RATING-006: Clear ordered comments state
       setOrderedEditComments([])
+      // Clear any existing error on successful save
+      clearEditFormError()
     } catch (err) {
-      editForm.setValidationError('Failed to update final comment. Please try again.')
+      // Extract structured error from response
+      const errorInfo = extractErrorMessage(err)
+      setEditFormError(errorInfo)
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -747,6 +787,10 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
     setEditPronounId('')
     // US-RATING-006: Clear ordered comments state
     setOrderedEditComments([])
+    // Clear any lingering save error from EDIT operation before returning to ADD
+    clearEditFormError()
+    // NOTE: Keep userHasStartedEditing as-is when returning to ADD form.
+    // This maintains form visibility if there was an error during the previous operation.
   }
 
   // Sort final comments by createdAt in descending order (newest first)
@@ -764,13 +808,14 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
             </div>
           )}
 
-          {/* Error State (AC 6) */}
-          {error && (
+          {/* Error State (AC 6) - Show error but don't hide form if user is editing */}
+          {/* Only show modal-level error if no form-specific errors exist */}
+          {error && !addFormError && !editFormError && !deleteFormError && (
             <ErrorMessage message={error} />
           )}
 
-          {/* Content - Only show when not loading and no error */}
-          {!loading && !error && (
+          {/* Content - Show when not loading, and either no error or user has started editing or is currently editing a comment (prevents data loss) */}
+          {!loading && (!error || userHasStartedEditing || !!editingId) && (
             <>
               {/* US-FINAL-003: Create Form (AC 1, 2) - MOVED TO TOP per US-FINAL-STYLE-001 */}
               {/* US-CSS-006: Refactored to use standardized Input component and design tokens */}
@@ -792,7 +837,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                       label="First Name"
                       required
                       value={addForm.firstName}
-                      onChange={(e) => addForm.setFirstName(e.target.value)}
+                      onChange={(e) => {
+                        addForm.setFirstName(e.target.value)
+                        setUserHasStartedEditing(true)
+                        clearAddFormErrorOnEdit()
+                      }}
                       placeholder="Enter student first name"
                       disabled={submitting}
                       error={addForm.validationError && !addForm.firstName}
@@ -804,7 +853,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                       id="last-name-input"
                       label="Last Name"
                       value={addForm.lastName}
-                      onChange={(e) => addForm.setLastName(e.target.value)}
+                      onChange={(e) => {
+                        addForm.setLastName(e.target.value)
+                        setUserHasStartedEditing(true)
+                        clearAddFormErrorOnEdit()
+                      }}
                       placeholder="Enter student last name (optional)"
                       disabled={submitting}
                     />
@@ -820,6 +873,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   onChange={(e) => {
                     const value = e.target.value
                     addForm.setGrade(value === '' ? '' : Number(value))
+                    setUserHasStartedEditing(true)
+                    clearAddFormErrorOnEdit()
                   }}
                   placeholder="0-100"
                   min="0"
@@ -831,7 +886,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                 {/* TASK-1.3: Pronoun selection dropdown */}
                 <PronounSelect
                   value={addPronounId}
-                  onChange={setAddPronounId}
+                  onChange={(pronounId) => {
+                    setAddPronounId(pronounId)
+                    setUserHasStartedEditing(true)
+                    clearAddFormErrorOnEdit()
+                  }}
                   id="add-pronoun-select"
                   label="Pronoun"
                   disabled={submitting}
@@ -937,7 +996,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                     id="comment-input"
                     ref={addCommentTextareaRef}
                     value={addForm.comment}
-                    onChange={(e) => addForm.setComment(e.target.value)}
+                    onChange={(e) => {
+                      addForm.setComment(e.target.value)
+                      clearAddFormErrorOnEdit()
+                      setUserHasStartedEditing(true)
+                    }}
                     onFocus={handleCommentFocus}
                     onBlur={handleCommentBlur}
                     placeholder="Enter optional comment (max 3000 characters)"
@@ -970,6 +1033,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                   </div>
                 </div>
 
+                {/* Error Alert - ADD Form (Final Comments Error Handling) */}
+                {addFormError && (
+                  <SaveErrorAlert error={addFormError} onDismiss={clearAddFormError} />
+                )}
+
                 {addForm.validationError && (
                   <ErrorMessage message={addForm.validationError} />
                 )}
@@ -995,6 +1063,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                 >
                   Existing Comments
                 </h3>
+
+                {/* Error Alert - DELETE Operation (Final Comments Error Handling) */}
+                {deleteFormError && (
+                  <SaveErrorAlert error={deleteFormError} onDismiss={clearDeleteFormError} />
+                )}
 
                 {/* Empty State (AC 3) - US-FC-STYLE-004 */}
                 {sortedComments.length === 0
@@ -1059,7 +1132,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                           label="First Name"
                                           required
                                           value={editForm.firstName}
-                                          onChange={(e) => editForm.setFirstName(e.target.value)}
+                                          onChange={(e) => {
+                                            editForm.setFirstName(e.target.value)
+                                            clearEditFormErrorOnEdit()
+                                            setUserHasStartedEditing(true)
+                                          }}
                                           placeholder="Enter student first name"
                                           error={editForm.validationError && !editForm.firstName}
                                         />
@@ -1070,7 +1147,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                           id={`edit-last-name-${comment.id}`}
                                           label="Last Name"
                                           value={editForm.lastName}
-                                          onChange={(e) => editForm.setLastName(e.target.value)}
+                                          onChange={(e) => {
+                                            editForm.setLastName(e.target.value)
+                                            clearEditFormErrorOnEdit()
+                                            setUserHasStartedEditing(true)
+                                          }}
                                           placeholder="Enter student last name (optional)"
                                         />
                                       </div>
@@ -1085,6 +1166,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                       onChange={(e) => {
                                         const value = e.target.value
                                         editForm.setGrade(value === '' ? '' : Number(value))
+                                        clearEditFormErrorOnEdit()
+                                        setUserHasStartedEditing(true)
                                       }}
                                       placeholder="0-100"
                                       min={0}
@@ -1095,7 +1178,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                     {/* TASK-1.3: Pronoun selection dropdown (Edit Form) */}
                                     <PronounSelect
                                       value={editPronounId}
-                                      onChange={setEditPronounId}
+                                      onChange={(pronounId) => {
+                                        setEditPronounId(pronounId)
+                                        clearEditFormErrorOnEdit()
+                                        setUserHasStartedEditing(true)
+                                      }}
                                       id={`edit-pronoun-select-${comment.id}`}
                                       label="Pronoun"
                                       disabled={submitting}
@@ -1201,7 +1288,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                         id={`edit-comment-${comment.id}`}
                                         ref={editCommentTextareaRef}
                                         value={editForm.comment}
-                                        onChange={(e) => editForm.setComment(e.target.value)}
+                                        onChange={(e) => {
+                                          editForm.setComment(e.target.value)
+                                          clearEditFormErrorOnEdit()
+                                          setUserHasStartedEditing(true)
+                                        }}
                                         onFocus={handleCommentFocus}
                                         onBlur={handleCommentBlur}
                                         placeholder="Enter optional comment (max 3000 characters)"
@@ -1232,6 +1323,11 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                         {editForm.comment.length}/3000 characters
                                       </div>
                                     </div>
+
+                                    {/* Error Alert - EDIT Form (Final Comments Error Handling) */}
+                                    {editFormError && (
+                                      <SaveErrorAlert error={editFormError} onDismiss={clearEditFormError} />
+                                    )}
 
                                     {editForm.validationError && (
                                       <div className="validation-error" role="alert">

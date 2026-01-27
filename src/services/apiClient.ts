@@ -188,17 +188,30 @@ class ApiClient {
           return Promise.reject(error)
         }
 
-        // Handle other error responses
-        const errorData = error.response?.data as Record<string, unknown> | undefined
-        const apiError = new Error(
-          (errorData?.message as string) || (errorData?.error as string) || error.message || 'An error occurred',
-        )
+        // Handle other error responses - preserve structured error format from backend
+        const errorData = error.response?.data
+
+        // If backend returns an object with error/details, preserve it as-is
+        if (errorData && typeof errorData === 'object' && ('error' in errorData || 'message' in errorData)) {
+          return Promise.reject(errorData)
+        }
+
+        // Fallback: Create structured error if backend doesn't provide one
+        const errorMessage = (errorData && typeof errorData === 'object' && 'message' in errorData)
+          ? (errorData.message as string)
+          : error.message || 'An error occurred'
+
+        const errorDetails = (errorData && typeof errorData === 'object' && 'details' in errorData)
+          ? errorData.details
+          : null
+
+        const apiError = new Error(errorMessage)
 
         // Attach additional error properties for detailed error handling
         Object.assign(apiError, {
           status: error.response?.status,
-          message: (errorData?.message as string) || (errorData?.error as string) || error.message,
-          details: errorData?.details || null,
+          message: errorMessage,
+          details: errorDetails,
           originalError: error,
         })
 

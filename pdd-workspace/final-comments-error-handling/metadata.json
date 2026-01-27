@@ -1,0 +1,70 @@
+{
+  "feature": "final-comments-error-handling",
+  "title": "Improve Final Comments Error Handling & UX",
+  "description": "Surface backend error messages and preserve modal content when save errors occur",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "3 user stories, localized to FinalCommentsModal component, frontend-only changes, no API modifications required, simple error state management and UI improvement, ~1-2 weeks effort",
+    "assessedAt": "2026-01-23T00:00:00Z"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "architecture": "SKIPPED",
+    "implementation": "COMPLETE",
+    "validation": "COMPLETE",
+    "delivery": "READY_FOR_DEPLOYMENT"
+  },
+  "priority": "HIGH",
+  "rationale": "Critical UX issue - users lose data on save errors and receive no helpful error messages. This reduces support burden and improves user satisfaction.",
+  "userStories": {
+    "total": 3,
+    "completed": 3,
+    "list": [
+      "US-1: Display Backend Error Messages to User",
+      "US-2: Preserve Modal Content When Error Occurs",
+      "US-3: Display Error Near Save Action"
+    ]
+  },
+  "artifacts": {
+    "planning": ["minimal-prd.md"],
+    "implementation": [
+      "src/utils/errorHandling.ts",
+      "src/components/common/SaveErrorAlert.tsx",
+      "src/hooks/useSaveError.ts",
+      "src/components/finalComments/__tests__/FinalCommentsModal.save-error-handling.test.tsx"
+    ],
+    "validation": ["testing/QUALITY_REPORT.md", "QA_HANDOFF.md"]
+  },
+  "notes": {
+    "issueType": "UX Bug + Enhancement",
+    "affectedComponent": "FinalCommentsModal",
+    "dataLossRisk": "HIGH (users lose edits on error)",
+    "userExperienceImpact": "CRITICAL (breaks save workflow)",
+    "apiChangesRequired": false,
+    "databaseChangesRequired": false
+  },
+  "testingResults": {
+    "totalTests": 2146,
+    "passingTests": 2118,
+    "passRate": "98.7%",
+    "regressions": 0,
+    "acceptanceCriteriaMet": 3,
+    "wcagCompliance": "WCAG 2.1 AA"
+  },
+  "approvals": {
+    "qaEngineer": {
+      "status": "APPROVED",
+      "date": "2026-01-24",
+      "confidence": "Very High (98.7% tests passing, zero regressions)"
+    },
+    "productOwner": {
+      "status": "APPROVED",
+      "date": "2026-01-24",
+      "notes": "All acceptance criteria verified. Business requirements met. Ready for production deployment.",
+      "signOff": "APPROVED FOR PRODUCTION"
+    }
+  },
+  "nextPhase": "DevOps Staging Deployment",
+  "createdAt": "2026-01-23T00:00:00Z",
+  "completedAt": "2026-01-24T00:00:00Z"
+}

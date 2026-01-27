@@ -172,7 +172,30 @@ React Query / TanStack Query (Industry Standard) - Best overall:
 - Most React teams use this now
 To remove duplicated loading requests in components
 
+Modify the PeronalizedComments, and final comments to take in the pronouns like the Outcome comments 
+
 When there is a name that has already been added the style is wrong, the background is white
+
+Something is broken with the logout on the github pages app
+* you are sent to https://dev-xz2pg3bky1ezk33h.us.auth0.com/v2/logout?client_id=1JFCOTaGY4nTaEQXqQAtrG7Ocma5Y1fQ&returnTo=https%3A%2F%2Fdgaudet.github.io%2Flogin&auth0Client=eyJuYW1lIjoiYXV0aDAtc3BhLWpzIiwidmVyc2lvbiI6IjIuOS4xIn0%3D
+** you get a 400 and are basically on this same url
+* Locally sent to https://dev-xz2pg3bky1ezk33h.us.auth0.com/v2/logout?client_id=1JFCOTaGY4nTaEQXqQAtrG7Ocma5Y1fQ&returnTo=http%3A%2F%2Flocalhost%3A5173%2Flogin&auth0Client=eyJuYW1lIjoiYXV0aDAtc3BhLWpzIiwidmVyc2lvbiI6IjIuOS4xIn0%3D
+* I feel like the github pages not working with SPA's is likely the problem
+** That call gets a 302 (found) and then the login page is loaded
 
 When saving a student with the same name as before, it doesn't tell you it's failing due to duplicate name
 * Also the flow when there is a failure, isn't good, you lose the student you were working with, perhaps it should be at the bottom of the form
+
+Copy comments to other class should remove duplicates
+When adding one comment or editing a comment, the save should check for duplicates
+
+when clicking populate with comments, it should also check grammer
+perhaps we could have the user upload comments from last year and use that to determine what are the outcome comments and the personalized ones
+
+If you have an extra space in outcome comment or personalized it only shows up in edit, or when copying
+
+If you trigger the save error, on the add modal, then open the edit modal, it shows there as well, when it should not
+Test a loading error on the final comments modal
+Test an error when saving comments that doesn't have the custom message and details
+This is probably a backend change, but I was able to edit john to be john 2 which matches another comment, and no duplicate error
+Also I can't seem to set the lastname to blank after it being set, possibly a backend issue as well
