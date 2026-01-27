@@ -666,7 +666,7 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
         confirmButtonText="Delete"
         cancelButtonText="Cancel"
       >
-        <p className="text-sm text-gray-600 mt-2">
+        <p style={{ fontSize: typography.fontSize.sm, color: themeColors.text.disabled, marginTop: spacing.md, whiteSpace: 'pre-wrap' }}>
           "{getCommentPreview(deleteConfirmation.commentText)}"
         </p>
       </ConfirmationModal>
