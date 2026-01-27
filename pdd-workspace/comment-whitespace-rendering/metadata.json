@@ -1,0 +1,17 @@
+{
+  "feature": "comment-whitespace-rendering",
+  "type": "bug-fix",
+  "complexity": {
+    "level": "L1",
+    "reasoning": "Single bug affecting multiple components. Requires investigation to identify root cause (likely CSS or string handling). Estimated 1-2 weeks to investigate and fix. No architectural changes needed.",
+    "assessedAt": "2026-01-27"
+  },
+  "phases": {
+    "planning": "COMPLETE",
+    "implementation": "PENDING",
+    "validation": "PENDING"
+  },
+  "artifacts": [
+    "pdd.md"
+  ]
+}
