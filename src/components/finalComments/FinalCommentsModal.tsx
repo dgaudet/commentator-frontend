@@ -809,7 +809,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
           )}
 
           {/* Error State (AC 6) - Show error but don't hide form if user is editing */}
-          {error && (
+          {/* Only show modal-level error if no form-specific errors exist */}
+          {error && !addFormError && !editFormError && !deleteFormError && (
             <ErrorMessage message={error} />
           )}
 
