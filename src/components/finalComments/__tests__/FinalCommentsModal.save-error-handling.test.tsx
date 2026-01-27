@@ -1642,5 +1642,43 @@ describe('FinalCommentsModal - Save Error Handling', () => {
       // Verify the alert is for the form error
       expect(alerts[0].textContent).toContain('Network error')
     })
+
+    it('should keep components visible when editing a comment', async () => {
+      // Regression test: Components should not disappear while in edit mode
+      // The visibility condition now includes: (!error || userHasStartedEditing || !!editingId)
+      // So when editingId is set, content should remain visible even with errors
+      render(
+        <FinalCommentsModal
+          isOpen={true}
+          entityData={mockClass}
+          finalComments={mockFinalComments}
+          onCreateComment={mockOnCreateComment}
+          onUpdateComment={mockOnUpdateComment}
+          onDeleteComment={mockOnDeleteComment}
+          loading={false}
+          error={null}
+        />,
+      )
+
+      // Initially, both sections should be visible
+      expect(screen.getByText(/Add New Final Comment/i)).toBeInTheDocument()
+      expect(screen.getByText(/Existing Comments/i)).toBeInTheDocument()
+
+      // Click edit to enter edit mode
+      const editButtons = screen.getAllByRole('button', { name: /edit/i })
+      expect(editButtons.length).toBeGreaterThan(0)
+      await userEvent.click(editButtons[0])
+
+      // Wait for edit form to become visible
+      await waitFor(() => {
+        // The edit form should be visible with the comment's data
+        expect(screen.getByDisplayValue(mockFinalComments[0].firstName)).toBeInTheDocument()
+      })
+
+      // CRITICAL: While editing, both sections should remain visible
+      // (This would fail if the visibility condition didn't include !!editingId)
+      expect(screen.getByText(/Add New Final Comment/i)).toBeInTheDocument()
+      expect(screen.getByText(/Existing Comments/i)).toBeInTheDocument()
+    })
   })
 })

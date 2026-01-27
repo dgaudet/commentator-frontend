@@ -814,8 +814,8 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
             <ErrorMessage message={error} />
           )}
 
-          {/* Content - Show when not loading, and either no error or user has started editing (prevents data loss) */}
-          {!loading && (!error || userHasStartedEditing) && (
+          {/* Content - Show when not loading, and either no error or user has started editing or is currently editing a comment (prevents data loss) */}
+          {!loading && (!error || userHasStartedEditing || !!editingId) && (
             <>
               {/* US-FINAL-003: Create Form (AC 1, 2) - MOVED TO TOP per US-FINAL-STYLE-001 */}
               {/* US-CSS-006: Refactored to use standardized Input component and design tokens */}
