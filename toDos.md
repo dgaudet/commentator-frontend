@@ -189,10 +189,8 @@ When saving a student with the same name as before, it doesn't tell you it's fai
 Copy comments to other class should remove duplicates
 When adding one comment or editing a comment, the save should check for duplicates
 
-when clicking populate with comments, it should also check grammer
+when clicking populate with comments, maybe it should also check grammer
 perhaps we could have the user upload comments from last year and use that to determine what are the outcome comments and the personalized ones
-
-If you have an extra space in outcome comment or personalized it only shows up in edit, or when copying
 
 If you trigger the save error, on the add modal, then open the edit modal, it shows there as well, when it should not
 Test a loading error on the final comments modal

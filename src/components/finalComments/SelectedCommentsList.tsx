@@ -140,6 +140,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
           flex: 1,
           fontSize: typography.fontSize.sm,
           color: themeColors.text.primary,
+          whiteSpace: 'pre-wrap',
         }}
       >
         {comment.comment}

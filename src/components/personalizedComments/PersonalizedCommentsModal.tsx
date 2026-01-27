@@ -603,6 +603,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                                   lineHeight: typography.lineHeight.normal,
                                   marginBottom: spacing.md,
                                   flex: 1,
+                                  whiteSpace: 'pre-wrap',
                                 }}
                               >
                                 {comment.comment}

@@ -608,6 +608,7 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
                                 color: themeColors.text.primary,
                                 marginBottom: spacing.md,
                                 lineHeight: typography.lineHeight.normal,
+                                whiteSpace: 'pre-wrap',
                               }}
                             >
                               {comment.comment}
