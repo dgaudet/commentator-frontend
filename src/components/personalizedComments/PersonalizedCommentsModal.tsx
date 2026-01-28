@@ -603,6 +603,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
                                   lineHeight: typography.lineHeight.normal,
                                   marginBottom: spacing.md,
                                   flex: 1,
+                                  whiteSpace: 'pre-wrap',
                                 }}
                               >
                                 {comment.comment}
@@ -657,7 +658,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
         confirmButtonText="Delete"
         cancelButtonText="Cancel"
       >
-        <p className="text-sm text-gray-600 mt-2">
+        <p style={{ fontSize: typography.fontSize.sm, color: themeColors.text.disabled, marginTop: spacing.md, whiteSpace: 'pre-wrap' }}>
           "{getCommentPreview(deleteConfirmation.commentText)}"
         </p>
       </ConfirmationModal>

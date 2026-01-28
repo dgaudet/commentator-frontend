@@ -189,13 +189,15 @@ When saving a student with the same name as before, it doesn't tell you it's fai
 Copy comments to other class should remove duplicates
 When adding one comment or editing a comment, the save should check for duplicates
 
-when clicking populate with comments, it should also check grammer
+when clicking populate with comments, maybe it should also check grammer
 perhaps we could have the user upload comments from last year and use that to determine what are the outcome comments and the personalized ones
-
-If you have an extra space in outcome comment or personalized it only shows up in edit, or when copying
 
 If you trigger the save error, on the add modal, then open the edit modal, it shows there as well, when it should not
 Test a loading error on the final comments modal
 Test an error when saving comments that doesn't have the custom message and details
 This is probably a backend change, but I was able to edit john to be john 2 which matches another comment, and no duplicate error
 Also I can't seem to set the lastname to blank after it being set, possibly a backend issue as well
+
+extra space issues:
+* If you create a class with an extra space, then the drop-down doesn't show it
+* If the users first name or last name has 2 spaces it's hidden

@@ -408,6 +408,7 @@ export const TypeaheadSearch = <T, >({
                           index < filteredItems.length - 1
                             ? `${borders.width.thin} solid ${themeColors.border.default}`
                             : 'none',
+                        whiteSpace: 'pre-wrap',
                       }}
                     >
                       {prefix && <span style={{ marginRight: spacing.sm }}>{prefix}</span>}
