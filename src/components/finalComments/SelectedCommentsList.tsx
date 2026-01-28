@@ -374,6 +374,7 @@ export const SelectedCommentsList: React.FC<SelectedCommentsListProps> = ({
                       flex: 1,
                       fontSize: typography.fontSize.sm,
                       color: themeColors.text.primary,
+                      whiteSpace: 'pre-wrap',
                     }}
                   >
                     {activeComment.comment}

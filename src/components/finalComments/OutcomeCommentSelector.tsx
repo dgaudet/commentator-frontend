@@ -137,6 +137,7 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
     lineHeight: '1.6',
     cursor: 'pointer',
     transition: 'background-color 0.2s ease',
+    whiteSpace: 'pre-wrap' as const,
   }
 
   /**
@@ -253,6 +254,7 @@ export const OutcomeCommentSelector: React.FC<OutcomeCommentSelectorProps> = ({
               color: themeColors.text.primary,
               fontSize: typography.fontSize.sm,
               lineHeight: '1.6',
+              whiteSpace: 'pre-wrap',
             }}
           >
             {selectedComment.comment}
