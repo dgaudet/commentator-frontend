@@ -233,6 +233,7 @@ export const SubjectListItem: React.FC<SubjectListItemProps> = React.memo(({
     color: themeColors.text.primary,
     cursor: onView ? 'pointer' : 'default',
     margin: 0,
+    whiteSpace: 'pre-wrap',
   }
 
   const dateStyle: React.CSSProperties = {

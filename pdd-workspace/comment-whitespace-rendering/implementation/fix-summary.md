@@ -1,4 +1,4 @@
-# Comment Whitespace Rendering Bug Fix - Implementation Summary
+# Whitespace Rendering Bug Fix - Complete Implementation Summary
 
 **Date**: 2026-01-27
 **Feature**: comment-whitespace-rendering
@@ -6,7 +6,13 @@
 **Status**: COMPLETE ✅
 
 ## Problem
-Extra spaces in personalized comments and outcome comments were being stripped in list/view modes but were visible in edit mode, creating a visual inconsistency.
+Extra spaces in:
+- **Comments** (personalized, outcome, final comments)
+- **Class names**
+- **Student names** (first and last names)
+- **Subject names**
+
+were being stripped in list/view/dropdown modes but were visible in edit mode, creating a visual inconsistency.
 
 ## Root Cause
 **HTML default whitespace collapsing behavior** - By default, browsers collapse consecutive whitespace characters (multiple spaces, tabs, etc.) into a single space. The comment display divs/spans had no `whiteSpace` CSS property set, so the browser applied default rendering rules.
@@ -16,7 +22,9 @@ The edit views (textarea inputs) preserved spaces because textarea elements natu
 ## Solution
 Added `whiteSpace: 'pre-wrap'` CSS property to all comment display elements. This preserves multiple spaces, tabs, and line breaks in the rendered output.
 
-### Files Modified
+### Files Modified (11 total)
+
+**Comment Display Fixes:**
 1. **PersonalizedCommentsModal.tsx**
    - Line 606: Added `whiteSpace: 'pre-wrap'` to comment display div
    - Line 662: Updated delete confirmation preview paragraph to use design tokens with `whiteSpace: 'pre-wrap'`
@@ -31,13 +39,28 @@ Added `whiteSpace: 'pre-wrap'` CSS property to all comment display elements. Thi
 
 4. **FinalCommentsModal.tsx**
    - Line 1419: Added `whiteSpace: 'pre-wrap'` to final comments display div
+   - Line 1375: Added `whiteSpace: 'pre-wrap'` to student name display div
 
 5. **OutcomeCommentSelector.tsx**
-   - Line 256: Added `whiteSpace: 'pre-wrap'` to selected outcome comment display div
+   - Line 257: Added `whiteSpace: 'pre-wrap'` to selected outcome comment display div
    - Line 140: Added `whiteSpace: 'pre-wrap' as const` to alternative outcome comment items style object
 
 6. **TypeaheadSearch.tsx**
    - Line 411: Added `whiteSpace: 'pre-wrap'` to dropdown option style object
+
+**Class/Subject Name and Student Name Fixes:**
+7. **ClassManagementModal.tsx**
+   - Line 394: Added `whiteSpace: 'pre-wrap'` to class dropdown selector
+
+8. **SubjectList.tsx**
+   - Line 433: Added `whiteSpace: 'pre-wrap'` to subject dropdown selector
+
+9. **SubjectListItem.tsx**
+   - Line 236: Added `whiteSpace: 'pre-wrap'` to subject name header
+
+10. **CopyCommentsModal.tsx**
+    - Line 187: Added `whiteSpace: 'pre-wrap'` to source subject name display
+    - Line 240: Added `whiteSpace: 'pre-wrap'` to target subject dropdown selector
 
 ### Tests Created (TDD Red-Green-Refactor Cycle)
 
@@ -64,7 +87,7 @@ Received: ""
 
 ## Comprehensive Coverage
 
-**All comment display locations fixed (9 total):**
+**All comment display locations fixed (10 locations):**
 1. ✅ PersonalizedCommentsModal - Comment list view
 2. ✅ PersonalizedCommentsModal - Delete confirmation preview
 3. ✅ OutcomeCommentsModal - Comment list view
@@ -76,11 +99,19 @@ Received: ""
 9. ✅ OutcomeCommentSelector - Alternative comment options
 10. ✅ TypeaheadSearch - Dropdown option labels
 
+**All class name and student name display locations fixed (5 additional locations):**
+11. ✅ FinalCommentsModal - Student first/last name display
+12. ✅ ClassManagementModal - Class dropdown selector
+13. ✅ SubjectList - Subject dropdown selector
+14. ✅ SubjectListItem - Subject name header
+15. ✅ CopyCommentsModal - Source subject name display
+16. ✅ CopyCommentsModal - Target subject dropdown selector
+
 ## Quality Metrics
 ✅ **All Tests Passing**: 2,264 tests passed, 0 failed
 ✅ **No Linting Errors**: ESLint and Stylelint pass without warnings
 ✅ **No Regressions**: All existing tests continue to pass
-✅ **Comprehensive Coverage**: Fixes applied to all 6 affected components in 10 locations
+✅ **Comprehensive Coverage**: Fixes applied to all 11 affected components in 16 locations
 
 ## Behavior Changes
 - **Before**: Multiple spaces were hidden in list view (e.g., "Great   work" displayed as "Great work")

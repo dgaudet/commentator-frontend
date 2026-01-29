@@ -1372,6 +1372,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                             color: themeColors.text.primary,
                                             lineHeight: typography.lineHeight.normal,
                                             marginBottom: spacing.xs,
+                                            whiteSpace: 'pre-wrap',
                                           }}
                                         >
                                           {comment.firstName}
