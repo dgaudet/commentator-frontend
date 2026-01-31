@@ -430,6 +430,7 @@ export const SubjectList: React.FC<SubjectListProps> = ({
             cursor: 'pointer',
             outline: 'none',
             transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
+            whiteSpace: 'pre-wrap',
           }}
         >
           <option value="">

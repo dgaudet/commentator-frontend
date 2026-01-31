@@ -183,6 +183,7 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
               color: themeColors.text.primary,
               fontWeight: typography.fontWeight.semibold,
               margin: 0,
+              whiteSpace: 'pre-wrap',
             }}
           >
             {sourceSubjectName}
@@ -235,6 +236,7 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
                       backgroundColor: themeColors.background.primary,
                       color: themeColors.text.primary,
                       cursor: 'pointer',
+                      whiteSpace: 'pre-wrap',
                     }}
                   >
                     <option value="">-- Select target subject --</option>

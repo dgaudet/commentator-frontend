@@ -1372,6 +1372,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                             color: themeColors.text.primary,
                                             lineHeight: typography.lineHeight.normal,
                                             marginBottom: spacing.xs,
+                                            whiteSpace: 'pre-wrap',
                                           }}
                                         >
                                           {comment.firstName}
@@ -1416,6 +1417,7 @@ export const FinalCommentsModal = <T extends { id: string; name: string }>({
                                           color: themeColors.text.secondary,
                                           marginBottom: spacing.lg,
                                           lineHeight: typography.lineHeight.relaxed,
+                                          whiteSpace: 'pre-wrap',
                                         }}
                                       >
                                         {comment.comment}
