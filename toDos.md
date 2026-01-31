@@ -186,9 +186,6 @@ Something is broken with the logout on the github pages app
 When saving a student with the same name as before, it doesn't tell you it's failing due to duplicate name
 * Also the flow when there is a failure, isn't good, you lose the student you were working with, perhaps it should be at the bottom of the form
 
-Copy comments to other class should remove duplicates
-When adding one comment or editing a comment, the save should check for duplicates
-
 when clicking populate with comments, maybe it should also check grammer
 perhaps we could have the user upload comments from last year and use that to determine what are the outcome comments and the personalized ones
 
@@ -198,6 +195,4 @@ Test an error when saving comments that doesn't have the custom message and deta
 This is probably a backend change, but I was able to edit john to be john 2 which matches another comment, and no duplicate error
 Also I can't seem to set the lastname to blank after it being set, possibly a backend issue as well
 
-extra space issues:
-* If you create a class with an extra space, then the drop-down doesn't show it
-* If the users first name or last name has 2 spaces it's hidden
+Copy comments to other class should remove duplicates, as well as the bulk upload
