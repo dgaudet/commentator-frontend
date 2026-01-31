@@ -54,7 +54,6 @@ describe('PersonalizedCommentsModal - Whitespace Visual Rendering', () => {
 
       // Check the computed style to ensure whitespace is preserved in rendering
       const computedStyle = window.getComputedStyle(commentDiv)
-      console.log('whiteSpace style:', computedStyle.whiteSpace)
 
       // The issue: by default HTML collapses whitespace.
       // We need white-space: pre-wrap to preserve it visually
