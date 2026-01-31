@@ -34,9 +34,7 @@ export function isDuplicateComment(
  * @param getCommentText - Optional function to extract comment text from comment object (defaults to .text property)
  * @returns The first matching duplicate comment or null if not found
  */
-export function findDuplicateComment<
-  T extends Record<string, unknown> & { text?: string },
->(
+export function findDuplicateComment<T>(
   newCommentText: string,
   existingComments: T[],
   filterBySubject?: (comment: T) => boolean,
@@ -46,7 +44,13 @@ export function findDuplicateComment<
     ? existingComments.filter(filterBySubject)
     : existingComments
 
-  const textGetter = getCommentText || ((comment: T) => comment.text || '')
+  // Use provided text getter or try to get 'text' property, fallback to empty string
+  const textGetter =
+    getCommentText ||
+    ((comment: T) => {
+      const commentObj = comment as Record<string, unknown>
+      return (commentObj.text as string) || ''
+    })
 
   return (
     filtered.find((comment) =>
