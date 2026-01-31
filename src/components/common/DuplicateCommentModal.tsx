@@ -2,7 +2,13 @@
  * DuplicateCommentModal Component
  * Reusable modal for notifying users about duplicate comments
  * Used by both OutcomeCommentsModal and PersonalizedCommentsModal
+ *
+ * Uses design tokens for theme support (light/dark mode)
  */
+
+import { useThemeColors } from '../../hooks/useThemeColors'
+import { spacing, typography, borders } from '../../theme/tokens'
+import { Button } from './Button'
 
 interface DuplicateCommentModalProps {
   isOpen: boolean
@@ -19,6 +25,8 @@ export function DuplicateCommentModal({
   subjectName,
   onCancel,
 }: DuplicateCommentModalProps): JSX.Element | null {
+  const themeColors = useThemeColors()
+
   if (!isOpen) {
     return null
   }
@@ -45,20 +53,21 @@ export function DuplicateCommentModal({
     >
       <div
         style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '8px',
-          padding: '24px',
+          backgroundColor: themeColors.background.primary,
+          borderRadius: borders.radius.md,
+          padding: spacing.lg,
           maxWidth: '500px',
           width: '90%',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          boxShadow: `0 ${spacing.xs} ${spacing.md} rgba(0, 0, 0, 0.15)`,
         }}
       >
         <h2
           id="duplicate-modal-title"
           style={{
-            margin: '0 0 16px 0',
-            fontSize: '18px',
+            margin: `0 0 ${spacing.md} 0`,
+            fontSize: typography.fontSize.lg,
             fontWeight: 600,
+            color: themeColors.text.primary,
           }}
         >
           Duplicate Comment Detected
@@ -66,9 +75,9 @@ export function DuplicateCommentModal({
 
         <p
           style={{
-            margin: '0 0 12px 0',
-            fontSize: '14px',
-            color: '#424242',
+            margin: `0 0 ${spacing.sm} 0`,
+            fontSize: typography.fontSize.base,
+            color: themeColors.text.secondary,
           }}
         >
           This
@@ -86,11 +95,11 @@ export function DuplicateCommentModal({
         <div
           data-testid="existing-comment-display"
           style={{
-            backgroundColor: '#f5f5f5',
-            borderLeft: '4px solid #1976d2',
-            padding: '12px 16px',
-            marginBottom: '16px',
-            borderRadius: '4px',
+            backgroundColor: themeColors.background.secondary,
+            borderLeft: `${borders.width.thick} solid ${themeColors.primary.main}`,
+            padding: spacing.md,
+            marginBottom: spacing.md,
+            borderRadius: borders.radius.sm,
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
           }}
@@ -98,8 +107,8 @@ export function DuplicateCommentModal({
           <p
             style={{
               margin: 0,
-              fontSize: '14px',
-              color: '#212121',
+              fontSize: typography.fontSize.base,
+              color: themeColors.text.primary,
               lineHeight: '1.5',
             }}
           >
@@ -109,9 +118,9 @@ export function DuplicateCommentModal({
 
         <p
           style={{
-            margin: '0 0 20px 0',
-            fontSize: '13px',
-            color: '#666666',
+            margin: `0 0 ${spacing.lg} 0`,
+            fontSize: typography.fontSize.sm,
+            color: themeColors.text.secondary,
             fontStyle: 'italic',
           }}
         >
@@ -122,32 +131,12 @@ export function DuplicateCommentModal({
           style={{
             display: 'flex',
             justifyContent: 'flex-end',
-            gap: '8px',
+            gap: spacing.sm,
           }}
         >
-          <button
-            type="button"
-            onClick={onCancel}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#1976d2',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'background-color 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#1565c0'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#1976d2'
-            }}
-          >
+          <Button variant="primary" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     </div>

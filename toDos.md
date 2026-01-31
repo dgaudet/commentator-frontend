@@ -196,3 +196,5 @@ This is probably a backend change, but I was able to edit john to be john 2 whic
 Also I can't seem to set the lastname to blank after it being set, possibly a backend issue as well
 
 Copy comments to other class should remove duplicates, as well as the bulk upload
+Question
+* Can you have duplicate outcome comments with different grade levels?
