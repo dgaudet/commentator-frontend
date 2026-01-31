@@ -35,17 +35,17 @@ Currently, users can accidentally create duplicate comments within the same subj
 
 ## 3. Solution Overview
 
-Implement duplicate detection with user-friendly modal notifications:
+Implement duplicate detection with preventive modal notifications:
 
 **Outcome Comments:**
 - When user attempts to save an outcome comment, compare against existing outcome comments for that subject
 - If exact match found, show modal with existing comment details
-- Allow user to proceed with override if intentional
+- Prevent save and return user to editing (only Cancel option)
 
 **Personalized Comments:**
 - Same pattern: compare against existing personalized comments for the same subject
 - Show modal notification if duplicate detected
-- Provide option to cancel, view existing, or override
+- Prevent save, user must cancel and edit
 
 **Technical Approach:**
 - Use existing comment lists already loaded in modals
@@ -55,6 +55,8 @@ Implement duplicate detection with user-friendly modal notifications:
 ---
 
 ## 4. User Stories
+
+**Note:** Whitespace trimming and empty comment prevention are existing features already implemented in the comment components. This feature leverages those existing constraints.
 
 ### US-DCP-001: Detect Duplicate Outcome Comments
 **As a** teacher managing outcome comments
@@ -99,21 +101,6 @@ Implement duplicate detection with user-friendly modal notifications:
 
 **Priority:** High
 **Story Points:** 5-8
-
----
-
-### US-DCP-003: Empty/Whitespace Validation
-**As a** system
-**I want to** trim whitespace and handle empty/whitespace-only comments appropriately
-**So that** duplicate detection doesn't flag false positives from whitespace variations
-
-**Acceptance Criteria:**
-- AC-1: Before comparison, trim leading/trailing whitespace from both new and existing comments
-- AC-2: Prevent saving comments that are empty or whitespace-only
-- AC-3: Show user-friendly error if comment is blank
-
-**Priority:** Medium
-**Story Points:** 2-3
 
 ---
 
@@ -162,16 +149,15 @@ Implement duplicate detection with user-friendly modal notifications:
 ├─────────────────────────────────────────┤
 │                                         │
 │  This outcome comment already exists    │
-│  for "Mathematics"                      │
+│  for "Mathematics":                     │
 │                                         │
-│  Existing Comment:                      │
-│  ┌─────────────────────────────────┐   │
-│  │ "Shows strong understanding of  │   │
-│  │  key mathematical concepts"     │   │
-│  └─────────────────────────────────┘   │
+│  "Shows strong understanding of         │
+│   key mathematical concepts"            │
 │                                         │
-│  Would you like to:                     │
-│  [Cancel]  [View Existing]  [Save Anyway]
+│  Please edit the existing comment or    │
+│  enter a different comment.             │
+│                                         │
+│                      [Cancel]           │
 │                                         │
 └─────────────────────────────────────────┘
 ```
@@ -184,14 +170,14 @@ Implement duplicate detection with user-friendly modal notifications:
 ├─────────────────────────────────────────┤
 │                                         │
 │  This comment already exists for        │
-│  "Mathematics"                          │
+│  "Mathematics":                         │
 │                                         │
-│  Existing Comment:                      │
-│  ┌─────────────────────────────────┐   │
-│  │ "Great progress this semester"  │   │
-│  └─────────────────────────────────┘   │
+│  "Great progress this semester"         │
 │                                         │
-│  [Cancel]  [View Existing]  [Save Anyway]
+│  Please edit the existing comment or    │
+│  enter a different comment.             │
+│                                         │
+│                      [Cancel]           │
 │                                         │
 └─────────────────────────────────────────┘
 ```
@@ -233,9 +219,9 @@ Implement duplicate detection with user-friendly modal notifications:
 
 | Metric | Target | Measurement |
 |--------|--------|-------------|
-| Duplicate Prevention Rate | >90% of duplicate attempts prevented | Count prevented saves vs total save attempts |
-| User Override Rate | <10% of prevented attempts bypassed | Track "Save Anyway" clicks |
-| Error Rate | 0% false positives | Manual QA testing with edge cases |
+| Duplicate Prevention Rate | 100% of duplicate attempts prevented | All duplicates blocked at save |
+| False Positive Rate | 0% false positives | Manual QA testing with edge cases |
+| Error Rate | 0% errors during duplicate detection | System logging and monitoring |
 | User Satisfaction | 4.5+/5 | Post-feature survey on comment management |
 
 ---
@@ -246,9 +232,10 @@ Implement duplicate detection with user-friendly modal notifications:
 - ✅ Exact-match duplicate detection for outcome comments
 - ✅ Exact-match duplicate detection for personalized comments
 - ✅ Modal displays existing comment text
-- ✅ User can cancel, view existing, or override
+- ✅ Duplicate save is prevented (only Cancel button)
 - ✅ Case-sensitive comparison
 - ✅ Whitespace trimming before comparison
+- ✅ User guidance message in modal
 
 **Should Have:**
 - ✅ Clear, user-friendly modal messages
@@ -344,11 +331,11 @@ Comments are essential for tracking student progress. To maintain clean, meaning
 
 ## 15. Future Enhancements (Not in Scope)
 
-- **Smart Suggestions:** "Did you mean to use this existing comment?"
+- **API-Level Validation:** Prevent duplicates even if client validation bypassed
+- **Smart Suggestions:** "Did you mean to use this existing comment?" with navigation link
 - **Fuzzy Matching:** Detect similar comments, not just exact matches
 - **Bulk Deduplication:** Tool to find and merge duplicate comments
 - **Comment Versioning:** Track comment history and changes
-- **API-Level Validation:** Prevent duplicates even if client validation bypassed
 - **Duplicate Analytics:** Dashboard showing duplicate attempts and trends
 
 ---

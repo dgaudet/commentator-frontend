@@ -49,13 +49,6 @@
       "status": "Planning"
     },
     {
-      "id": "US-DCP-003",
-      "title": "Whitespace & Empty Comment Validation",
-      "priority": "Medium",
-      "points": 3,
-      "status": "Planning"
-    },
-    {
       "id": "US-DCP-004",
       "title": "Reusable DuplicateCommentModal Component",
       "priority": "High",

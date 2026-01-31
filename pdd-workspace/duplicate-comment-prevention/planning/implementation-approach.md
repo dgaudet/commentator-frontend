@@ -83,9 +83,10 @@ This document outlines the technical approach for preventing duplicate outcome a
 **Component Structure:**
 ```
 src/components/common/DuplicateCommentModal.tsx
-├── Props: isOpen, existingComment, newComment, onCancel, onViewExisting, onSaveAnyway
+├── Props: isOpen, existingComment, commentType, subjectName, onCancel
 ├── Displays existing comment
-├── Handles three user actions
+├── Shows helpful guidance message
+├── Single Cancel button to return to editing
 └── Accessible and themeable
 ```
 
@@ -188,40 +189,35 @@ export function findDuplicateComment<T extends { text: string }>(
 interface DuplicateCommentModalProps {
   isOpen: boolean
   existingComment: string
-  newComment: string
-  onCancel: () => void
-  onViewExisting: () => void
-  onSaveAnyway: () => void
   commentType: 'outcome' | 'personalized'
   subjectName: string
+  onCancel: () => void
 }
 
 export function DuplicateCommentModal({
   isOpen,
   existingComment,
-  newComment,
-  onCancel,
-  onViewExisting,
-  onSaveAnyway,
   commentType,
   subjectName,
+  onCancel,
 }: DuplicateCommentModalProps) {
   if (!isOpen) return null
 
   return (
     <div role="dialog" aria-modal="true">
       <h2>Duplicate Comment Detected</h2>
-      <p>This {commentType} comment already exists for "{subjectName}"</p>
+      <p>This {commentType} comment already exists for "{subjectName}":</p>
 
       <div className="existing-comment">
-        <p className="label">Existing Comment:</p>
-        <div className="text">{existingComment}</div>
+        <p className="comment-text">{existingComment}</p>
       </div>
+
+      <p className="guidance">
+        Please edit the existing comment or enter a different comment.
+      </p>
 
       <div className="actions">
         <button onClick={onCancel}>Cancel</button>
-        <button onClick={onViewExisting}>View Existing</button>
-        <button onClick={onSaveAnyway}>Save Anyway</button>
       </div>
     </div>
   )
@@ -255,7 +251,7 @@ const handleSaveComment = async (commentText: string) => {
   )
 
   if (duplicate) {
-    // Show duplicate modal instead of saving
+    // Show duplicate modal - prevent save
     setDuplicateModal({ isOpen: true, existingComment: duplicate })
     return
   }
@@ -264,9 +260,8 @@ const handleSaveComment = async (commentText: string) => {
   await saveComment(commentText)
 }
 
-const handleSaveAnyway = async () => {
-  // Save despite duplicate
-  await saveComment(commentText)
+const handleCancelDuplicate = () => {
+  // Close modal, keep text in input for user to edit
   setDuplicateModal({ isOpen: false, existingComment: null })
 }
 
@@ -277,15 +272,9 @@ return (
     <DuplicateCommentModal
       isOpen={duplicateModal.isOpen}
       existingComment={duplicateModal.existingComment?.text || ''}
-      newComment={commentText}
-      onCancel={() => setDuplicateModal({ isOpen: false, existingComment: null })}
-      onViewExisting={() => {
-        // Navigate to existing comment (optional)
-        setDuplicateModal({ isOpen: false, existingComment: null })
-      }}
-      onSaveAnyway={handleSaveAnyway}
       commentType="outcome"
       subjectName={selectedSubject?.name || 'Unknown'}
+      onCancel={handleCancelDuplicate}
     />
   </>
 )
@@ -363,10 +352,13 @@ Save comment, show success
 ```
 Modal displays with existing comment
          ↓
-User chooses action
-         ├→ Cancel: Close modal, return to editing
-         ├→ View Existing: (Optional) Navigate to existing
-         └→ Save Anyway: Save new comment as duplicate
+User reads guidance message
+         ↓
+User clicks "Cancel"
+         ↓
+Modal closes, return to editing with text preserved
+         ↓
+User edits comment or starts over with different text
 ```
 
 ---
@@ -419,8 +411,7 @@ User chooses action
 
 ## Success Criteria Checklist
 
-- [ ] >90% of duplicate attempts are prevented
-- [ ] <10% user override rate ("Save Anyway" clicks)
+- [ ] 100% of duplicate attempts are prevented
 - [ ] Zero false positive duplicate detections
 - [ ] >90% test coverage on new code
 - [ ] WCAG 2.1 AA accessibility compliance

@@ -19,7 +19,7 @@ This document contains detailed user stories for the duplicate comment preventio
 **WHEN** a teacher attempts to save an outcome comment
 **AND** that exact comment already exists for the selected subject
 **THEN THE SYSTEM SHALL** display a modal notification showing the existing comment
-**AND** prevent the save until the user chooses an action (Cancel, View Existing, or Save Anyway)
+**AND** prevent the save with only a Cancel option to return to editing
 
 ### Detailed Requirements
 
@@ -37,11 +37,12 @@ This document contains detailed user stories for the duplicate comment preventio
    - Title: "Duplicate Comment Detected"
    - Message: "This outcome comment already exists for [Subject Name]"
    - Existing comment text displayed in read-only container
-   - Three action buttons: "Cancel", "View Existing", "Save Anyway"
-6. User chooses action:
-   - If "Cancel": Modal closes, user returns to editing field with text preserved
-   - If "View Existing": Navigate to existing comment (optional: allow edit/delete)
-   - If "Save Anyway": Proceed with save, modal closes, new comment created
+   - Single action button: "Cancel"
+   - Additional message: "Please edit the existing comment or enter a different comment"
+6. User clicks "Cancel":
+   - Modal closes
+   - User returns to editing field with text preserved
+   - Save is prevented
 
 **Alternate Flows:**
 
@@ -80,20 +81,21 @@ This document contains detailed user stories for the duplicate comment preventio
 - [ ] Duplicates in other subjects are not reported
 
 **AC-1.4: Modal Display**
-- [ ] Modal has accessible title and close button
+- [ ] Modal has accessible title
 - [ ] Existing comment text is clearly displayed
+- [ ] Helpful message guides user to edit existing or enter different comment
 - [ ] Modal is keyboard navigable
 - [ ] Modal meets WCAG 2.1 AA accessibility standards
 
-**AC-1.5: User Actions**
-- [ ] "Cancel" closes modal, preserves input text
-- [ ] "View Existing" navigates to existing comment (implementation detail: optional)
-- [ ] "Save Anyway" saves new comment despite duplicate
-- [ ] All buttons are clearly labeled and actionable
+**AC-1.5: Cancel Button**
+- [ ] "Cancel" button closes modal
+- [ ] Input text is preserved after closing
+- [ ] User returns to editing field with focus
+- [ ] Button is clearly labeled and actionable
 
 **AC-1.6: Error Handling**
 - [ ] If comparison fails, show generic error (log to console)
-- [ ] Continue allowing save with "Save Anyway"
+- [ ] Prevent save if error occurs during comparison
 - [ ] No duplicate modal shown if error occurs
 
 **AC-1.7: Load Existing Comments**
@@ -120,8 +122,13 @@ test('should match after trimming whitespace', () => {
   // ...
 })
 
-// Test 4: Modal buttons work
-test('should close modal and save when "Save Anyway" clicked', () => {
+// Test 4: Modal cancel works
+test('should close modal and preserve input when Cancel clicked', () => {
+  // ...
+})
+
+// Test 5: Save is prevented
+test('should prevent save when duplicate detected', () => {
   // ...
 })
 ```
@@ -153,7 +160,7 @@ test('should close modal and save when "Save Anyway" clicked', () => {
 **WHEN** a teacher attempts to save a personalized comment
 **AND** that exact comment already exists for the same subject
 **THEN THE SYSTEM SHALL** display a modal notification showing the existing comment
-**AND** provide options to cancel, view existing, or save anyway
+**AND** prevent the save, returning the user to editing
 
 ### Detailed Requirements
 
@@ -171,11 +178,12 @@ test('should close modal and save when "Save Anyway" clicked', () => {
    - Title: "Duplicate Comment Detected"
    - Message: "This personalized comment already exists for [Subject Name]"
    - Existing comment text
-   - Three buttons: "Cancel", "View Existing", "Save Anyway"
-6. User chooses:
-   - "Cancel": Return to editing, preserve text
-   - "View Existing": Navigate to/view existing comment
-   - "Save Anyway": Create duplicate, save new comment
+   - Message: "Please edit the existing comment or enter a different comment"
+   - Single button: "Cancel"
+6. User clicks "Cancel":
+   - Modal closes
+   - User returns to editing with text preserved
+   - Save is prevented
 
 **Alternate Flows:**
 - Same as US-DCP-001 (No duplicate, Empty comment, User cancels)
@@ -200,17 +208,19 @@ test('should close modal and save when "Save Anyway" clicked', () => {
 **AC-2.4: Modal Display**
 - [ ] Shows existing comment text clearly
 - [ ] Accessible title and controls
+- [ ] Helpful message guides user action
 - [ ] Proper keyboard navigation
 - [ ] WCAG 2.1 AA compliant
 
-**AC-2.5: User Actions**
-- [ ] "Cancel" closes, preserves input
-- [ ] "View Existing" allows viewing/editing existing comment
-- [ ] "Save Anyway" creates new comment
+**AC-2.5: Cancel Button**
+- [ ] "Cancel" closes modal
+- [ ] Input text is preserved
+- [ ] User returns to editing with focus
+- [ ] Save is prevented
 
 **AC-2.6: Error Handling**
 - [ ] Graceful error if comparison fails
-- [ ] Allow save with "Save Anyway" if error occurs
+- [ ] Prevent save if error occurs
 - [ ] Log errors appropriately
 
 **AC-2.7: Comment List Availability**
@@ -254,97 +264,19 @@ test('should handle multi-line comments correctly', () => {
 
 ---
 
-## US-DCP-003: Whitespace & Empty Comment Validation
+## Note on Existing Constraints
 
-### Story
+**Whitespace & Empty Comment Validation**
 
-**WHEN** a user attempts to save a comment with only whitespace
-**THEN THE SYSTEM SHALL** show an error message and prevent save
-**AND WHEN** comparing for duplicates, the system shall trim leading/trailing whitespace
+The comment components already prevent saving when there are zero non-whitespace characters. This existing functionality will be maintained and verified through existing tests. This is NOT a new story to be implemented.
 
-### Detailed Requirements
+**Existing Behavior to Maintain:**
+- Comments cannot be saved if they contain only whitespace
+- Whitespace is trimmed before duplicate comparison
+- Internal whitespace is preserved
+- Clear error messages guide users to enter valid comments
 
-**Precondition:**
-- User is attempting to save a comment (outcome or personalized)
-
-**Main Flow - Empty Comment:**
-1. User clicks Save with empty or whitespace-only input
-2. System shows error: "Please enter a comment"
-3. Save is blocked
-4. User returns to editing with text preserved
-
-**Main Flow - Whitespace Trimming:**
-1. User enters comment with leading/trailing spaces: "  My comment  "
-2. System trims to "My comment" for duplicate comparison
-3. Comparison checks against existing comments
-4. Save proceeds with trimmed text
-
-### Acceptance Criteria
-
-**AC-3.1: Empty Comment Validation**
-- [ ] Reject comments that are completely empty (length === 0)
-- [ ] Show error message: "Please enter a comment"
-- [ ] Return focus to input field
-- [ ] Do not attempt duplicate check for empty comments
-
-**AC-3.2: Whitespace-Only Validation**
-- [ ] Reject comments with only whitespace (spaces, tabs, newlines)
-- [ ] "   " (three spaces) is rejected
-- [ ] "\n\t\n" (newlines/tabs) is rejected
-- [ ] Show error message consistently
-
-**AC-3.3: Whitespace Trimming**
-- [ ] Leading whitespace removed: "  text" → "text"
-- [ ] Trailing whitespace removed: "text  " → "text"
-- [ ] Both removed: "  text  " → "text"
-- [ ] Trimming happens BEFORE duplicate comparison
-
-**AC-3.4: Internal Whitespace Preserved**
-- [ ] Multiple internal spaces preserved: "My  comment" → "My  comment"
-- [ ] Tabs preserved: "My\tcomment" → "My\tcomment"
-- [ ] Newlines preserved for multi-line: "Line1\nLine2" → "Line1\nLine2"
-
-**AC-3.5: Error Message**
-- [ ] Clear, user-friendly message
-- [ ] Guides user to enter comment
-- [ ] No technical jargon
-
-### Testing Strategy
-
-**RED Phase:**
-```typescript
-test('should reject empty comments', () => {
-  // ...
-})
-
-test('should reject whitespace-only comments', () => {
-  // ...
-})
-
-test('should trim whitespace before comparison', () => {
-  // ...
-})
-
-test('should preserve internal whitespace', () => {
-  // ...
-})
-```
-
-**GREEN Phase:**
-- Add validation before duplicate check
-- Trim text during comparison
-
-**REFACTOR Phase:**
-- Extract to validation utility
-- Reuse across modals
-
-### Story Points: 3
-
-### Priority: Medium
-
-### Dependencies
-- No external dependencies
-- Should be done before US-DCP-001 and US-DCP-002 for clean foundation
+**Verification:** Ensure that duplicate detection works correctly with the existing whitespace handling already in place.
 
 ---
 
@@ -363,10 +295,7 @@ test('should preserve internal whitespace', () => {
 interface DuplicateCommentModalProps {
   isOpen: boolean
   existingComment: string
-  newComment: string
   onCancel: () => void
-  onViewExisting: () => void
-  onSaveAnyway: () => void
   commentType: 'outcome' | 'personalized'
   subjectName: string
 }
@@ -375,7 +304,7 @@ interface DuplicateCommentModalProps {
 **Component Responsibilities:**
 1. Display modal with duplicate warning
 2. Show existing comment text
-3. Handle three user actions (Cancel, View Existing, Save Anyway)
+3. Handle Cancel user action to return to editing
 4. Manage accessibility (ARIA labels, keyboard nav)
 5. Adapt message based on comment type
 
@@ -392,11 +321,9 @@ interface DuplicateCommentModalProps {
 - [ ] Displays existing comment in read-only container
 - [ ] Labels indicate this is the existing comment
 
-**AC-4.3: Button Handlers**
+**AC-4.3: Button Handler**
 - [ ] "Cancel" button calls onCancel prop
-- [ ] "View Existing" button calls onViewExisting prop
-- [ ] "Save Anyway" button calls onSaveAnyway prop
-- [ ] All buttons properly labeled
+- [ ] Button is properly labeled and accessible
 
 **AC-4.4: Accessibility**
 - [ ] Keyboard navigable (Tab through buttons, Enter to activate)
@@ -472,10 +399,11 @@ test('should be keyboard accessible', () => {
 2. Try to create outcome comment "Good work" → blocked (match after trim)
 3. Try to create outcome comment "  Good work  " → blocked
 
-**Scenario 4: User Override**
+**Scenario 4: User Must Change Comment**
 1. Try to create duplicate → modal appears
-2. Click "Save Anyway" → comment saves
-3. Now two identical comments exist (allowed if intentional)
+2. Click "Cancel" → return to editing
+3. Edit comment text → different comment now
+4. Click Save → saves successfully (no longer duplicate)
 
 ---
 
@@ -485,7 +413,6 @@ test('should be keyboard accessible', () => {
 |-------|----|--------------| -------|
 | US-DCP-001 | 1.1-1.7 | OutcomeCommentsModal.duplicate-detection.test.tsx | Pending |
 | US-DCP-002 | 2.1-2.7 | PersonalizedCommentsModal.duplicate-detection.test.tsx | Pending |
-| US-DCP-003 | 3.1-3.5 | Validation utility tests | Pending |
 | US-DCP-004 | 4.1-4.6 | DuplicateCommentModal.test.tsx | Pending |
 
 ---
