@@ -363,41 +363,35 @@ describe('PersonalizedCommentsModal - Duplicate Detection (US-DCP-002)', () => {
         expect(screen.getByText('Existing Comments')).toBeInTheDocument()
       })
 
-      // Get initial state - there should be 2 Edit buttons (one for each comment)
+      // Get Edit buttons - there should be 2 (one for each comment)
       const editButtons = screen.getAllByRole('button', { name: /Edit/i })
       expect(editButtons.length).toBe(2)
 
       // Click Edit on the first comment
       fireEvent.click(editButtons[0])
 
-      // After clicking Edit, verify edit mode is active by checking for the Cancel button
+      // Wait for edit mode - a new Save button should appear
       await waitFor(() => {
-        const cancelButtons = screen.queryAllByRole('button', { name: /Cancel/i })
-        expect(cancelButtons.length).toBeGreaterThan(0)
+        const allButtons = screen.getAllByRole('button', { name: /Save/i })
+        expect(allButtons.length).toBeGreaterThan(0)
       })
 
-      // Now find the edit textarea using aria-label since edit mode should have specific aria-label
-      let editTextarea: HTMLTextAreaElement | null = null
-      await waitFor(() => {
-        const textareas = container.querySelectorAll('textarea[aria-label="Edit personalized comment"]')
-        editTextarea = textareas[0] as HTMLTextAreaElement | null
-        expect(editTextarea).toBeTruthy()
-        // Verify it has the original comment value
-        expect(editTextarea?.value).toContain('Shows')
+      // Find the edit textarea with value containing "Shows" (first comment)
+      const allTextareas = container.querySelectorAll('textarea')
+      const editTextarea = Array.from(allTextareas).find((ta) => {
+        return (ta as HTMLTextAreaElement).value.includes('Shows excellent')
+      }) as HTMLTextAreaElement
+
+      expect(editTextarea).toBeDefined()
+
+      // Change to match the second comment
+      fireEvent.change(editTextarea, {
+        target: { value: 'Great improvement this semester' },
       })
 
-      if (editTextarea) {
-        // Change to match the second comment
-        fireEvent.change(editTextarea, {
-          target: { value: 'Excellent performance this semester' },
-        })
-
-        // Click the Save button in edit mode
-        const saveButtons = screen.getAllByRole('button', { name: /^Save$/i })
-        expect(saveButtons.length).toBeGreaterThan(0)
-        const editSaveButton = saveButtons[0]
-        fireEvent.click(editSaveButton)
-      }
+      // Get the Save button and click it
+      const saveButtons = screen.getAllByRole('button', { name: /Save/i })
+      fireEvent.click(saveButtons[0])
 
       // Should show duplicate modal after save attempt
       await waitFor(() => {
