@@ -366,6 +366,111 @@ describe('OutcomeCommentsModal - Duplicate Detection (US-DCP-001)', () => {
     })
   })
 
+  describe('Duplicate Detection - Editing Comments', () => {
+    it('should prevent editing a comment to match an existing one', async () => {
+      const onUpdateComment = jest.fn()
+      const { container } = render(<OutcomeCommentsModal {...defaultProps} onUpdateComment={onUpdateComment} />)
+
+      // Wait for the Existing Comments section to render
+      await waitFor(() => {
+        expect(screen.getByText('Existing Comments')).toBeInTheDocument()
+      })
+
+      // Get initial state - there should be 2 Edit buttons (one for each comment)
+      const editButtons = screen.getAllByRole('button', { name: /Edit/i })
+      expect(editButtons.length).toBe(2)
+
+      // Click Edit on the first comment
+      fireEvent.click(editButtons[0])
+
+      // After clicking Edit, verify edit mode is active by checking for the Cancel button
+      await waitFor(() => {
+        const cancelButtons = screen.queryAllByRole('button', { name: /Cancel/i })
+        expect(cancelButtons.length).toBeGreaterThan(0)
+      })
+
+      // Now find the edit textarea using aria-label since edit mode should have specific aria-label
+      let editTextarea: HTMLTextAreaElement | null = null
+      await waitFor(() => {
+        const textareas = container.querySelectorAll('textarea[aria-label="Edit outcome comment"]')
+        editTextarea = textareas[0] as HTMLTextAreaElement | null
+        expect(editTextarea).toBeTruthy()
+        // Verify it has the original comment value
+        expect(editTextarea?.value).toContain('Shows')
+      })
+
+      if (editTextarea) {
+        // Change to match the second comment
+        fireEvent.change(editTextarea, {
+          target: { value: 'Demonstrates excellent problem-solving skills' },
+        })
+
+        // Click the Save button in edit mode
+        const saveButtons = screen.getAllByRole('button', { name: /^Save$/i })
+        expect(saveButtons.length).toBeGreaterThan(0)
+        const editSaveButton = saveButtons[0]
+        fireEvent.click(editSaveButton)
+      }
+
+      // Should show duplicate modal after save attempt
+      await waitFor(() => {
+        expect(screen.getByText(/Duplicate Comment Detected/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should allow editing a comment to a unique value', async () => {
+      const onUpdateComment = jest.fn().mockResolvedValue(undefined)
+      const { container } = render(
+        <OutcomeCommentsModal
+          {...defaultProps}
+          onUpdateComment={onUpdateComment}
+        />,
+      )
+
+      // Wait for the Existing Comments section to render
+      await waitFor(() => {
+        expect(screen.getByText('Existing Comments')).toBeInTheDocument()
+      })
+
+      // Find and click Edit on the first comment
+      const editButtons = screen.getAllByRole('button', { name: /Edit/i })
+      fireEvent.click(editButtons[0])
+
+      // After clicking Edit, wait for the textarea with the comment value to appear
+      let editTextarea: HTMLTextAreaElement | null = null
+      await waitFor(() => {
+        // Get all textareas from the container
+        const allTextareas = container.querySelectorAll('textarea')
+        // Find the one with the comment value (should be the edit textarea)
+        editTextarea = Array.from(allTextareas).find((ta) => {
+          return ta.value === 'Shows strong understanding of algebra'
+        }) as HTMLTextAreaElement | null
+        expect(editTextarea).toBeTruthy()
+      })
+
+      // Change to a unique value
+      if (editTextarea) {
+        fireEvent.change(editTextarea, {
+          target: { value: 'Unique edited comment' },
+        })
+
+        // Save - find the Save button
+        const saveButtons = screen.getAllByRole('button', { name: /Save/i })
+        expect(saveButtons.length).toBeGreaterThan(0)
+        fireEvent.click(saveButtons[saveButtons.length - 1])
+      }
+
+      // Should not show duplicate modal
+      await waitFor(() => {
+        expect(
+          screen.queryByText(/Duplicate Comment Detected/i),
+        ).not.toBeInTheDocument()
+      })
+
+      expect(onUpdateComment).toHaveBeenCalled()
+    })
+  })
+
   describe('Duplicate Detection - Multiline Comments', () => {
     it('should detect duplicate multiline comments', async () => {
       const multilineComment = 'Line 1\nLine 2\nLine 3'

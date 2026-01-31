@@ -209,6 +209,20 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
     }
 
     if (editingId) {
+      // Check for duplicate comments (US-DCP-001), excluding current comment
+      const commentsExcludingCurrent = outcomeComments.filter((c) => c.id !== editingId)
+      const duplicate = findDuplicateComment(
+        editContent,
+        commentsExcludingCurrent,
+        (comment) => comment.subjectId === entityData.id,
+        (comment) => comment.comment,
+      )
+
+      if (duplicate) {
+        setDuplicateModal({ isOpen: true, existingComment: duplicate })
+        return
+      }
+
       setValidationError('')
       await onUpdateComment(editingId, {
         comment: editContent.trim(),
