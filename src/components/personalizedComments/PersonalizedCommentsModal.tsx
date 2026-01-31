@@ -726,13 +726,15 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
         />
       )}
 
-      <DuplicateCommentModal
-        isOpen={duplicateModal.isOpen}
-        existingComment={duplicateModal.existingComment?.comment || ''}
-        commentType="personalized"
-        subjectName={entityData.name}
-        onCancel={handleDuplicateCancel}
-      />
+      {entityData && (
+        <DuplicateCommentModal
+          isOpen={duplicateModal.isOpen}
+          existingComment={duplicateModal.existingComment?.comment || ''}
+          commentType="personalized"
+          subjectName={entityData.name}
+          onCancel={handleDuplicateCancel}
+        />
+      )}
     </>
   )
 }
