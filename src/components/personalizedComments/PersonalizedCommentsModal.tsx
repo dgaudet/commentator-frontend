@@ -17,11 +17,18 @@
  * - US-PERS-005: Navigate back to subject list
  * - US-CP-001: Add Copy Button to Personalized Comments Page
  * - US-CP-002: Display Modal with Subject Selection
+ * - US-DCP-002: Prevent duplicate personalized comments
  *
  * US-DELETE-CONFIRM-002 Features:
  * - Uses standardized ConfirmationModal component
  * - Shows preview of comment text (truncated to 100 chars)
  * - Consistent UX with other delete operations
+ *
+ * US-DCP-002 Features:
+ * - Client-side duplicate detection for personalized comments
+ * - Shows DuplicateCommentModal when exact match found
+ * - Prevents save if duplicate detected
+ * - Preserves form state on duplicate detection
  *
  * UI Consistency: Migrated to design tokens (US-UI-003)
  * US-DARK-005: Updated to use dynamic theme colors
@@ -33,11 +40,13 @@ import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { DuplicateCommentModal } from '../common/DuplicateCommentModal'
 import { EmojiRatingSelector } from '../common/EmojiRatingSelector'
 import { CommentTextField } from '../common/CommentTextField'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 import { usePronounsQuery } from '../../hooks/usePronounsQuery'
+import { findDuplicateComment } from '../../utils/commentComparison'
 import { getRatingEmoji, getRatingLabel, getNormalizedRating, sortPersonalizedCommentsByRating } from '../../utils/personalizedCommentRating'
 import { replacePronounsWithPlaceholders } from '../../utils/pronouns'
 import { MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH } from '../../constants/commentLimits'
@@ -85,6 +94,13 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
     isOpen: false,
     commentId: null,
     commentText: '',
+  })
+  const [duplicateModal, setDuplicateModal] = useState<{
+    isOpen: boolean
+    existingComment: PersonalizedComment | null
+  }>({
+    isOpen: false,
+    existingComment: null,
   })
   const [validationError, setValidationError] = useState('')
   // US-CP-001: Copy Comments button state
@@ -235,6 +251,19 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
       return
     }
 
+    // Check for duplicate comments (US-DCP-002)
+    const duplicate = findDuplicateComment(
+      newCommentContent,
+      personalizedComments,
+      (comment) => comment.subjectId === entityData.id,
+      (comment) => comment.comment,
+    )
+
+    if (duplicate) {
+      setDuplicateModal({ isOpen: true, existingComment: duplicate })
+      return
+    }
+
     setValidationError('')
     await onCreateComment({
       subjectId: entityData.id,
@@ -298,6 +327,10 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
 
   const handleDeleteCancel = () => {
     setDeleteConfirmation({ isOpen: false, commentId: null, commentText: '' })
+  }
+
+  const handleDuplicateCancel = () => {
+    setDuplicateModal({ isOpen: false, existingComment: null })
   }
 
   // Truncate comment text for preview (US-DELETE-CONFIRM-002 AC3)
@@ -692,6 +725,14 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
           }}
         />
       )}
+
+      <DuplicateCommentModal
+        isOpen={duplicateModal.isOpen}
+        existingComment={duplicateModal.existingComment?.comment || ''}
+        commentType="personalized"
+        subjectName={entityData.name}
+        onCancel={handleDuplicateCancel}
+      />
     </>
   )
 }
