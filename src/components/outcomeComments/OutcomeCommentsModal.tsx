@@ -12,11 +12,18 @@
  * 2. Create new outcome comment for an entity
  * 3. Edit existing outcome comment
  * 4. Delete outcome comment with confirmation (US-DELETE-CONFIRM-001)
+ * 5. Prevent duplicate outcome comments (US-DCP-001)
  *
  * US-DELETE-CONFIRM-001 Features:
  * - Uses standardized ConfirmationModal component
  * - Shows preview of comment text (truncated to 100 chars)
  * - Consistent UX with other delete operations
+ *
+ * US-DCP-001 Features:
+ * - Client-side duplicate detection for outcome comments
+ * - Shows DuplicateCommentModal when exact match found
+ * - Prevents save if duplicate detected
+ * - Preserves form state on duplicate detection
  *
  * Related: TD-001 (OutcomeCommentsModal Subject Type Compatibility)
  * UI Consistency: Migrated to design tokens (US-UI-002)
@@ -26,10 +33,12 @@ import { useState, useMemo } from 'react'
 import type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest, Pronoun } from '../../types'
 import { useReplacePronounsButton } from '../../hooks/useReplacePronounsButton'
 import { sortOutcomeCommentsByRange } from '../../utils/sortOutcomeComments'
+import { findDuplicateComment } from '../../utils/commentComparison'
 import { LoadingSpinner } from '../common/LoadingSpinner'
 import { ErrorMessage } from '../common/ErrorMessage'
 import { Button } from '../common/Button'
 import { ConfirmationModal } from '../common/ConfirmationModal'
+import { DuplicateCommentModal } from '../common/DuplicateCommentModal'
 import { CommentTextField } from '../common/CommentTextField'
 import { ReplacePronounsButton } from './ReplacePronounsButton'
 import { spacing, typography, borders } from '../../theme/tokens'
@@ -81,6 +90,13 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
     isOpen: false,
     commentId: null,
     commentText: '',
+  })
+  const [duplicateModal, setDuplicateModal] = useState<{
+    isOpen: boolean
+    existingComment: OutcomeComment | null
+  }>({
+    isOpen: false,
+    existingComment: null,
   })
   const [validationError, setValidationError] = useState('')
   const { isLoading: replacePronounsLoading, message: replacePronounsMessage, handleReplacePronounsFunctionality, getMessageBoxStyle } = useReplacePronounsButton()
@@ -143,6 +159,19 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
       return
     }
 
+    // Check for duplicate comments (US-DCP-001)
+    const duplicate = findDuplicateComment(
+      newCommentContent,
+      outcomeComments,
+      (comment) => comment.subjectId === entityData.id,
+      (comment) => comment.comment,
+    )
+
+    if (duplicate) {
+      setDuplicateModal({ isOpen: true, existingComment: duplicate })
+      return
+    }
+
     setValidationError('')
     await onCreateComment({
       subjectId: entityData.id,
@@ -180,6 +209,20 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
     }
 
     if (editingId) {
+      // Check for duplicate comments (US-DCP-001), excluding current comment
+      const commentsExcludingCurrent = outcomeComments.filter((c) => c.id !== editingId)
+      const duplicate = findDuplicateComment(
+        editContent,
+        commentsExcludingCurrent,
+        (comment) => comment.subjectId === entityData.id,
+        (comment) => comment.comment,
+      )
+
+      if (duplicate) {
+        setDuplicateModal({ isOpen: true, existingComment: duplicate })
+        return
+      }
+
       setValidationError('')
       await onUpdateComment(editingId, {
         comment: editContent.trim(),
@@ -218,6 +261,10 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
 
   const handleDeleteCancel = () => {
     setDeleteConfirmation({ isOpen: false, commentId: null, commentText: '' })
+  }
+
+  const handleDuplicateCancel = () => {
+    setDuplicateModal({ isOpen: false, existingComment: null })
   }
 
   // Truncate comment text for preview (US-DELETE-CONFIRM-001 AC3)
@@ -670,6 +717,14 @@ export const OutcomeCommentsModal = <T extends { id: string; name: string }>({
           "{getCommentPreview(deleteConfirmation.commentText)}"
         </p>
       </ConfirmationModal>
+
+      <DuplicateCommentModal
+        isOpen={duplicateModal.isOpen}
+        existingComment={duplicateModal.existingComment?.comment || ''}
+        commentType="outcome"
+        subjectName={entityData.name}
+        onCancel={handleDuplicateCancel}
+      />
     </>
   )
 }
