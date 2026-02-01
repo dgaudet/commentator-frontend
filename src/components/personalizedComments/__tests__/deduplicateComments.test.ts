@@ -7,6 +7,7 @@
  */
 
 import type { ParsedComment } from '../parseComments'
+import type { PersonalizedComment } from '../../../types'
 import { deduplicateComments } from '../deduplicateComments'
 
 describe('deduplicateComments', () => {
@@ -311,6 +312,305 @@ describe('deduplicateComments', () => {
       expect(result.duplicateCount).toBe(4)
       expect(result.unique.map((c) => c.text)).toContain('Excellent participation')
       expect(result.unique.map((c) => c.text)).toContain('Needs improvement')
+    })
+  })
+})
+
+/**
+ * US-1: Duplicate Detection Against Existing Comments
+ * NEW FEATURE: Check uploaded comments against existing PersonalizedComments from modal state
+ *
+ * Acceptance Criteria:
+ * - ✅ Accepts optional existingComments parameter
+ * - ✅ Case-insensitive matching against existing comments
+ * - ✅ Whitespace normalization before comparison
+ * - ✅ Returns accurate duplicateCount when checking against existing
+ * - ✅ Removes duplicates from unique array when they match existing
+ * - ✅ Preserves uploaded comment order for non-duplicates
+ */
+describe('deduplicateComments - Checking Against Existing Comments', () => {
+  describe('AC1: Basic duplicate detection against existing', () => {
+    it('should detect exact match with existing comment', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'Great work', rating: 5 },
+      ]
+
+      const existingComments: PersonalizedComment[] = [
+        {
+          id: '1',
+          subjectId: 'subject-1',
+          comment: 'Great work',
+          rating: 5,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+      ]
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      expect(result.unique).toHaveLength(0)
+      expect(result.duplicateCount).toBe(1)
+      expect(result.removedDuplicates).toHaveLength(1)
+    })
+
+    it('should detect case-insensitive duplicates against existing', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'Great work', rating: 5 },
+      ]
+
+      const existingComments: PersonalizedComment[] = [
+        {
+          id: '1',
+          subjectId: 'subject-1',
+          comment: 'great work',
+          rating: 5,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+      ]
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      expect(result.unique).toHaveLength(0)
+      expect(result.duplicateCount).toBe(1)
+    })
+
+    it('should detect duplicates with whitespace variations', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: '  Great work  ', rating: 5 },
+      ]
+
+      const existingComments: PersonalizedComment[] = [
+        {
+          id: '1',
+          subjectId: 'subject-1',
+          comment: 'Great work',
+          rating: 5,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+      ]
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      expect(result.unique).toHaveLength(0)
+      expect(result.duplicateCount).toBe(1)
+    })
+  })
+
+  describe('AC2: Preserve non-duplicates when checking existing', () => {
+    it('should keep comment that does not match existing', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'New comment', rating: 5 },
+      ]
+
+      const existingComments: PersonalizedComment[] = [
+        {
+          id: '1',
+          subjectId: 'subject-1',
+          comment: 'Great work',
+          rating: 5,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+      ]
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      expect(result.unique).toHaveLength(1)
+      expect(result.unique[0].text).toBe('New comment')
+      expect(result.duplicateCount).toBe(0)
+    })
+
+    it('should keep multiple non-duplicate comments', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'New comment 1', rating: 5 },
+        { text: 'New comment 2', rating: 4 },
+        { text: 'New comment 3', rating: 3 },
+      ]
+
+      const existingComments: PersonalizedComment[] = [
+        {
+          id: '1',
+          subjectId: 'subject-1',
+          comment: 'Great work',
+          rating: 5,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+      ]
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      expect(result.unique).toHaveLength(3)
+      expect(result.duplicateCount).toBe(0)
+    })
+  })
+
+  describe('AC3: Mixed duplicates and new comments', () => {
+    it('should filter out duplicates but keep new comments', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'Great work', rating: 5 },
+        { text: 'New comment', rating: 4 },
+        { text: 'great work', rating: 3 }, // duplicate
+      ]
+
+      const existingComments: PersonalizedComment[] = [
+        {
+          id: '1',
+          subjectId: 'subject-1',
+          comment: 'Great work',
+          rating: 5,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+      ]
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      expect(result.unique).toHaveLength(1)
+      expect(result.unique[0].text).toBe('New comment')
+      expect(result.duplicateCount).toBe(2) // One exact match with existing, one duplicate within upload
+    })
+
+    it('should handle uploaded duplicates + existing duplicates', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'Great work', rating: 5 },
+        { text: 'great work', rating: 5 }, // dup within upload
+        { text: 'New comment', rating: 4 },
+      ]
+
+      const existingComments: PersonalizedComment[] = [
+        {
+          id: '1',
+          subjectId: 'subject-1',
+          comment: 'Great work',
+          rating: 5,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+      ]
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      // Should have: "New comment" (the only non-duplicate)
+      expect(result.unique).toHaveLength(1)
+      expect(result.unique[0].text).toBe('New comment')
+      // Duplicate count: 1 (from within upload: great work) + 1 (from existing: Great work)
+      expect(result.duplicateCount).toBe(2)
+    })
+  })
+
+  describe('AC4: Edge cases with existing comments', () => {
+    it('should handle empty existing comments array', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'New comment', rating: 5 },
+      ]
+
+      const existingComments: PersonalizedComment[] = []
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      expect(result.unique).toHaveLength(1)
+      expect(result.duplicateCount).toBe(0)
+    })
+
+    it('should handle no existing comments parameter', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'Comment 1', rating: 5 },
+        { text: 'comment 1', rating: 5 },
+      ]
+
+      const result = deduplicateComments(uploadedComments)
+
+      // Should only deduplicate within uploaded (existing behavior)
+      expect(result.unique).toHaveLength(1)
+      expect(result.duplicateCount).toBe(1)
+    })
+
+    it('should handle multiple existing comments', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'Comment 1', rating: 5 },
+        { text: 'Comment 2', rating: 4 },
+        { text: 'Comment 3', rating: 3 },
+        { text: 'New unique', rating: 2 },
+      ]
+
+      const existingComments: PersonalizedComment[] = [
+        {
+          id: '1',
+          subjectId: 'subject-1',
+          comment: 'Comment 1',
+          rating: 5,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+        {
+          id: '2',
+          subjectId: 'subject-1',
+          comment: 'Comment 2',
+          rating: 4,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+      ]
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      expect(result.unique).toHaveLength(2)
+      expect(result.unique[0].text).toBe('Comment 3')
+      expect(result.unique[1].text).toBe('New unique')
+      expect(result.duplicateCount).toBe(2)
+    })
+  })
+
+  describe('AC5: Rating irrelevant for duplicate detection', () => {
+    it('should consider different ratings as same duplicate if text matches existing', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'Great work', rating: 3 }, // Different rating from existing
+      ]
+
+      const existingComments: PersonalizedComment[] = [
+        {
+          id: '1',
+          subjectId: 'subject-1',
+          comment: 'Great work',
+          rating: 5,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+      ]
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      // Should still be detected as duplicate despite different rating
+      expect(result.unique).toHaveLength(0)
+      expect(result.duplicateCount).toBe(1)
+    })
+  })
+
+  describe('AC6: Performance with large existing dataset', () => {
+    it('should efficiently check against many existing comments', () => {
+      const uploadedComments: ParsedComment[] = [
+        { text: 'New comment 1', rating: 5 },
+        { text: 'New comment 2', rating: 4 },
+      ]
+
+      // Create 1000 existing comments
+      const existingComments: PersonalizedComment[] = Array.from({ length: 1000 }, (_, i) => ({
+        id: `existing-${i}`,
+        subjectId: 'subject-1',
+        comment: `Existing comment ${i}`,
+        rating: (i % 5) + 1,
+        createdAt: '2026-01-01',
+        updatedAt: '2026-01-01',
+      }))
+
+      const result = deduplicateComments(uploadedComments, existingComments)
+
+      // New comments should not match any existing
+      expect(result.unique).toHaveLength(2)
+      expect(result.duplicateCount).toBe(0)
     })
   })
 })

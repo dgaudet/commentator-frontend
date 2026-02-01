@@ -1,14 +1,19 @@
 /**
  * Deduplication Utility
  * Story 1: Implement Deduplication Logic
+ * US-1: Bulk Upload Duplicate Detection - Check Against Existing Comments
  *
  * Removes duplicate comments from bulk uploads using exact text matching
  * (case-insensitive with whitespace normalization).
+ *
+ * NEW: Can optionally check uploaded comments against existing PersonalizedComments
+ * from modal state to prevent re-saving duplicates.
  *
  * Algorithm: O(n) time complexity using Set-based deduplication
  */
 
 import type { ParsedComment } from './parseComments'
+import type { PersonalizedComment } from '../../types'
 
 /**
  * Result of deduplication operation
@@ -46,15 +51,29 @@ function normalizeText(text: string): string {
  * Duplicates are determined by comparing normalized comment text (case-insensitive, whitespace-normalized).
  * Comments with different ratings but identical text are still considered duplicates.
  *
- * **Performance**: O(n) time complexity, O(n) space complexity using Set-based deduplication
+ * NEW (US-1): Optionally checks uploaded comments against existing PersonalizedComments.
+ * This prevents re-importing comments that already exist in the modal state.
+ *
+ * **Algorithm Flow**:
+ * 1. Normalize existing comments (if provided) into a Set
+ * 2. For each uploaded comment:
+ *    a. Check if it matches any existing comment
+ *    b. Check if it matches any previously processed uploaded comment
+ *    c. If new, add to unique list; if duplicate, add to removed list
+ * 3. Return deduplicated results
+ *
+ * **Performance**: O(n + m) where n = uploaded comments, m = existing comments
+ * Using Set-based lookups for O(1) average case duplicate detection
  *
  * @param comments - Array of parsed comments to deduplicate
+ * @param existingComments - Optional array of existing PersonalizedComments to check against
  * @returns Object containing:
  *   - `unique`: Array of deduplicated comments (first occurrence preserved)
- *   - `duplicateCount`: Number of duplicate comments removed
+ *   - `duplicateCount`: Number of duplicate comments removed (from both uploads and existing)
  *   - `removedDuplicates`: Array of comment objects that were removed (for debugging/logging)
  *
  * @example
+ * // Example 1: Dedup within upload (existing behavior)
  * const comments = [
  *   { text: 'Great work', rating: 5 },
  *   { text: 'great work', rating: 5 }, // duplicate - different case
@@ -63,13 +82,37 @@ function normalizeText(text: string): string {
  * const result = deduplicateComments(comments)
  * // result.unique = [{ text: 'Great work', rating: 5 }, { text: 'Excellent', rating: 4 }]
  * // result.duplicateCount = 1
- * // result.removedDuplicates = [{ text: 'great work', rating: 5 }]
+ *
+ * @example
+ * // Example 2: Dedup against existing comments (new feature)
+ * const uploaded = [
+ *   { text: 'Great work', rating: 5 },
+ *   { text: 'New comment', rating: 4 }
+ * ]
+ * const existing = [
+ *   { id: '1', comment: 'Great work', ... }
+ * ]
+ * const result = deduplicateComments(uploaded, existing)
+ * // result.unique = [{ text: 'New comment', rating: 4 }]
+ * // result.duplicateCount = 1 (matched existing "Great work")
  */
-export function deduplicateComments(comments: ParsedComment[]): DeduplicationResult {
+export function deduplicateComments(
+  comments: ParsedComment[],
+  existingComments?: PersonalizedComment[],
+): DeduplicationResult {
   const seen = new Set<string>()
   const unique: ParsedComment[] = []
   const removedDuplicates: ParsedComment[] = []
 
+  // Step 1: Add existing comments to seen set (US-1 new feature)
+  if (existingComments && existingComments.length > 0) {
+    for (const existing of existingComments) {
+      const normalized = normalizeText(existing.comment)
+      seen.add(normalized)
+    }
+  }
+
+  // Step 2: Process uploaded comments
   for (const comment of comments) {
     const normalized = normalizeText(comment.text)
 
