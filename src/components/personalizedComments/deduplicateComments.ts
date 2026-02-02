@@ -9,7 +9,10 @@
  * NEW: Can optionally check uploaded comments against existing PersonalizedComments
  * from modal state to prevent re-saving duplicates.
  *
- * Algorithm: O(n) time complexity using Set-based deduplication
+ * Algorithm: O(n + m) time complexity where:
+ * - n = number of uploaded comments
+ * - m = number of existing comments (if provided, else 0)
+ * Uses Set-based deduplication for O(1) average case duplicate detection
  */
 
 import type { ParsedComment } from './parseComments'
