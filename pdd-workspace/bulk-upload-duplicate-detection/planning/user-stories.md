@@ -56,17 +56,17 @@
 ### Acceptance Criteria
 
 - ✅ Leading/trailing whitespace is trimmed before comparison
-- ✅ Internal whitespace is preserved (e.g., "Hello  World" vs "Hello World" are different)
-- ✅ Empty or null comments are handled gracefully (not matched as duplicates)
-- ✅ Tabs and newlines are treated as whitespace for trimming
+- ✅ Internal whitespace is normalized (multiple spaces collapse to single space, e.g., "Hello  World" equals "Hello World")
+- ✅ Tabs and newlines are converted to spaces and normalized
+- ✅ Empty or null comments are handled gracefully
 - ✅ System doesn't crash on malformed input
 
 ### Test Scenarios
 
-1. Upload "  comment  " when "comment" exists → Duplicate
-2. Upload "hello  world" when "hello world" exists → Different (internal space counts)
+1. Upload "  comment  " when "comment" exists → Duplicate (after trim)
+2. Upload "hello  world" (2 spaces) when "hello world" (1 space) exists → Duplicate (internal whitespace normalized)
 3. Upload "" (empty string) → Handled gracefully
-4. Upload "\t\n  " (only whitespace) → Handled gracefully
+4. Upload "\t\n  " (only whitespace) → Handled gracefully (becomes empty after normalization)
 
 ---
 

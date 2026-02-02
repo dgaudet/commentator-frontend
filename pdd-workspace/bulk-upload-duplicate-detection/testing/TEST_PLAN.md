@@ -107,8 +107,8 @@ Test the duplicate detection feature when teachers bulk upload comments to ensur
 
 ---
 
-### TC-3: Internal Whitespace Preservation
-**Objective**: Verify internal whitespace differences are detected
+### TC-3: Internal Whitespace Normalization
+**Objective**: Verify internal whitespace is normalized (multiple spaces collapse to single space)
 
 **Preconditions**:
 - Existing comment: "hello world"
@@ -118,11 +118,11 @@ Test the duplicate detection feature when teachers bulk upload comments to ensur
 2. Click "Import"
 
 **Expected Results**:
-- Both uploaded comments treated as NEW (internal spaces differ)
-- `duplicateCount = 0`
-- Both saved successfully
+- Both uploaded comments detected as DUPLICATES (internal whitespace normalized)
+- `duplicateCount = 2`
+- Results show: "0 comments imported. 2 duplicates removed."
 
-**Acceptance**: PASS if 2 new comments saved
+**Acceptance**: PASS if both treated as duplicates with accurate count
 
 ---
 

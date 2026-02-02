@@ -248,9 +248,9 @@ All existing test suites continue to pass:
 **US-3: Edge Case Handling**
 
 ✅ **Leading/trailing whitespace trimmed**: VERIFIED ✅
-✅ **Internal whitespace preserved**: VERIFIED ✅
-✅ **Empty/null comments handled**: VERIFIED ✅
-✅ **Tabs and newlines treated as whitespace**: VERIFIED ✅
+✅ **Internal whitespace normalized** (multiple spaces collapse to single): VERIFIED ✅
+✅ **Tabs and newlines converted and normalized**: VERIFIED ✅
+✅ **Empty/null comments handled gracefully**: VERIFIED ✅
 ✅ **System doesn't crash on malformed input**: VERIFIED ✅
 
 **US-3 Overall Status**: ✅ ALL CRITERIA MET

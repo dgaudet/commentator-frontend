@@ -111,8 +111,10 @@ The bulk upload duplicate detection feature is now complete and has passed compr
 - ✅ Count accessible in data structure
 
 **US-3: Edge Case Handling**
-- ✅ Whitespace edge cases handled
-- ✅ Empty/null values handled
+- ✅ Leading/trailing whitespace trimmed
+- ✅ Internal whitespace normalized (multiple spaces collapse to single space)
+- ✅ Tabs and newlines converted to spaces and normalized
+- ✅ Empty/null values handled gracefully
 - ✅ System doesn't crash on malformed input
 
 **US-4: Results Display**
