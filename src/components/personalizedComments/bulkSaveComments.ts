@@ -2,15 +2,16 @@
  * bulkSaveComments utility function
  * Story 2: Integrate Deduplication into Bulk Save Flow
  * Story 4: Validate and Save Comments Sequentially
+ * US-1: Check Against Existing Comments
  *
  * Saves parsed comments to the backend via the existing API one at a time:
- * 1. Deduplicates comments (Story 2)
+ * 1. Deduplicates comments, optionally checking against existing PersonalizedComments
  * 2. Saves only unique comments to the backend
  * 3. Tracks successful and failed imports
  * 4. Maximizes successful imports by continuing even if some fail
  */
 
-import type { CreatePersonalizedCommentRequest } from '../../types'
+import type { CreatePersonalizedCommentRequest, PersonalizedComment } from '../../types'
 import type { ParsedComment } from './parseComments'
 import { deduplicateComments } from './deduplicateComments'
 
@@ -37,10 +38,11 @@ export interface BulkSaveResult {
  *
  * **Workflow**:
  * 1. Deduplicates input comments (case-insensitive, whitespace-normalized)
- * 2. Saves only unique comments to the API one-by-one
- * 3. Tracks successful and failed saves separately
- * 4. Continues processing even if some saves fail
- * 5. Reports duplicate count and comprehensive save results
+ * 2. Optionally checks against existing PersonalizedComments (US-1 feature)
+ * 3. Saves only unique comments to the API one-by-one
+ * 4. Tracks successful and failed saves separately
+ * 5. Continues processing even if some saves fail
+ * 6. Reports duplicate count and comprehensive save results
  *
  * **Note**: `totalAttempted` reflects the original input count (before deduplication),
  * allowing callers to understand the ratio of duplicates removed.
@@ -49,6 +51,7 @@ export interface BulkSaveResult {
  * @param comments - Array of parsed comments to deduplicate and save
  * @param createComment - API function to save individual comments
  * @param onProgress - Optional callback to report progress (called after each comment processed)
+ * @param existingComments - Optional array of existing PersonalizedComments to check against (US-1)
  * @returns Result object with successful saves, failed saves, duplicate count, and total attempted
  */
 export async function bulkSaveComments(
@@ -56,9 +59,10 @@ export async function bulkSaveComments(
   comments: ParsedComment[],
   createComment: (request: CreatePersonalizedCommentRequest) => Promise<unknown>,
   onProgress?: (current: number) => void,
+  existingComments?: PersonalizedComment[],
 ): Promise<BulkSaveResult> {
-  // Step 1: Deduplicate comments before saving (Story 2)
-  const dedup = deduplicateComments(comments)
+  // Step 1: Deduplicate comments before saving (Story 2) + check existing (US-1)
+  const dedup = deduplicateComments(comments, existingComments)
 
   const result: BulkSaveResult = {
     successful: [],

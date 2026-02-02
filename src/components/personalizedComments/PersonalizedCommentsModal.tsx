@@ -723,6 +723,7 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
       )}
 
       {/* Story 1: Bulk Upload Modal */}
+      {/* US-1: Pass existing comments to detect duplicates */}
       {entityData && (
         <BulkUploadModal
           isOpen={isBulkUploadModalOpen}
@@ -735,7 +736,14 @@ export const PersonalizedCommentsModal = <T extends { id: string; name: string }
             // Story 4: Sequential save using existing API
             // bulkSaveComments attempts each comment via onCreateComment, tracking successes/failures
             // Story 5: Pass progress callback for real-time progress updates
-            return bulkSaveComments(entityData.id, comments, onCreateComment, onProgress)
+            // US-1: Pass existing comments to detect and skip duplicates
+            return bulkSaveComments(
+              entityData.id,
+              comments,
+              onCreateComment,
+              onProgress,
+              personalizedComments,
+            )
           }}
         />
       )}
