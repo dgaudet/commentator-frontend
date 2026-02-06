@@ -31,11 +31,12 @@
  */
 
 import { useState, useEffect } from 'react'
-import type { Subject } from '../../types'
+import type { Subject, PersonalizedCommentCopyResult } from '../../types'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
 import { Button } from '../common/Button'
 import { personalizedCommentService } from '../../services/api/personalizedCommentService'
+import { formatSuccessMessage } from '../../utils/formatCopyMessage'
 
 interface CopyCommentsModalProps {
   isOpen: boolean
@@ -62,10 +63,8 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
   // US-CP-004: API integration state
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<{
-    count: number
-    overwrite: boolean
-  } | null>(null)
+  // US-CP-006: Updated to use PersonalizedCommentCopyResult from API
+  const [success, setSuccess] = useState<PersonalizedCommentCopyResult | null>(null)
 
   // AC-2.3: Filter out source subject and sort alphabetically
   const availableTargets = ownedSubjects
@@ -87,6 +86,7 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
   }, [isOpen])
 
   // US-CP-004: Handle copy action with API call
+  // US-CP-006: Updated to handle new PersonalizedCommentCopyResult response type
   const handleCopy = async () => {
     if (!selectedTargetId) {
       setError('Please select a target subject')
@@ -96,15 +96,13 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
     setIsLoading(true)
     setError(null)
     try {
-      const copied = await personalizedCommentService.copy({
+      const result = await personalizedCommentService.copy({
         subjectFromId: sourceSubjectId,
         subjectToId: selectedTargetId,
         overwrite: overwriteMode,
       })
-      setSuccess({
-        count: copied.length,
-        overwrite: overwriteMode,
-      })
+      // Result now contains: { successCount, duplicateCount, overwrite }
+      setSuccess(result)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to copy comments'
       setError(errorMessage)
@@ -399,7 +397,7 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
           </div>
         )}
 
-        {/* Success State Display (AC-4.3) */}
+        {/* Success State Display (AC-4.3, US-CP-007) */}
         {success && (
           <div
             style={{
@@ -415,19 +413,9 @@ export const CopyCommentsModal: React.FC<CopyCommentsModalProps> = ({
                 fontSize: typography.fontSize.sm,
                 color: 'rgb(34, 197, 94)',
                 margin: 0,
-                marginBottom: spacing.xs,
               }}
             >
-              Successfully copied {success.count} {success.count === 1 ? 'comment' : 'comments'} to {targetName}
-            </p>
-            <p
-              style={{
-                fontSize: typography.fontSize.sm,
-                color: 'rgb(34, 197, 94)',
-                margin: 0,
-              }}
-            >
-              {success.overwrite ? 'Overwrote existing comments' : 'Appended to existing comments'}
+              {formatSuccessMessage(success, targetName)}
             </p>
           </div>
         )}

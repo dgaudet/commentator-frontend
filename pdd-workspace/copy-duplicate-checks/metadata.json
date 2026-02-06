@@ -1,0 +1,148 @@
+{
+  "feature": "copy-duplicate-checks",
+  "title": "Copy Personalized Comments with Duplicate Detection",
+  "description": "Update frontend to handle new PersonalizedCommentCopyResult response type from the /personalized-comment/copy API endpoint",
+  "complexity": {
+    "level": "L1",
+    "category": "Micro",
+    "reasoning": "Single component update with straightforward service method change. Response type is simpler (object vs array). No data model changes. Clear test patterns exist from prior work.",
+    "assessedAt": "2026-02-06T00:00:00Z",
+    "estimatedEffort": "1-2 weeks",
+    "teamSize": "1 developer"
+  },
+  "phases": {
+    "planning": {
+      "status": "COMPLETE",
+      "startDate": "2026-02-06",
+      "completedDate": "2026-02-06",
+      "artifacts": [
+        "intent.md",
+        "requirements.md",
+        "design.md",
+        "tasks.md"
+      ]
+    },
+    "implementation": {
+      "status": "PENDING",
+      "startDate": null,
+      "expectedEndDate": null,
+      "tasks": 8,
+      "taskBreakdown": "See tasks.md for detailed breakdown"
+    },
+    "validation": {
+      "status": "PENDING",
+      "startDate": null,
+      "expectedEndDate": null
+    }
+  },
+  "scope": {
+    "in_scope": [
+      "Update personalizedCommentService.copy() return type",
+      "Add PersonalizedCommentCopyResult TypeScript interface",
+      "Update CopyCommentsModal success message logic",
+      "Display duplicate information in append mode",
+      "Handle singular/plural in messages",
+      "Write unit tests for service method",
+      "Write component tests for message formatting",
+      "Verify existing error handling preserved"
+    ],
+    "out_of_scope": [
+      "Backend API changes",
+      "Changes to bulk upload functionality",
+      "UI redesign or modal restructuring",
+      "Changes to other copy features"
+    ]
+  },
+  "risk": {
+    "level": "LOW",
+    "rationale": "Single component affected, straightforward type changes, no breaking changes, existing error handling preserved",
+    "mitigation": [
+      "Strict TypeScript checking",
+      "Comprehensive unit tests",
+      "Component integration tests",
+      "No changes to existing happy path logic"
+    ]
+  },
+  "filesAffected": [
+    {
+      "path": "src/types/index.ts",
+      "type": "Addition",
+      "description": "Add PersonalizedCommentCopyResult interface"
+    },
+    {
+      "path": "src/services/api/personalizedCommentService.ts",
+      "type": "Update",
+      "description": "Change copy() return type from PersonalizedComment[] to PersonalizedCommentCopyResult"
+    },
+    {
+      "path": "src/components/personalizedComments/CopyCommentsModal.tsx",
+      "type": "Update",
+      "description": "Update success message logic to display duplicate information"
+    },
+    {
+      "path": "src/services/api/__tests__/personalizedCommentService.copy.test.ts",
+      "type": "Addition",
+      "description": "Add tests for service method response type"
+    },
+    {
+      "path": "src/components/personalizedComments/__tests__/CopyCommentsModal.duplicate-handling.test.tsx",
+      "type": "Addition",
+      "description": "Add tests for message formatting logic"
+    }
+  ],
+  "successCriteria": [
+    {
+      "id": "SC-1",
+      "description": "API response correctly parsed as PersonalizedCommentCopyResult",
+      "verifiedBy": "Unit tests pass"
+    },
+    {
+      "id": "SC-2",
+      "description": "Users see duplicate information in append mode",
+      "verifiedBy": "Component integration tests pass"
+    },
+    {
+      "id": "SC-3",
+      "description": "TypeScript compilation clean with no errors",
+      "verifiedBy": "npm run lint passes"
+    },
+    {
+      "id": "SC-4",
+      "description": "All tests pass with 80%+ coverage",
+      "verifiedBy": "npm run test passes"
+    },
+    {
+      "id": "SC-5",
+      "description": "No regression in existing features",
+      "verifiedBy": "Full test suite passes"
+    }
+  ],
+  "stakeholders": [
+    {
+      "role": "Principal Product Owner",
+      "responsibility": "Approve requirements and accept feature"
+    },
+    {
+      "role": "Frontend Engineer",
+      "responsibility": "Implement feature with TDD-first approach"
+    },
+    {
+      "role": "QA Engineer",
+      "responsibility": "Validate test coverage and integration"
+    }
+  ],
+  "dependencies": [],
+  "blockedBy": [],
+  "blocks": [],
+  "notes": [
+    "Branch: feat/copy-duplicate-checks",
+    "API endpoint returns: { successCount, duplicateCount, overwrite }",
+    "Backend already implements duplicate detection (case-sensitive)",
+    "Append mode: Duplicates skipped automatically",
+    "Overwrite mode: All existing comments replaced",
+    "Sequential task execution recommended: 1 -> 2 -> (3) -> 4 -> 5 -> 6 -> 7 -> 8"
+  ],
+  "version": "1.0.0",
+  "createdAt": "2026-02-06",
+  "updatedAt": "2026-02-06"
+}

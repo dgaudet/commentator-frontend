@@ -17,6 +17,7 @@ import type {
   PersonalizedComment,
   CreatePersonalizedCommentRequest,
   UpdatePersonalizedCommentRequest,
+  PersonalizedCommentCopyResult,
 } from '../../types'
 
 export const personalizedCommentService = {
@@ -93,19 +94,19 @@ export const personalizedCommentService = {
 
   /**
    * Copy personalized comments from one subject to another
-   * Reference: US-CP-004 - Implement Copy API Integration with Feedback
+   * Reference: US-CP-006 - Handle new API response format with duplicate detection
    * @param subjectFromId - ObjectId of source subject
    * @param subjectToId - ObjectId of target subject
    * @param overwrite - Whether to overwrite (true) or append (false) comments
-   * @returns Array of PersonalizedComment objects that were copied
+   * @returns PersonalizedCommentCopyResult with operation summary (successCount, duplicateCount, overwrite)
    */
   async copy(request: {
     subjectFromId: string
     subjectToId: string
     overwrite: boolean
-  }): Promise<PersonalizedComment[]> {
+  }): Promise<PersonalizedCommentCopyResult> {
     try {
-      const response = await apiClient.post<PersonalizedComment[]>(
+      const response = await apiClient.post<PersonalizedCommentCopyResult>(
         '/personalized-comment/copy',
         request,
       )

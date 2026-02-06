@@ -194,8 +194,3 @@ Test a loading error on the final comments modal
 Test an error when saving comments that doesn't have the custom message and details
 This is probably a backend change, but I was able to edit john to be john 2 which matches another comment, and no duplicate error
 Also I can't seem to set the lastname to blank after it being set, possibly a backend issue as well
-
-Copy comments to other class should remove duplicates, as well as the bulk upload
-
-Can you create a pdd to modify the `Copy Comments to another subject` function, when the `Append to existing comments` option is selected, to not copy over any comments where the personalized comment would be a duplicate.
-If there are duplicates, the status message should just indicate the number of comments that were not copied because they were duplicates, no need to indicate which ones were duplicates.

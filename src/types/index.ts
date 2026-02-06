@@ -18,7 +18,7 @@ export type { Class, CreateClassRequest, UpdateClassRequest } from './Class'
 export type { OutcomeComment, CreateOutcomeCommentRequest, UpdateOutcomeCommentRequest } from './OutcomeComment'
 
 // Personalized Comment entity types
-export type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest } from './PersonalizedComment'
+export type { PersonalizedComment, CreatePersonalizedCommentRequest, UpdatePersonalizedCommentRequest, PersonalizedCommentCopyResult } from './PersonalizedComment'
 
 // Final Comment entity types
 export type { FinalComment, CreateFinalCommentRequest, UpdateFinalCommentRequest } from './FinalComment'
