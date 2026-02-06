@@ -60,3 +60,35 @@ export interface UpdatePersonalizedCommentRequest {
   /** Comment rating (1-5) - Required, must be > 0 */
   rating: number
 }
+
+/**
+ * Result of a copy operation for personalized comments
+ * Returned by: POST /personalized-comment/copy
+ *
+ * Provides operation summary with success count and duplicate information
+ * Replaces the previous response format which returned PersonalizedComment[]
+ */
+export interface PersonalizedCommentCopyResult {
+  /**
+   * Number of comments successfully copied to the target subject
+   * @example 3
+   */
+  successCount: number
+
+  /**
+   * Number of comments skipped due to duplication detection
+   * Only relevant when overwrite=false (append mode)
+   * In overwrite mode, this is always 0 because all existing comments are replaced
+   * Backend uses case-sensitive text matching to detect duplicates
+   * @example 2
+   */
+  duplicateCount: number
+
+  /**
+   * The overwrite mode that was used in this copy operation
+   * true: Overwrite all existing comments in target subject
+   * false: Append to existing comments (with duplicate detection)
+   * @example false
+   */
+  overwrite: boolean
+}
