@@ -417,7 +417,7 @@ describe('personalizedCommentService.copy', () => {
 
       const mockResponse2: PersonalizedCommentCopyResult = {
         successCount: 3,
-        duplicateCount: 1,
+        duplicateCount: 0,
         overwrite: true,
       }
 

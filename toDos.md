@@ -189,8 +189,4 @@ When saving a student with the same name as before, it doesn't tell you it's fai
 when clicking populate with comments, maybe it should also check grammer
 perhaps we could have the user upload comments from last year and use that to determine what are the outcome comments and the personalized ones
 
-If you trigger the save error, on the add modal, then open the edit modal, it shows there as well, when it should not
-Test a loading error on the final comments modal
-Test an error when saving comments that doesn't have the custom message and details
-This is probably a backend change, but I was able to edit john to be john 2 which matches another comment, and no duplicate error
-Also I can't seem to set the lastname to blank after it being set, possibly a backend issue as well
+The errors on the final comment modal for add/edit, should probably be modals like the other comment modals, that would make the errors a bit cleaner and easier, you won't have to worry about the error message still showing on edit or add
