@@ -59,17 +59,12 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
     sourceCommentCount: 5,
   }
 
-  const mockComments = [
-    {
-      id: '1',
-      subjectId: targetSubject1.id,
-      comment: 'Comment 1',
-      rating: 4,
-      userId: 'user1',
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
-  ]
+  // US-CP-006: Updated to match new PersonalizedCommentCopyResult response format
+  const mockCopyResult = {
+    successCount: 1,
+    duplicateCount: 0,
+    overwrite: false,
+  }
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -209,7 +204,13 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
     })
 
     it('should display correct count in success message for zero comments', async () => {
-      personalizedCommentService.copy.mockResolvedValue([])
+      // US-CP-006: Updated to use PersonalizedCommentCopyResult with zero success count
+      const mockZeroResult = {
+        successCount: 0,
+        duplicateCount: 0,
+        overwrite: false,
+      }
+      personalizedCommentService.copy.mockResolvedValue(mockZeroResult)
 
       render(
         <CopyCommentsModal
@@ -246,7 +247,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
     it('should allow copy operation with duplicates (backend handles logic)', async () => {
       // Backend is responsible for handling duplicate logic
       // Frontend should allow the operation to proceed
-      personalizedCommentService.copy.mockResolvedValue(mockComments)
+      personalizedCommentService.copy.mockResolvedValue(mockCopyResult)
 
       render(<CopyCommentsModal {...defaultProps} />)
 
@@ -261,13 +262,15 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
       })
     })
 
-    it('should display success even if duplicates are created', async () => {
-      const duplicateComments = [
-        ...mockComments,
-        ...mockComments, // Duplicates
-      ]
+    it('should display success with duplicate count when duplicates detected', async () => {
+      // US-CP-006: Updated to match new behavior where backend detects and skips duplicates
+      const mockWithDuplicates = {
+        successCount: 2,
+        duplicateCount: 3, // 3 duplicates were skipped
+        overwrite: false,
+      }
 
-      personalizedCommentService.copy.mockResolvedValue(duplicateComments)
+      personalizedCommentService.copy.mockResolvedValue(mockWithDuplicates)
 
       render(<CopyCommentsModal {...defaultProps} />)
 
@@ -279,6 +282,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
 
       await waitFor(() => {
         expect(screen.getByText(/successfully copied 2 comments/i)).toBeInTheDocument()
+        expect(screen.getByText(/3 duplicates were skipped/i)).toBeInTheDocument()
       })
     })
   })
@@ -339,7 +343,13 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
   describe('AC-5.6: Form State Edge Cases', () => {
     it('should maintain form state during error recovery', async () => {
       personalizedCommentService.copy.mockRejectedValueOnce(new Error('First attempt failed'))
-      personalizedCommentService.copy.mockResolvedValueOnce(mockComments)
+      // US-CP-006: Use overwrite mode result for second attempt
+      const mockOverwriteResult = {
+        successCount: 1,
+        duplicateCount: 0,
+        overwrite: true,
+      }
+      personalizedCommentService.copy.mockResolvedValueOnce(mockOverwriteResult)
 
       render(<CopyCommentsModal {...defaultProps} />)
 
@@ -366,9 +376,8 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
       fireEvent.click(tryAgainButton)
 
       await waitFor(() => {
-        expect(screen.getByText(/successfully copied/i)).toBeInTheDocument()
-        // Mode indication should reflect the selection made
-        expect(screen.getByText(/overwrote existing comments/i)).toBeInTheDocument()
+        // US-CP-007: Updated to match new formatSuccessMessage output for overwrite mode
+        expect(screen.getByText(/successfully replaced all comments/i)).toBeInTheDocument()
       })
     })
 
@@ -378,7 +387,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
       const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
       fireEvent.change(dropdown, { target: { value: targetSubject2.id } })
 
-      personalizedCommentService.copy.mockResolvedValue(mockComments)
+      personalizedCommentService.copy.mockResolvedValue(mockCopyResult)
 
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
@@ -415,7 +424,7 @@ describe('CopyCommentsModal - Validation & Edge Cases (US-CP-005)', () => {
       personalizedCommentService.copy.mockImplementation(
         () =>
           new Promise((resolve) => {
-            setTimeout(() => resolve(mockComments), 50)
+            setTimeout(() => resolve(mockCopyResult), 50)
           }),
       )
 

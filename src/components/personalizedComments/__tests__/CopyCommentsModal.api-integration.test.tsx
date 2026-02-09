@@ -53,26 +53,12 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
     sourceCommentCount: 12,
   }
 
-  const mockComments = [
-    {
-      id: '1',
-      subjectId: targetSubject.id,
-      comment: 'Comment 1',
-      rating: 4,
-      userId: 'user1',
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
-    {
-      id: '2',
-      subjectId: targetSubject.id,
-      comment: 'Comment 2',
-      rating: 3,
-      userId: 'user1',
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
-  ]
+  // US-CP-006: Updated to match new PersonalizedCommentCopyResult response format
+  const mockCopyResult = {
+    successCount: 2,
+    duplicateCount: 0,
+    overwrite: false,
+  }
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -80,7 +66,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
 
   describe('AC-4.1: Copy Button Submission', () => {
     it('should send copy request when Copy button is clicked', async () => {
-      personalizedCommentService.copy.mockResolvedValue(mockComments)
+      personalizedCommentService.copy.mockResolvedValue(mockCopyResult)
       render(<CopyCommentsModal {...defaultProps} />)
 
       // Select target subject
@@ -100,7 +86,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockImplementation(
         () =>
           new Promise((resolve) => {
-            setTimeout(() => resolve(mockComments), 100)
+            setTimeout(() => resolve(mockCopyResult), 100)
           }),
       )
       render(<CopyCommentsModal {...defaultProps} />)
@@ -122,7 +108,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockImplementation(
         () =>
           new Promise((resolve) => {
-            setTimeout(() => resolve(mockComments), 100)
+            setTimeout(() => resolve(mockCopyResult), 100)
           }),
       )
       render(<CopyCommentsModal {...defaultProps} />)
@@ -141,7 +127,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
 
   describe('AC-4.2: API Request Format', () => {
     it('should send correct request payload with subjectFromId, subjectToId, overwrite', async () => {
-      personalizedCommentService.copy.mockResolvedValue(mockComments)
+      personalizedCommentService.copy.mockResolvedValue(mockCopyResult)
       render(<CopyCommentsModal {...defaultProps} />)
 
       // Select target and mode
@@ -162,7 +148,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
     })
 
     it('should send overwrite=true when overwrite mode is selected', async () => {
-      personalizedCommentService.copy.mockResolvedValue(mockComments)
+      personalizedCommentService.copy.mockResolvedValue(mockCopyResult)
       render(<CopyCommentsModal {...defaultProps} />)
 
       // Select target
@@ -188,7 +174,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
 
   describe('AC-4.3: Success Feedback with Mode Indication', () => {
     it('should display success message with count and append indication', async () => {
-      personalizedCommentService.copy.mockResolvedValue(mockComments) // 2 comments
+      personalizedCommentService.copy.mockResolvedValue(mockCopyResult) // 2 comments
       render(<CopyCommentsModal {...defaultProps} />)
 
       const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
@@ -197,13 +183,19 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       fireEvent.click(copyButton)
 
       await waitFor(() => {
+        // US-CP-007: Updated to match new formatSuccessMessage output
         expect(screen.getByText(/successfully copied 2 comments to Physics/i)).toBeInTheDocument()
-        expect(screen.getByText(/appended to existing comments/i)).toBeInTheDocument()
       })
     })
 
     it('should display overwrite indication in success message', async () => {
-      personalizedCommentService.copy.mockResolvedValue(mockComments)
+      // Create a mock result for overwrite mode
+      const mockOverwriteResult = {
+        successCount: 2,
+        duplicateCount: 0,
+        overwrite: true,
+      }
+      personalizedCommentService.copy.mockResolvedValue(mockOverwriteResult)
       render(<CopyCommentsModal {...defaultProps} />)
 
       const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
@@ -214,13 +206,14 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       const copyButton = screen.getByRole('button', { name: /copy/i })
       fireEvent.click(copyButton)
 
+      // US-CP-007: Updated to match new formatSuccessMessage output
       await waitFor(() => {
-        expect(screen.getByText(/overwrote existing comments/i)).toBeInTheDocument()
+        expect(screen.getByText(/successfully replaced all comments/i)).toBeInTheDocument()
       })
     })
 
     it('should keep modal open on success and require Done button to close', async () => {
-      personalizedCommentService.copy.mockResolvedValue(mockComments)
+      personalizedCommentService.copy.mockResolvedValue(mockCopyResult)
       render(<CopyCommentsModal {...defaultProps} />)
 
       const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
@@ -243,7 +236,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
     })
 
     it('should allow user to close immediately with button', async () => {
-      personalizedCommentService.copy.mockResolvedValue(mockComments)
+      personalizedCommentService.copy.mockResolvedValue(mockCopyResult)
       render(<CopyCommentsModal {...defaultProps} />)
 
       const dropdown = screen.getByLabelText(/copy to \(Target\)/i)
@@ -324,7 +317,12 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
 
     it('should allow retry after error', async () => {
       personalizedCommentService.copy.mockRejectedValueOnce(new Error('First attempt failed'))
-      personalizedCommentService.copy.mockResolvedValueOnce(mockComments)
+      const mockRetryResult = {
+        successCount: 2,
+        duplicateCount: 0,
+        overwrite: false,
+      }
+      personalizedCommentService.copy.mockResolvedValueOnce(mockRetryResult)
 
       render(<CopyCommentsModal {...defaultProps} />)
 
@@ -383,7 +381,7 @@ describe('CopyCommentsModal - API Integration (US-CP-004)', () => {
       personalizedCommentService.copy.mockImplementation(
         () =>
           new Promise((resolve) => {
-            setTimeout(() => resolve(mockComments), 100)
+            setTimeout(() => resolve(mockCopyResult), 100)
           }),
       )
       render(<CopyCommentsModal {...defaultProps} />)
