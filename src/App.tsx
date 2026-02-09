@@ -10,6 +10,7 @@ import { ThemeStyles } from './components/common/ThemeStyles'
 import { spacing } from './theme/tokens'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { LoginPage } from './pages/LoginPage'
+import { SignupPage } from './pages/SignupPage'
 import { CallbackPage } from './pages/CallbackPage'
 import { Header } from './components/Header'
 
@@ -124,6 +125,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="/callback" element={<CallbackPage />} />
         <Route
           path="/*"
