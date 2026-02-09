@@ -349,18 +349,18 @@ export const SignupForm: React.FC = () => {
 ```
 src/
 ├── pages/
-│   └── SignupPage.tsx          (Page wrapper with layout)
+│   └── SignupPage.tsx            (Page wrapper with layout)
 ├── components/
 │   └── auth/
-│       ├── SignupForm.tsx      (Form logic & validation)
-│       └── SignupForm.test.tsx (Component tests)
+│       ├── SignupForm.tsx        (Form logic & validation)
+│       └── SignupForm.test.tsx   (Component tests)
 ├── services/
 │   ├── api/
-│   │   ├── userService.ts      (API calls)
-│   │   └── userService.test.ts (Service tests)
+│   │   ├── userService.ts        (API calls)
+│   │   └── userService.test.ts   (Service tests)
 ├── utils/
-│   ├── validation.ts           (Validation functions)
-│   └── validation.test.ts      (Validation tests)
+│   ├── userValidators.ts         (User-specific validation functions)
+│   └── userValidators.test.ts    (User validation tests)
 ```
 
 ---

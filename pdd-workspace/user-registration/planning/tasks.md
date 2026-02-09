@@ -42,30 +42,30 @@ Create the SignupPage and basic SignupForm component structure with layout
 **Effort**: 4 hours
 **Dependencies**: Task 1
 **Description**:
-Create form input fields and implement validation logic
+Create form input fields and implement user-specific validation logic
 
 **Subtasks**:
 - [ ] Create form input fields: First Name, Last Name, Email, Password, Confirm Password
-- [ ] Create `src/utils/validation.ts` with validation functions:
+- [ ] Create `src/utils/userValidators.ts` with user validation functions:
   - `validateFirstName(value: string): string | undefined`
   - `validateLastName(value: string): string | undefined`
   - `validateEmail(value: string): string | undefined`
   - `validatePassword(value: string): string | undefined`
   - `validatePasswordMatch(password: string, confirmPassword: string): string | undefined`
-- [ ] Create `src/utils/validation.test.ts` with unit tests for all validations
+- [ ] Create `src/utils/userValidators.test.ts` with unit tests for all validations
 - [ ] Run validation tests - ensure all pass
 - [ ] Add real-time validation on field blur
 - [ ] Add error message display under each field
 
 **Acceptance Criteria**:
-- All validation functions exist and are tested
-- Validation tests pass (100% coverage for validation module)
+- All user validation functions exist and are tested
+- Validation tests pass (100% coverage for userValidators module)
 - Form fields display error messages when invalid
 - Errors clear when user corrects field
 - Password requirements clearly shown
 
 **Definition of Done**:
-- Validation unit tests pass
+- User validator unit tests pass
 - Form shows validation errors correctly
 - No TypeScript errors
 

@@ -58,7 +58,7 @@ Enable new users to self-service create accounts through a signup form accessibl
 ## 🧪 Testing Requirements
 
 **All using TDD approach (write tests first)**:
-- ✅ Validation unit tests (validation.test.ts)
+- ✅ User validator unit tests (userValidators.test.ts)
 - ✅ Service unit tests (userService.test.ts)
 - ✅ Component tests (SignupForm.test.tsx) - 20+ tests
 - ✅ Integration test for full signup flow
