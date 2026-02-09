@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import styles from './LoginPage.module.css'
 
@@ -42,9 +43,9 @@ export const LoginPage: React.FC = () => {
           <p>
             Don't have an account?
             {' '}
-            <a href="https://auth0.com" target="_blank" rel="noopener noreferrer">
+            <Link to="/signup">
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
       </div>
