@@ -5,6 +5,13 @@
  */
 
 import React, { useState } from 'react'
+import {
+  validateFirstName,
+  validateLastName,
+  validateEmail,
+  validatePassword,
+  validatePasswordMatch,
+} from '../../utils/userValidators'
 import styles from './SignupForm.module.css'
 
 interface FormState {
@@ -49,9 +56,63 @@ export const SignupForm: React.FC = () => {
     }
   }
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    const fieldName = name as keyof FormErrors
+
+    let error: string | undefined
+
+    switch (name) {
+      case 'firstName':
+        error = validateFirstName(value)
+        break
+      case 'lastName':
+        error = validateLastName(value)
+        break
+      case 'email':
+        error = validateEmail(value)
+        break
+      case 'password':
+        error = validatePassword(value)
+        break
+      case 'confirmPassword':
+        error = validatePasswordMatch(formData.password, value)
+        break
+    }
+
+    setErrors(prev => ({
+      ...prev,
+      [fieldName]: error,
+    }))
+  }
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {}
+
+    newErrors.firstName = validateFirstName(formData.firstName)
+    newErrors.lastName = validateLastName(formData.lastName)
+    newErrors.email = validateEmail(formData.email)
+    newErrors.password = validatePassword(formData.password)
+    newErrors.confirmPassword = validatePasswordMatch(
+      formData.password,
+      formData.confirmPassword,
+    )
+
+    setErrors(newErrors)
+
+    // Form is valid if there are no errors
+    return !Object.values(newErrors).some(error => error !== undefined)
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Validation will be added in Task 2
+
+    if (!validateForm()) {
+      return
+    }
+
+    // Form submission logic will be added in Task 3
+    console.log('Form is valid, submitting...', formData)
   }
 
   return (
@@ -67,6 +128,7 @@ export const SignupForm: React.FC = () => {
           type="text"
           value={formData.firstName}
           onChange={handleChange}
+          onBlur={handleBlur}
           className={styles.input}
           placeholder="John"
           required
@@ -87,6 +149,7 @@ export const SignupForm: React.FC = () => {
           type="text"
           value={formData.lastName}
           onChange={handleChange}
+          onBlur={handleBlur}
           className={styles.input}
           placeholder="Doe"
           required
@@ -107,6 +170,7 @@ export const SignupForm: React.FC = () => {
           type="email"
           value={formData.email}
           onChange={handleChange}
+          onBlur={handleBlur}
           className={styles.input}
           placeholder="john.doe@example.com"
           required
@@ -127,6 +191,7 @@ export const SignupForm: React.FC = () => {
           type="password"
           value={formData.password}
           onChange={handleChange}
+          onBlur={handleBlur}
           className={styles.input}
           placeholder="••••••••"
           required
@@ -147,6 +212,7 @@ export const SignupForm: React.FC = () => {
           type="password"
           value={formData.confirmPassword}
           onChange={handleChange}
+          onBlur={handleBlur}
           className={styles.input}
           placeholder="••••••••"
           required
