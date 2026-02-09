@@ -9,23 +9,25 @@ import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { spacing, typography, shadows } from '../theme/tokens'
 import { useThemeColors } from '../hooks/useThemeColors'
+import { useThemeGradients } from '../hooks/useThemeGradients'
 import { SignupForm } from '../components/auth/SignupForm'
 import styles from './SignupPage.module.css'
 
 export const SignupPage: React.FC = () => {
   const themeColors = useThemeColors()
+  const themeGradients = useThemeGradients()
 
   const containerStyle = useMemo(() => ({
-    backgroundColor: themeColors.background.primary,
-  }), [themeColors])
+    background: themeGradients.primary,
+  }), [themeGradients])
 
   const signupContainerStyle = useMemo(() => ({
     gap: spacing.xl,
   }), [])
 
   const signupHeroStyle = useMemo(() => ({
-    background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.primary.dark} 100%)`,
-  }), [themeColors])
+    background: themeGradients.primary,
+  }), [themeGradients])
 
   const formWrapperStyle = useMemo(() => ({
     backgroundColor: themeColors.background.secondary,

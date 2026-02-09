@@ -251,6 +251,26 @@ export const darkFocusRings = {
 } as const
 
 /**
+ * Light Theme Gradients
+ *
+ * Gradient backgrounds for pages and components in light mode.
+ * Matches the main app background gradient from ThemeStyles.
+ */
+export const gradients = {
+  primary: 'linear-gradient(180deg, #E0F7FF 0%, #FFFFFF 100%)', // Light theme: cyan to white gradient
+} as const
+
+/**
+ * Dark Theme Gradients
+ *
+ * Gradient backgrounds for pages and components in dark mode.
+ * Matches the main app background gradient from ThemeStyles.
+ */
+export const darkGradients = {
+  primary: 'linear-gradient(180deg, #0052CC 0%, #1A1A1A 100%)', // Dark theme: blue to dark background gradient
+} as const
+
+/**
  * TypeScript Types
  *
  * Export types for better IDE autocomplete and type safety.
@@ -265,3 +285,5 @@ export type FocusShadowColors = typeof focusShadowColors
 export type DarkFocusShadowColors = typeof darkFocusShadowColors
 export type FocusRings = typeof focusRings
 export type DarkFocusRings = typeof darkFocusRings
+export type Gradients = typeof gradients
+export type DarkGradients = typeof darkGradients

@@ -184,3 +184,7 @@ test out changing my password in auth0
 
 Need to style the login form
 Need to style the page before login
+
+Would like to use the purple background for the login box in dark mode
+Would like to use the background gradient for the Sign up and login pages, both dark and light modes have a gradient that should be used.
+When showing the login loading, the background is purple
