@@ -4,7 +4,7 @@
  * Reference: US-UR-005, US-UR-006
  */
 
-import { render, screen, fireEvent, waitFor } from '../../../test-utils'
+import { renderWithRouter, screen, fireEvent, waitFor } from '../../../test-utils'
 import { SignupForm } from '../SignupForm'
 import { userService } from '../../../services/api/userService'
 
@@ -56,7 +56,7 @@ describe('SignupForm - Integration Tests', () => {
   }
 
   it('should successfully submit form with valid data', async () => {
-    render(<SignupForm />)
+    renderWithRouter(<SignupForm />)
 
     fillForm()
     const submitButton = screen.getByRole('button', { name: /create account/i })
@@ -82,7 +82,7 @@ describe('SignupForm - Integration Tests', () => {
       () => new Promise(resolve => setTimeout(resolve, 100)),
     )
 
-    render(<SignupForm />)
+    renderWithRouter(<SignupForm />)
     fillForm()
 
     const submitButton = screen.getByRole('button', { name: /create account/i })
@@ -96,7 +96,7 @@ describe('SignupForm - Integration Tests', () => {
   })
 
   it('should display button text while submitting', () => {
-    render(<SignupForm />)
+    renderWithRouter(<SignupForm />)
     fillForm()
 
     const submitButton = screen.getByRole('button', { name: /create account/i })
@@ -115,7 +115,7 @@ describe('SignupForm - Integration Tests', () => {
     const errorMsg = 'Email already in use'
     ;(userService.create as jest.Mock).mockRejectedValueOnce(new Error(errorMsg))
 
-    render(<SignupForm />)
+    renderWithRouter(<SignupForm />)
     fillForm()
 
     const submitButton = screen.getByRole('button', { name: /create account/i })
@@ -128,7 +128,7 @@ describe('SignupForm - Integration Tests', () => {
   })
 
   it('should not submit if form validation fails', () => {
-    render(<SignupForm />)
+    renderWithRouter(<SignupForm />)
 
     // Don't fill form - validation should fail
     const submitButton = screen.getByRole('button', { name: /create account/i })
@@ -141,7 +141,7 @@ describe('SignupForm - Integration Tests', () => {
     const errorMsg = 'Failed to create account'
     ;(userService.create as jest.Mock).mockRejectedValueOnce(new Error(errorMsg))
 
-    render(<SignupForm />)
+    renderWithRouter(<SignupForm />)
     fillForm()
 
     const submitButton = screen.getByRole('button', { name: /create account/i })

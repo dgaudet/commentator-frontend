@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   validateFirstName,
   validateLastName,
@@ -32,6 +33,7 @@ interface FormErrors {
 }
 
 export const SignupForm: React.FC = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState<FormState>({
     firstName: '',
     lastName: '',
@@ -129,13 +131,12 @@ export const SignupForm: React.FC = () => {
         password: formData.password,
       })
 
-      // Success - will handle navigation in Task 4
-      console.log('Account created successfully')
+      // Success - redirect to login page
+      navigate('/login')
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Account creation failed. Please try again.'
       setFormError(errorMessage)
-    } finally {
       setIsLoading(false)
     }
   }
