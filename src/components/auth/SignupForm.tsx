@@ -12,6 +12,7 @@ import {
   validatePassword,
   validatePasswordMatch,
 } from '../../utils/userValidators'
+import { userService } from '../../services/api/userService'
 import styles from './SignupForm.module.css'
 
 interface FormState {
@@ -40,6 +41,8 @@ export const SignupForm: React.FC = () => {
   })
 
   const [errors, setErrors] = useState<FormErrors>({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [formError, setFormError] = useState<string | undefined>()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -53,6 +56,10 @@ export const SignupForm: React.FC = () => {
         ...prev,
         [name]: undefined,
       }))
+    }
+    // Clear form-level error when user starts editing
+    if (formError) {
+      setFormError(undefined)
     }
   }
 
@@ -104,19 +111,43 @@ export const SignupForm: React.FC = () => {
     return !Object.values(newErrors).some(error => error !== undefined)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!validateForm()) {
       return
     }
 
-    // Form submission logic will be added in Task 3
-    console.log('Form is valid, submitting...', formData)
+    setIsLoading(true)
+    setFormError(undefined)
+
+    try {
+      await userService.create({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+      })
+
+      // Success - will handle navigation in Task 4
+      console.log('Account created successfully')
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Account creation failed. Please try again.'
+      setFormError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
     <form className={styles.signupForm} onSubmit={handleSubmit} role="form">
+      {/* Form-level error message */}
+      {formError && <div className={styles.errorMessage}>{formError}</div>}
+
+      {/* Loading indicator */}
+      {isLoading && <div className={styles.loadingIndicator}>Creating account...</div>}
+
       {/* First Name Field */}
       <div className={styles.formGroup}>
         <label htmlFor="firstName" className={styles.label}>
@@ -134,7 +165,7 @@ export const SignupForm: React.FC = () => {
           required
         />
         {errors.firstName && (
-          <span className={styles.errorMessage}>{errors.firstName}</span>
+          <span className={styles.fieldError}>{errors.firstName}</span>
         )}
       </div>
 
@@ -155,7 +186,7 @@ export const SignupForm: React.FC = () => {
           required
         />
         {errors.lastName && (
-          <span className={styles.errorMessage}>{errors.lastName}</span>
+          <span className={styles.fieldError}>{errors.lastName}</span>
         )}
       </div>
 
@@ -176,7 +207,7 @@ export const SignupForm: React.FC = () => {
           required
         />
         {errors.email && (
-          <span className={styles.errorMessage}>{errors.email}</span>
+          <span className={styles.fieldError}>{errors.email}</span>
         )}
       </div>
 
@@ -197,7 +228,7 @@ export const SignupForm: React.FC = () => {
           required
         />
         {errors.password && (
-          <span className={styles.errorMessage}>{errors.password}</span>
+          <span className={styles.fieldError}>{errors.password}</span>
         )}
       </div>
 
@@ -218,13 +249,13 @@ export const SignupForm: React.FC = () => {
           required
         />
         {errors.confirmPassword && (
-          <span className={styles.errorMessage}>{errors.confirmPassword}</span>
+          <span className={styles.fieldError}>{errors.confirmPassword}</span>
         )}
       </div>
 
       {/* Submit Button */}
-      <button type="submit" className={styles.submitButton}>
-        Create Account
+      <button type="submit" className={styles.submitButton} disabled={isLoading}>
+        {isLoading ? 'Creating Account...' : 'Create Account'}
       </button>
     </form>
   )
