@@ -122,16 +122,16 @@ function App() {
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/callback" element={<CallbackPage />} />
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoute>
-              <ThemeProvider>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/callback" element={<CallbackPage />} />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
                 <ThemeStyles />
                 <AppContent
                   showForm={showForm}
@@ -141,12 +141,12 @@ function App() {
                   onFormSuccess={handleFormSuccess}
                   onFormCancel={handleFormCancel}
                 />
-              </ThemeProvider>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   )
 }
 
