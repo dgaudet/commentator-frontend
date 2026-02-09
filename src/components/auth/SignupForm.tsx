@@ -137,7 +137,7 @@ export const SignupForm: React.FC = () => {
     color: themeColors.text.primary,
   })
 
-  const handleInputFocus = (inputRef: React.RefObject<HTMLInputElement>, hasError: boolean) => (
+  const handleInputFocus = (hasError: boolean) => (
     e: React.FocusEvent<HTMLInputElement>,
   ) => {
     const focusColor = hasError ? themeColors.semantic.error : themeColors.primary.main
@@ -259,7 +259,7 @@ export const SignupForm: React.FC = () => {
             handleBlur(e)
             handleInputBlur(Boolean(errors.firstName))(e)
           }}
-          onFocus={handleInputFocus(firstNameInputRef, Boolean(errors.firstName))}
+          onFocus={handleInputFocus(Boolean(errors.firstName))}
           style={createInputStyle(Boolean(errors.firstName))}
           placeholder="John"
           required
@@ -304,7 +304,7 @@ export const SignupForm: React.FC = () => {
             handleBlur(e)
             handleInputBlur(Boolean(errors.lastName))(e)
           }}
-          onFocus={handleInputFocus(lastNameInputRef, Boolean(errors.lastName))}
+          onFocus={handleInputFocus(Boolean(errors.lastName))}
           style={createInputStyle(Boolean(errors.lastName))}
           placeholder="Doe"
           required
@@ -349,7 +349,7 @@ export const SignupForm: React.FC = () => {
             handleBlur(e)
             handleInputBlur(Boolean(errors.email))(e)
           }}
-          onFocus={handleInputFocus(emailInputRef, Boolean(errors.email))}
+          onFocus={handleInputFocus(Boolean(errors.email))}
           style={createInputStyle(Boolean(errors.email))}
           placeholder="john.doe@example.com"
           required
@@ -394,7 +394,7 @@ export const SignupForm: React.FC = () => {
             handleBlur(e)
             handleInputBlur(Boolean(errors.password))(e)
           }}
-          onFocus={handleInputFocus(passwordInputRef, Boolean(errors.password))}
+          onFocus={handleInputFocus(Boolean(errors.password))}
           style={createInputStyle(Boolean(errors.password))}
           placeholder="••••••••"
           required
@@ -439,7 +439,7 @@ export const SignupForm: React.FC = () => {
             handleBlur(e)
             handleInputBlur(Boolean(errors.confirmPassword))(e)
           }}
-          onFocus={handleInputFocus(confirmPasswordInputRef, Boolean(errors.confirmPassword))}
+          onFocus={handleInputFocus(Boolean(errors.confirmPassword))}
           style={createInputStyle(Boolean(errors.confirmPassword))}
           placeholder="••••••••"
           required
