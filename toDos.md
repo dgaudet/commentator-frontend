@@ -16,13 +16,6 @@
     - Helps users track progress through student comments
     - Decision needed: How should comments be ordered?
 
-### Bulk Operations
-- [ ] **Bulk add students with their grades**
-    - Business value: Faster data entry for large classes
-    - Complexity: Needs CSV import or multi-row form design
-
----
-
 ## 🎨 Design & Branding
 
 ### Visual Design
@@ -73,8 +66,6 @@ Looks like the add personalized comments button should show a message when click
 the error labels aren't standardized, the add subject is different from the rest I believe
 
 When adding a new class, it should be selected by default after creation.
-
-The final comments error text doesn't use the standardized error label component.
 
 Login
 * The header, should be modified to be the one we already have
@@ -152,9 +143,6 @@ Older Notes:
 
 default github pages url - https://dgaudet.github.io/commentator-frontend/
 
-possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
-test out changing my password in auth0
-
 Create a proper 404 page that gives information about not finding any result
 It would be nice to have the header and proper colors on the login page as well
 
@@ -190,3 +178,9 @@ when clicking populate with comments, maybe it should also check grammer
 perhaps we could have the user upload comments from last year and use that to determine what are the outcome comments and the personalized ones
 
 The errors on the final comment modal for add/edit, should probably be modals like the other comment modals, that would make the errors a bit cleaner and easier, you won't have to worry about the error message still showing on edit or add
+
+possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
+test out changing my password in auth0
+
+Need to style the login form
+Need to style the page before login
