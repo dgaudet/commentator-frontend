@@ -8,7 +8,7 @@
 
 /* Form-level error message (at top of form) */
 .errorMessage {
-  padding: 12px;
+  padding: 12px 14px;
   background-color: #fee;
   border: 1px solid #fcc;
   border-radius: 6px;
@@ -16,10 +16,11 @@
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 8px;
+  line-height: 1.5;
 }
 
 .loadingIndicator {
-  padding: 12px;
+  padding: 12px 14px;
   background-color: #e8f4f8;
   border: 1px solid #b3dce6;
   border-radius: 6px;
@@ -29,6 +30,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  line-height: 1.5;
 }
 
 .formGroup {
@@ -42,16 +44,20 @@
   font-weight: 600;
   color: #1f2937;
   display: block;
+  line-height: 1.4;
 }
 
 .input {
-  padding: 10px 12px;
+  padding: 12px 14px;
   font-size: 14px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-family: inherit;
   transition: all 0.2s ease;
   background-color: #f9fafb;
+  line-height: 1.5;
+  /* Ensure minimum height for touch targets */
+  min-height: 44px;
 }
 
 .input:focus {
@@ -77,10 +83,11 @@
   color: #dc2626;
   display: block;
   margin-top: -6px;
+  line-height: 1.4;
 }
 
 .submitButton {
-  padding: 12px;
+  padding: 14px 16px;
   margin-top: 10px;
   background-color: #667eea;
   color: white;
@@ -90,6 +97,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  /* Ensure minimum height for touch targets */
+  min-height: 44px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .submitButton:hover:not(:disabled) {
@@ -112,7 +125,26 @@
   outline-offset: 2px;
 }
 
-/* Mobile adjustments */
+/* Tablet adjustments (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .label {
+    font-size: 13px;
+  }
+
+  .input {
+    padding: 11px 13px;
+    font-size: 14px;
+    min-height: 42px;
+  }
+
+  .submitButton {
+    padding: 12px 14px;
+    font-size: 15px;
+    min-height: 42px;
+  }
+}
+
+/* Mobile adjustments (max-width: 640px) */
 @media (max-width: 640px) {
   .formGroup {
     gap: 6px;
@@ -123,12 +155,24 @@
   }
 
   .input {
-    padding: 10px;
+    padding: 12px 14px;
     font-size: 16px; /* Prevents zoom on iOS */
+    min-height: 44px;
   }
 
   .submitButton {
-    padding: 10px;
-    font-size: 14px;
+    padding: 12px 14px;
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .errorMessage {
+    font-size: 13px;
+    padding: 11px 13px;
+  }
+
+  .loadingIndicator {
+    font-size: 13px;
+    padding: 11px 13px;
   }
 }

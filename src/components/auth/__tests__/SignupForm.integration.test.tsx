@@ -78,9 +78,8 @@ describe('SignupForm - Integration Tests', () => {
   })
 
   it('should disable submit button during submission', async () => {
-    ;(userService.create as jest.Mock).mockImplementationOnce(
-      () => new Promise(resolve => setTimeout(resolve, 100)),
-    )
+    const errorMsg = 'Test error'
+    ;(userService.create as jest.Mock).mockRejectedValueOnce(new Error(errorMsg))
 
     renderWithRouter(<SignupForm />)
     fillForm()
@@ -88,8 +87,10 @@ describe('SignupForm - Integration Tests', () => {
     const submitButton = screen.getByRole('button', { name: /create account/i })
     fireEvent.click(submitButton)
 
+    // Button should be disabled while submitting
     expect(submitButton).toBeDisabled()
 
+    // After error, button should be re-enabled
     await waitFor(() => {
       expect(submitButton).not.toBeDisabled()
     })
