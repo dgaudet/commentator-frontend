@@ -162,6 +162,27 @@ describe('userValidators', () => {
       // Should mention multiple requirements
       expect(result?.toLowerCase()).toMatch(/password/i)
     })
+
+    it('should reject passwords with leading whitespace', () => {
+      expect(validatePassword(' Password1!')).toBeDefined()
+      expect(validatePassword('  SecurePass99#')).toBeDefined()
+    })
+
+    it('should reject passwords with trailing whitespace', () => {
+      expect(validatePassword('Password1! ')).toBeDefined()
+      expect(validatePassword('SecurePass99# ')).toBeDefined()
+    })
+
+    it('should reject passwords with leading and trailing whitespace', () => {
+      expect(validatePassword(' Password1! ')).toBeDefined()
+      expect(validatePassword('  SecurePass99#  ')).toBeDefined()
+    })
+
+    it('should provide clear error message for leading/trailing whitespace', () => {
+      const result = validatePassword(' Password1! ')
+      expect(result).toBeDefined()
+      expect(result?.toLowerCase()).toMatch(/whitespace|leading|trailing|spaces/i)
+    })
   })
 
   describe('validatePasswordMatch', () => {

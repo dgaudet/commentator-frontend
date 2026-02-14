@@ -77,44 +77,48 @@ export function validateEmail(value: string): string | undefined {
 /**
  * Validates password strength
  * Requirements:
+ * - No leading or trailing whitespace
  * - 8-128 characters
  * - At least one uppercase letter
  * - At least one lowercase letter
  * - At least one number
  * - At least one special character (!@#$%^&*)
- * @param value - The password to validate
+ * @param value - The password to validate (no trimming - validates raw input)
  * @returns Error message if invalid, undefined if valid
  */
 export function validatePassword(value: string): string | undefined {
-  const trimmed = value.trim()
+  // Check for leading or trailing whitespace first (validate raw input, don't silently trim)
+  if (value !== value.trim()) {
+    return 'Password must not have leading or trailing spaces'
+  }
 
-  if (!trimmed) {
+  if (!value) {
     return 'Password is required'
   }
 
-  if (trimmed.length > MAX_PASSWORD_LENGTH) {
+  if (value.length > MAX_PASSWORD_LENGTH) {
     return 'Password must not exceed 128 characters'
   }
 
   const requirements: string[] = []
 
-  if (trimmed.length < MIN_PASSWORD_LENGTH) {
+  if (value.length < MIN_PASSWORD_LENGTH) {
     requirements.push('at least 8 characters')
   }
 
-  if (!/[A-Z]/.test(trimmed)) {
+  if (!/[A-Z]/.test(value)) {
     requirements.push('an uppercase letter')
   }
 
-  if (!/[a-z]/.test(trimmed)) {
+  if (!/[a-z]/.test(value)) {
     requirements.push('a lowercase letter')
   }
 
-  if (!/\d/.test(trimmed)) {
+  if (!/\d/.test(value)) {
     requirements.push('a number')
   }
 
-  if (!/[!@#$%^&*]/.test(trimmed)) {
+  if (!/[!@#$%^&*]/.test(value)) {
     requirements.push('a special character (!@#$%^&*)')
   }
 
