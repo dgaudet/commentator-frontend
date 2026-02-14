@@ -183,29 +183,12 @@ possible Auth0 login/user create flow by using Auth0 configuration, instead of i
 test out changing my password in auth0
 
 Need to style the login form
-Need to style the page before login
-
-Would like to use the purple background for the login box in dark mode
-Would like to use the background gradient for the Sign up and login pages, both dark and light modes have a gradient that should be used.
-When showing the login loading, the background is purple
-I still need to do some more styling, and see if AI can do something with the stock photo
 
 Things to test on create user
 * Do we need a separate function for the gradients? we already had gradients?
 
-Options for image editing
 Online Background Removal Tools (Easiest)
 - https://www.remove.bg/ - AI-powered background removal, great for people
-- https://cleanup.pictures/ - Good for selective object removal
-- https://www.photoshop.com/tools - Free online photo editor
-2. Desktop Software
-   - GIMP (Free) - Open source, has magic wand and selection tools
-   - Photoshop (Paid) - Professional option with excellent selection tools
-   - Affinity Photo (One-time purchase) - Good middle ground
-3. Python Script (If you want automation)
-   - Could write a script using Python libraries like rembg or PIL for background removal
-4. AI Image Editors
-   - Adobe Express - Has AI-powered background removal
-   - Pixlr - Free online editor with background removal
+
 
 test@test2.com

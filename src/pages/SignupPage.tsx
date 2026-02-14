@@ -24,9 +24,15 @@ export const SignupPage: React.FC = () => {
   }), [])
 
   const signupHeroStyle = useMemo(() => ({
-    /* Hero background will blend with the page background from ThemeStyles */
-    backgroundColor: 'transparent',
-  }), [])
+    /* Gradient background for hero section */
+    background: `linear-gradient(135deg, ${themeColors.primary.light}20 0%, ${themeColors.primary.main}40 100%)`,
+    borderRadius: '12px',
+    position: 'relative' as const,
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  }), [themeColors])
 
   const formWrapperStyle = useMemo(() => ({
     backgroundColor: themeColors.background.secondary,
@@ -57,7 +63,56 @@ export const SignupPage: React.FC = () => {
       <div className={styles.signupContainer} style={signupContainerStyle}>
         {/* Hero section with teacher image and background */}
         <div className={styles.signupHero} style={signupHeroStyle}>
-          <div className={styles.heroBackground} />
+          {/* Hero image */}
+          <div className={styles.heroBackground} style={{
+            backgroundImage: 'url(/images/TeacherWithKid1.png)',
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center bottom',
+            width: '100%',
+            height: '100%',
+          }} />
+
+          {/* Info boxes overlay */}
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '20px',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            fontSize: typography.fontSize.sm,
+            fontWeight: '600',
+            color: themeColors.primary.main,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}>
+            <span>✓</span>
+            <span>Streamline Assessment</span>
+          </div>
+
+          <div style={{
+            position: 'absolute',
+            bottom: '60px',
+            right: '20px',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            fontSize: typography.fontSize.sm,
+            fontWeight: '600',
+            color: themeColors.primary.main,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}>
+            <span>⭐</span>
+            <span>Better Feedback</span>
+          </div>
         </div>
 
         {/* Form section */}
