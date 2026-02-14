@@ -6,7 +6,7 @@
  * - First Name validation (required, max length)
  * - Last Name validation (required, max length)
  * - Email validation (required, valid format)
- * - Password validation (8+ chars, uppercase, lowercase, number)
+ * - Password validation (8+ chars, uppercase, lowercase, number, special character)
  * - Password match validation (confirmation field)
  */
 
@@ -129,20 +129,25 @@ describe('userValidators', () => {
       expect(validatePassword('MyPassword')).toBeDefined()
     })
 
+    it('should return error if password lacks special character', () => {
+      expect(validatePassword('Password123')).toBeDefined()
+      expect(validatePassword('MyPass1234')).toBeDefined()
+    })
+
     it('should return error for password exceeding max length', () => {
       const longPassword = 'A' + 'a'.repeat(127) + '1'
       expect(validatePassword(longPassword)).toBeDefined()
     })
 
     it('should return undefined for valid passwords', () => {
-      expect(validatePassword('Password1')).toBeUndefined()
-      expect(validatePassword('MyPass123')).toBeUndefined()
-      expect(validatePassword('SecurePass99')).toBeUndefined()
+      expect(validatePassword('Password1!')).toBeUndefined()
+      expect(validatePassword('MyPass123@')).toBeUndefined()
+      expect(validatePassword('SecurePass99#')).toBeUndefined()
       expect(validatePassword('P@ssw0rd')).toBeUndefined()
     })
 
     it('should accept passwords at max length', () => {
-      const maxPassword = 'A' + 'a'.repeat(126) + '1'
+      const maxPassword = 'A' + 'a'.repeat(125) + '1!'
       expect(validatePassword(maxPassword)).toBeUndefined()
     })
 
@@ -187,8 +192,8 @@ describe('userValidators', () => {
       const firstName = 'John'
       const lastName = 'Doe'
       const email = 'john.doe@example.com'
-      const password = 'SecurePass123'
-      const confirmPassword = 'SecurePass123'
+      const password = 'SecurePass123!'
+      const confirmPassword = 'SecurePass123!'
 
       expect(validateFirstName(firstName)).toBeUndefined()
       expect(validateLastName(lastName)).toBeUndefined()

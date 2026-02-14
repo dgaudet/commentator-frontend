@@ -191,11 +191,7 @@ When showing the login loading, the background is purple
 I still need to do some more styling, and see if AI can do something with the stock photo
 
 Things to test on create user
-** Does the meta data get set properly?
-** do the passwords match?
 * Do we need a separate function for the gradients? we already had gradients?
-* The request and response for create user in userService, does not match the api at curl http://localhost:3000/api-docs
-* Looks like the backend has a special character requirement
 
 Options for image editing
 Online Background Removal Tools (Easiest)

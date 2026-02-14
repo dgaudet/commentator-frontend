@@ -120,7 +120,7 @@ describe('userService', () => {
         firstName: 'Jane',
         lastName: 'Smith',
         email: 'jane@example.com',
-        password: 'Secure123Pass',
+        password: 'Secure123Pass!',
       }
 
       const apiResponse = {

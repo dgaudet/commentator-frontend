@@ -49,10 +49,10 @@ describe('SignupForm - Success Flow & Navigation', () => {
       target: { value: 'john@example.com' },
     })
     fireEvent.change(screen.getByLabelText(/^password/i), {
-      target: { value: 'Password123' },
+      target: { value: 'Password123!' },
     })
     fireEvent.change(screen.getByLabelText(/confirm password/i), {
-      target: { value: 'Password123' },
+      target: { value: 'Password123!' },
     })
 
     fireEvent.blur(screen.getByLabelText(/first name/i))
@@ -104,10 +104,10 @@ describe('SignupForm - Success Flow & Navigation', () => {
       target: { value: 'jane@example.com' },
     })
     fireEvent.change(screen.getByLabelText(/^password/i), {
-      target: { value: 'Password456' },
+      target: { value: 'Password456@' },
     })
     fireEvent.change(screen.getByLabelText(/confirm password/i), {
-      target: { value: 'Password456' },
+      target: { value: 'Password456@' },
     })
 
     fireEvent.blur(screen.getByLabelText(/first name/i))
@@ -126,7 +126,7 @@ describe('SignupForm - Success Flow & Navigation', () => {
           firstName: 'Jane',
           lastName: 'Smith',
           email: 'jane@example.com',
-          password: 'Password456',
+          password: 'Password456@',
         }),
       )
     })

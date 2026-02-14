@@ -68,10 +68,10 @@ describe('SignupPage - E2E User Journeys', () => {
         target: { value: 'alice.brown@example.com' },
       })
       fireEvent.change(screen.getByLabelText(/^password/i), {
-        target: { value: 'SecurePassword123' },
+        target: { value: 'SecurePassword123!' },
       })
       fireEvent.change(screen.getByLabelText(/confirm password/i), {
-        target: { value: 'SecurePassword123' },
+        target: { value: 'SecurePassword123!' },
       })
 
       // Step 2: User validates fields
@@ -90,7 +90,7 @@ describe('SignupPage - E2E User Journeys', () => {
           firstName: 'Alice',
           lastName: 'Brown',
           email: 'alice.brown@example.com',
-          password: 'SecurePassword123',
+          password: 'SecurePassword123!',
         })
       })
     })

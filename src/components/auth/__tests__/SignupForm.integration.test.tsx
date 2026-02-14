@@ -43,10 +43,10 @@ describe('SignupForm - Integration Tests', () => {
       target: { value: 'john@example.com' },
     })
     fireEvent.change(screen.getByLabelText(/^password/i), {
-      target: { value: 'Password123' },
+      target: { value: 'Password123!' },
     })
     fireEvent.change(screen.getByLabelText(/confirm password/i), {
-      target: { value: 'Password123' },
+      target: { value: 'Password123!' },
     })
 
     fireEvent.blur(screen.getByLabelText(/first name/i))
@@ -70,7 +70,7 @@ describe('SignupForm - Integration Tests', () => {
             firstName: 'John',
             lastName: 'Doe',
             email: 'john@example.com',
-            password: 'Password123',
+            password: 'Password123!',
           }),
         )
       },

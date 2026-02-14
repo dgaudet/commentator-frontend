@@ -81,6 +81,7 @@ export function validateEmail(value: string): string | undefined {
  * - At least one uppercase letter
  * - At least one lowercase letter
  * - At least one number
+ * - At least one special character (!@#$%^&*)
  * @param value - The password to validate
  * @returns Error message if invalid, undefined if valid
  */
@@ -111,6 +112,10 @@ export function validatePassword(value: string): string | undefined {
 
   if (!/\d/.test(trimmed)) {
     requirements.push('a number')
+  }
+
+  if (!/[!@#$%^&*]/.test(trimmed)) {
+    requirements.push('a special character (!@#$%^&*)')
   }
 
   if (requirements.length > 0) {
