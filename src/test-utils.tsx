@@ -11,6 +11,7 @@
  * import { render, screen } from './test-utils'
  */
 import { ReactElement } from 'react'
+import { BrowserRouter } from 'react-router-dom'
 import { render as rtlRender, RenderOptions } from '@testing-library/react'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { AuthProvider } from './contexts/AuthContext'
@@ -61,6 +62,29 @@ function renderMinimal(
   return rtlRender(ui, options)
 }
 
+/**
+ * Render function for page components that use React Router
+ * Wraps with BrowserRouter to support Link components
+ * Use this for pages that need router navigation
+ *
+ * @param ui - React component to render
+ * @param options - Render options
+ * @returns Render result with all RTL utilities
+ */
+function renderWithRouter(
+  ui: ReactElement,
+  options?: Omit<RenderOptions, 'wrapper'>,
+) {
+  return rtlRender(ui, {
+    wrapper: ({ children }) => (
+      <BrowserRouter>
+        <ThemeProvider>{children}</ThemeProvider>
+      </BrowserRouter>
+    ),
+    ...options,
+  })
+}
+
 // Re-export everything from RTL except render (we provide custom render below)
 export {
   screen,
@@ -72,7 +96,7 @@ export {
 } from '@testing-library/react'
 
 // Export our custom renders
-export { customRender as render, renderMinimal }
+export { customRender as render, renderMinimal, renderWithRouter }
 
 // Export all fixture factories (Story 5 - lightweight mocking)
 // eslint-disable-next-line react-refresh/only-export-components

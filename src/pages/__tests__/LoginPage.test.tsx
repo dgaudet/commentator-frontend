@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { renderWithRouter, screen } from '../../test-utils'
 import userEvent from '@testing-library/user-event'
 import * as AuthModule from '../../contexts/AuthContext'
 import { LoginPage } from '../LoginPage'
@@ -25,23 +25,23 @@ describe('LoginPage', () => {
   })
 
   it('should render the login page', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     expect(screen.getByRole('heading')).toBeInTheDocument()
   })
 
   it('should display application title', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     expect(screen.getByText(/commentator/i)).toBeInTheDocument()
   })
 
   it('should display a login button', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     const loginButton = screen.getByRole('button', { name: /login/i })
     expect(loginButton).toBeInTheDocument()
   })
 
   it('should display signup link', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     expect(screen.getByText(/don't have an account/i)).toBeInTheDocument()
     expect(screen.getByText(/sign up/i)).toBeInTheDocument()
   })
@@ -59,7 +59,7 @@ describe('LoginPage', () => {
       getAccessToken: jest.fn(),
     })
 
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     const loginButton = screen.getByRole('button', { name: /login/i })
 
     await userEvent.click(loginButton)
@@ -69,25 +69,25 @@ describe('LoginPage', () => {
   })
 
   it('should be mobile responsive', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     const container = screen.getByRole('heading').closest('div')
     expect(container).toBeInTheDocument()
   })
 
   it('should have proper heading hierarchy', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     const heading = screen.getByRole('heading')
     expect(['H1', 'H2', 'H3'].includes(heading.tagName)).toBe(true)
   })
 
   it('should have proper labels for interactive elements', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     const loginButton = screen.getByRole('button', { name: /login/i })
     expect(loginButton).toHaveAccessibleName()
   })
 
   it('should be keyboard navigable', async () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     const loginButton = screen.getByRole('button', { name: /login/i })
 
     // Tab to the button
@@ -100,7 +100,7 @@ describe('LoginPage', () => {
   })
 
   it('should have proper semantic HTML', () => {
-    const { container } = render(<LoginPage />)
+    const { container } = renderWithRouter(<LoginPage />)
     const main = container.querySelector('main')
     expect(main).toBeInTheDocument()
   })
@@ -117,7 +117,7 @@ describe('LoginPage', () => {
       getAccessToken: jest.fn(),
     })
 
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     expect(screen.getByText(/login failed/i)).toBeInTheDocument()
   })
 
@@ -133,7 +133,7 @@ describe('LoginPage', () => {
       getAccessToken: jest.fn(),
     })
 
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
     const loginButton = screen.getByRole('button', { name: /login with auth0/i })
     expect(loginButton).toBeDisabled()
     expect(screen.getByText('Logging in...')).toBeInTheDocument()

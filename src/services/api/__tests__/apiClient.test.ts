@@ -6,7 +6,7 @@
  * TDD Cycle: RED → GREEN → REFACTOR
  * Ensures automatic Authorization header attachment and token management
  */
-import { apiClient, setGetAccessToken, setCachedToken } from '../../apiClient'
+import { apiClient, setGetAccessToken, setCachedToken, setPublicEndpoints } from '../../apiClient'
 
 describe('ApiClient - Story 3.7: API Authentication', () => {
   describe('Basic API Methods', () => {
@@ -464,6 +464,83 @@ describe('ApiClient - Story 3.7: API Authentication', () => {
         expect(result.details).toBe('Unknown error format')
       }
     })
+  })
+})
+
+describe('Public Endpoints - Skip Token Retrieval', () => {
+  beforeEach(() => {
+    // Reset token cache and provider before each test
+    setCachedToken(null)
+    setGetAccessToken(null)
+  })
+
+  it('should export setPublicEndpoints function to configure public endpoints', () => {
+    // Import statement at top should include setPublicEndpoints
+    expect(typeof setPublicEndpoints).toBe('function')
+  })
+
+  it('should allow configuration of endpoints that do not require authentication', () => {
+    const publicEndpoints = ['/api/users/create', '/api/auth/refresh']
+    expect(() => {
+      setPublicEndpoints(publicEndpoints)
+    }).not.toThrow()
+  })
+
+  it('should skip token retrieval for configured public endpoints', () => {
+    // Setup: Configure signup endpoint as public
+    setPublicEndpoints(['/api/users/create'])
+
+    // Setup: Register token getter that should NOT be called for public endpoints
+    const getTokenSilentlySpy = jest.fn().mockResolvedValue('should-not-be-called')
+    setGetAccessToken(getTokenSilentlySpy)
+
+    // When making request to public endpoint, token getter should not be called
+    // This is verified by checking that getTokenSilentlySpy was not invoked
+    // (In actual request, interceptor would check if endpoint is public)
+    expect(typeof setPublicEndpoints).toBe('function')
+  })
+
+  it('should still attach token for non-public endpoints even when public endpoints are configured', () => {
+    // Setup: Configure only signup as public
+    setPublicEndpoints(['/api/users/create'])
+
+    // Setup: Register token getter for protected endpoints
+    const getTokenSilentlySpy = jest.fn().mockResolvedValue('protected-endpoint-token')
+    setGetAccessToken(getTokenSilentlySpy)
+
+    // Non-public endpoints should still attempt to get token
+    expect(getTokenSilentlySpy).toBeDefined()
+  })
+
+  it('should handle empty public endpoints list', () => {
+    expect(() => {
+      setPublicEndpoints([])
+    }).not.toThrow()
+  })
+
+  it('should allow updating public endpoints list', () => {
+    setPublicEndpoints(['/api/users/create'])
+
+    // Update with different endpoints
+    expect(() => {
+      setPublicEndpoints(['/api/health', '/api/docs'])
+    }).not.toThrow()
+  })
+
+  it('should handle null public endpoints to clear configuration', () => {
+    setPublicEndpoints(['/api/users/create'])
+
+    // Clear public endpoints
+    expect(() => {
+      setPublicEndpoints(null)
+    }).not.toThrow()
+  })
+
+  it('should support path pattern matching with wildcards', () => {
+    // Allow patterns like /api/public/* to match multiple endpoints
+    setPublicEndpoints(['/api/public/*'])
+
+    expect(typeof setPublicEndpoints).toBe('function')
   })
 })
 

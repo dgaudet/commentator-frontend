@@ -1,81 +1,76 @@
+/* LoginPage Styles */
+/* Gradient background and card layout */
+/* Design token colors are applied via inline styles and theme hooks */
+
 .container {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Background gradient applied via inline style with theme colors */
 }
 
 .card {
-  background: white;
   border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   padding: 40px;
   max-width: 400px;
   width: 100%;
   text-align: center;
+  /* Background and shadow applied via inline styles with theme colors */
 }
 
 .title {
   margin: 0 0 8px 0;
   font-size: 32px;
   font-weight: 700;
-  color: #333;
+  /* Color applied via inline style */
 }
 
 .subtitle {
   margin: 0 0 30px 0;
   font-size: 14px;
-  color: #666;
+  /* Color applied via inline style */
 }
 
 .error {
-  background-color: #fee;
-  border: 1px solid #fcc;
   border-radius: 4px;
   padding: 12px;
   margin-bottom: 20px;
-  color: #c33;
   font-size: 14px;
+  border: 1px solid;
+  border-color: inherit;
+  /* Background and text colors applied via inline styles */
 }
 
 .loginButton {
   width: 100%;
   padding: 12px;
-  background-color: #667eea;
-  color: white;
   border: none;
   border-radius: 4px;
   font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-.loginButton:hover:not(:disabled) {
-  background-color: #5568d3;
+  /* Colors and text applied via inline styles */
 }
 
 .loginButton:disabled {
-  opacity: 0.6;
   cursor: not-allowed;
+}
+
+.link {
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+  /* Color and font-weight applied via inline styles */
+}
+
+.link:hover {
+  text-decoration: underline;
 }
 
 .signupPrompt {
   margin-top: 20px;
   font-size: 14px;
-  color: #666;
-}
-
-.signupPrompt a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.signupPrompt a:hover {
-  text-decoration: underline;
+  /* Color applied via inline style */
 }
 
 @media (max-width: 600px) {
