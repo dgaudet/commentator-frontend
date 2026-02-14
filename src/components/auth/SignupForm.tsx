@@ -181,6 +181,13 @@ export const SignupForm: React.FC = () => {
       const errorMessage =
         error instanceof Error ? error.message : 'Account creation failed. Please try again.'
       setFormError(errorMessage)
+      // Clear password fields on error for security (don't retain sensitive data)
+      // but preserve other fields so user doesn't have to re-enter everything
+      setFormData(prev => ({
+        ...prev,
+        password: '',
+        confirmPassword: '',
+      }))
       setIsLoading(false)
     }
   }

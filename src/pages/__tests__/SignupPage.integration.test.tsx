@@ -276,6 +276,16 @@ describe('SignupPage - Integration Tests', () => {
       // Button should be re-enabled for retry
       expect(screen.getByRole('button', { name: /create account/i })).not.toBeDisabled()
 
+      // Passwords were cleared on error - user must re-enter them for security
+      fireEvent.change(screen.getByLabelText(/^password/i), {
+        target: { value: 'Password123!' },
+      })
+      fireEvent.change(screen.getByLabelText(/confirm password/i), {
+        target: { value: 'Password123!' },
+      })
+      fireEvent.blur(screen.getByLabelText(/^password/i))
+      fireEvent.blur(screen.getByLabelText(/confirm password/i))
+
       // Mock second attempt to succeed
       ;(userService.create as jest.Mock).mockResolvedValueOnce({
         userId: '456',

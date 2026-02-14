@@ -162,4 +162,73 @@ describe('SignupForm - Integration Tests', () => {
     // No error should be visible anymore
     // (Error message should be cleared when user types)
   })
+
+  it('should preserve firstName, lastName, email on API error', async () => {
+    const errorMsg = 'Email already in use'
+    ;(userService.create as jest.Mock).mockRejectedValueOnce(new Error(errorMsg))
+
+    renderWithRouter(<SignupForm />)
+    fillForm()
+
+    const submitButton = screen.getByRole('button', { name: /create account/i })
+    fireEvent.click(submitButton)
+
+    await waitFor(() => {
+      expect(submitButton).not.toBeDisabled()
+    })
+
+    // Form fields should still contain the user's data (except passwords)
+    expect((screen.getByLabelText(/first name/i) as HTMLInputElement).value).toBe('John')
+    expect((screen.getByLabelText(/last name/i) as HTMLInputElement).value).toBe('Doe')
+    expect((screen.getByLabelText(/^email/i) as HTMLInputElement).value).toBe('john@example.com')
+  })
+
+  it('should clear password and confirmPassword on API error', async () => {
+    const errorMsg = 'Email already in use'
+    ;(userService.create as jest.Mock).mockRejectedValueOnce(new Error(errorMsg))
+
+    renderWithRouter(<SignupForm />)
+    fillForm()
+
+    // Verify passwords are filled before submission
+    expect((screen.getByLabelText(/^password/i) as HTMLInputElement).value).toBe('Password123!')
+    expect((screen.getByLabelText(/confirm password/i) as HTMLInputElement).value).toBe(
+      'Password123!',
+    )
+
+    const submitButton = screen.getByRole('button', { name: /create account/i })
+    fireEvent.click(submitButton)
+
+    await waitFor(() => {
+      expect(submitButton).not.toBeDisabled()
+    })
+
+    // Passwords should be cleared after error (security requirement)
+    expect((screen.getByLabelText(/^password/i) as HTMLInputElement).value).toBe('')
+    expect((screen.getByLabelText(/confirm password/i) as HTMLInputElement).value).toBe('')
+  })
+
+  it('should preserve all form data except passwords on API error for retry', async () => {
+    const errorMsg = 'Server error'
+    ;(userService.create as jest.Mock).mockRejectedValueOnce(new Error(errorMsg))
+
+    renderWithRouter(<SignupForm />)
+    fillForm()
+
+    const submitButton = screen.getByRole('button', { name: /create account/i })
+    fireEvent.click(submitButton)
+
+    await waitFor(() => {
+      expect(submitButton).not.toBeDisabled()
+    })
+
+    // User can see their email/name but needs to re-enter passwords
+    const firstNameInput = screen.getByLabelText(/first name/i) as HTMLInputElement
+    const emailInput = screen.getByLabelText(/^email/i) as HTMLInputElement
+    const passwordInput = screen.getByLabelText(/^password/i) as HTMLInputElement
+
+    expect(firstNameInput.value).toBe('John')
+    expect(emailInput.value).toBe('john@example.com')
+    expect(passwordInput.value).toBe('') // Password cleared
+  })
 })
