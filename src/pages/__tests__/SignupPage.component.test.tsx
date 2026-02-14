@@ -8,6 +8,48 @@ import { renderWithRouter, screen, within } from '../../test-utils'
 import { SignupPage } from '../SignupPage'
 
 describe('SignupPage Component', () => {
+  describe('Hero Image - Base Path Handling', () => {
+    it('should render hero section with background image', () => {
+      const { container } = renderWithRouter(<SignupPage />)
+      const heroBackground = container.querySelector('.heroBackground')
+      expect(heroBackground).toBeInTheDocument()
+    })
+
+    it('should use imported image URL for hero background', () => {
+      const { container } = renderWithRouter(<SignupPage />)
+      const heroBackground = container.querySelector('.heroBackground') as HTMLElement
+
+      // The background image should not be a hardcoded absolute path
+      // It should be processed by the bundler (contains bundler-generated hash or path)
+      const bgImage = window.getComputedStyle(heroBackground).backgroundImage
+
+      // Should have a URL but not a hardcoded domain root path
+      expect(bgImage).toBeDefined()
+      expect(bgImage).not.toContain('(/images/') // Not hardcoded root path
+    })
+
+    it('should render hero background as CSS background image', () => {
+      const { container } = renderWithRouter(<SignupPage />)
+      const heroBackground = container.querySelector('.heroBackground')
+
+      expect(heroBackground).toHaveStyle({
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center bottom',
+      })
+    })
+
+    it('should have hero background with correct dimensions', () => {
+      const { container } = renderWithRouter(<SignupPage />)
+      const heroBackground = container.querySelector('.heroBackground') as HTMLElement
+
+      expect(heroBackground).toHaveStyle({
+        width: '100%',
+        height: '100%',
+      })
+    })
+  })
+
   describe('Page Layout Structure', () => {
     it('should render main container with correct role', () => {
       renderWithRouter(<SignupPage />)

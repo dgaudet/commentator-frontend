@@ -11,6 +11,7 @@ import { spacing, typography, shadows } from '../theme/tokens'
 import { useThemeColors } from '../hooks/useThemeColors'
 import { SignupForm } from '../components/auth/SignupForm'
 import styles from './SignupPage.module.css'
+import teacherImage from '../../images/TeacherWithKid1.png'
 
 export const SignupPage: React.FC = () => {
   const themeColors = useThemeColors()
@@ -65,7 +66,7 @@ export const SignupPage: React.FC = () => {
         <div className={styles.signupHero} style={signupHeroStyle}>
           {/* Hero image */}
           <div className={styles.heroBackground} style={{
-            backgroundImage: 'url(/images/TeacherWithKid1.png)',
+            backgroundImage: `url(${teacherImage})`,
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center bottom',
