@@ -184,8 +184,5 @@ test out changing my password in auth0
 
 Need to style the login form
 
-Things to test on create user
-* Do we need a separate function for the gradients? we already had gradients?
-
 Online Background Removal Tools (Easiest)
 - https://www.remove.bg/ - AI-powered background removal, great for people
