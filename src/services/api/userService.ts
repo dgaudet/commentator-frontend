@@ -65,14 +65,8 @@ function getUserFriendlyErrorMessage(error: unknown): string {
     ? (error as Record<string, unknown>).status
     : null
 
-  // Map common error scenarios to user-friendly messages
-  // Check for backend-provided messages first
-  if (errorMessage && errorMessage !== 'Failed to create account') {
-    // Preserve helpful backend messages (e.g., "Email already in use")
-    return errorMessage
-  }
-
-  // Map HTTP status codes to user-friendly messages
+  // Map HTTP status codes to user-friendly messages first
+  // This takes precedence over generic error messages
   switch (status) {
     case 400:
       return 'Please check your information and try again'
@@ -84,9 +78,20 @@ function getUserFriendlyErrorMessage(error: unknown): string {
       return 'An error occurred on our end. Please try again later'
     case 503:
       return 'Our service is temporarily unavailable. Please try again soon'
-    default:
-      return 'Failed to create account'
   }
+
+  // If no status code match, preserve meaningful backend error messages
+  // List of specific messages to preserve (helpful backend messages)
+  const helpfulMessages = [
+    'Email already in use',
+  ]
+
+  if (errorMessage && helpfulMessages.includes(errorMessage)) {
+    return errorMessage
+  }
+
+  // Fallback to generic message if no status code or helpful message found
+  return 'Failed to create account'
 }
 
 export const userService = {

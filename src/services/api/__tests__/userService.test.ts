@@ -216,14 +216,14 @@ describe('userService', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: 'existing@example.com',
-        password: 'Password123',
+        password: 'Password123!',
       }
 
       const conflictError = new Error('Email already in use')
       ;(apiClient.post as jest.Mock).mockRejectedValue(conflictError)
 
       await expect(userService.create(createRequest)).rejects.toThrow(
-        'Failed to create account',
+        'Email already in use',
       )
     })
 
