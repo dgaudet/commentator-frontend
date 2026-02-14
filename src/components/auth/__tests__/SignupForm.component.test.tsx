@@ -155,8 +155,9 @@ describe('SignupForm Component', () => {
   describe('Form Submission', () => {
     it('should call userService.create on valid form submission', async () => {
       ;(userService.create as jest.Mock).mockResolvedValueOnce({
-        id: '123',
+        userId: '123',
         email: 'test@example.com',
+        createdAt: '2026-02-14T10:00:00Z',
       })
 
       renderWithRouter(<SignupForm />)
@@ -195,8 +196,9 @@ describe('SignupForm Component', () => {
 
     it('should handle form submission with all fields filled', async () => {
       ;(userService.create as jest.Mock).mockResolvedValueOnce({
-        id: '456',
+        userId: '456',
         email: 'jane@example.com',
+        createdAt: '2026-02-14T10:00:00Z',
       })
 
       renderWithRouter(<SignupForm />)

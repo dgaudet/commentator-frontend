@@ -26,8 +26,9 @@ describe('SignupForm - Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     ;(userService.create as jest.Mock).mockResolvedValue({
-      id: '123',
+      userId: '123',
       email: 'test@example.com',
+      createdAt: '2026-02-14T10:00:00Z',
     })
   })
 

@@ -15,7 +15,7 @@ describe('userService', () => {
   })
 
   describe('create', () => {
-    it('should call apiClient.post with correct endpoint and data', async () => {
+    it('should transform request and call apiClient.post with nested user_metadata', async () => {
       const createRequest = {
         firstName: 'John',
         lastName: 'Doe',
@@ -23,21 +23,34 @@ describe('userService', () => {
         password: 'Password123',
       }
 
-      const expectedResponse = {
-        id: '123',
-        firstName: 'John',
-        lastName: 'Doe',
+      const apiResponse = {
+        user_id: '123',
         email: 'john@example.com',
+        created_at: '2026-02-14T10:00:00Z',
       }
 
       ;(apiClient.post as jest.Mock).mockResolvedValue({
-        data: expectedResponse,
+        data: apiResponse,
       })
 
       const result = await userService.create(createRequest)
 
-      expect(apiClient.post).toHaveBeenCalledWith('/api/users/create', createRequest)
-      expect(result).toEqual(expectedResponse)
+      // Verify request was transformed to API format with nested user_metadata
+      expect(apiClient.post).toHaveBeenCalledWith('/api/users/create', {
+        email: 'john@example.com',
+        password: 'Password123',
+        user_metadata: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      })
+
+      // Verify response was transformed to camelCase
+      expect(result).toEqual({
+        userId: '123',
+        email: 'john@example.com',
+        createdAt: '2026-02-14T10:00:00Z',
+      })
     })
 
     it('should handle API errors and throw user-friendly error message', async () => {
@@ -70,7 +83,7 @@ describe('userService', () => {
       await expect(userService.create(createRequest)).rejects.toThrow()
     })
 
-    it('should pass only required fields to API', async () => {
+    it('should pass fields to API in correct structure with nested user_metadata', async () => {
       const createRequest = {
         firstName: 'John',
         lastName: 'Doe',
@@ -79,24 +92,30 @@ describe('userService', () => {
       }
 
       ;(apiClient.post as jest.Mock).mockResolvedValue({
-        data: { id: '123', ...createRequest },
+        data: {
+          user_id: '123',
+          email: 'john@example.com',
+          created_at: '2026-02-14T10:00:00Z',
+        },
       })
 
       await userService.create(createRequest)
 
-      // Verify exactly these fields are sent
+      // Verify request structure matches API contract with nested user_metadata
       expect(apiClient.post).toHaveBeenCalledWith(
         '/api/users/create',
         expect.objectContaining({
-          firstName: 'John',
-          lastName: 'Doe',
           email: 'john@example.com',
           password: 'Password123',
+          user_metadata: expect.objectContaining({
+            firstName: 'John',
+            lastName: 'Doe',
+          }),
         }),
       )
     })
 
-    it('should return user object with id on success', async () => {
+    it('should return user object with userId (transformed from user_id) on success', async () => {
       const createRequest = {
         firstName: 'Jane',
         lastName: 'Smith',
@@ -104,22 +123,22 @@ describe('userService', () => {
         password: 'Secure123Pass',
       }
 
-      const expectedResponse = {
-        id: '456',
-        firstName: 'Jane',
-        lastName: 'Smith',
+      const apiResponse = {
+        user_id: '456',
         email: 'jane@example.com',
+        created_at: '2026-02-14T11:00:00Z',
       }
 
       ;(apiClient.post as jest.Mock).mockResolvedValue({
-        data: expectedResponse,
+        data: apiResponse,
       })
 
       const result = await userService.create(createRequest)
 
-      expect(result).toHaveProperty('id')
-      expect(result.firstName).toEqual('Jane')
+      expect(result).toHaveProperty('userId')
+      expect(result.userId).toEqual('456')
       expect(result.email).toEqual('jane@example.com')
+      expect(result.createdAt).toEqual('2026-02-14T11:00:00Z')
     })
 
     it('should handle 400 validation error response', async () => {

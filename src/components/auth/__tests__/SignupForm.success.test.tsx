@@ -31,8 +31,9 @@ describe('SignupForm - Success Flow & Navigation', () => {
 
   it('should navigate to login page after successful account creation', async () => {
     ;(userService.create as jest.Mock).mockResolvedValueOnce({
-      id: '123',
+      userId: '123',
       email: 'john@example.com',
+      createdAt: '2026-02-14T10:00:00Z',
     })
 
     renderWithRouter(<SignupForm />)
@@ -85,8 +86,9 @@ describe('SignupForm - Success Flow & Navigation', () => {
 
   it('should call userService with correct form data', async () => {
     ;(userService.create as jest.Mock).mockResolvedValueOnce({
-      id: '456',
+      userId: '456',
       email: 'jane@example.com',
+      createdAt: '2026-02-14T10:00:00Z',
     })
 
     renderWithRouter(<SignupForm />)
