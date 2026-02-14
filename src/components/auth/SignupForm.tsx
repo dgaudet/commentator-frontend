@@ -198,6 +198,7 @@ export const SignupForm: React.FC = () => {
       {/* Form-level error message */}
       {formError && (
         <div
+          role="alert"
           style={{
             padding: `${spacing.md} ${spacing.md}`,
             backgroundColor: themeColors.semantic.errorLight,

@@ -189,6 +189,3 @@ Things to test on create user
 
 Online Background Removal Tools (Easiest)
 - https://www.remove.bg/ - AI-powered background removal, great for people
-
-
-test@test2.com
