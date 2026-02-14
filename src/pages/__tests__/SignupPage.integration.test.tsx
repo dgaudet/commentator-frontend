@@ -33,6 +33,7 @@ jest.mock('../../utils/userValidators', () => ({
   validatePassword: jest.fn(value => {
     if (!value) return 'Password is required'
     if (value.length < 8) return 'Password must be at least 8 characters'
+    if (!/[!@#$%^&*]/.test(value)) return 'Password must contain at least one special character'
     return undefined
   }),
   validatePasswordMatch: jest.fn((password, confirm) => {
@@ -49,8 +50,9 @@ describe('SignupPage - Integration Tests', () => {
   describe('Complete Signup Flow', () => {
     it('should complete successful signup with valid data', async () => {
       ;(userService.create as jest.Mock).mockResolvedValueOnce({
-        id: '123',
+        userId: '123',
         email: 'john.doe@example.com',
+        createdAt: '2026-02-14T10:00:00Z',
       })
 
       renderWithRouter(<SignupPage />)
@@ -71,10 +73,10 @@ describe('SignupPage - Integration Tests', () => {
         target: { value: 'john.doe@example.com' },
       })
       fireEvent.change(screen.getByLabelText(/^password/i), {
-        target: { value: 'SecurePass123' },
+        target: { value: 'SecurePass123!' },
       })
       fireEvent.change(screen.getByLabelText(/confirm password/i), {
-        target: { value: 'SecurePass123' },
+        target: { value: 'SecurePass123!' },
       })
 
       // Blur all fields to trigger validation
@@ -93,7 +95,7 @@ describe('SignupPage - Integration Tests', () => {
           firstName: 'John',
           lastName: 'Doe',
           email: 'john.doe@example.com',
-          password: 'SecurePass123',
+          password: 'SecurePass123!',
         })
       })
     })
@@ -151,10 +153,10 @@ describe('SignupPage - Integration Tests', () => {
         target: { value: 'invalid-email' },
       })
       fireEvent.change(screen.getByLabelText(/^password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
       fireEvent.change(screen.getByLabelText(/confirm password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
 
       fireEvent.blur(screen.getByLabelText(/first name/i))
@@ -181,10 +183,10 @@ describe('SignupPage - Integration Tests', () => {
         target: { value: 'john@example.com' },
       })
       fireEvent.change(screen.getByLabelText(/^password/i), {
-        target: { value: 'Short1' },
+        target: { value: 'Short1!' },
       })
       fireEvent.change(screen.getByLabelText(/confirm password/i), {
-        target: { value: 'Short1' },
+        target: { value: 'Short1!' },
       })
 
       fireEvent.blur(screen.getByLabelText(/first name/i))
@@ -216,10 +218,10 @@ describe('SignupPage - Integration Tests', () => {
         target: { value: 'john@example.com' },
       })
       fireEvent.change(screen.getByLabelText(/^password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
       fireEvent.change(screen.getByLabelText(/confirm password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
 
       fireEvent.blur(screen.getByLabelText(/first name/i))
@@ -252,10 +254,10 @@ describe('SignupPage - Integration Tests', () => {
         target: { value: 'john@example.com' },
       })
       fireEvent.change(screen.getByLabelText(/^password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
       fireEvent.change(screen.getByLabelText(/confirm password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
 
       fireEvent.blur(screen.getByLabelText(/first name/i))
@@ -276,8 +278,9 @@ describe('SignupPage - Integration Tests', () => {
 
       // Mock second attempt to succeed
       ;(userService.create as jest.Mock).mockResolvedValueOnce({
-        id: '456',
+        userId: '456',
         email: 'john@example.com',
+        createdAt: '2026-02-14T11:00:00Z',
       })
 
       // Retry submission
@@ -372,10 +375,10 @@ describe('SignupPage - Integration Tests', () => {
         target: { value: 'john@example.com' },
       })
       fireEvent.change(screen.getByLabelText(/^password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
       fireEvent.change(screen.getByLabelText(/confirm password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
 
       fireEvent.blur(screen.getByLabelText(/first name/i))
@@ -407,10 +410,10 @@ describe('SignupPage - Integration Tests', () => {
         target: { value: 'john@example.com' },
       })
       fireEvent.change(screen.getByLabelText(/^password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
       fireEvent.change(screen.getByLabelText(/confirm password/i), {
-        target: { value: 'Password123' },
+        target: { value: 'Password123!' },
       })
 
       fireEvent.blur(screen.getByLabelText(/first name/i))
