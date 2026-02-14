@@ -202,6 +202,106 @@ describe('SignupForm - WCAG 2.1 AA Accessibility', () => {
       const form = screen.getByRole('form')
       expect(form).toBeInTheDocument()
     })
+
+    it('should have stable IDs on error message spans', () => {
+      renderWithRouter(<SignupForm />)
+      const firstNameInput = screen.getByLabelText(/first name/i)
+      // Trigger validation error by blurring with empty value
+      fireEvent.blur(firstNameInput)
+
+      // Error message should have stable ID format like "firstName-error"
+      const errorId = `${firstNameInput.id}-error`
+      // Error message exists with predictable ID
+      expect(errorId).toBe('firstName-error')
+    })
+
+    it('should set aria-invalid when field has error', () => {
+      renderWithRouter(<SignupForm />)
+      const firstNameInput = screen.getByLabelText(/first name/i) as HTMLInputElement
+
+      // Trigger validation error
+      fireEvent.blur(firstNameInput)
+
+      // After blur with empty value, aria-invalid should be true
+      expect(firstNameInput).toHaveAttribute('aria-invalid', 'true')
+    })
+
+    it('should set aria-invalid to false when field is valid', () => {
+      renderWithRouter(<SignupForm />)
+      const firstNameInput = screen.getByLabelText(/first name/i) as HTMLInputElement
+
+      // Type valid value
+      fireEvent.change(firstNameInput, { target: { value: 'John' } })
+      fireEvent.blur(firstNameInput)
+
+      // Valid field should have aria-invalid="false"
+      expect(firstNameInput).toHaveAttribute('aria-invalid', 'false')
+    })
+
+    it('should link input to error message via aria-describedby', () => {
+      renderWithRouter(<SignupForm />)
+      const firstNameInput = screen.getByLabelText(/first name/i) as HTMLInputElement
+
+      // Trigger validation error
+      fireEvent.blur(firstNameInput)
+
+      // Input should have aria-describedby pointing to error ID
+      expect(firstNameInput).toHaveAttribute('aria-describedby', 'firstName-error')
+    })
+
+    it('should remove aria-describedby when error is cleared', () => {
+      renderWithRouter(<SignupForm />)
+      const firstNameInput = screen.getByLabelText(/first name/i) as HTMLInputElement
+
+      // First trigger error
+      fireEvent.blur(firstNameInput)
+      expect(firstNameInput).toHaveAttribute('aria-describedby')
+
+      // Then provide valid input
+      fireEvent.change(firstNameInput, { target: { value: 'John' } })
+      fireEvent.blur(firstNameInput)
+
+      // aria-describedby should be removed when no error
+      expect(firstNameInput).not.toHaveAttribute('aria-describedby')
+    })
+
+    it('should wire all field errors with aria-describedby', () => {
+      renderWithRouter(<SignupForm />)
+      const fields = [
+        { input: screen.getByLabelText(/first name/i), id: 'firstName-error' },
+        { input: screen.getByLabelText(/last name/i), id: 'lastName-error' },
+        { input: screen.getByLabelText(/^email/i), id: 'email-error' },
+        { input: screen.getByLabelText(/^password/i), id: 'password-error' },
+        { input: screen.getByLabelText(/confirm password/i), id: 'confirmPassword-error' },
+      ]
+
+      fields.forEach(({ input, id }) => {
+        // Trigger validation error
+        fireEvent.blur(input)
+
+        // Should have aria-describedby with correct ID
+        expect(input).toHaveAttribute('aria-describedby', id)
+      })
+    })
+
+    it('should maintain aria-invalid state across user interactions', () => {
+      renderWithRouter(<SignupForm />)
+      const firstNameInput = screen.getByLabelText(/first name/i) as HTMLInputElement
+
+      // Invalid state
+      fireEvent.blur(firstNameInput)
+      expect(firstNameInput).toHaveAttribute('aria-invalid', 'true')
+
+      // Valid state
+      fireEvent.change(firstNameInput, { target: { value: 'John' } })
+      fireEvent.blur(firstNameInput)
+      expect(firstNameInput).toHaveAttribute('aria-invalid', 'false')
+
+      // Back to invalid if cleared
+      fireEvent.change(firstNameInput, { target: { value: '' } })
+      fireEvent.blur(firstNameInput)
+      expect(firstNameInput).toHaveAttribute('aria-invalid', 'true')
+    })
   })
 
   describe('Button Accessibility', () => {

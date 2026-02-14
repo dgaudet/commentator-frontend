@@ -264,9 +264,12 @@ export const SignupForm: React.FC = () => {
           style={createInputStyle(Boolean(errors.firstName))}
           placeholder="John"
           required
+          aria-invalid={Boolean(errors.firstName)}
+          aria-describedby={errors.firstName ? 'firstName-error' : undefined}
         />
         {errors.firstName && (
           <span
+            id="firstName-error"
             style={{
               fontSize: typography.fontSize.xs,
               color: themeColors.semantic.error,
@@ -309,9 +312,12 @@ export const SignupForm: React.FC = () => {
           style={createInputStyle(Boolean(errors.lastName))}
           placeholder="Doe"
           required
+          aria-invalid={Boolean(errors.lastName)}
+          aria-describedby={errors.lastName ? 'lastName-error' : undefined}
         />
         {errors.lastName && (
           <span
+            id="lastName-error"
             style={{
               fontSize: typography.fontSize.xs,
               color: themeColors.semantic.error,
@@ -354,9 +360,12 @@ export const SignupForm: React.FC = () => {
           style={createInputStyle(Boolean(errors.email))}
           placeholder="john.doe@example.com"
           required
+          aria-invalid={Boolean(errors.email)}
+          aria-describedby={errors.email ? 'email-error' : undefined}
         />
         {errors.email && (
           <span
+            id="email-error"
             style={{
               fontSize: typography.fontSize.xs,
               color: themeColors.semantic.error,
@@ -399,9 +408,12 @@ export const SignupForm: React.FC = () => {
           style={createInputStyle(Boolean(errors.password))}
           placeholder="••••••••"
           required
+          aria-invalid={Boolean(errors.password)}
+          aria-describedby={errors.password ? 'password-error' : undefined}
         />
         {errors.password && (
           <span
+            id="password-error"
             style={{
               fontSize: typography.fontSize.xs,
               color: themeColors.semantic.error,
@@ -444,9 +456,12 @@ export const SignupForm: React.FC = () => {
           style={createInputStyle(Boolean(errors.confirmPassword))}
           placeholder="••••••••"
           required
+          aria-invalid={Boolean(errors.confirmPassword)}
+          aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
         />
         {errors.confirmPassword && (
           <span
+            id="confirmPassword-error"
             style={{
               fontSize: typography.fontSize.xs,
               color: themeColors.semantic.error,
