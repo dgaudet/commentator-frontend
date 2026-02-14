@@ -53,19 +53,73 @@ describe('userService', () => {
       })
     })
 
-    it('should handle API errors and throw user-friendly error message', async () => {
+    it('should preserve backend error message (e.g., duplicate email)', async () => {
       const createRequest = {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john@example.com',
-        password: 'Password123',
+        password: 'Password123!',
       }
 
       const apiError = new Error('Email already in use')
       ;(apiClient.post as jest.Mock).mockRejectedValue(apiError)
 
       await expect(userService.create(createRequest)).rejects.toThrow(
-        'Failed to create account',
+        'Email already in use',
+      )
+    })
+
+    it('should map 409 conflict status to user-friendly message', async () => {
+      const createRequest = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'Password123!',
+      }
+
+      const conflictError = Object.assign(new Error('User exists'), {
+        status: 409,
+      })
+      ;(apiClient.post as jest.Mock).mockRejectedValue(conflictError)
+
+      await expect(userService.create(createRequest)).rejects.toThrow(
+        'This email is already registered. Please use a different email or try logging in',
+      )
+    })
+
+    it('should map 400 validation status to user-friendly message', async () => {
+      const createRequest = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'invalid-email',
+        password: 'Password123!',
+      }
+
+      const validationError = Object.assign(new Error('Invalid input'), {
+        status: 400,
+      })
+      ;(apiClient.post as jest.Mock).mockRejectedValue(validationError)
+
+      await expect(userService.create(createRequest)).rejects.toThrow(
+        'Please check your information and try again',
+      )
+    })
+
+    it('should map 500 server error to user-friendly message', async () => {
+      const createRequest = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'Password123!',
+      }
+
+      const serverError = Object.assign(new Error('Internal server error'), {
+        status: 500,
+      })
+      ;(apiClient.post as jest.Mock).mockRejectedValue(serverError)
+
+      await expect(userService.create(createRequest)).rejects.toThrow(
+        'An error occurred on our end. Please try again later',
       )
     })
 

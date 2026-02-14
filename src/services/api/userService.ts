@@ -52,16 +52,59 @@ interface UserApiResponse {
   created_at: string
 }
 
+/**
+ * Map HTTP status codes and known error messages to user-friendly messages
+ * @internal
+ */
+function getUserFriendlyErrorMessage(error: unknown): string {
+  // Extract error message from various error formats
+  const errorMessage = (error instanceof Error) ? error.message : String(error)
+
+  // Extract status code if available
+  const status = (error && typeof error === 'object' && 'status' in error)
+    ? (error as Record<string, unknown>).status
+    : null
+
+  // Map common error scenarios to user-friendly messages
+  // Check for backend-provided messages first
+  if (errorMessage && errorMessage !== 'Failed to create account') {
+    // Preserve helpful backend messages (e.g., "Email already in use")
+    return errorMessage
+  }
+
+  // Map HTTP status codes to user-friendly messages
+  switch (status) {
+    case 400:
+      return 'Please check your information and try again'
+    case 409:
+      return 'This email is already registered. Please use a different email or try logging in'
+    case 422:
+      return 'Please check your information and try again'
+    case 500:
+      return 'An error occurred on our end. Please try again later'
+    case 503:
+      return 'Our service is temporarily unavailable. Please try again soon'
+    default:
+      return 'Failed to create account'
+  }
+}
+
 export const userService = {
   /**
    * Create a new user account
    * @param request - User data for account creation (component-friendly format)
    * @returns User object on success
+   * @throws Error with user-friendly message extracted from backend or mapped from status code
    *
    * Transforms between:
    * - Input: Component request with flat structure
    * - API: Nested user_metadata structure
    * - Output: Transformed response in camelCase
+   *
+   * Error handling strategy:
+   * 1. Attempt to use backend error message (e.g., "Email already in use")
+   * 2. Map HTTP status codes to user-friendly messages
+   * 3. Fall back to generic error message
    */
   async create(request: CreateUserRequest): Promise<User> {
     try {
@@ -88,8 +131,10 @@ export const userService = {
         createdAt: response.data.created_at,
       }
     } catch (error) {
+      // Extract user-friendly error message
+      const userMessage = getUserFriendlyErrorMessage(error)
       console.error('Failed to create user account:', error)
-      throw new Error('Failed to create account')
+      throw new Error(userMessage)
     }
   },
 }
