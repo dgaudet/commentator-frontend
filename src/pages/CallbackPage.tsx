@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { typography, shadows } from '../theme/tokens'
+import { useThemeColors } from '../hooks/useThemeColors'
 import { useAuth } from '../contexts/AuthContext'
 import styles from './CallbackPage.module.css'
 
@@ -9,6 +11,45 @@ export const CallbackPage: React.FC = () => {
   const { isAuthenticated } = useAuth()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const themeColors = useThemeColors()
+
+  const containerStyle = useMemo(() => ({
+    background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.primary.dark} 100%)`,
+  }), [themeColors])
+
+  const cardStyle = useMemo(() => ({
+    backgroundColor: themeColors.background.primary,
+    boxShadow: shadows.lg,
+  }), [themeColors])
+
+  const errorCardStyle = useMemo(() => ({
+    backgroundColor: themeColors.background.primary,
+    boxShadow: shadows.lg,
+    borderLeftColor: themeColors.semantic.error,
+  }), [themeColors])
+
+  const errorTitleStyle = useMemo(() => ({
+    color: themeColors.semantic.error,
+    fontSize: typography.fontSize.lg,
+  }), [themeColors])
+
+  const errorTextStyle = useMemo(() => ({
+    color: themeColors.text.secondary,
+  }), [themeColors])
+
+  const buttonStyle = useMemo(() => ({
+    backgroundColor: themeColors.primary.main,
+    cursor: 'pointer',
+  }), [themeColors])
+
+  const spinnerStyle = useMemo(() => ({
+    borderColor: `${themeColors.background.tertiary}`,
+    borderTopColor: themeColors.primary.main,
+  }), [themeColors])
+
+  const cardTextStyle = useMemo(() => ({
+    color: themeColors.text.primary,
+  }), [themeColors])
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -63,15 +104,25 @@ export const CallbackPage: React.FC = () => {
 
   if (error) {
     return (
-      <main className={styles.container}>
-        <div className={styles.errorCard}>
-          <h1>Authentication Error</h1>
-          <p role="alert">{error}</p>
+      <main className={styles.container} style={containerStyle}>
+        <div className={styles.errorCard} style={errorCardStyle}>
+          <h1 style={errorTitleStyle}>Authentication Error</h1>
+          <p role="alert" style={errorTextStyle}>{error}</p>
           <button
             onClick={() => {
               window.location.href = '/login'
             }}
             className={styles.button}
+            style={{
+              ...buttonStyle,
+              opacity: 1,
+            }}
+            onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.currentTarget.style.backgroundColor = themeColors.primary.dark
+            }}
+            onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.currentTarget.style.backgroundColor = themeColors.primary.main
+            }}
           >
             Back to Login
           </button>
@@ -82,19 +133,19 @@ export const CallbackPage: React.FC = () => {
 
   if (loading) {
     return (
-      <main className={styles.container}>
-        <div className={styles.card}>
-          <div className={styles.spinner} />
-          <p>Processing authentication...</p>
+      <main className={styles.container} style={containerStyle}>
+        <div className={styles.card} style={cardStyle}>
+          <div className={styles.spinner} style={spinnerStyle} />
+          <p style={cardTextStyle}>Processing authentication...</p>
         </div>
       </main>
     )
   }
 
   return (
-    <main className={styles.container}>
-      <div className={styles.card}>
-        <p>Redirecting...</p>
+    <main className={styles.container} style={containerStyle}>
+      <div className={styles.card} style={cardStyle}>
+        <p style={cardTextStyle}>Redirecting...</p>
       </div>
     </main>
   )

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen } from '../../test-utils'
 import * as AuthModule from '../../contexts/AuthContext'
 import { CallbackPage } from '../CallbackPage'
 
