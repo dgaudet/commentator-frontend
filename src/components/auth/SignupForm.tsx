@@ -5,7 +5,7 @@
  * Uses design tokens for theme-aware styling (US-TOKEN-011)
  */
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { spacing, typography, borders } from '../../theme/tokens'
 import { useThemeColors } from '../../hooks/useThemeColors'
@@ -50,11 +50,23 @@ export const SignupForm: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({})
   const [isLoading, setIsLoading] = useState(false)
   const [formError, setFormError] = useState<string | undefined>()
+  const [successMessage, setSuccessMessage] = useState<string | undefined>()
   const firstNameInputRef = useRef<HTMLInputElement>(null)
   const lastNameInputRef = useRef<HTMLInputElement>(null)
   const emailInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
   const confirmPasswordInputRef = useRef<HTMLInputElement>(null)
+
+  // Handle redirect after success message display
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        navigate('/login')
+      }, 1500) // 1.5 seconds delay
+
+      return () => clearTimeout(timer)
+    }
+  }, [successMessage, navigate])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -175,8 +187,16 @@ export const SignupForm: React.FC = () => {
         password: formData.password,
       })
 
-      // Success - redirect to login page
-      navigate('/login')
+      // Success - show message and clear form
+      setSuccessMessage('Account created successfully! Redirecting to login...')
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      })
+      setIsLoading(false)
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Account creation failed. Please try again.'
@@ -202,6 +222,25 @@ export const SignupForm: React.FC = () => {
       onSubmit={handleSubmit}
       role="form"
     >
+      {/* Form-level success message */}
+      {successMessage && (
+        <div
+          role="status"
+          style={{
+            padding: `${spacing.md} ${spacing.md}`,
+            backgroundColor: '#ecfdf5',
+            border: `${borders.width.thin} solid #10b981`,
+            borderRadius: borders.radius.md,
+            color: '#059669',
+            fontSize: typography.fontSize.sm,
+            fontWeight: typography.fontWeight.medium,
+            lineHeight: typography.lineHeight.normal,
+          }}
+        >
+          {successMessage}
+        </div>
+      )}
+
       {/* Form-level error message */}
       {formError && (
         <div
