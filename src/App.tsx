@@ -123,6 +123,7 @@ function App() {
 
   return (
     <ThemeProvider>
+      <ThemeStyles />
       <Router>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
@@ -132,7 +133,6 @@ function App() {
             path="/*"
             element={
               <ProtectedRoute>
-                <ThemeStyles />
                 <AppContent
                   showForm={showForm}
                   editingSubject={editingSubject}

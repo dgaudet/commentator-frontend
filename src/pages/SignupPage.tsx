@@ -9,25 +9,24 @@ import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { spacing, typography, shadows } from '../theme/tokens'
 import { useThemeColors } from '../hooks/useThemeColors'
-import { useThemeGradients } from '../hooks/useThemeGradients'
 import { SignupForm } from '../components/auth/SignupForm'
 import styles from './SignupPage.module.css'
 
 export const SignupPage: React.FC = () => {
   const themeColors = useThemeColors()
-  const themeGradients = useThemeGradients()
 
   const containerStyle = useMemo(() => ({
-    background: themeGradients.primary,
-  }), [themeGradients])
+    /* Background is applied globally by ThemeStyles component */
+  }), [])
 
   const signupContainerStyle = useMemo(() => ({
     gap: spacing.xl,
   }), [])
 
   const signupHeroStyle = useMemo(() => ({
-    background: themeGradients.primary,
-  }), [themeGradients])
+    /* Hero background will blend with the page background from ThemeStyles */
+    backgroundColor: 'transparent',
+  }), [])
 
   const formWrapperStyle = useMemo(() => ({
     backgroundColor: themeColors.background.secondary,

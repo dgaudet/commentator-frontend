@@ -2,18 +2,16 @@ import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { typography, shadows } from '../theme/tokens'
 import { useThemeColors } from '../hooks/useThemeColors'
-import { useThemeGradients } from '../hooks/useThemeGradients'
 import { useAuth } from '../contexts/AuthContext'
 import styles from './LoginPage.module.css'
 
 export const LoginPage: React.FC = () => {
   const { login, loading, error, isAuthenticated } = useAuth()
   const themeColors = useThemeColors()
-  const themeGradients = useThemeGradients()
 
   const containerStyle = useMemo(() => ({
-    background: themeGradients.primary,
-  }), [themeGradients])
+    /* Background is applied globally by ThemeStyles component */
+  }), [])
 
   const cardStyle = useMemo(() => ({
     backgroundColor: themeColors.background.secondary,
