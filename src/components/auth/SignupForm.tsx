@@ -228,10 +228,10 @@ export const SignupForm: React.FC = () => {
           role="status"
           style={{
             padding: `${spacing.md} ${spacing.md}`,
-            backgroundColor: '#ecfdf5',
-            border: `${borders.width.thin} solid #10b981`,
+            backgroundColor: themeColors.semantic.successLight,
+            border: `${borders.width.thin} solid ${themeColors.semantic.success}`,
             borderRadius: borders.radius.md,
-            color: '#059669',
+            color: themeColors.semantic.successDark,
             fontSize: typography.fontSize.sm,
             fontWeight: typography.fontWeight.medium,
             lineHeight: typography.lineHeight.normal,
