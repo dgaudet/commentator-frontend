@@ -198,6 +198,4 @@ Need to style the login form
 
 Online Background Removal Tools (Easiest)
 - https://www.remove.bg/ - AI-powered background removal, great for people
-
-need to test the public route auth changes
-test UserService Error handling
+- 

@@ -242,5 +242,83 @@ describe('userService', () => {
         'Failed to create account',
       )
     })
+
+    it('should display error.details message when present from backend', async () => {
+      const createRequest = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'Password123!',
+      }
+
+      const errorWithDetails = Object.assign(new Error('Validation error'), {
+        status: 422,
+        details: 'Password must contain at least one special character (!@#$%^&*)',
+      })
+      ;(apiClient.post as jest.Mock).mockRejectedValue(errorWithDetails)
+
+      await expect(userService.create(createRequest)).rejects.toThrow(
+        'Password must contain at least one special character (!@#$%^&*)',
+      )
+    })
+
+    it('should prefer error.details over error.message', async () => {
+      const createRequest = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'invalid',
+        password: 'Password123!',
+      }
+
+      const errorWithDetails = Object.assign(new Error('Invalid input'), {
+        status: 400,
+        details: 'Email address format is invalid. Please provide a valid email address.',
+      })
+      ;(apiClient.post as jest.Mock).mockRejectedValue(errorWithDetails)
+
+      await expect(userService.create(createRequest)).rejects.toThrow(
+        'Email address format is invalid. Please provide a valid email address.',
+      )
+    })
+
+    it('should prefer error.details over status code mapping', async () => {
+      const createRequest = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'Password123!',
+      }
+
+      const errorWithDetails = Object.assign(new Error('Request validation failed'), {
+        status: 400,
+        details: 'First name cannot contain numbers',
+      })
+      ;(apiClient.post as jest.Mock).mockRejectedValue(errorWithDetails)
+
+      // Should use details instead of status-based message
+      await expect(userService.create(createRequest)).rejects.toThrow(
+        'First name cannot contain numbers',
+      )
+    })
+
+    it('should fall back to status code mapping if error.details is empty', async () => {
+      const createRequest = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'Password123!',
+      }
+
+      const errorWithEmptyDetails = Object.assign(new Error('Request failed'), {
+        status: 500,
+        details: '',
+      })
+      ;(apiClient.post as jest.Mock).mockRejectedValue(errorWithEmptyDetails)
+
+      // Should use status code mapping since details is empty
+      await expect(userService.create(createRequest)).rejects.toThrow(
+        'An error occurred on our end. Please try again later',
+      )
+    })
   })
 })

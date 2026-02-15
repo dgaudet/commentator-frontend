@@ -54,9 +54,24 @@ interface UserApiResponse {
 
 /**
  * Map HTTP status codes and known error messages to user-friendly messages
+ * Priority order:
+ * 1. error.details - Most specific backend error details (highest priority)
+ * 2. error.message - General backend error message
+ * 3. Status code mapping - Generic user-friendly messages
+ * 4. Fallback - Generic error message
  * @internal
  */
 function getUserFriendlyErrorMessage(error: unknown): string {
+  // Extract error.details - highest priority for user-facing details
+  const errorDetails = (error && typeof error === 'object' && 'details' in error)
+    ? (error as Record<string, unknown>).details
+    : null
+
+  // If details is a non-empty string, use it (most specific error from backend)
+  if (errorDetails && typeof errorDetails === 'string' && errorDetails.trim()) {
+    return errorDetails
+  }
+
   // Extract error message from various error formats
   const errorMessage = (error instanceof Error) ? error.message : String(error)
 
@@ -65,7 +80,7 @@ function getUserFriendlyErrorMessage(error: unknown): string {
     ? (error as Record<string, unknown>).status
     : null
 
-  // Map HTTP status codes to user-friendly messages first
+  // Map HTTP status codes to user-friendly messages
   // This takes precedence over generic error messages
   switch (status) {
     case 400:
