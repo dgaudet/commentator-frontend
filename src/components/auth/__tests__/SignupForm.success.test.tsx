@@ -31,7 +31,7 @@ describe('SignupForm - Success Flow & Navigation', () => {
   })
 
   afterEach(() => {
-    jest.runOnlyPendingTimers()
+    jest.clearAllTimers()
     jest.useRealTimers()
   })
 
