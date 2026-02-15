@@ -49,6 +49,9 @@ interface CachedToken {
 }
 let cachedToken: CachedToken | null = null
 
+// Public endpoints that don't require authentication
+let publicEndpoints: string[] = []
+
 /**
  * Register the function to retrieve access tokens from Auth context
  * Called by AuthContext after Auth0 is initialized
@@ -80,6 +83,30 @@ export const setCachedToken = (token: string | null, expiresIn: number = 3600) =
 }
 
 /**
+ * Configure endpoints that do not require authentication
+ * Prevents unnecessary token retrieval for public endpoints like user signup
+ *
+ * Optimization: Skips getTokenSilently() calls for endpoints that don't need authorization,
+ * reducing latency and avoiding token-fetch errors for unauthenticated flows
+ *
+ * @param endpoints - Array of endpoint paths (e.g., ['/api/users/create']) or null to clear
+ *
+ * @example
+ * // Configure public endpoints
+ * setPublicEndpoints(['/api/users/create', '/api/auth/refresh'])
+ *
+ * // Clear public endpoints configuration
+ * setPublicEndpoints(null)
+ */
+export const setPublicEndpoints = (endpoints: string[] | null) => {
+  if (endpoints === null) {
+    publicEndpoints = []
+  } else {
+    publicEndpoints = endpoints
+  }
+}
+
+/**
  * Get the cached token if it's still valid, otherwise return null
  * Returns null if cache is expired or not set
  *
@@ -93,6 +120,23 @@ function getCachedTokenIfValid(): string | null {
     return null
   }
   return cachedToken.token
+}
+
+/**
+ * Check if a request path is marked as a public endpoint
+ * @param path - Request path (e.g., '/api/users/create')
+ * @returns True if the endpoint is public and doesn't need authentication
+ */
+function isPublicEndpoint(path: string): boolean {
+  return publicEndpoints.some((endpoint) => {
+    // Support wildcard patterns like '/api/public/*'
+    if (endpoint.endsWith('*')) {
+      const prefix = endpoint.slice(0, -1) // Remove the '*'
+      return path.startsWith(prefix)
+    }
+    // Exact match
+    return path === endpoint
+  })
 }
 
 /**
@@ -120,8 +164,16 @@ class ApiClient {
 
     // Request interceptor: Attach JWT token to all requests
     // Optimization: Uses cached token from AuthContext when available, falls back to getTokenSilently()
+    // Also skips token retrieval for explicitly public endpoints to avoid unnecessary async calls
     this.client.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
+        // 0. Check if this is a public endpoint that doesn't require authentication
+        const path = config.url || ''
+        if (isPublicEndpoint(path)) {
+          // Skip token retrieval for public endpoints
+          return config
+        }
+
         // Strategy: Try cached token first (fastest), then fall back to getTokenSilently()
         let token: string | null = null
 

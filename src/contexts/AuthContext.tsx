@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
 import { Auth0Client } from '@auth0/auth0-spa-js'
-import { setGetAccessToken, setCachedToken } from '../services/apiClient'
+import { setGetAccessToken, setCachedToken, setPublicEndpoints } from '../services/apiClient'
 import { parseAuthError } from '../utils/authErrorHandler'
 import { getDefaultAuthConfig, type AuthConfig } from '../config/authConfig'
 import { getStoredCallbackParams, clearStoredCallbackParams } from '../utils/callbackHandler'
@@ -67,6 +67,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
 
         // Register the getAccessToken function with the API client
         setGetAccessToken(() => client.getTokenSilently())
+
+        // Configure public endpoints that don't require authentication
+        // Prevents unnecessary token retrieval and reduces latency for unauthenticated flows
+        setPublicEndpoints([
+          '/api/users/create', // User signup endpoint
+        ])
 
         // Check if we have callback parameters stored by the callback handler
         // The callback handler (public/callback/index.html) stores these when returning from Auth0

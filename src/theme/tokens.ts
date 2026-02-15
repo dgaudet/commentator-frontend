@@ -50,6 +50,8 @@ export const colors = {
     errorDark: '#B91C1C',
     errorLight: '#FEE2E2',
     success: '#10B981',
+    successDark: '#059669',
+    successLight: '#ECFDF5',
     warning: '#F59E0B',
     warningDark: '#92400E',
     warningLight: '#FEF3C7',
@@ -109,6 +111,8 @@ export const darkColors = {
     errorDark: '#DC2626', // Same as light theme error
     errorLight: '#7F1D1D', // Dark red background
     success: '#34D399', // Lighter green for visibility
+    successDark: '#10B981', // Darker green matching light theme's main success color
+    successLight: '#064E3B', // Very dark green background for dark mode
     warning: '#FBBF24', // Lighter amber for dark backgrounds
     warningDark: '#FCD34D', // Light yellow text for dark backgrounds
     warningLight: '#78350F', // Very dark brown for dark background surface
@@ -251,6 +255,26 @@ export const darkFocusRings = {
 } as const
 
 /**
+ * Light Theme Gradients
+ *
+ * Gradient backgrounds for pages and components in light mode.
+ * Matches the main app background gradient from ThemeStyles.
+ */
+export const gradients = {
+  primary: 'linear-gradient(180deg, #E0F7FF 0%, #FFFFFF 100%)', // Light theme: cyan to white gradient
+} as const
+
+/**
+ * Dark Theme Gradients
+ *
+ * Gradient backgrounds for pages and components in dark mode.
+ * Matches the main app background gradient from ThemeStyles.
+ */
+export const darkGradients = {
+  primary: 'linear-gradient(180deg, #0052CC 0%, #1A1A1A 100%)', // Dark theme: blue to dark background gradient
+} as const
+
+/**
  * TypeScript Types
  *
  * Export types for better IDE autocomplete and type safety.
@@ -265,3 +289,5 @@ export type FocusShadowColors = typeof focusShadowColors
 export type DarkFocusShadowColors = typeof darkFocusShadowColors
 export type FocusRings = typeof focusRings
 export type DarkFocusRings = typeof darkFocusRings
+export type Gradients = typeof gradients
+export type DarkGradients = typeof darkGradients

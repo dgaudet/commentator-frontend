@@ -1,48 +1,49 @@
+/* CallbackPage Styles */
+/* Auth0 callback/loading page with design token colors */
+/* Theme colors are applied via inline styles */
+
 .container {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Background gradient applied via inline style with theme colors */
 }
 
 .card {
-  background: white;
   border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   padding: 40px;
   max-width: 400px;
   width: 100%;
   text-align: center;
+  /* Background and shadow applied via inline styles with theme colors */
 }
 
 .errorCard {
-  background: white;
   border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   padding: 40px;
   max-width: 400px;
   width: 100%;
   text-align: center;
-  border-left: 4px solid #c33;
+  border-left: 4px solid;
+  /* Background, border color, and text color applied via inline styles */
 }
 
 .errorCard h1 {
   margin: 0 0 16px 0;
-  color: #c33;
   font-size: 24px;
+  /* Color applied via inline style */
 }
 
 .errorCard p {
   margin: 0 0 24px 0;
-  color: #666;
   line-height: 1.5;
+  /* Color applied via inline style */
 }
 
 .button {
   padding: 12px 24px;
-  background-color: #667eea;
   color: white;
   border: none;
   border-radius: 4px;
@@ -50,20 +51,21 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  /* Background color applied via inline style with theme colors */
 }
 
 .button:hover {
-  background-color: #5568d3;
+  /* Hover background color applied via inline style */
 }
 
 .spinner {
   width: 40px;
   height: 40px;
   margin: 0 auto 20px auto;
-  border: 4px solid #f0f0f0;
-  border-top-color: #667eea;
+  border: 4px solid;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  /* Border color applied via inline style with theme colors */
 }
 
 @keyframes spin {

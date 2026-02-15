@@ -10,6 +10,7 @@ import { ThemeStyles } from './components/common/ThemeStyles'
 import { spacing } from './theme/tokens'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { LoginPage } from './pages/LoginPage'
+import { SignupPage } from './pages/SignupPage'
 import { CallbackPage } from './pages/CallbackPage'
 import { Header } from './components/Header'
 
@@ -121,16 +122,17 @@ function App() {
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/callback" element={<CallbackPage />} />
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoute>
-              <ThemeProvider>
-                <ThemeStyles />
+    <ThemeProvider>
+      <ThemeStyles />
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/callback" element={<CallbackPage />} />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
                 <AppContent
                   showForm={showForm}
                   editingSubject={editingSubject}
@@ -139,12 +141,12 @@ function App() {
                   onFormSuccess={handleFormSuccess}
                   onFormCancel={handleFormCancel}
                 />
-              </ThemeProvider>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   )
 }
 
