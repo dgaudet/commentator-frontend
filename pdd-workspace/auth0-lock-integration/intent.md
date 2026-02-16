@@ -18,10 +18,9 @@ Currently, the LoginPage redirects users to Auth0's hosted login page via an ext
 Embed Auth0's Lock Widget directly in the LoginPage to provide:
 - ✅ Seamless in-app authentication experience
 - ✅ Application design system styling (design tokens)
-- ✅ Built-in sign up functionality
-- ✅ Optional social login support
 - ✅ Professional, accessible authentication UI
 - ✅ Zero changes to CallbackPage (existing flow works)
+- ✅ Zero changes to existing `/signup` route (preserved)
 
 ## Success Criteria
 
@@ -52,29 +51,32 @@ Embed Auth0's Lock Widget directly in the LoginPage to provide:
 ## Feature Scope
 
 ### Included ✅
-- Auth0 Lock Widget integration
+- Auth0 Lock Widget integration (for login only)
 - LoginPage redesign with Lock
 - Theme/design token application
-- Sign up within Lock
 - Email/password authentication
 - Responsive design
 - Component tests
 - Error handling
+- "Create Account" link redirects to existing `/signup` route
 
 ### Out of Scope ❌
+- Sign up in Lock Widget (using existing `/signup` route instead)
 - Social login integration (future enhancement)
 - Passwordless authentication (future enhancement)
 - MFA/2FA (future enhancement)
 - Changes to CallbackPage
 - Changes to existing auth flow
+- Changes to existing /signup route
 
 ## Key Design Decisions
 
 1. **Embed Lock in LoginPage**: Full control over styling and layout
 2. **Lock Modal vs. Embedded**: Embedded in page for better UX
 3. **Design Tokens**: Apply `themeColors.primary.main` to Lock widget
-4. **Sign Up**: Use Lock's built-in sign up tab (no separate /signup route conflict)
+4. **Sign Up**: Lock shows login only (no signup tab) - preserves existing `/signup` route
 5. **Hero Section**: Keep existing design (left side) and add Lock on right
+6. **Create Account Link**: Below Lock Widget directs to existing `/signup` route
 
 ## Risks & Mitigations
 

@@ -52,29 +52,26 @@ AND the user shall be redirected to dashboard (authenticated)
 
 ---
 
-### US-003: User Creates Account via Sign Up
+### US-003: User Creates Account via Sign Up Link
 ```
 GIVEN a user sees the Lock Widget login form
-WHEN the user clicks the "Sign Up" tab
-THEN the user shall see sign-up form fields (email, password, name)
-AND the user shall be able to create a new account
-AND after successful signup the user shall be logged in
-AND the user shall be redirected to /callback and then dashboard
+WHEN the user clicks the "Create Account" link
+THEN the user shall be redirected to the existing /signup route
+AND the user shall be able to use the existing signup form
+AND the signup flow shall work as currently designed
 ```
 
 **Acceptance Criteria**:
-- Sign Up tab visible in Lock Widget
-- Email validation enforced
-- Password validation enforced (special character, length)
-- Account creation succeeds with valid data
-- User automatically logged in after signup
-- Redirect flow works for new users
+- "Create Account" link visible below/within Lock Widget
+- Link directs to `/signup` route
+- Existing signup form loads correctly
+- Signup validation and API calls work unchanged
+- User automatically logged in after signup (existing behavior)
+- Redirect to dashboard works (existing behavior)
 
 **Edge Cases**:
-- Email already exists → Show "Email already registered" message
-- Password doesn't meet requirements → Show validation errors
-- Network error during signup → Show error and allow retry
-- First name/last name required → Validation enforced
+- User tries to signup, then returns to login (existing /signup handles this)
+- All existing /signup errors and validations apply
 
 ---
 
@@ -192,20 +189,22 @@ AND form shall be completable without mouse
 
 ---
 
-### US-010: No External Link to Auth0
+### US-010: Embed Lock Widget Instead of External Auth0 Link
 ```
 GIVEN a user navigates to /login
 WHEN the page loads
 THEN the user shall NOT see an external link to Auth0 hosted login
-AND the LoginPage shall embed Lock Widget instead
-AND the old signup link to external page shall be removed
+AND the LoginPage shall embed Lock Widget for login
+AND the Lock Widget shall show login form only (no signup tab)
+AND the user shall see a link to the existing /signup route
 ```
 
 **Acceptance Criteria**:
 - Old external Auth0 link removed
 - No "Log in with Auth0" button
 - Lock Widget is the primary login mechanism
-- Sign up available within Lock
+- Sign up available via link to existing `/signup` route
+- Existing /signup form and flow unchanged
 
 ---
 

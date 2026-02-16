@@ -121,7 +121,7 @@ export function LoginPage(): JSX.Element {
       },
       container: 'auth0-lock-container',
       allowedConnections: ['Username-Password-Authentication'],
-      allowSignUp: true,
+      allowSignUp: false,  // Login only (use existing /signup route)
       allowForgotPassword: true
     });
 

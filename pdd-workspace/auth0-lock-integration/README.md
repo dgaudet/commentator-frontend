@@ -269,16 +269,40 @@ Your code just needs to listen to Lock events and display messages.
 
 ---
 
+## ⚠️ Important: Login Only (No Signup in Lock)
+
+**This implementation uses Lock Widget for LOGIN ONLY:**
+- ✅ Lock shows email/password login form
+- ✅ Lock shows forgot password link
+- ❌ Lock does NOT show signup tab
+- ✅ Existing `/signup` route is preserved and linked
+
+**User Flow**:
+1. User sees Lock login form on `/login`
+2. User can either:
+   - Enter credentials to login (Lock handles it)
+   - Click "Create Account" link (redirects to `/signup`)
+3. Existing signup form at `/signup` works unchanged
+4. After signup, user is logged in and redirected (existing behavior)
+
+**Key Change**: `allowSignUp: false` in Lock configuration
+
+See **STYLING_MOCKUP.md** for visual reference including the "Create Account" link placement.
+
+---
+
 ## 🎬 Next Steps
 
 ### For Frontend Engineer
-1. Create feature branch
-2. Read all specification documents
-3. Start TASK 1 (create failing tests first)
-4. Follow TDD approach strictly
-5. Run tests frequently
-6. Commit regularly with clear messages
-7. Submit PR when all 5 tasks complete
+1. Review STYLING_MOCKUP.md for design reference
+2. Create feature branch
+3. Read all specification documents (intent → requirements → design → tasks)
+4. Start TASK 1 (create failing tests first)
+5. Follow TDD approach strictly
+6. Run tests frequently
+7. Commit regularly with clear messages
+8. Update metadata.json as you progress
+9. Submit PR when all 5 tasks complete
 
 ### For Code Reviewer
 1. Verify all 20 tests passing

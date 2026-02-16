@@ -2,6 +2,13 @@
 
 ## 🎯 High Priority Features
 
+Something is broken with the logout on the github pages app
+* you are sent to https://dev-xz2pg3bky1ezk33h.us.auth0.com/v2/logout?client_id=1JFCOTaGY4nTaEQXqQAtrG7Ocma5Y1fQ&returnTo=https%3A%2F%2Fdgaudet.github.io%2Flogin&auth0Client=eyJuYW1lIjoiYXV0aDAtc3BhLWpzIiwidmVyc2lvbiI6IjIuOS4xIn0%3D
+  ** you get a 400 and are basically on this same url
+* Locally sent to https://dev-xz2pg3bky1ezk33h.us.auth0.com/v2/logout?client_id=1JFCOTaGY4nTaEQXqQAtrG7Ocma5Y1fQ&returnTo=http%3A%2F%2Flocalhost%3A5173%2Flogin&auth0Client=eyJuYW1lIjoiYXV0aDAtc3BhLWpzIiwidmVyc2lvbiI6IjIuOS4xIn0%3D
+* I feel like the github pages not working with SPA's is likely the problem
+  ** That call gets a 302 (found) and then the login page is loaded
+
 ## 📋 Medium Priority
 
 ### UI Improvements
@@ -133,13 +140,6 @@ Modify the PeronalizedComments, and final comments to take in the pronouns like 
 
 When there is a name that has already been added the style is wrong, the background is white
 
-Something is broken with the logout on the github pages app
-* you are sent to https://dev-xz2pg3bky1ezk33h.us.auth0.com/v2/logout?client_id=1JFCOTaGY4nTaEQXqQAtrG7Ocma5Y1fQ&returnTo=https%3A%2F%2Fdgaudet.github.io%2Flogin&auth0Client=eyJuYW1lIjoiYXV0aDAtc3BhLWpzIiwidmVyc2lvbiI6IjIuOS4xIn0%3D
-** you get a 400 and are basically on this same url
-* Locally sent to https://dev-xz2pg3bky1ezk33h.us.auth0.com/v2/logout?client_id=1JFCOTaGY4nTaEQXqQAtrG7Ocma5Y1fQ&returnTo=http%3A%2F%2Flocalhost%3A5173%2Flogin&auth0Client=eyJuYW1lIjoiYXV0aDAtc3BhLWpzIiwidmVyc2lvbiI6IjIuOS4xIn0%3D
-* I feel like the github pages not working with SPA's is likely the problem
-** That call gets a 302 (found) and then the login page is loaded
-
 When saving a student with the same name as before, it doesn't tell you it's failing due to duplicate name
 * Also the flow when there is a failure, isn't good, you lose the student you were working with, perhaps it should be at the bottom of the form
 
@@ -148,15 +148,12 @@ perhaps we could have the user upload comments from last year and use that to de
 
 The errors on the final comment modal for add/edit, should probably be modals like the other comment modals, that would make the errors a bit cleaner and easier, you won't have to worry about the error message still showing on edit or add
 
-possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
-test out changing my password in auth0
-
-Need to style the login form
-
 Online Background Removal Tools (Easiest)
 - https://www.remove.bg/ - AI-powered background removal, great for people
 
 Need to test out the create user on github, do the images work?
+
+Use the metada to dispaly the user's first/last name instead of the email 2 times.
 
 if we use this Auth0 lock Widget, then I assume I need to test more cases
 test forgot password

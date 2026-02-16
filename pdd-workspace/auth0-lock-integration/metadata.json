@@ -2,7 +2,8 @@
   "feature": {
     "id": "auth0-lock-integration",
     "name": "Auth0 Lock Widget Integration",
-    "description": "Replace external Auth0 login with embedded Auth0 Lock Widget for seamless in-app authentication with design system styling"
+    "description": "Replace external Auth0 login with embedded Auth0 Lock Widget for seamless in-app authentication with design system styling. Lock handles login only; existing /signup route preserved.",
+    "approach": "Lock for login only (allowSignUp: false) with link to existing /signup route"
   },
   "complexity": {
     "level": "L2",
@@ -347,8 +348,11 @@
     "Ready for frontend engineer to implement using TDD approach",
     "All specifications complete and detailed",
     "L2 complexity - no formal approval gates required",
-    "Zero changes needed to existing CallbackPage, routes, or auth context",
+    "CRITICAL: Lock shows LOGIN ONLY (allowSignUp: false) - preserves existing /signup route",
+    "Create Account link below Lock directs to existing /signup route",
+    "Zero changes needed to existing CallbackPage, /signup route, or auth context",
     "Design tokens already integrated in codebase",
+    "STYLING_MOCKUP.md provides visual reference with color and layout examples",
     "20+ test cases provide comprehensive coverage"
   ],
   "adr_references": [
