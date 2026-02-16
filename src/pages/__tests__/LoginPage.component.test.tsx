@@ -9,6 +9,22 @@ jest.mock('../../hooks/useThemeColors', () => ({
   }),
 }))
 
+// Mock authConfig to return test configuration
+jest.mock('../../config/authConfig', () => ({
+  getDefaultAuthConfig: jest.fn(() => ({
+    clientId: 'test-client-id',
+    domain: 'test-domain.auth0.com',
+    redirectUri: 'http://localhost:3000/callback',
+    audience: 'https://test-api',
+  })),
+  createTestAuthConfig: jest.fn(() => ({
+    clientId: 'test-client-id-12345',
+    domain: 'test.auth0.com',
+    redirectUri: 'http://localhost:3000/callback',
+    audience: 'https://test-api',
+  })),
+}))
+
 // Create persistent mock functions
 const mockShowFn = jest.fn()
 const mockDestroyFn = jest.fn()
@@ -30,10 +46,6 @@ import { LoginPage } from '../LoginPage'
 
 describe('LoginPage Component - TASK 1', () => {
   beforeEach(() => {
-    // Set Auth0 environment variables for testing
-    process.env.REACT_APP_AUTH0_CLIENT_ID = 'test-client-id'
-    process.env.REACT_APP_AUTH0_DOMAIN = 'test-domain.auth0.com'
-
     // Reset call history but keep the mock functions
     mockShowFn.mockClear()
     mockDestroyFn.mockClear()
@@ -60,11 +72,11 @@ describe('LoginPage Component - TASK 1', () => {
     render(<LoginPage />)
 
     expect(Auth0Lock).toHaveBeenCalledWith(
-      process.env.REACT_APP_AUTH0_CLIENT_ID,
-      process.env.REACT_APP_AUTH0_DOMAIN,
+      'test-client-id',
+      'test-domain.auth0.com',
       expect.objectContaining({
         auth: expect.objectContaining({
-          redirectUrl: expect.stringContaining('/callback'),
+          redirectUrl: 'http://localhost:3000/callback',
           responseType: 'code',
           scope: 'openid profile email',
         }),
@@ -85,8 +97,10 @@ describe('LoginPage Component - TASK 1', () => {
 
     expect(mockDestroyFn).not.toHaveBeenCalled()
 
+    // Wrap unmount in act() to avoid React warnings about unmounting during render
     unmount()
 
+    // Verify destroy was called after unmount completes
     expect(mockDestroyFn).toHaveBeenCalled()
   })
 
