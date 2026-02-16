@@ -1,25 +1,6 @@
 # To Do Items
 
-## ✅ Completed
-
-### SignupForm - Success Message with Delay
-- ✅ **Show success message before redirect**
-  - Displays "Account created successfully!" message
-  - Form fields are cleared after success
-  - Redirects to login after 1.5 second delay
-  - TDD approach: Created 3 tests, implemented feature
-  - All 2709 tests passing
-
----
-
 ## 🎯 High Priority Features
-
-### Final Comments Enhancements
-- [ ] **Print view for all comments in a class**
-    - Button to view all comments for class that you can print
-    - Business value: Enables batch printing/review
-
----
 
 ## 📋 Medium Priority
 
@@ -52,35 +33,11 @@
     - "The act function seems to be deprecated but it's used in tests and code"
     - Investigate React Testing Library updates
     - May need to refactor test patterns
-
 ---
 
-## 📚 Documentation & Resources
-
-### Available Documentation
-- ✅ **Design System Documentation**: `docs/design-system.md`
-    - Design token usage guide
-    - Component API reference (Input, Label, Button)
-    - Step-by-step migration guide
-    - Best practices and conventions
-    - Real-world examples from FinalCommentsModal
-
-### Completed Features
-- ✅ Design token system (colors, spacing, typography, borders, shadows)
-- ✅ Standardized Input component (with validation, errors, required indicator)
-- ✅ Standardized Label component
-- ✅ Enhanced Button component (primary, secondary, danger variants)
-- ✅ FinalCommentsModal migrated to design tokens (32 inline styles eliminated)
-- ✅ ClassManagementModal migrated to design tokens (23 modalStyles replaced)
-
----
-Looks like the add personalized comments button should show a message when clicked with no comment
 the error labels aren't standardized, the add subject is different from the rest I believe
 
-When adding a new class, it should be selected by default after creation.
-
 Login
-* The header, should be modified to be the one we already have
 * The "pages" should be refactored to be components
 * Need to style the login form
 * THe header with they dark/light styles should be used for the login as well
@@ -198,4 +155,8 @@ Need to style the login form
 
 Online Background Removal Tools (Easiest)
 - https://www.remove.bg/ - AI-powered background removal, great for people
-- 
+
+Need to test out the create user on github, do the images work?
+
+if we use this Auth0 lock Widget, then I assume I need to test more cases
+test forgot password
