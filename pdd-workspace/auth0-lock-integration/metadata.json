@@ -68,7 +68,8 @@
     }
   },
   "requirements": {
-    "count": 10,
+    "count": 9,
+    "note": "US-008 (Callback flow) removed - existing CallbackPage already tested and working",
     "userStories": [
       {
         "id": "US-001",
@@ -82,7 +83,7 @@
       },
       {
         "id": "US-003",
-        "title": "User Creates Account via Sign Up",
+        "title": "User Creates Account via Sign Up Link",
         "status": "PENDING"
       },
       {
@@ -106,18 +107,13 @@
         "status": "PENDING"
       },
       {
-        "id": "US-008",
-        "title": "Callback Redirect Works Seamlessly",
-        "status": "PENDING"
-      },
-      {
         "id": "US-009",
         "title": "Accessibility - Keyboard Navigation",
         "status": "PENDING"
       },
       {
         "id": "US-010",
-        "title": "No External Link to Auth0",
+        "title": "Embed Lock Widget Instead of External Auth0 Link",
         "status": "PENDING"
       }
     ]

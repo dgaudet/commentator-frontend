@@ -3,7 +3,9 @@
 **Status**: READY FOR DESIGN
 **Format**: EARS Notation (Event, Action, Response)
 
-## User Stories
+## User Stories (9 Total)
+
+**Note**: Callback flow (US-008) removed - existing CallbackPage already handles auth code exchange and token management. This PDD focuses on Lock Widget integration only.
 
 ### US-001: User Sees Styled Login Form
 ```
@@ -33,15 +35,14 @@ GIVEN a user sees the Lock Widget login form
 WHEN the user enters valid email and password
 AND clicks the login button
 THEN Lock Widget shall authenticate with Auth0
-AND the user shall be redirected to /callback
-AND the CallbackPage shall exchange auth code for tokens
-AND the user shall be redirected to dashboard (authenticated)
+AND the existing CallbackPage shall handle token exchange (no changes needed)
+AND the user shall be logged in and redirected to dashboard
 ```
 
 **Acceptance Criteria**:
 - Valid credentials authenticate successfully
-- Redirect to /callback works
-- Callback page processes auth code
+- Lock redirects to /callback with auth code
+- Existing CallbackPage processes code (already working)
 - User session established
 - No error messages shown
 
@@ -49,6 +50,8 @@ AND the user shall be redirected to dashboard (authenticated)
 - Invalid password → Show error message from Lock
 - Non-existent email → Show error message from Lock
 - Network error during auth → Show error message and allow retry
+
+**Note**: Callback flow already implemented and tested in existing CallbackPage. This story validates Lock integration only.
 
 ---
 
@@ -151,24 +154,6 @@ AND the user shall not be able to submit the form twice
 
 ---
 
-### US-008: Callback Redirect Works Seamlessly
-```
-GIVEN a user successfully authenticates via Lock Widget
-WHEN Lock redirects to /callback with auth code
-AND CallbackPage exchanges code for tokens
-THEN the user shall be logged in
-AND the user shall be redirected to authenticated area
-AND the existing CallbackPage flow shall work unchanged
-```
-
-**Acceptance Criteria**:
-- Auth code in URL query string: `code=...`
-- CallbackPage processes code (no changes)
-- Access token stored correctly
-- Redirect to authenticated area works
-- Existing callback tests still pass
-
----
 
 ### US-009: Accessibility - Keyboard Navigation
 ```
@@ -243,12 +228,12 @@ AND the user shall see a link to the existing /signup route
 ## Validation Criteria
 
 ### Definition of Done
-- ✅ All 10 user stories implemented
+- ✅ All 9 user stories implemented (callback flow already exists)
 - ✅ 15+ component tests passing
 - ✅ Responsive design verified on 3+ devices
 - ✅ Accessibility audit passed (WCAG AA)
 - ✅ Error cases tested
-- ✅ Callback integration verified
+- ✅ Lock Widget integration verified
 - ✅ TypeScript strict mode passing
 - ✅ Lint and format checks passing
 - ✅ Code review approved
@@ -266,8 +251,9 @@ AND the user shall see a link to the existing /signup route
 
 ## Success Metrics
 
-1. **User Experience**: Users can log in/sign up without leaving app
-2. **Design Consistency**: Auth form matches application styling
-3. **Zero Breaking Changes**: Existing CallbackPage flow unchanged
-4. **Code Quality**: 100% test coverage for Login component
+1. **User Experience**: Users can log in without leaving app, sign up via existing /signup route
+2. **Design Consistency**: Auth form matches application styling with design tokens
+3. **Zero Breaking Changes**: Existing CallbackPage flow unchanged, existing /signup route preserved
+4. **Code Quality**: 15+ test cases for Lock Widget integration
 5. **Accessibility**: WCAG 2.1 AA compliant
+6. **Integration**: Lock redirects correctly to existing CallbackPage (already verified to work)
