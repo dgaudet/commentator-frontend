@@ -1,0 +1,168 @@
+{
+  "feature": "auth0-lock-integration",
+  "title": "Auth0 Lock Widget Integration",
+  "status": "INTENT_REFINEMENT",
+  "version": "1.0",
+  "created": "2026-02-15T00:00:00Z",
+  "phases": {
+    "planning": "COMPLETE",
+    "design": "COMPLETE",
+    "implementation": "PENDING",
+    "delivery": "PENDING"
+  },
+  "complexity": {
+    "level": "L2",
+    "description": "Low - Single component integration, no backend changes"
+  },
+  "requirements": {
+    "status": "COMPLETE",
+    "count": 10,
+    "details": [
+      "US-001: User sees styled login form",
+      "US-002: User logs in with email and password",
+      "US-003: User creates account via sign up",
+      "US-004: User sees error messages",
+      "US-005: Login form is responsive",
+      "US-006: Login form supports theme",
+      "US-007: Loading state during authentication",
+      "US-008: Callback redirect works seamlessly",
+      "US-009: Accessibility - keyboard navigation",
+      "US-010: No external link to Auth0"
+    ]
+  },
+  "design": {
+    "status": "COMPLETE",
+    "architecture": "Lock Widget embedded in LoginPage",
+    "key_decisions": [
+      "ADR-001: Embed Lock Widget vs. redirect to hosted login",
+      "ADR-002: Use Auth0 Lock vs. custom form",
+      "ADR-003: Lock styling via CSS overrides + design tokens"
+    ]
+  },
+  "implementation": {
+    "status": "PENDING",
+    "tasks": [
+      {
+        "id": "TASK-1",
+        "title": "Set Up Lock Widget Component Base",
+        "status": "PENDING",
+        "risk": "LOW",
+        "duration": "1-2 hours",
+        "tests": 6
+      },
+      {
+        "id": "TASK-2",
+        "title": "Add Responsive Layout & Styling",
+        "status": "PENDING",
+        "risk": "LOW",
+        "duration": "2-3 hours",
+        "tests": 5
+      },
+      {
+        "id": "TASK-3",
+        "title": "Integration with Auth Flow & Error Handling",
+        "status": "PENDING",
+        "risk": "MEDIUM",
+        "duration": "2-3 hours",
+        "tests": 4
+      },
+      {
+        "id": "TASK-4",
+        "title": "Comprehensive Test Suite & Accessibility",
+        "status": "PENDING",
+        "risk": "LOW",
+        "duration": "1.5-2 hours",
+        "tests": 5
+      },
+      {
+        "id": "TASK-5",
+        "title": "Final Integration & Cleanup",
+        "status": "PENDING",
+        "risk": "TRIVIAL",
+        "duration": "30-60 minutes",
+        "tests": 0
+      }
+    ],
+    "totalTasks": 5,
+    "completedTasks": 0,
+    "totalTestCases": 20,
+    "estimatedHours": "8-12"
+  },
+  "files": {
+    "new": [
+      "src/pages/LoginPage.tsx",
+      "src/pages/LoginPage.module.css",
+      "src/pages/__tests__/LoginPage.component.test.tsx"
+    ],
+    "modified": [],
+    "deleted": []
+  },
+  "dependencies": {
+    "runtime": [
+      "auth0-lock (already installed)"
+    ],
+    "testing": [
+      "@testing-library/react",
+      "@testing-library/jest-dom",
+      "jest"
+    ],
+    "design": [
+      "useThemeColors hook",
+      "Design token system"
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Lock widget styling limited",
+      "impact": "MEDIUM",
+      "mitigation": "Use CSS class overrides for custom styling"
+    },
+    {
+      "risk": "Lock theme not theme-aware",
+      "impact": "MEDIUM",
+      "mitigation": "Extract primary color from useThemeColors hook"
+    },
+    {
+      "risk": "Lock conflicts with existing form",
+      "impact": "MEDIUM",
+      "mitigation": "Replace LoginPage form with Lock entirely"
+    },
+    {
+      "risk": "Callback flow breaks",
+      "impact": "HIGH",
+      "mitigation": "Thoroughly test callback redirect flow"
+    }
+  ],
+  "approvals": {
+    "requirements": {
+      "approved": false,
+      "approvedBy": null,
+      "approvedAt": null
+    },
+    "design": {
+      "approved": true,
+      "approvedBy": "system-architect",
+      "approvedAt": "2026-02-15T00:00:00Z"
+    },
+    "implementation": {
+      "approved": false,
+      "approvedBy": null,
+      "approvedAt": null
+    }
+  },
+  "metrics": {
+    "testCoverage": 20,
+    "accessibility": "WCAG 2.1 AA",
+    "responsiveDesign": "Mobile, Tablet, Desktop",
+    "estimatedComplexity": "Low",
+    "estimatedRisk": "Low-Medium"
+  },
+  "notes": [
+    "Architecture design approved by system-architect",
+    "Ready for frontend engineer to implement using TDD approach",
+    "All tests should follow Red-Green-Refactor cycle",
+    "CallbackPage requires no changes - existing flow works",
+    "Design tokens applied via useThemeColors hook",
+    "20+ test cases covering unit, integration, responsive, and accessibility"
+  ]
+}
