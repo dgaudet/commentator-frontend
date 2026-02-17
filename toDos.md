@@ -168,8 +168,4 @@ redirectUri: 'http://localhost:5173/callback',
 audience: 'https://dev-xz2pg3bky1ezk33h.us.auth0.com/api/v2/',
 }
 
-
-I think I was looking into a few things, and continuing the app gateway stuff
-today, lots of meetings
-A tonne of exports
-Tell brendan about Sammi's env-one pr being merged
+yX0#fHZ$w%RXfr2W

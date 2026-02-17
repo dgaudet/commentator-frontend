@@ -28,13 +28,16 @@ jest.mock('../../config/authConfig', () => ({
 // Create persistent mock functions
 const mockShowFn = jest.fn()
 const mockDestroyFn = jest.fn()
+const mockHideFn = jest.fn()
+const mockOnFn = jest.fn()
 
 jest.mock('auth0-lock', () => {
   return jest.fn((_clientId, _domain, _options) => {
     return {
       show: mockShowFn,
       destroy: mockDestroyFn,
-      on: jest.fn(),
+      hide: mockHideFn,
+      on: mockOnFn,
     }
   })
 })
@@ -49,6 +52,8 @@ describe('LoginPage Component - TASK 1', () => {
     // Reset call history but keep the mock functions
     mockShowFn.mockClear()
     mockDestroyFn.mockClear()
+    mockHideFn.mockClear()
+    mockOnFn.mockClear()
     ;(Auth0Lock as jest.Mock).mockClear()
   })
 
@@ -76,9 +81,12 @@ describe('LoginPage Component - TASK 1', () => {
       'test-domain.auth0.com',
       expect.objectContaining({
         auth: expect.objectContaining({
-          redirectUrl: 'http://localhost:3000/callback',
-          responseType: 'code',
+          redirect: false,
+          responseType: 'token id_token',
           scope: 'openid profile email',
+          params: expect.objectContaining({
+            audience: 'https://test-api',
+          }),
         }),
         theme: expect.objectContaining({
           primaryColor: '#667eea',

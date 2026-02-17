@@ -33,6 +33,7 @@ jest.mock('auth0-lock', () => {
   return jest.fn(() => ({
     show: jest.fn(),
     destroy: jest.fn(),
+    hide: jest.fn(),
     on: jest.fn(),
   }))
 })

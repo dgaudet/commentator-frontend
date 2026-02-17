@@ -33,10 +33,13 @@ jest.mock('../../config/authConfig', () => ({
   })),
 }))
 
+const mockHideFn = jest.fn()
+
 jest.mock('auth0-lock', () => {
   return jest.fn(() => ({
     show: mockShowFn,
     destroy: mockDestroyFn,
+    hide: mockHideFn,
     on: mockOnFn,
   }))
 })
@@ -55,8 +58,8 @@ describe('LoginPage - Auth Flow & Error Handling (TASK 3)', () => {
     ;(Auth0Lock as jest.Mock).mockClear()
   })
 
-  // TEST 1: Lock redirects to /callback with correct redirectUrl
-  it('should configure Lock to redirect to /callback after authentication', () => {
+  // TEST 1: Lock uses non-redirect mode to avoid PKCE state mismatch with SPA SDK
+  it('should configure Lock in non-redirect mode', () => {
     renderWithRouter(<LoginPage />)
 
     expect(Auth0Lock).toHaveBeenCalledWith(
@@ -64,15 +67,15 @@ describe('LoginPage - Auth Flow & Error Handling (TASK 3)', () => {
       expect.any(String),
       expect.objectContaining({
         auth: expect.objectContaining({
-          redirectUrl: 'http://localhost:3000/callback',
-          responseType: 'code',
+          redirect: false,
+          responseType: 'token id_token',
         }),
       }),
     )
   })
 
-  // TEST 2: Lock uses correct auth scope
-  it('should request openid profile email scopes', () => {
+  // TEST 2: Lock uses correct auth scope and audience
+  it('should request openid profile email scopes with audience', () => {
     renderWithRouter(<LoginPage />)
 
     expect(Auth0Lock).toHaveBeenCalledWith(
@@ -81,6 +84,9 @@ describe('LoginPage - Auth Flow & Error Handling (TASK 3)', () => {
       expect.objectContaining({
         auth: expect.objectContaining({
           scope: 'openid profile email',
+          params: expect.objectContaining({
+            audience: 'https://test-api',
+          }),
         }),
       }),
     )
@@ -181,5 +187,12 @@ describe('LoginPage - Auth Flow & Error Handling (TASK 3)', () => {
 
     const signupLink = screen.getByRole('link', { name: /sign up/i })
     expect(signupLink).toHaveAttribute('href', '/signup')
+  })
+
+  // TEST 11: Lock registers 'authenticated' event handler
+  it('should register an authenticated event handler on Lock', () => {
+    renderWithRouter(<LoginPage />)
+
+    expect(mockOnFn).toHaveBeenCalledWith('authenticated', expect.any(Function))
   })
 })
