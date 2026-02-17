@@ -1,0 +1,359 @@
+{
+  "feature": {
+    "id": "auth0-lock-integration",
+    "name": "Auth0 Lock Widget Integration",
+    "description": "Replace external Auth0 login with embedded Auth0 Lock Widget for seamless in-app authentication with design system styling. Lock handles login only; existing /signup route preserved.",
+    "approach": "Lock for login only (allowSignUp: false) with link to existing /signup route"
+  },
+  "complexity": {
+    "level": "L2",
+    "score": 2,
+    "description": "Low complexity - single component integration, no backend changes, straightforward implementation",
+    "rationale": "Focuses on frontend component integration only. Existing CallbackPage handles auth flow with no changes required. Lock Widget is a stable, maintained library."
+  },
+  "status": {
+    "overall": "DESIGN_COMPLETE",
+    "createdAt": "2026-02-15T00:00:00Z",
+    "lastUpdated": "2026-02-15T00:00:00Z"
+  },
+  "phases": {
+    "intent_refinement": {
+      "status": "COMPLETE",
+      "completedAt": "2026-02-15T00:00:00Z",
+      "artifacts": [
+        "intent.md"
+      ],
+      "description": "Problem statement, vision, and success criteria defined"
+    },
+    "planning": {
+      "status": "COMPLETE",
+      "completedAt": "2026-02-15T00:00:00Z",
+      "artifacts": [
+        "requirements.md"
+      ],
+      "description": "10 user stories in EARS notation, acceptance criteria, non-functional requirements"
+    },
+    "architecture": {
+      "status": "COMPLETE",
+      "completedAt": "2026-02-15T00:00:00Z",
+      "artifacts": [
+        "architecture/design.md"
+      ],
+      "description": "Technical architecture, component design, integration patterns, responsive design strategy",
+      "approvedBy": "system-architect",
+      "approvedAt": "2026-02-15T00:00:00Z"
+    },
+    "implementation": {
+      "status": "PENDING",
+      "startedAt": null,
+      "completedAt": null,
+      "artifacts": [
+        "tasks.md"
+      ],
+      "description": "5 TDD-based implementation tasks with Red-Green-Refactor cycles",
+      "blockedBy": [],
+      "blocks": []
+    },
+    "testing": {
+      "status": "PENDING",
+      "startedAt": null,
+      "completedAt": null,
+      "description": "20 comprehensive test cases covering unit, responsive, and accessibility"
+    },
+    "delivery_validation": {
+      "status": "PENDING",
+      "startedAt": null,
+      "completedAt": null,
+      "description": "Final validation, code review, and production readiness"
+    }
+  },
+  "requirements": {
+    "count": 9,
+    "note": "US-008 (Callback flow) removed - existing CallbackPage already tested and working",
+    "userStories": [
+      {
+        "id": "US-001",
+        "title": "User Sees Styled Login Form",
+        "status": "PENDING"
+      },
+      {
+        "id": "US-002",
+        "title": "User Logs In with Email and Password",
+        "status": "PENDING"
+      },
+      {
+        "id": "US-003",
+        "title": "User Creates Account via Sign Up Link",
+        "status": "PENDING"
+      },
+      {
+        "id": "US-004",
+        "title": "User Sees Error Messages",
+        "status": "PENDING"
+      },
+      {
+        "id": "US-005",
+        "title": "Login Form is Responsive",
+        "status": "PENDING"
+      },
+      {
+        "id": "US-006",
+        "title": "Login Form Supports Theme (Dark Mode)",
+        "status": "PENDING"
+      },
+      {
+        "id": "US-007",
+        "title": "Loading State During Authentication",
+        "status": "PENDING"
+      },
+      {
+        "id": "US-009",
+        "title": "Accessibility - Keyboard Navigation",
+        "status": "PENDING"
+      },
+      {
+        "id": "US-010",
+        "title": "Embed Lock Widget Instead of External Auth0 Link",
+        "status": "PENDING"
+      }
+    ]
+  },
+  "implementation": {
+    "tasks": {
+      "total": 5,
+      "completed": 0,
+      "list": [
+        {
+          "id": "TASK-1",
+          "title": "Set Up Lock Widget Component Base",
+          "status": "PENDING",
+          "risk": "LOW",
+          "estimatedHours": "1-2",
+          "testCases": 6,
+          "dependencies": []
+        },
+        {
+          "id": "TASK-2",
+          "title": "Add Responsive Layout & Styling",
+          "status": "PENDING",
+          "risk": "LOW",
+          "estimatedHours": "2-3",
+          "testCases": 5,
+          "dependencies": ["TASK-1"]
+        },
+        {
+          "id": "TASK-3",
+          "title": "Integration with Auth Flow & Error Handling",
+          "status": "PENDING",
+          "risk": "MEDIUM",
+          "estimatedHours": "2-3",
+          "testCases": 4,
+          "dependencies": ["TASK-1", "TASK-2"]
+        },
+        {
+          "id": "TASK-4",
+          "title": "Comprehensive Test Suite & Accessibility",
+          "status": "PENDING",
+          "risk": "LOW",
+          "estimatedHours": "1.5-2",
+          "testCases": 5,
+          "dependencies": ["TASK-1", "TASK-2", "TASK-3"]
+        },
+        {
+          "id": "TASK-5",
+          "title": "Final Integration & Cleanup",
+          "status": "PENDING",
+          "risk": "TRIVIAL",
+          "estimatedHours": "0.5-1",
+          "testCases": 0,
+          "dependencies": ["TASK-1", "TASK-2", "TASK-3", "TASK-4"]
+        }
+      ]
+    },
+    "totalTestCases": 20,
+    "estimatedTotalHours": "8-12",
+    "codeCoverage": {
+      "target": 100,
+      "unit": "percent"
+    }
+  },
+  "files": {
+    "new": [
+      "src/pages/LoginPage.tsx",
+      "src/pages/LoginPage.module.css",
+      "src/pages/__tests__/LoginPage.component.test.tsx"
+    ],
+    "modified": [],
+    "deleted": [],
+    "count": {
+      "new": 3,
+      "modified": 0,
+      "deleted": 0
+    }
+  },
+  "dependencies": {
+    "runtime": [
+      {
+        "name": "auth0-lock",
+        "version": "^12.0.0",
+        "status": "already installed",
+        "critical": true
+      }
+    ],
+    "testing": [
+      "@testing-library/react",
+      "@testing-library/jest-dom",
+      "jest"
+    ],
+    "design": [
+      "useThemeColors hook (existing)",
+      "Design token system (existing)"
+    ],
+    "external": [
+      "Auth0 configuration (already set up)"
+    ]
+  },
+  "risks": [
+    {
+      "id": "RISK-1",
+      "title": "Lock widget styling limited",
+      "impact": "MEDIUM",
+      "likelihood": "HIGH",
+      "mitigation": "Use CSS class overrides for custom styling",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "RISK-2",
+      "title": "Lock theme not automatically theme-aware",
+      "impact": "MEDIUM",
+      "likelihood": "MEDIUM",
+      "mitigation": "Extract primary color from useThemeColors hook at component mount",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "RISK-3",
+      "title": "Lock conflicts with existing form elements",
+      "impact": "MEDIUM",
+      "likelihood": "LOW",
+      "mitigation": "Replace LoginPage form with Lock entirely, verify in tests",
+      "status": "IDENTIFIED"
+    },
+    {
+      "id": "RISK-4",
+      "title": "Callback flow regression",
+      "impact": "HIGH",
+      "likelihood": "LOW",
+      "mitigation": "Thoroughly test callback redirect flow with integration tests",
+      "status": "IDENTIFIED"
+    }
+  ],
+  "quality_gates": {
+    "implementation": {
+      "gateId": "L2_IMPLEMENTATION_GATE",
+      "status": "BLOCKED",
+      "blockedBy": [],
+      "description": "L2 complexity does not require formal architecture approval",
+      "canProceed": true,
+      "note": "Architecture complete - implementation can proceed"
+    },
+    "testing": {
+      "gateId": "QA_GATE",
+      "status": "PENDING",
+      "requirements": [
+        "All 20 tests passing",
+        "Code coverage >= 90%",
+        "No TypeScript errors",
+        "Lint checks passing"
+      ]
+    },
+    "code_review": {
+      "gateId": "REVIEW_GATE",
+      "status": "PENDING",
+      "requirements": [
+        "Peer code review",
+        "Architecture review",
+        "Accessibility review"
+      ]
+    },
+    "deployment": {
+      "gateId": "DEPLOYMENT_GATE",
+      "status": "PENDING",
+      "requirements": [
+        "All quality gates passed",
+        "PR approved and merged",
+        "Build successful"
+      ]
+    }
+  },
+  "team": {
+    "architect": {
+      "role": "System Architect",
+      "status": "COMPLETE",
+      "note": "Architecture designed and approved"
+    },
+    "frontend_engineer": {
+      "role": "Frontend Engineer",
+      "status": "PENDING",
+      "note": "Ready to implement using TDD approach"
+    },
+    "qa_engineer": {
+      "role": "QA Engineer",
+      "status": "PENDING",
+      "note": "Will validate testing and quality gates"
+    }
+  },
+  "timeline": {
+    "created": "2026-02-15",
+    "architecture_complete": "2026-02-15",
+    "implementation_target_start": "2026-02-16",
+    "implementation_target_end": "2026-02-18",
+    "estimated_total_duration_days": 2,
+    "critical_path": [
+      "TASK-1 (component base)",
+      "TASK-2 (responsive design)",
+      "TASK-3 (auth flow)",
+      "TASK-4 (tests & a11y)",
+      "TASK-5 (cleanup)"
+    ]
+  },
+  "success_criteria": {
+    "functional": [
+      "Lock Widget renders in LoginPage",
+      "Design tokens applied to primary color",
+      "Sign up works within Lock",
+      "Callback redirect successful",
+      "Error handling works",
+      "Responsive on all breakpoints"
+    ],
+    "quality": [
+      "All 20 tests passing",
+      "WCAG 2.1 AA compliant",
+      "TypeScript strict mode",
+      "Zero breaking changes",
+      "Code review approved"
+    ],
+    "metrics": [
+      "Lock loads in < 2 seconds",
+      "Form interactions respond in < 100ms",
+      "Auth request completes in < 5 seconds",
+      "100% test coverage for component"
+    ]
+  },
+  "notes": [
+    "Architecture approved by system-architect on 2026-02-15",
+    "Ready for frontend engineer to implement using TDD approach",
+    "All specifications complete and detailed",
+    "L2 complexity - no formal approval gates required",
+    "CRITICAL: Lock shows LOGIN ONLY (allowSignUp: false) - preserves existing /signup route",
+    "Create Account link below Lock directs to existing /signup route",
+    "Zero changes needed to existing CallbackPage, /signup route, or auth context",
+    "Design tokens already integrated in codebase",
+    "STYLING_MOCKUP.md provides visual reference with color and layout examples",
+    "20+ test cases provide comprehensive coverage"
+  ],
+  "adr_references": [
+    "ADR-001: Embedded Lock vs. Redirect to Hosted Login",
+    "ADR-002: Use Auth0 Lock vs. Custom Auth Form",
+    "ADR-003: Lock Widget Styling Approach"
+  ]
+}

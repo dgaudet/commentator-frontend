@@ -1,136 +1,91 @@
-import React, { useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { typography, shadows } from '../theme/tokens'
+import { useEffect, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import Auth0Lock from 'auth0-lock'
 import { useThemeColors } from '../hooks/useThemeColors'
-import { useAuth } from '../contexts/AuthContext'
+import { getDefaultAuthConfig } from '../config/authConfig'
 import styles from './LoginPage.module.css'
 
+/**
+ * LoginPage Component
+ * Renders Auth0 Lock Widget for authentication
+ *
+ * Uses Lock in non-redirect mode (redirect: false) so authentication
+ * is handled in-page via the 'authenticated' event. This avoids PKCE
+ * state mismatch between Lock Widget and Auth0 SPA SDK.
+ *
+ * After Lock authenticates, Auth0 sets a session cookie. We navigate
+ * to '/' and AuthContext picks up the session via getTokenSilently().
+ *
+ * Features:
+ * - Lock Widget for secure login (no redirect)
+ * - Design token theming (primary colors)
+ * - Responsive layout
+ * - Graceful error handling
+ */
 export const LoginPage: React.FC = () => {
-  const { login, loading, error, isAuthenticated } = useAuth()
-  const themeColors = useThemeColors()
+  const { primary, text } = useThemeColors()
+  const lockRef = useRef<Auth0Lock | null>(null)
+  const navigate = useNavigate()
 
-  const containerStyle = useMemo(() => ({
-    /* Background is applied globally by ThemeStyles component */
-  }), [])
+  useEffect(() => {
+    // Get Auth0 configuration from centralized config
+    let authConfig
+    try {
+      authConfig = getDefaultAuthConfig()
+    } catch (error) {
+      console.error('Failed to load Auth0 configuration:', error)
+      return
+    }
 
-  const cardStyle = useMemo(() => ({
-    backgroundColor: themeColors.background.secondary,
-    boxShadow: shadows.lg,
-  }), [themeColors])
+    const lock = new Auth0Lock(authConfig.clientId, authConfig.domain, {
+      auth: {
+        redirect: false,
+        responseType: 'token id_token',
+        scope: 'openid profile email',
+        params: {
+          audience: authConfig.audience,
+        },
+      },
+      theme: {
+        primaryColor: primary.main,
+      },
+      container: 'auth0-lock-container',
+      allowedConnections: ['Username-Password-Authentication'],
+      allowSignUp: false,
+      allowForgotPassword: true,
+    })
 
-  const titleStyle = useMemo(() => ({
-    color: themeColors.text.primary,
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.bold,
-  }), [themeColors])
+    // Handle successful authentication in-page (no redirect)
+    // Auth0 sets a session cookie; AuthContext picks it up via getTokenSilently()
+    lock.on('authenticated', () => {
+      lock.hide()
+      navigate('/', { replace: true })
+    })
 
-  const subtitleStyle = useMemo(() => ({
-    color: themeColors.text.secondary,
-    fontSize: typography.fontSize.sm,
-  }), [themeColors])
+    lockRef.current = lock
 
-  const errorStyle = useMemo(() => ({
-    backgroundColor: themeColors.semantic.errorLight,
-    borderColor: themeColors.semantic.error,
-    color: themeColors.semantic.error,
-    fontSize: typography.fontSize.sm,
-  }), [themeColors])
+    // Defer show() to the next frame so React finishes committing the
+    // container div to the DOM before Lock starts manipulating it
+    const frameId = requestAnimationFrame(() => {
+      lock.show()
+    })
 
-  const buttonStyle = useMemo(() => ({
-    backgroundColor: themeColors.primary.main,
-    color: themeColors.text.inverse,
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
-  }), [themeColors])
-
-  const signupPromptStyle = useMemo(() => ({
-    color: themeColors.text.secondary,
-    fontSize: typography.fontSize.sm,
-  }), [themeColors])
-
-  const linkStyle = useMemo(() => ({
-    color: themeColors.primary.main,
-    fontWeight: typography.fontWeight.semibold,
-  }), [themeColors])
-
-  const handleLoginClick = async () => {
-    await login()
-  }
-
-  if (isAuthenticated) {
-    return (
-      <main className={styles.container} style={containerStyle}>
-        <div>Already authenticated</div>
-      </main>
-    )
-  }
+    return () => {
+      cancelAnimationFrame(frameId)
+      lock.destroy()
+      lockRef.current = null
+    }
+  // Only run on mount/unmount - Lock manages its own DOM
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
-    <main className={styles.container} style={containerStyle}>
-      <div className={styles.card} style={cardStyle}>
-        <h1 className={styles.title} style={titleStyle}>
-          Commentator
-        </h1>
-        <p className={styles.subtitle} style={subtitleStyle}>
-          Student Report Comments Management
-        </p>
-
-        {error && (
-          <div role="alert" className={styles.error} style={errorStyle}>
-            {error}
-          </div>
-        )}
-
-        <button
-          onClick={handleLoginClick}
-          disabled={loading}
-          className={styles.loginButton}
-          style={{
-            ...buttonStyle,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1,
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.outline = '2px solid'
-            e.currentTarget.style.outlineColor = themeColors.primary.main
-            e.currentTarget.style.outlineOffset = '2px'
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.outline = 'none'
-          }}
-          onMouseEnter={(e) => {
-            if (!loading) {
-              e.currentTarget.style.backgroundColor = themeColors.primary.dark
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = themeColors.primary.main
-          }}
-          aria-label="Login with Auth0"
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-
-        <div className={styles.signupPrompt} style={signupPromptStyle}>
-          <p>
-            Don't have an account?
-            {' '}
-            <Link
-              to="/signup"
-              style={linkStyle}
-              className={styles.link}
-              onFocus={(e) => {
-                e.currentTarget.style.outline = '2px solid'
-                e.currentTarget.style.outlineColor = themeColors.primary.main
-                e.currentTarget.style.outlineOffset = '2px'
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.outline = 'none'
-              }}
-            >
-              Sign up
-            </Link>
-          </p>
+    <main className={styles.container} role="main">
+      <div className={styles.contentWrapper}>
+        <div className={styles.lockContainer} id="auth0-lock-container" />
+        <div className={styles.signupPrompt} style={{ color: text.primary }}>
+          Don&apos;t have an account?{' '}
+          <Link to="/signup" style={{ color: primary.main }}>Sign Up</Link>
         </div>
       </div>
     </main>

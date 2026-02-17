@@ -4,6 +4,47 @@
  * Reference: US-UR-009
  */
 
+/* eslint-disable import/first */
+
+// Setup mocks FIRST before any imports
+jest.mock('../../hooks/useThemeColors', () => ({
+  useThemeColors: () => ({
+    primary: { main: '#667eea' },
+    background: { primary: '#ffffff' },
+    text: { primary: '#1f2937' },
+  }),
+}))
+
+jest.mock('../../config/authConfig', () => ({
+  getDefaultAuthConfig: jest.fn(() => ({
+    clientId: 'test-client-id',
+    domain: 'test-domain.auth0.com',
+    redirectUri: 'http://localhost:3000/callback',
+    audience: 'https://test-api',
+  })),
+  createTestAuthConfig: jest.fn(() => ({
+    clientId: 'test-client-id-12345',
+    domain: 'test.auth0.com',
+    redirectUri: 'http://localhost:3000/callback',
+    audience: 'https://test-api',
+  })),
+}))
+
+const mockShowFn = jest.fn()
+const mockDestroyFn = jest.fn()
+
+jest.mock('auth0-lock', () => {
+  return jest.fn((_clientId, _domain, _options) => {
+    return {
+      show: mockShowFn,
+      destroy: mockDestroyFn,
+      hide: jest.fn(),
+      on: jest.fn(),
+    }
+  })
+})
+
+// Now import after mocks are set up
 import { renderWithRouter, screen } from '../../test-utils'
 import { LoginPage } from '../LoginPage'
 

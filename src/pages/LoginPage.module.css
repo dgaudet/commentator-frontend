@@ -1,6 +1,5 @@
 /* LoginPage Styles */
-/* Gradient background and card layout */
-/* Design token colors are applied via inline styles and theme hooks */
+/* Auth0 Lock Widget layout with responsive design */
 
 .container {
   display: flex;
@@ -8,82 +7,94 @@
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
-  /* Background gradient applied via inline style with theme colors */
 }
 
-.card {
+.lockContainer {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Responsive design: reduce Lock size on mobile */
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .lockContainer {
+    max-width: 100%;
+  }
+}
+
+/* Tablet layout: optimize spacing */
+@media (min-width: 768px) {
+  .container {
+    padding: 40px;
+  }
+
+  .lockContainer {
+    width: 500px;
+  }
+}
+
+/* Desktop layout: Lock in right area with generous spacing */
+@media (min-width: 1200px) {
+  .container {
+    justify-content: center;
+    padding: 40px 60px;
+  }
+}
+
+/* Content wrapper for vertical stacking of lock + signup prompt */
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+@media (max-width: 480px) {
+  .contentWrapper {
+    max-width: 100%;
+  }
+}
+
+/* Lock Widget input and button styling overrides */
+:global(.auth0-lock input) {
+  min-height: 44px; /* Touch target minimum */
+  font-size: 16px; /* Prevent iOS auto-zoom */
+  padding: 12px;
   border-radius: 8px;
-  padding: 40px;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  /* Background and shadow applied via inline styles with theme colors */
 }
 
-.title {
-  margin: 0 0 8px 0;
-  font-size: 32px;
-  font-weight: 700;
-  /* Color applied via inline style */
-}
-
-.subtitle {
-  margin: 0 0 30px 0;
-  font-size: 14px;
-  /* Color applied via inline style */
-}
-
-.error {
-  border-radius: 4px;
-  padding: 12px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  border: 1px solid;
-  border-color: inherit;
-  /* Background and text colors applied via inline styles */
-}
-
-.loginButton {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 4px;
+:global(.auth0-lock button) {
+  min-height: 44px; /* Touch target minimum */
   font-size: 16px;
-  transition: background-color 0.3s ease;
-  /* Colors and text applied via inline styles */
+  border-radius: 8px;
 }
 
-.loginButton:disabled {
-  cursor: not-allowed;
-}
-
-.link {
-  text-decoration: none;
-  transition: text-decoration 0.2s ease;
-  /* Color and font-weight applied via inline styles */
-}
-
-.link:hover {
-  text-decoration: underline;
+:global(.auth0-lock button:focus),
+:global(.auth0-lock input:focus) {
+  outline-offset: 2px;
 }
 
 .signupPrompt {
+  text-align: center;
   margin-top: 20px;
   font-size: 14px;
-  /* Color applied via inline style */
 }
 
-@media (max-width: 600px) {
-  .card {
-    padding: 30px 20px;
-  }
+.signupPrompt a {
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 5px;
+}
 
-  .title {
-    font-size: 24px;
-  }
+.signupPrompt a:hover {
+  text-decoration: underline;
+}
 
-  .loginButton {
-    padding: 10px;
-    font-size: 14px;
-  }
+.signupPrompt a:focus {
+  outline: 2px solid;
+  outline-offset: 2px;
 }

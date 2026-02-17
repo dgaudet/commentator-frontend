@@ -101,7 +101,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
           console.debug('Not in callback flow or already processed', err)
         }
 
-        const isAuth = await client.isAuthenticated()
+        let isAuth = await client.isAuthenticated()
+
+        // If not authenticated, try silent auth to discover sessions
+        // established by external flows (e.g., Lock Widget in non-redirect mode)
+        if (!isAuth) {
+          try {
+            await client.getTokenSilently()
+            isAuth = await client.isAuthenticated()
+          } catch {
+            // No active session - user needs to log in
+          }
+        }
+
         setIsAuthenticated(isAuth)
 
         if (isAuth) {
