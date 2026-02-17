@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import Auth0Lock from 'auth0-lock'
 import { useThemeColors } from '../hooks/useThemeColors'
 import { getDefaultAuthConfig } from '../config/authConfig'
@@ -16,23 +17,19 @@ import styles from './LoginPage.module.css'
  */
 export const LoginPage: React.FC = () => {
   const { primary } = useThemeColors()
+  const lockRef = useRef<Auth0Lock | null>(null)
 
-  // Get Auth0 configuration from centralized config
-  let authConfig
-  try {
-    authConfig = getDefaultAuthConfig()
-  } catch (error) {
-    console.error('Failed to load Auth0 configuration:', error)
-    authConfig = null
-  }
-
-  // Memoize Lock configuration to avoid unnecessary recalculation and effect re-runs
-  const lockConfig = useMemo(() => {
-    if (!authConfig) {
-      return null
+  useEffect(() => {
+    // Get Auth0 configuration from centralized config
+    let authConfig
+    try {
+      authConfig = getDefaultAuthConfig()
+    } catch (error) {
+      console.error('Failed to load Auth0 configuration:', error)
+      return
     }
 
-    return {
+    const lock = new Auth0Lock(authConfig.clientId, authConfig.domain, {
       auth: {
         redirectUrl: authConfig.redirectUri,
         responseType: 'code' as const,
@@ -45,26 +42,31 @@ export const LoginPage: React.FC = () => {
       allowedConnections: ['Username-Password-Authentication'],
       allowSignUp: false,
       allowForgotPassword: true,
-    }
-  }, [authConfig, primary.main])
+    })
 
-  useEffect(() => {
-    if (!authConfig || !lockConfig) {
-      return
-    }
+    lockRef.current = lock
 
-    const lock = new Auth0Lock(authConfig.clientId, authConfig.domain, lockConfig)
-
-    lock.show()
+    // Defer show() to the next frame so React finishes committing the
+    // container div to the DOM before Lock starts manipulating it
+    const frameId = requestAnimationFrame(() => {
+      lock.show()
+    })
 
     return () => {
+      cancelAnimationFrame(frameId)
       lock.destroy()
+      lockRef.current = null
     }
-  }, [authConfig, lockConfig])
+  // Only run on mount/unmount - Lock manages its own DOM
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <main className={styles.container} role="main">
       <div className={styles.lockContainer} id="auth0-lock-container" />
+      <div className={styles.signupPrompt}>
+        Don&apos;t have an account? <Link to="/signup">Sign Up</Link>
+      </div>
     </main>
   )
 }

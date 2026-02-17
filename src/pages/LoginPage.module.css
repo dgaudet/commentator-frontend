@@ -54,3 +54,24 @@
 :global(.auth0-lock input:focus) {
   outline-offset: 2px;
 }
+
+.signupPrompt {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.signupPrompt a {
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.signupPrompt a:hover {
+  text-decoration: underline;
+}
+
+.signupPrompt a:focus {
+  outline: 2px solid;
+  outline-offset: 2px;
+}

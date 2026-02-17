@@ -157,3 +157,14 @@ Use the metada to dispaly the user's first/last name instead of the email 2 time
 
 if we use this Auth0 lock Widget, then I assume I need to test more cases
 test forgot password
+
+The styling of the login is pretty different from the rest of the app, is it possible to cahnge that
+Do we really need the changes in setupTests.ts? they seem similar to the code already there
+The build has a warning now as well
+
+authConfig = {
+domain: 'dev-xz2pg3bky1ezk33h.us.auth0.com',
+clientId: '1JFCOTaGY4nTaEQXqQAtrG7Ocma5Y1fQ',
+redirectUri: 'http://localhost:5173/callback',
+audience: 'https://dev-xz2pg3bky1ezk33h.us.auth0.com/api/v2/',
+}

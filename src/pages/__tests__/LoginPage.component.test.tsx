@@ -41,7 +41,7 @@ jest.mock('auth0-lock', () => {
 
 // Now import after mocks are set up
 import Auth0Lock from 'auth0-lock'
-import { render, screen } from '../../test-utils'
+import { renderWithRouter, screen } from '../../test-utils'
 import { LoginPage } from '../LoginPage'
 
 describe('LoginPage Component - TASK 1', () => {
@@ -54,14 +54,14 @@ describe('LoginPage Component - TASK 1', () => {
 
   // TEST 1: Component renders without crashing
   it('should render LoginPage without errors', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
 
     expect(screen.getByRole('main')).toBeInTheDocument()
   })
 
   // TEST 2: Lock container element exists
   it('should render auth0-lock-container element', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
 
     const lockContainer = document.getElementById('auth0-lock-container')
     expect(lockContainer).toBeInTheDocument()
@@ -69,7 +69,7 @@ describe('LoginPage Component - TASK 1', () => {
 
   // TEST 3: Lock Widget initializes on mount
   it('should initialize Auth0 Lock on component mount', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
 
     expect(Auth0Lock).toHaveBeenCalledWith(
       'test-client-id',
@@ -93,7 +93,7 @@ describe('LoginPage Component - TASK 1', () => {
 
   // TEST 4: Lock Widget destroyed on unmount
   it('should call lock.destroy() on component unmount', () => {
-    const { unmount } = render(<LoginPage />)
+    const { unmount } = renderWithRouter(<LoginPage />)
 
     expect(mockDestroyFn).not.toHaveBeenCalled()
 
@@ -106,7 +106,7 @@ describe('LoginPage Component - TASK 1', () => {
 
   // TEST 5: Primary color from design tokens applied
   it('should apply primary color from design tokens to Lock Widget', () => {
-    render(<LoginPage />)
+    renderWithRouter(<LoginPage />)
 
     expect(Auth0Lock).toHaveBeenCalledWith(
       expect.any(String),
@@ -119,10 +119,15 @@ describe('LoginPage Component - TASK 1', () => {
     )
   })
 
-  // TEST 6: Lock.show() called
-  it('should call lock.show() to display widget', () => {
-    render(<LoginPage />)
+  // TEST 6: Lock.show() called (deferred via requestAnimationFrame)
+  it('should call lock.show() to display widget', async () => {
+    jest.useFakeTimers()
+    renderWithRouter(<LoginPage />)
+
+    // lock.show() is deferred to next animation frame to avoid React render conflicts
+    jest.runAllTimers()
 
     expect(mockShowFn).toHaveBeenCalled()
+    jest.useRealTimers()
   })
 })

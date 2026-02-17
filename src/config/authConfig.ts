@@ -20,12 +20,14 @@ export interface AuthConfig {
 
 /**
  * Get Auth0 configuration from environment variables
- * Uses env module which provides consistent access across browser and test environments
+ * Vite replaces import.meta.env.VITE_* with actual values at build time for production.
+ * For tests, this function should be mocked using jest.mock() or wrapped with createTestAuthConfig.
  *
  * @returns Auth0 configuration from environment
  * @throws Error if required environment variables are missing
  */
 export function getDefaultAuthConfig(): AuthConfig {
+  // Vite config strips VITE_ prefix and maps to process.env.* via define
   const domain = process.env.AUTH0_DOMAIN
   const clientId = process.env.AUTH0_CLIENT_ID
   const redirectUri = process.env.AUTH0_REDIRECT_URI
