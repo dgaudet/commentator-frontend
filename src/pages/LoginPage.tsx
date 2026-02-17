@@ -16,7 +16,7 @@ import styles from './LoginPage.module.css'
  * - Graceful error handling
  */
 export const LoginPage: React.FC = () => {
-  const { primary } = useThemeColors()
+  const { primary, text } = useThemeColors()
   const lockRef = useRef<Auth0Lock | null>(null)
 
   useEffect(() => {
@@ -63,9 +63,12 @@ export const LoginPage: React.FC = () => {
 
   return (
     <main className={styles.container} role="main">
-      <div className={styles.lockContainer} id="auth0-lock-container" />
-      <div className={styles.signupPrompt}>
-        Don&apos;t have an account? <Link to="/signup">Sign Up</Link>
+      <div className={styles.contentWrapper}>
+        <div className={styles.lockContainer} id="auth0-lock-container" />
+        <div className={styles.signupPrompt} style={{ color: text.primary }}>
+          Don&apos;t have an account?{' '}
+          <Link to="/signup" style={{ color: primary.main }}>Sign Up</Link>
+        </div>
       </div>
     </main>
   )

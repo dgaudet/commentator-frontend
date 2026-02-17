@@ -36,6 +36,29 @@
   }
 }
 
+/* Desktop layout: Lock in right area with generous spacing */
+@media (min-width: 1200px) {
+  .container {
+    justify-content: center;
+    padding: 40px 60px;
+  }
+}
+
+/* Content wrapper for vertical stacking of lock + signup prompt */
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+@media (max-width: 480px) {
+  .contentWrapper {
+    max-width: 100%;
+  }
+}
+
 /* Lock Widget input and button styling overrides */
 :global(.auth0-lock input) {
   min-height: 44px; /* Touch target minimum */
