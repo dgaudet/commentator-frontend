@@ -16,6 +16,7 @@ export interface AuthConfig {
   clientId: string
   redirectUri: string
   audience: string
+  logoutReturnUri: string
 }
 
 /**
@@ -30,10 +31,11 @@ export function getDefaultAuthConfig(): AuthConfig {
   const clientId = process.env.AUTH0_CLIENT_ID
   const redirectUri = process.env.AUTH0_REDIRECT_URI
   const audience = process.env.AUTH0_AUDIENCE
+  const logoutReturnUri = process.env.AUTH0_LOGOUT_RETURN_URI
 
-  if (!domain || !clientId || !redirectUri || !audience) {
+  if (!domain || !clientId || !redirectUri || !audience || !logoutReturnUri) {
     throw new Error(
-      'Missing required Auth0 configuration. Please set: VITE_AUTH0_DOMAIN, VITE_AUTH0_CLIENT_ID, VITE_AUTH0_REDIRECT_URI, VITE_AUTH0_AUDIENCE',
+      'Missing required Auth0 configuration. Please set: VITE_AUTH0_DOMAIN, VITE_AUTH0_CLIENT_ID, VITE_AUTH0_REDIRECT_URI, VITE_AUTH0_AUDIENCE, VITE_AUTH0_LOGOUT_RETURN_URI',
     )
   }
 
@@ -42,6 +44,7 @@ export function getDefaultAuthConfig(): AuthConfig {
     clientId,
     redirectUri,
     audience,
+    logoutReturnUri,
   }
 }
 
@@ -57,6 +60,7 @@ export function createTestAuthConfig(overrides?: Partial<AuthConfig>): AuthConfi
     clientId: 'test-client-id-12345',
     redirectUri: 'http://localhost:3000/callback',
     audience: 'https://test-api',
+    logoutReturnUri: 'http://localhost:3000/login',
     ...overrides,
   }
 }
