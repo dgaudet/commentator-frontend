@@ -1,0 +1,129 @@
+{
+  "feature": "auth0-universal-login-l1",
+  "title": "Migrate to Auth0 Universal Login with Dashboard Branding",
+  "version": "1.0",
+  "status": "PLANNING_COMPLETE",
+  "created_at": "2026-02-22",
+  "updated_at": "2026-02-22",
+  "phases": {
+    "intent": {
+      "status": "COMPLETE",
+      "completed_at": "2026-02-22",
+      "document": "intent.md"
+    },
+    "requirements": {
+      "status": "COMPLETE",
+      "completed_at": "2026-02-22",
+      "document": "requirements.md",
+      "user_stories": 6,
+      "edge_cases": 5
+    },
+    "design": {
+      "status": "COMPLETE",
+      "completed_at": "2026-02-22",
+      "document": "design.md",
+      "components_designed": 3,
+      "files_to_modify": 8
+    },
+    "tasks": {
+      "status": "READY",
+      "document": "tasks.md",
+      "total_tasks": 7,
+      "low_risk": 6,
+      "medium_risk": 1,
+      "estimated_hours": "8-12"
+    },
+    "implementation": {
+      "status": "PENDING",
+      "started_at": null,
+      "estimated_completion": null
+    },
+    "validation": {
+      "status": "PENDING",
+      "started_at": null,
+      "estimated_completion": null
+    }
+  },
+  "complexity": {
+    "level": "L2",
+    "description": "Low-Medium complexity: Refactoring existing components, no new features, straightforward migration"
+  },
+  "deliverables": [
+    {
+      "name": "LoginPage.tsx",
+      "type": "Component",
+      "change": "Remove Lock widget, add simple button",
+      "risk": "Low"
+    },
+    {
+      "name": "AuthContext.tsx",
+      "type": "Context",
+      "change": "Documentation clarification only",
+      "risk": "Very Low"
+    },
+    {
+      "name": "CallbackPage.tsx",
+      "type": "Component",
+      "change": "Minimal changes, verify works correctly",
+      "risk": "Low"
+    },
+    {
+      "name": "Test Suite",
+      "type": "Tests",
+      "change": "Update mocks for Universal Login",
+      "risk": "Low"
+    },
+    {
+      "name": "Auth0 Branding",
+      "type": "Configuration",
+      "change": "Dashboard setup (colors, logo)",
+      "risk": "Very Low"
+    }
+  ],
+  "dependencies": {
+    "external": [
+      "auth0-spa-js (already installed)",
+      "Auth0 tenant with dashboard access"
+    ],
+    "internal": []
+  },
+  "metrics": {
+    "lines_of_code_removed": "~400",
+    "lines_of_code_added": "~50",
+    "files_modified": 8,
+    "files_deleted": 0,
+    "packages_removed": 1,
+    "test_cases_added": 15,
+    "test_cases_removed": 10
+  },
+  "approval": {
+    "ready_for_implementation": true,
+    "confidence": 0.95,
+    "notes": "Official Auth0 recommended pattern, well-tested, low risk migration"
+  },
+  "decisions": [
+    {
+      "id": "DES-1",
+      "title": "Adopt Universal Login instead of Lock",
+      "rationale": "Official Auth0 recommended pattern, actively maintained, eliminates state management confusion"
+    },
+    {
+      "id": "DES-2",
+      "title": "Use Dashboard branding for Level 1",
+      "rationale": "Simplest approach, no custom HTML/CSS needed, takes 15 minutes"
+    },
+    {
+      "id": "DES-3",
+      "title": "Reuse existing CallbackPage",
+      "rationale": "Already handles OAuth2 redirect correctly, minimal changes needed"
+    }
+  ],
+  "timeline": {
+    "phase_1_implementation": "2-3 hours",
+    "phase_2_testing": "2-3 hours",
+    "phase_3_configuration": "30 minutes",
+    "total_project": "8-12 hours",
+    "recommended_start": "ASAP",
+    "deadline": "Flexible (no external dependencies)"
+  }
+}
