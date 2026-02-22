@@ -4,23 +4,36 @@ import { CallbackPage } from '../CallbackPage'
 
 // Mock Auth context
 const mockUseAuth = jest.spyOn(AuthModule, 'useAuth')
+const mockNavigate = jest.fn()
+let mockSearchParams = new URLSearchParams('code=test&state=test')
 
 jest.mock('@auth0/auth0-spa-js', () => ({
   Auth0Client: jest.fn().mockImplementation(() => ({
     handleRedirectCallback: jest.fn().mockResolvedValue({
       appState: { returnTo: '/dashboard' },
     }),
+    isAuthenticated: jest.fn().mockResolvedValue(true),
+    getUser: jest.fn().mockResolvedValue({
+      sub: 'auth0|123456',
+      email: 'test@example.com',
+      name: 'Test User',
+    }),
+    getTokenSilently: jest.fn().mockResolvedValue('test-token'),
+    loginWithRedirect: jest.fn().mockResolvedValue(undefined),
+    logout: jest.fn().mockResolvedValue(undefined),
   })),
 }))
 
 jest.mock('react-router-dom', () => ({
-  useNavigate: jest.fn(() => jest.fn()),
-  useSearchParams: jest.fn(() => [new URLSearchParams('code=test&state=test'), jest.fn()]),
+  useNavigate: jest.fn(() => mockNavigate),
+  useSearchParams: jest.fn(() => [mockSearchParams, jest.fn()]),
 }))
 
 describe('CallbackPage', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockNavigate.mockClear()
+    mockSearchParams = new URLSearchParams('code=test&state=test')
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       loading: false,
@@ -60,10 +73,40 @@ describe('CallbackPage', () => {
   })
 
   it('should exchange authorization code for tokens', async () => {
-    render(<CallbackPage />)
+    // Start with auth not complete
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: false,
+      loading: false,
+      error: null,
+      user: null,
+      accessToken: null,
+      login: jest.fn(),
+      logout: jest.fn(),
+      getAccessToken: jest.fn(),
+    })
 
-    // Component should render without errors
-    expect(screen.getByRole('main')).toBeInTheDocument()
+    const { rerender } = render(<CallbackPage />)
+
+    // Verify component is waiting for auth
+    expect(screen.getByText(/processing authentication/i)).toBeInTheDocument()
+
+    // Simulate auth completion by updating mock to isAuthenticated=true
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      loading: false,
+      error: null,
+      user: { sub: 'user123', email: 'test@example.com', name: 'Test' },
+      accessToken: 'test-token',
+      login: jest.fn(),
+      logout: jest.fn(),
+      getAccessToken: jest.fn(),
+    })
+
+    rerender(<CallbackPage />)
+
+    // Give component time to detect auth change and redirect
+    await new Promise(resolve => setTimeout(resolve, 150))
+    expect(mockNavigate).toHaveBeenCalled()
   })
 
   it('should handle successful callback', async () => {
@@ -75,16 +118,25 @@ describe('CallbackPage', () => {
   })
 
   it('should display error if callback fails', () => {
+    // Mock error from Auth0
+    mockSearchParams = new URLSearchParams('error=access_denied&error_description=User%20cancelled%20login')
+
     render(<CallbackPage />)
 
-    // Should render without throwing
-    expect(screen.getByRole('main')).toBeInTheDocument()
+    // Should display error message
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+    expect(screen.getByText(/user.*cancelled/i)).toBeInTheDocument()
   })
 
   it('should redirect to dashboard on success', async () => {
+    mockNavigate.mockClear()
+
     render(<CallbackPage />)
 
-    expect(screen.getByRole('main')).toBeInTheDocument()
+    // Verify redirect was called with correct path
+    // Component waits for isAuthenticated to become true, then navigates
+    await new Promise(resolve => setTimeout(resolve, 100))
+    expect(mockNavigate).toHaveBeenCalledWith('/', { replace: true })
   })
 
   it('should handle network errors gracefully', () => {
@@ -121,5 +173,16 @@ describe('CallbackPage', () => {
     render(<CallbackPage />)
     const message = screen.getByText(/processing authentication/i)
     expect(message).toBeInTheDocument()
+  })
+
+  it('should handle missing authorization code from Universal Login', () => {
+    // Mock missing code (invalid callback)
+    mockSearchParams = new URLSearchParams('state=test') // No code parameter
+
+    render(<CallbackPage />)
+
+    // Should show error
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+    expect(screen.getByText(/no authorization code/i)).toBeInTheDocument()
   })
 })
