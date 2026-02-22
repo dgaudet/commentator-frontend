@@ -152,7 +152,11 @@ describe('LoginPage', () => {
     renderWithRouter(<LoginPage />)
     const logo = screen.getByAltText(/commentator logo/i)
     expect(logo).toBeInTheDocument()
-    expect(logo).toHaveAttribute('src', '/logo.png')
+    expect(logo).toHaveAttribute('src')
+    const src = logo.getAttribute('src')
+    expect(src).toBeTruthy()
+    // Vite imports images as URLs, so just verify the src is set
+    expect(typeof src).toBe('string')
   })
 
   it('should position logo before title', () => {

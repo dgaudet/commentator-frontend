@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { typography, shadows, borders } from '../theme/tokens'
 import { useThemeColors } from '../hooks/useThemeColors'
 import { useAuth } from '../contexts/AuthContext'
+import logo from '../../images/logo.png'
 import styles from './LoginPage.module.css'
 
 export const LoginPage: React.FC = () => {
@@ -80,7 +81,7 @@ export const LoginPage: React.FC = () => {
     <main className={styles.container} style={containerStyle}>
       <div className={styles.card} style={cardStyle}>
         <img
-          src="/logo.png"
+          src={logo}
           alt="Commentator logo"
           width={100}
           height={100}

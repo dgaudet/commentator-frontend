@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useThemeColors } from '../hooks/useThemeColors'
 import { useScrollVisibility } from '../hooks/useScrollVisibility'
 import { ThemeToggle } from './common/ThemeToggle'
+import logo from '../../images/logo.png'
 import styles from './Header.module.css'
 
 export const Header: React.FC = () => {
@@ -46,7 +47,7 @@ export const Header: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.brand}>
           <img
-            src="/logo.png"
+            src={logo}
             alt="Commentator logo"
             width={100}
             height={100}

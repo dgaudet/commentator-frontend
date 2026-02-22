@@ -194,8 +194,7 @@ The errors on the final comment modal for add/edit, should probably be modals li
 possible Auth0 login/user create flow by using Auth0 configuration, instead of in app - https://developer.auth0.com/resources/labs/forms/user-onboarding-made-easy#create-a-flow-to-update-user-metadata
 test out changing my password in auth0
 
-Need to style the login form
+Is it possible to remove the signup button from the Universal Login?
 
 Online Background Removal Tools (Easiest)
 - https://www.remove.bg/ - AI-powered background removal, great for people
-- 
