@@ -138,4 +138,22 @@ describe('LoginPage', () => {
     expect(loginButton).toBeDisabled()
     expect(screen.getByText('Logging in...')).toBeInTheDocument()
   })
+
+  it('should apply correct background color to container (matches design tokens)', () => {
+    const { container } = renderWithRouter(<LoginPage />)
+    const mainElement = container.querySelector('main')
+    const computedStyle = window.getComputedStyle(mainElement!)
+    // Should use background.secondary (#F9FAFB for light mode)
+    const backgroundColor = computedStyle.backgroundColor
+    expect(backgroundColor).toBe('rgb(249, 250, 251)') // #F9FAFB in RGB
+  })
+
+  it('should apply correct background color to card (matches design tokens)', () => {
+    const { container } = renderWithRouter(<LoginPage />)
+    const cardElement = container.querySelector('[class*="card"]')
+    const computedStyle = window.getComputedStyle(cardElement!)
+    // Should use background.primary (#FFFFFF for light mode)
+    const backgroundColor = computedStyle.backgroundColor
+    expect(backgroundColor).toBe('rgb(255, 255, 255)') // #FFFFFF in RGB
+  })
 })

@@ -10,11 +10,11 @@ export const LoginPage: React.FC = () => {
   const themeColors = useThemeColors()
 
   const containerStyle = useMemo(() => ({
-    /* Background is applied globally by ThemeStyles component */
-  }), [])
+    backgroundColor: themeColors.background.secondary,
+  }), [themeColors])
 
   const cardStyle = useMemo(() => ({
-    backgroundColor: themeColors.background.secondary,
+    backgroundColor: themeColors.background.primary,
     boxShadow: shadows.lg,
   }), [themeColors])
 
