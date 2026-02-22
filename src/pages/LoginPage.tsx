@@ -10,8 +10,8 @@ export const LoginPage: React.FC = () => {
   const themeColors = useThemeColors()
 
   const containerStyle = useMemo(() => ({
-    backgroundColor: themeColors.background.secondary,
-  }), [themeColors])
+    /* Background is applied globally by ThemeStyles component */
+  }), [])
 
   const cardStyle = useMemo(() => ({
     backgroundColor: themeColors.background.primary,
@@ -53,6 +53,17 @@ export const LoginPage: React.FC = () => {
     fontWeight: typography.fontWeight.semibold,
   }), [themeColors])
 
+  const logoStyle = useMemo(() => ({
+    width: '150px',
+    height: '150px',
+    borderRadius: '50%',
+    marginBottom: '16px',
+    marginLeft: 'auto' as const,
+    marginRight: 'auto' as const,
+    display: 'block' as const,
+    objectFit: 'contain' as const,
+  }), [])
+
   const handleLoginClick = async () => {
     await login()
   }
@@ -68,6 +79,13 @@ export const LoginPage: React.FC = () => {
   return (
     <main className={styles.container} style={containerStyle}>
       <div className={styles.card} style={cardStyle}>
+        <img
+          src="/logo.png"
+          alt="Commentator logo"
+          width={150}
+          height={150}
+          style={logoStyle}
+        />
         <h1 className={styles.title} style={titleStyle}>
           Commentator
         </h1>
