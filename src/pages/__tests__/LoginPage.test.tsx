@@ -64,8 +64,8 @@ describe('LoginPage', () => {
 
     await userEvent.click(loginButton)
 
-    // Just verify the button is clickable
-    expect(loginButton).toBeInTheDocument()
+    // Verify login was actually called with Universal Login redirect
+    expect(mockLogin).toHaveBeenCalledTimes(1)
   })
 
   it('should be mobile responsive', () => {
