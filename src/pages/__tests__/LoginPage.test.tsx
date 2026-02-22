@@ -138,4 +138,73 @@ describe('LoginPage', () => {
     expect(loginButton).toBeDisabled()
     expect(screen.getByText('Logging in...')).toBeInTheDocument()
   })
+
+  it('should apply correct background color to card (matches design tokens)', () => {
+    const { container } = renderWithRouter(<LoginPage />)
+    const cardElement = container.querySelector('[class*="card"]')
+    const computedStyle = window.getComputedStyle(cardElement!)
+    // Should use background.primary (#FFFFFF for light mode)
+    const backgroundColor = computedStyle.backgroundColor
+    expect(backgroundColor).toBe('rgb(255, 255, 255)') // #FFFFFF in RGB
+  })
+
+  it('should display logo image at top of card', () => {
+    renderWithRouter(<LoginPage />)
+    const logo = screen.getByAltText(/commentator logo/i)
+    expect(logo).toBeInTheDocument()
+    expect(logo).toHaveAttribute('src', '/logo.png')
+  })
+
+  it('should position logo before title', () => {
+    const { container } = renderWithRouter(<LoginPage />)
+    const logo = screen.getByAltText(/commentator logo/i)
+    const title = screen.getByText(/commentator/i)
+
+    // Logo should come before title in DOM
+    const logoIndex = Array.from(container.querySelectorAll('img, h1')).indexOf(logo)
+    const titleIndex = Array.from(container.querySelectorAll('img, h1')).indexOf(title)
+    expect(logoIndex).toBeLessThan(titleIndex)
+  })
+
+  it('should style logo as circular with appropriate sizing', () => {
+    renderWithRouter(<LoginPage />)
+    const logo = screen.getByAltText(/commentator logo/i)
+    const computedStyle = window.getComputedStyle(logo)
+
+    // Logo should be circular (border-radius 50%)
+    expect(computedStyle.borderRadius).toBe('50%')
+    // Logo should have appropriate width and height (100x100px)
+    expect(logo).toHaveAttribute('width', '100')
+    expect(logo).toHaveAttribute('height', '100')
+  })
+
+  it('should center logo horizontally in the card', () => {
+    renderWithRouter(<LoginPage />)
+    const logo = screen.getByAltText(/commentator logo/i)
+    const computedStyle = window.getComputedStyle(logo)
+
+    // Logo should be centered with auto margins
+    expect(computedStyle.marginLeft).toBe('auto')
+    expect(computedStyle.marginRight).toBe('auto')
+  })
+
+  it('should maintain logo aspect ratio (not squished)', () => {
+    renderWithRouter(<LoginPage />)
+    const logo = screen.getByAltText(/commentator logo/i) as HTMLImageElement
+    const computedStyle = window.getComputedStyle(logo)
+
+    // Should use object-fit to maintain aspect ratio
+    expect(computedStyle.objectFit).toBe('contain')
+  })
+
+  it('should apply border color from theme tokens to card', () => {
+    const { container } = renderWithRouter(<LoginPage />)
+    const cardElement = container.querySelector('[class*="card"]')
+    const computedStyle = window.getComputedStyle(cardElement!)
+
+    // Border should use design token border.default color (#E5E7EB)
+    expect(computedStyle.borderColor.toLowerCase()).toBe('#e5e7eb')
+    // Border width should be 1px (thin)
+    expect(computedStyle.borderWidth).toBe('1px')
+  })
 })

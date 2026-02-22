@@ -24,8 +24,9 @@
 
 .brand {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .title {

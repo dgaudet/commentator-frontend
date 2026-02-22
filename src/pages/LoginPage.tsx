@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { typography, shadows } from '../theme/tokens'
+import { typography, shadows, borders } from '../theme/tokens'
 import { useThemeColors } from '../hooks/useThemeColors'
 import { useAuth } from '../contexts/AuthContext'
 import styles from './LoginPage.module.css'
@@ -14,8 +14,9 @@ export const LoginPage: React.FC = () => {
   }), [])
 
   const cardStyle = useMemo(() => ({
-    backgroundColor: themeColors.background.secondary,
+    backgroundColor: themeColors.background.primary,
     boxShadow: shadows.lg,
+    border: `${borders.width.thin} solid ${themeColors.border.default}`,
   }), [themeColors])
 
   const titleStyle = useMemo(() => ({
@@ -53,6 +54,16 @@ export const LoginPage: React.FC = () => {
     fontWeight: typography.fontWeight.semibold,
   }), [themeColors])
 
+  const logoStyle = useMemo(() => ({
+    width: '100px',
+    height: '100px',
+    borderRadius: '50%',
+    marginLeft: 'auto' as const,
+    marginRight: 'auto' as const,
+    display: 'block' as const,
+    objectFit: 'contain' as const,
+  }), [])
+
   const handleLoginClick = async () => {
     await login()
   }
@@ -68,6 +79,13 @@ export const LoginPage: React.FC = () => {
   return (
     <main className={styles.container} style={containerStyle}>
       <div className={styles.card} style={cardStyle}>
+        <img
+          src="/logo.png"
+          alt="Commentator logo"
+          width={100}
+          height={100}
+          style={logoStyle}
+        />
         <h1 className={styles.title} style={titleStyle}>
           Commentator
         </h1>
