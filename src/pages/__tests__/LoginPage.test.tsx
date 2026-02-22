@@ -173,9 +173,9 @@ describe('LoginPage', () => {
 
     // Logo should be circular (border-radius 50%)
     expect(computedStyle.borderRadius).toBe('50%')
-    // Logo should have appropriate width and height (150x150px)
-    expect(logo).toHaveAttribute('width', '150')
-    expect(logo).toHaveAttribute('height', '150')
+    // Logo should have appropriate width and height (100x100px)
+    expect(logo).toHaveAttribute('width', '100')
+    expect(logo).toHaveAttribute('height', '100')
   })
 
   it('should center logo horizontally in the card', () => {

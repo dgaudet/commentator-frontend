@@ -13,8 +13,8 @@ export const Header: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
 
   const logoStyle = useMemo(() => ({
-    width: '150px',
-    height: '150px',
+    width: '100px',
+    height: '100px',
     borderRadius: '50%',
     objectFit: 'contain' as const,
     flexShrink: 0 as const,
@@ -48,8 +48,8 @@ export const Header: React.FC = () => {
           <img
             src="/logo.png"
             alt="Commentator logo"
-            width={150}
-            height={150}
+            width={100}
+            height={100}
             style={logoStyle}
           />
           <div>

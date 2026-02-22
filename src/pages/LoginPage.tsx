@@ -55,8 +55,8 @@ export const LoginPage: React.FC = () => {
   }), [themeColors])
 
   const logoStyle = useMemo(() => ({
-    width: '150px',
-    height: '150px',
+    width: '100px',
+    height: '100px',
     borderRadius: '50%',
     marginLeft: 'auto' as const,
     marginRight: 'auto' as const,
@@ -82,8 +82,8 @@ export const LoginPage: React.FC = () => {
         <img
           src="/logo.png"
           alt="Commentator logo"
-          width={150}
-          height={150}
+          width={100}
+          height={100}
           style={logoStyle}
         />
         <h1 className={styles.title} style={titleStyle}>

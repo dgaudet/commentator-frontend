@@ -378,8 +378,8 @@ describe('Header', () => {
     it('should style logo with appropriate sizing', () => {
       render(<Header />)
       const logo = screen.getByAltText(/commentator logo/i)
-      expect(logo).toHaveAttribute('width', '150')
-      expect(logo).toHaveAttribute('height', '150')
+      expect(logo).toHaveAttribute('width', '100')
+      expect(logo).toHaveAttribute('height', '100')
     })
 
     it('should display logo as circular', () => {
