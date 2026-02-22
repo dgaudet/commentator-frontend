@@ -153,12 +153,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
   const logout = useCallback(async () => {
     if (!auth0Client) return
     try {
+      const config = authConfig || getDefaultAuthConfig()
       setIsAuthenticated(false)
       setUser(null)
       setAccessToken(null)
       await auth0Client.logout({
         logoutParams: {
-          returnTo: `${window.location.origin}/login`,
+          returnTo: config.logoutReturnUri,
         },
       })
     } catch (err) {
@@ -166,7 +167,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, authConfig
       setError(authError.message)
       console.error('Logout error:', authError)
     }
-  }, [auth0Client])
+  }, [auth0Client, authConfig])
 
   const getAccessToken = useCallback(async (): Promise<string | null> => {
     if (!auth0Client) return null
