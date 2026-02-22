@@ -196,4 +196,15 @@ describe('LoginPage', () => {
     // Should use object-fit to maintain aspect ratio
     expect(computedStyle.objectFit).toBe('contain')
   })
+
+  it('should apply border color from theme tokens to card', () => {
+    const { container } = renderWithRouter(<LoginPage />)
+    const cardElement = container.querySelector('[class*="card"]')
+    const computedStyle = window.getComputedStyle(cardElement!)
+
+    // Border should use design token border.default color (#E5E7EB)
+    expect(computedStyle.borderColor.toLowerCase()).toBe('#e5e7eb')
+    // Border width should be 1px (thin)
+    expect(computedStyle.borderWidth).toBe('1px')
+  })
 })

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { typography, shadows } from '../theme/tokens'
+import { typography, shadows, borders } from '../theme/tokens'
 import { useThemeColors } from '../hooks/useThemeColors'
 import { useAuth } from '../contexts/AuthContext'
 import styles from './LoginPage.module.css'
@@ -16,6 +16,7 @@ export const LoginPage: React.FC = () => {
   const cardStyle = useMemo(() => ({
     backgroundColor: themeColors.background.primary,
     boxShadow: shadows.lg,
+    border: `${borders.width.thin} solid ${themeColors.border.default}`,
   }), [themeColors])
 
   const titleStyle = useMemo(() => ({
@@ -57,7 +58,6 @@ export const LoginPage: React.FC = () => {
     width: '150px',
     height: '150px',
     borderRadius: '50%',
-    marginBottom: '16px',
     marginLeft: 'auto' as const,
     marginRight: 'auto' as const,
     display: 'block' as const,
