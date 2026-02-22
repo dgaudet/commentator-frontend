@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useThemeColors } from '../hooks/useThemeColors'
 import { useScrollVisibility } from '../hooks/useScrollVisibility'
@@ -11,6 +11,14 @@ export const Header: React.FC = () => {
   const { isVisible } = useScrollVisibility()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const logoStyle = useMemo(() => ({
+    width: '150px',
+    height: '150px',
+    borderRadius: '50%',
+    objectFit: 'contain' as const,
+    flexShrink: 0 as const,
+  }), [])
 
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true)
@@ -37,8 +45,17 @@ export const Header: React.FC = () => {
     <header className={`${styles.header} ${!isVisible ? styles.hidden : ''}`} style={headerStyle}>
       <div className={styles.container}>
         <div className={styles.brand}>
-          <h1 className={styles.title}>Commentator</h1>
-          <p className={styles.subtitle}>Student Report Card Comment Management</p>
+          <img
+            src="/logo.png"
+            alt="Commentator logo"
+            width={150}
+            height={150}
+            style={logoStyle}
+          />
+          <div>
+            <h1 className={styles.title}>Commentator</h1>
+            <p className={styles.subtitle}>Student Report Card Comment Management</p>
+          </div>
         </div>
 
         <div className={styles.userSection}>

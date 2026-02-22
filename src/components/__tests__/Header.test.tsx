@@ -350,6 +350,46 @@ describe('Header', () => {
     })
   })
 
+  describe('Logo Display', () => {
+    it('should display logo in header', () => {
+      render(<Header />)
+      const logo = screen.getByAltText(/commentator logo/i)
+      expect(logo).toBeInTheDocument()
+    })
+
+    it('should have correct logo source', () => {
+      render(<Header />)
+      const logo = screen.getByAltText(/commentator logo/i) as HTMLImageElement
+      expect(logo).toHaveAttribute('src', '/logo.png')
+    })
+
+    it('should position logo to the left of title', () => {
+      const { container } = render(<Header />)
+      const logo = screen.getByAltText(/commentator logo/i)
+      const title = screen.getByText('Commentator')
+
+      // Logo should come before title in DOM
+      const brandElement = container.querySelector('.brand')
+      const logoIndex = Array.from(brandElement?.querySelectorAll('img, h1') || []).indexOf(logo)
+      const titleIndex = Array.from(brandElement?.querySelectorAll('img, h1') || []).indexOf(title)
+      expect(logoIndex).toBeLessThan(titleIndex)
+    })
+
+    it('should style logo with appropriate sizing', () => {
+      render(<Header />)
+      const logo = screen.getByAltText(/commentator logo/i)
+      expect(logo).toHaveAttribute('width', '150')
+      expect(logo).toHaveAttribute('height', '150')
+    })
+
+    it('should display logo as circular', () => {
+      render(<Header />)
+      const logo = screen.getByAltText(/commentator logo/i)
+      const computedStyle = window.getComputedStyle(logo)
+      expect(computedStyle.borderRadius).toBe('50%')
+    })
+  })
+
   describe('Scroll Visibility - Hide on Scroll', () => {
     beforeEach(() => {
       setScrollY(0)
