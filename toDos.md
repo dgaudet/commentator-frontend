@@ -200,3 +200,4 @@ Online Background Removal Tools (Easiest)
 - https://www.remove.bg/ - AI-powered background removal, great for people
 
 ensure that you can't push something directly to main
+check the sign up page in light theme too
