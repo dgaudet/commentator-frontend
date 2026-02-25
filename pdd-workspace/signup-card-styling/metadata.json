@@ -2,7 +2,7 @@
   "feature": "signup-card-styling",
   "title": "Align SignupPage Card Styling with LoginPage",
   "version": "1.0",
-  "status": "PLANNING",
+  "status": "IN_PROGRESS",
   "created_at": "2026-02-24",
   "updated_at": "2026-02-24",
   "phases": {
@@ -12,10 +12,17 @@
       "document": "intent.md"
     },
     "planning": {
-      "status": "IN_PROGRESS",
+      "status": "COMPLETE",
+      "completed_at": "2026-02-24",
       "document": "user-stories.md",
       "user_stories": 3,
       "edge_cases": 0
+    },
+    "implementation": {
+      "status": "IN_PROGRESS",
+      "started_at": "2026-02-24",
+      "stories_complete": 1,
+      "stories_in_progress": 2
     },
     "architecture": {
       "status": "SKIPPED",
@@ -47,11 +54,13 @@
     "internal": ["design-system", "theme-tokens"]
   },
   "metrics": {
-    "files_modified": 1,
+    "files_modified": 2,
     "files_deleted": 0,
-    "test_cases_added": 0,
+    "test_cases_added": 9,
     "estimated_hours": "0.5-1",
-    "estimated_pr_size": "small"
+    "actual_hours": "0.2",
+    "estimated_pr_size": "small",
+    "actual_pr_size": "small"
   },
   "approval": {
     "ready_for_planning": true,

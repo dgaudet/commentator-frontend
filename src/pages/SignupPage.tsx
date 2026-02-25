@@ -7,7 +7,7 @@
 
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { spacing, typography, shadows } from '../theme/tokens'
+import { spacing, typography, shadows, borders } from '../theme/tokens'
 import { useThemeColors } from '../hooks/useThemeColors'
 import { SignupForm } from '../components/auth/SignupForm'
 import styles from './SignupPage.module.css'
@@ -36,8 +36,9 @@ export const SignupPage: React.FC = () => {
   }), [themeColors])
 
   const formWrapperStyle = useMemo(() => ({
-    backgroundColor: themeColors.background.secondary,
+    backgroundColor: themeColors.background.primary,
     boxShadow: shadows.lg,
+    border: `${borders.width.thin} solid ${themeColors.border.default}`,
     padding: spacing.xl,
   }), [themeColors])
 
