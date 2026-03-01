@@ -7,7 +7,7 @@
 
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { spacing, typography, shadows } from '../theme/tokens'
+import { spacing, typography, shadows, borders } from '../theme/tokens'
 import { useThemeColors } from '../hooks/useThemeColors'
 import { SignupForm } from '../components/auth/SignupForm'
 import styles from './SignupPage.module.css'
@@ -36,8 +36,9 @@ export const SignupPage: React.FC = () => {
   }), [themeColors])
 
   const formWrapperStyle = useMemo(() => ({
-    backgroundColor: themeColors.background.secondary,
+    backgroundColor: themeColors.background.primary,
     boxShadow: shadows.lg,
+    border: `${borders.width.thin} solid ${themeColors.border.default}`,
     padding: spacing.xl,
   }), [themeColors])
 
@@ -59,6 +60,21 @@ export const SignupPage: React.FC = () => {
     fontWeight: typography.fontWeight.semibold,
   }), [themeColors])
 
+  const infoBoxStyle = useMemo(() => ({
+    position: 'absolute' as const,
+    backgroundColor: `${themeColors.background.primary}dd`,
+    backdropFilter: 'blur(8px)',
+    borderRadius: borders.radius.md,
+    padding: `${spacing.md} ${spacing.lg}`,
+    boxShadow: shadows.md,
+    fontSize: typography.fontSize.sm,
+    fontWeight: `${typography.fontWeight.semibold}`,
+    color: themeColors.primary.main,
+    display: 'flex' as const,
+    alignItems: 'center' as const,
+    gap: spacing.sm,
+  }), [themeColors])
+
   return (
     <main className={styles.container} style={containerStyle} role="main">
       <div className={styles.signupContainer} style={signupContainerStyle}>
@@ -76,40 +92,18 @@ export const SignupPage: React.FC = () => {
 
           {/* Info boxes overlay */}
           <div style={{
-            position: 'absolute',
+            ...infoBoxStyle,
             bottom: '20px',
             left: '20px',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: '8px',
-            padding: '12px 16px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-            fontSize: typography.fontSize.sm,
-            fontWeight: '600',
-            color: themeColors.primary.main,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
           }}>
             <span>✓</span>
             <span>Streamline Assessment</span>
           </div>
 
           <div style={{
-            position: 'absolute',
+            ...infoBoxStyle,
             bottom: '60px',
             right: '20px',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: '8px',
-            padding: '12px 16px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-            fontSize: typography.fontSize.sm,
-            fontWeight: '600',
-            color: themeColors.primary.main,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
           }}>
             <span>⭐</span>
             <span>Better Feedback</span>
