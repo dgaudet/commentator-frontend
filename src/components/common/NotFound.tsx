@@ -27,7 +27,7 @@ export default function NotFound() {
 
   const headingStyle = useMemo(() => ({
     color: themeColors.text.primary,
-    fontSize: typography.fontSize.xxxl,
+    fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
     margin: 0,
     marginBottom: spacing.md,
