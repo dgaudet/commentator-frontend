@@ -198,5 +198,3 @@ Is it possible to remove the signup button from the Universal Login?
 
 Online Background Removal Tools (Easiest)
 - https://www.remove.bg/ - AI-powered background removal, great for people
-
-ensure that you can't push something directly to main
