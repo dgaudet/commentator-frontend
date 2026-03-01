@@ -241,8 +241,9 @@ Before marking as production-ready, verify on deployed GitHub Pages:
 - ✅ `pdd-workspace/proper-404-and-spa-routing/planning/user-stories.md`
 
 ### Modified Files
-- ✅ `src/App.tsx` - Added basename configuration
 - ✅ `src/test-utils.tsx` - (No changes; works correctly with current setup)
+
+**Note on App.tsx**: No changes required. The existing Router configuration + 404.html SPA redirect handle GitHub Pages routing correctly. Adding basename was tested but found to be unnecessary.
 
 ---
 

@@ -124,7 +124,7 @@ function App() {
   return (
     <ThemeProvider>
       <ThemeStyles />
-      <Router basename="/commentator-frontend/">
+      <Router>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
