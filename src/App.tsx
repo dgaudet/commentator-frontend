@@ -13,6 +13,7 @@ import { LoginPage } from './pages/LoginPage'
 import { SignupPage } from './pages/SignupPage'
 import { CallbackPage } from './pages/CallbackPage'
 import { Header } from './components/Header'
+import { getBasePath } from './utils/getBasePath'
 
 /**
  * Inner application layout component
@@ -124,7 +125,7 @@ function App() {
   return (
     <ThemeProvider>
       <ThemeStyles />
-      <Router>
+      <Router basename={getBasePath()}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
